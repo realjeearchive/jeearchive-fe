@@ -12,7 +12,7 @@ import Logo from '../../../../public/images/logo.png';
 export function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(true);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
