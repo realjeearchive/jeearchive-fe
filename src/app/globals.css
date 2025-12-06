@@ -67,7 +67,20 @@ body {
     --login-page-secondary-text-color: #8B8AA0;
     --input-background-color: #7976a439;
     --input-border-color: #595F81;
-    --login-close-icon-color: #8b8aa0d5;
+    --login-close-icon-color: #8b8aa0d5; 
+
+
+    /* Dashboard color definitions */
+
+    --dashboard-background-color: #272320;
+    --dashboard-sidebar-background-color: #1E1D1B;
+    --dashboard-sidebar-border-color: #36312F;
+    --dashboard-primary-text-color: #F4F4F4;
+    --dashboard-secondary-text-color: #B5B4B4;
+    --dashboard-icons-color: #656160;
+    --dashboard-dividerline-color: #272625;
+    --dashboard-link-hover-color: #272625;
+    --dashboard-active-icon-color: #F4F4F4;
 
 
     

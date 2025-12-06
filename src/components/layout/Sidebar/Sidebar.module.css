@@ -1,0 +1,28 @@
+.sidebar {
+  position: relative;
+  width: 20%;
+  min-width: 300px;
+  background: var(--dashboard-sidebar-background-color);
+  color: var(--dashboard-primary-text-color);
+  padding: 18px;
+  box-sizing: border-box;
+  min-height: 100%;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+}
+
+.sidebarIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--dashboard-active-icon-color);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.sidebarIcon:hover {
+  background-color: var(--dashboard-link-hover-color);
+}

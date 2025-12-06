@@ -1,9 +1,8 @@
 
-export default function DashboardPage() {
+export default function page () {
   return (
     <div>
-      <h1>My Dashboard</h1>
-      <p>This is the protected root page for logged-in users.</p>
+      
     </div>
   );
 }

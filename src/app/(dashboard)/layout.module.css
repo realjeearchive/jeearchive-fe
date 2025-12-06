@@ -1,0 +1,16 @@
+
+.appWrap {
+  display: flex;
+  min-height: 100vh;
+  background: var(--dashboard-background-color); /* dark background */
+  color: #ddd;
+  font-family: Inter, sans-serif;
+  padding: 10px;
+}
+
+.dashboard {
+  flex: 1;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto; 
+}
