@@ -1,16 +1,21 @@
-// sidebar.tsx
+"use client";
+
 import React from "react";
 import styles from "./Sidebar.module.css";
 import { PiSidebar } from "react-icons/pi";
 
-const Sidebar = () => {
+export interface SidebarProps {
+  toggleSidebar: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar }) => {
   return (
     <aside className={styles.sidebar}>
-      <button className={styles.sidebarIcon}>
+      <button onClick={()=>toggleSidebar()} className={styles.sidebarIcon}>
         <PiSidebar size={22} />
       </button>
 
-      {/* Content area still empty */}
+      {/* Empty sidebar content */}
     </aside>
   );
 };

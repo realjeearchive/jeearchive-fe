@@ -8,9 +8,35 @@
   padding: 10px;
 }
 
+.sidebarContainer {
+  width: 20%;
+  min-width: 300px;
+  transition: all 0.3s ease;
+}
+
+.hideSidebar {
+  width: 0;
+  min-width: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
 .dashboard {
   flex: 1;
   padding: 24px;
   box-sizing: border-box;
   overflow-y: auto; 
+  transition: margin-left 0.3s ease;
+}
+
+.sidebarOpenButton {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--dashboard-primary-text-color);
+  font-size: 22px;
+  z-index: 10;
 }
