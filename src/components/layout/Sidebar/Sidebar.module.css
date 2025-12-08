@@ -9,8 +9,19 @@
   min-height: 100%;
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
+/* inner layout to control vertical spacing */
+.sidebarInner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Toggle */
 .sidebarIcon {
   position: absolute;
   top: 8px;
@@ -24,5 +35,165 @@
 }
 
 .sidebarIcon:hover {
+  background-color: var(--dashboard-link-hover-color);
+}
+
+/* Branding */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.logo {
+  border-radius: 6px;
+}
+
+.logoTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logoText {
+  font-size: 16px; /* main heading */
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.logoSubText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: -5px;
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* section with label + divider bar in one row */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* divider line element (no border-bottom on blocks) */
+.sectionDivider {
+  flex: 1;
+  height: 1px;
+  background-color: var(--dashboard-sidebar-border-color);
+  border-radius: 999px;
+}
+
+.nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  color: var(--dashboard-secondary-text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+  font-size: 13px;   /* slightly smaller than logo heading */
+  font-weight: 500;
+}
+
+.navItem:hover {
+  background: var(--dashboard-link-hover-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+.navItem svg {
+  color: var(--dashboard-icons-color);
+}
+
+.navItemActive {
+  background: var(--dashboard-link-hover-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* Footer profile card */
+.footer {
+  margin-top: 16px;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footerProfile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footerAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--dashboard-link-hover-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.footerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.footerName {
+  font-size: 13px;  /* aligned with nav items */
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+}
+
+.footerTag {
+  font-size: 11px;  /* same as subtext / section label */
+  color: var(--dashboard-secondary-text-color);
+  margin-top: -5px;
+}
+
+.footerAction {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--dashboard-icons-color);
+}
+
+.footerAction:hover {
   background-color: var(--dashboard-link-hover-color);
 }
