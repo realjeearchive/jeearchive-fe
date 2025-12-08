@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </button>
         )}
 
-        {children}
+        <div className={styles.dashboardRight}>{children}</div>
       </main>
     </div>
   );

@@ -1,0 +1,140 @@
+:root {
+  --bg: #272320;
+  --card: #1E1D1B;
+  --border: #36312F;
+  --text-main: #F4F4F4;
+  --text-sub: #B5B4B4;
+}
+
+/* WRAPPER */
+.dashboardWrapper {
+  padding: 20px 24px;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* HEADER */
+.header {
+  margin-bottom: 10px;
+}
+
+.greeting {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.subtext {
+  color: var(--text-sub);
+  margin-top: 4px;
+}
+
+/* QUICK ACTIONS */
+.quickActions {
+  display: flex;
+  gap: 16px;
+}
+
+.actionCard {
+  flex: 1;
+  background: var(--card);
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.actionCard:hover {
+  background: #24221f;
+}
+
+/* STATS GRID */
+.progressGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.progressCard {
+  background: var(--card);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.progressCard h3 {
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.progressValue {
+  font-size: 26px;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* SUBJECT PERFORMANCE */
+.subjectSection {
+  margin-top: 10px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.subjectGrid {
+  display: flex;
+  gap: 16px;
+}
+
+.subjectCard {
+  flex: 1;
+  background: var(--card);
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.subjectValue {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* WEAK TOPICS */
+.weakTopics ul li {
+  margin-bottom: 6px;
+  color: var(--text-sub);
+}
+
+/* ACTIVITY */
+.activityList li {
+  margin-bottom: 6px;
+}
+
+/* LEADERBOARD */
+.leaderboardCard {
+  background: var(--card);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.yourRank {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* MOTIVATION */
+.quote {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-sub);
+  padding: 12px;
+  border-left: 3px solid var(--text-sub);
+}
