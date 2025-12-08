@@ -1,6 +1,8 @@
 "use client";
 
 import React, { FC } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "./Sidebar.module.css";
 import Image from "next/image";
 
@@ -20,26 +22,59 @@ import {
 
 export interface SidebarProps {
   toggleSidebar: () => void;
-  activeRoute?: string;
 }
 
-const Sidebar: FC<SidebarProps> = ({ toggleSidebar, activeRoute }) => {
-  const currentRoute = activeRoute ?? "dashboard";
+type NavItem = {
+  id: string;
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+};
 
-  const mainLinks = [
-    { id: "dashboard", label: "Dashboard", icon: <FiHome size={16} /> },
-    { id: "pyq", label: "Previous Year Questions", icon: <FiBookOpen size={16} /> },
-    { id: "chapter", label: "Chapter wise Questions", icon: <FiLayers size={16} /> },
-    { id: "analytics", label: "Analytics", icon: <FiBarChart2 size={16} /> },
-    { id: "leaderboard", label: "Leaderboards", icon: <FiAward size={16} /> },
-    { id: "friends", label: "Play with Friends", icon: <FiUsers size={16} /> },
+const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
+  const pathname = usePathname();
+
+  const mainLinks: NavItem[] = [
+    { id: "dashboard", label: "Dashboard", href: "/dashboard", icon: <FiHome size={16} /> },
+    {
+      id: "pyq",
+      label: "Previous Year Questions",
+      href: "/previous-year-questions",
+      icon: <FiBookOpen size={16} />,
+    },
+    {
+      id: "chapter",
+      label: "Chapter wise Questions",
+      href: "/chapter-wise-questions",
+      icon: <FiLayers size={16} />,
+    },
+    { id: "analytics", label: "Analytics", href: "/analytics", icon: <FiBarChart2 size={16} /> },
+    {
+      id: "leaderboard",
+      label: "Leaderboards",
+      href: "/leaderboards",
+      icon: <FiAward size={16} />,
+    },
+    {
+      id: "friends",
+      label: "Play with Friends",
+      href: "/play-with-friends",
+      icon: <FiUsers size={16} />,
+    },
   ];
 
-  const secondaryLinks = [
-    { id: "profile", label: "Profile", icon: <FiUser size={16} /> },
-    { id: "settings", label: "Settings", icon: <FiSettings size={16} /> },
-    { id: "help", label: "Help & Support", icon: <FiHelpCircle size={16} /> },
+  const secondaryLinks: NavItem[] = [
+    { id: "profile", label: "Profile", href: "/profile", icon: <FiUser size={16} /> },
+    { id: "settings", label: "Settings", href: "/settings", icon: <FiSettings size={16} /> },
+    { id: "help", label: "Help & Support", href: "/help-&-support", icon: <FiHelpCircle size={16} /> },
   ];
+
+  const isActive = (href: string) => {
+    if (href === "/dashboard" && (pathname === "/" || pathname === "/dashboard")) {
+      return true;
+    }
+    return pathname === href;
+  };
 
   return (
     <aside className={styles.sidebar}>
@@ -62,7 +97,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar, activeRoute }) => {
             className={styles.logo}
           />
           <div className={styles.logoTextBlock}>
-            <span className={styles.logoText}>JEEArchive</span>
+            <span className={styles.logoText}>JEE Archive</span>
             <span className={styles.logoSubText}>Ace your JEE</span>
           </div>
         </div>
@@ -76,14 +111,16 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar, activeRoute }) => {
             </div>
             <ul>
               {mainLinks.map((link) => (
-                <li
-                  key={link.id}
-                  className={`${styles.navItem} ${
-                    currentRoute === link.id ? styles.navItemActive : ""
-                  }`}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
+                <li key={link.id}>
+                  <Link
+                    href={link.href}
+                    className={`${styles.navItem} ${
+                      isActive(link.href) ? styles.navItemActive : ""
+                    }`}
+                  >
+                    {link.icon}
+                    <span>{link.label}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -96,14 +133,16 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar, activeRoute }) => {
             </div>
             <ul>
               {secondaryLinks.map((link) => (
-                <li
-                  key={link.id}
-                  className={`${styles.navItem} ${
-                    currentRoute === link.id ? styles.navItemActive : ""
-                  }`}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
+                <li key={link.id}>
+                  <Link
+                    href={link.href}
+                    className={`${styles.navItem} ${
+                      isActive(link.href) ? styles.navItemActive : ""
+                    }`}
+                  >
+                    {link.icon}
+                    <span>{link.label}</span>
+                  </Link>
                 </li>
               ))}
             </ul>

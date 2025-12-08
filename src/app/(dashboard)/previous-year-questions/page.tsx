@@ -1,7 +1,7 @@
 const TestPage = () => {
   return (
     <div>
-      Tests page...
+      Previous year questions page...
     </div>
   );
 };
