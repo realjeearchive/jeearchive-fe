@@ -12,7 +12,7 @@ import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.png';
 import { loginSchema, type LoginInput } from '@/features/auth/schemas';
 import { loginRequest, type LoginResponse } from '@/features/auth/api';
-import { useAuthStore, useUserStore } from '@/store';
+import { useAuthStore } from '@/store';
 import { toast } from 'sonner';
 
 export function LoginForm() {
@@ -22,7 +22,6 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
-  const setProfile = useUserStore((s) => s.setProfile);
 
 
 
