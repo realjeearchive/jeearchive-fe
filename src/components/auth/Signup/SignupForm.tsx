@@ -5,78 +5,95 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.png';
+import { signupSchema, type SignupInput } from '@/features/auth/schemas';
+import { signupRequest, type SignupResponse } from '@/features/auth/api';
+import { toast } from 'sonner';
+import { useUserStore } from '@/store';
+// import { useAuthStore } from '@/store';
 
 export function SignupForm() {
   const router = useRouter();
+  // const setUser = useAuthStore((s) => s.setUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const setProfile = useUserStore((s) => s.setProfile);
+
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setErrors({});
+    setFieldErrors({});
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    // const name = formData.get('name') as string;
-    // const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const confirmPassword = formData.get('confirm-password') as string;
+    const rawData = {
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      confirmPassword: formData.get('confirm-password') as string,
+    };
 
-    // Client-side validation
-    const newErrors: Record<string, string> = {};
-    
-    if (password !== confirmPassword) {
-      newErrors['confirm-password'] = 'Passwords do not match';
-    }
-    
-    if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    }
+    let parsed: SignupInput;
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    try {
+      parsed = signupSchema.parse(rawData);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const fieldErrs: Record<string, string> = {};
+        err.issues.forEach((issue) => {
+          const field = issue.path[0] as string;
+          if (!fieldErrs[field]) {
+            fieldErrs[field] = issue.message;
+          }
+        });
+        setFieldErrors(fieldErrs);
+        setLoading(false);
+        return;
+      }
+
+      setError('Invalid form data');
       setLoading(false);
       return;
     }
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/signup', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ name, email, password }),
-      // });
+  const data: SignupResponse = await signupRequest(parsed);
+  setProfile({
+    name: parsed.name,
+    tag: 'JEE Aspirant',
+  });
+  toast.success(data.message || 'OTP sent to your email.');
 
-      // if (!response.ok) {
-      //   throw new Error('Email already exists');
-      // }
-
-      router.push('/verify-email');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
+  router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}`);
+} catch (err) {
+  const message = err instanceof Error ? err.message : 'Something went wrong';
+  setError(message);
+  toast.error(message);
+} finally {
+  setLoading(false);
+}
   };
 
   return (
     <div className={Styles.signupFormContainer}>
       <div className={Styles.signupHeader}>
-        <Image 
-          src={Logo} 
-          alt="jeearchive-logo" 
-          width={60} // Adjust as needed
-          height={60} // Adjust as needed
+        <Image
+          src={Logo}
+          alt="jeearchive-logo"
+          width={60}
+          height={60}
           className={Styles.logo}
         />
         <h2 className={Styles.signupHeading}>{"Let's get started"}</h2>
       </div>
+
       <FormError message={error} />
 
       <form onSubmit={handleSubmit} className={Styles.signupForm}>
@@ -87,7 +104,7 @@ export function SignupForm() {
           label="Full Name"
           required
           placeholder="John Doe"
-          error={errors.name}
+          error={fieldErrors.name}
         />
 
         <AuthInput
@@ -97,7 +114,7 @@ export function SignupForm() {
           label="Email address"
           required
           placeholder="you@example.com"
-          error={errors.email}
+          error={fieldErrors.email}
         />
 
         <AuthInput
@@ -107,7 +124,7 @@ export function SignupForm() {
           label="Password"
           required
           placeholder="••••••••"
-          error={errors.password}
+          error={fieldErrors.password}
         />
 
         <AuthInput
@@ -117,22 +134,23 @@ export function SignupForm() {
           label="Confirm Password"
           required
           placeholder="••••••••"
-          error={errors['confirm-password']}
+          error={fieldErrors.confirmPassword}
         />
 
-
         <AuthButton type="submit" loading={loading}>
-          <div className='font-medium'>Create account</div>
+          <div className="font-medium">Create account</div>
         </AuthButton>
+
         <p className={Styles.onboardingNavigationText}>
           Already have an account?{' '}
-          <Link href="/login" className={` ${Styles.onboardingNavigation} font-medium`}>
+          <Link
+            href="/login"
+            className={`${Styles.onboardingNavigation} font-medium`}
+          >
             Sign in
           </Link>
         </p>
       </form>
-
-      {/* <SocialAuth /> */}
     </div>
   );
 }

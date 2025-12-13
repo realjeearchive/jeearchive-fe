@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthInitializer } from "./providers/AuthInitializer";
+import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
@@ -15,7 +17,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <AuthInitializer>
+          {children}
+        </AuthInitializer>
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          toastOptions={{
+            style: { fontSize: 14 },
+          }}
+        />
       </body>
     </html>
   );

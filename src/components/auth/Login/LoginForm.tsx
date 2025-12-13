@@ -5,51 +5,85 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.png';
+import { loginSchema, type LoginInput } from '@/features/auth/schemas';
+import { loginRequest, type LoginResponse } from '@/features/auth/api';
+import { useAuthStore, useUserStore } from '@/store';
+import { toast } from 'sonner';
 
 export function LoginForm() {
   const router = useRouter();
+  // const setUser = useAuthStore((s) => s.setUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const setProfile = useUserStore((s) => s.setProfile);
+
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  e.preventDefault();
+  setError('');
+  setFieldErrors({});
+  setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    try {
-      // TODO: Replace with actual API call
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
-      }
-
-      router.push('/dashboard');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
+  const formData = new FormData(e.currentTarget);
+  const rawData = {
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+    remberMe: formData.get('remember-me') === 'on',
   };
+
+  let parsed: LoginInput;
+
+  try {
+    parsed = loginSchema.parse(rawData);
+    console.log("LoginForm: parded data: ",parsed);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const fieldErrs: Record<string, string> = {};
+      err.issues.forEach((issue) => {
+        const field = issue.path[0] as string;
+        if (!fieldErrs[field]) {
+          fieldErrs[field] = issue.message;
+        }
+      });
+      setFieldErrors(fieldErrs);
+      setLoading(false);
+      return;
+    }
+
+    setError('Invalid form data');
+    setLoading(false);
+    return;
+  }
+
+  try {
+  const data: LoginResponse = await loginRequest(rawData);
+
+  setAccessToken(data.accessToken);
+  toast.success('Logged in successfully.');
+  router.push('/dashboard');
+} catch (err) {
+  const message = err instanceof Error ? err.message : 'Something went wrong';
+  setError(message);
+  toast.error(message);
+} finally {
+  setLoading(false);
+}
+};
 
   return (
     <div className={Styles.loginFormContainer}>
       <div className={Styles.loginHeader}>
-        <Image 
-          src={Logo} 
-          alt="jeearchive-logo" 
+        <Image
+          src={Logo}
+          alt="jeearchive-logo"
           width={60}
           height={60}
           className={Styles.logo}
@@ -67,6 +101,7 @@ export function LoginForm() {
           label="Email address"
           required
           placeholder="you@example.com"
+          error={fieldErrors.email}
         />
 
         <AuthInput
@@ -76,6 +111,7 @@ export function LoginForm() {
           label="Password"
           required
           placeholder="••••••••"
+          error={fieldErrors.password}
         />
 
         <div className={Styles.formExtras}>
@@ -96,13 +132,16 @@ export function LoginForm() {
           </Link>
         </div>
 
-
         <AuthButton type="submit" loading={loading}>
-          <div className='font-medium'>Sign in</div>
+          <div className="font-medium">Sign in</div>
         </AuthButton>
+
         <p className={Styles.onboardingNavigationText}>
           {"Don't have an account?"}{' '}
-          <Link href="/signup" className={`${Styles.onboardingNavigation} font-medium`}>
+          <Link
+            href="/signup"
+            className={`${Styles.onboardingNavigation} font-medium`}
+          >
             Sign up
           </Link>
         </p>
