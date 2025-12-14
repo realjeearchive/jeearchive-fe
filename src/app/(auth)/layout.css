@@ -1,28 +1,67 @@
-
-.onboarding{
-    background-color: var(--login-background-color);
-    height: 100vh;
+.onboarding {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--login-background-color);
 }
 
-.carousel-section{
-    width: 100%;
-    height: 100vh;
+.carousel-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
-.form-section{
-  position: fixed;
+.form-section {
+  position: absolute;
   top: 0;
   right: 0;
   width: 30%;
-  height: 100%;
-  background-color: rgba(39, 40, 63, 0.967);
+  min-width: 360px;
+  max-width: 520px;
+  height: 100vh;
+
+  background-color: rgba(30, 43, 62, 0.973);
+  backdrop-filter: blur(26px) saturate(140%);
+  -webkit-backdrop-filter: blur(26px) saturate(140%);
+
+  box-shadow: -40px 0 80px rgba(0, 0, 0, 0.8);
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 20;
   z-index: 1;
-  box-shadow:  inset 0 0 100px 10px rgba(39, 40, 63, 0.967);
 }
 
+.form-section > * {
+  width: 100%;
+  max-width: 380px;
+}
 
+@media (max-width: 900px) {
+  .form-section {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: 100vh;
+    border-left: none;
+    box-shadow: none;
+    padding: 0;
+
+    background-color: rgba(30, 43, 62, 0.973);
+
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+  }
+
+  .carousel-wrapper {
+    display: none;
+  }
+
+  .form-section > * {
+    max-width: 420px;
+  }
+}

@@ -1,3 +1,4 @@
+// app/(auth)/layout.tsx
 import type { Metadata } from 'next';
 import './layout.css';
 import { OnboardingCarousel } from '@/components/layout/LoginCarausel';
@@ -12,10 +13,13 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className='onboarding'>
-      <div className="carousel-section">
+    <div className="onboarding">
+      {/* Carousel is full-screen background */}
+      <div className="carousel-wrapper">
         <OnboardingCarousel />
       </div>
+
+      {/* Right glass panel on top of carousel */}
       <div className="form-section">
         {children}
       </div>
