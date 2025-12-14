@@ -94,9 +94,10 @@ export function ForgotPasswordForm() {
           type="email"
           label="Email address"
           required
-          placeholder="you@example.com"
+          placeholder="Email"
           error={fieldErrors.email}
         />
+
 
         <AuthButton type="submit" loading={loading}>
           <div className="font-medium">Verify Email</div>

@@ -17,65 +17,63 @@ import { toast } from 'sonner';
 
 export function LoginForm() {
   const router = useRouter();
-  // const setUser = useAuthStore((s) => s.setUser);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
 
-
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setError('');
-  setFieldErrors({});
-  setLoading(true);
+    e.preventDefault();
+    setError('');
+    setFieldErrors({});
+    setLoading(true);
 
-  const formData = new FormData(e.currentTarget);
-  const rawData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-    remberMe: formData.get('remember-me') === 'on',
-  };
+    const formData = new FormData(e.currentTarget);
+    const rawData = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      remberMe: formData.get('remember-me') === 'on',
+    };
 
-  let parsed: LoginInput;
+    let parsed: LoginInput;
 
-  try {
-    parsed = loginSchema.parse(rawData);
-    console.log("LoginForm: parded data: ",parsed);
-  } catch (err) {
-    if (err instanceof z.ZodError) {
-      const fieldErrs: Record<string, string> = {};
-      err.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        if (!fieldErrs[field]) {
-          fieldErrs[field] = issue.message;
-        }
-      });
-      setFieldErrors(fieldErrs);
+    try {
+      parsed = loginSchema.parse(rawData);
+      console.log('LoginForm: parsed data: ', parsed);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const fieldErrs: Record<string, string> = {};
+        err.issues.forEach((issue) => {
+          const field = issue.path[0] as string;
+          if (!fieldErrs[field]) {
+            fieldErrs[field] = issue.message;
+          }
+        });
+        setFieldErrors(fieldErrs);
+        toast.error('Please fix the highlighted fields.');
+        setLoading(false);
+        return;
+      }
+
+      setError('Invalid form data');
       setLoading(false);
       return;
     }
 
-    setError('Invalid form data');
-    setLoading(false);
-    return;
-  }
+    try {
+      const data: LoginResponse = await loginRequest(rawData);
 
-  try {
-  const data: LoginResponse = await loginRequest(rawData);
-
-  setAccessToken(data.accessToken);
-  toast.success('Logged in successfully.');
-  router.push('/dashboard');
-} catch (err) {
-  const message = err instanceof Error ? err.message : 'Something went wrong';
-  setError(message);
-  toast.error(message);
-} finally {
-  setLoading(false);
-}
-};
+      setAccessToken(data.accessToken);
+      toast.success('Logged in successfully.');
+      router.push('/dashboard');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={Styles.loginFormContainer}>
@@ -99,7 +97,7 @@ export function LoginForm() {
           type="email"
           label="Email address"
           required
-          placeholder="you@example.com"
+          placeholder="Email"
           error={fieldErrors.email}
         />
 
@@ -109,7 +107,7 @@ export function LoginForm() {
           type="password"
           label="Password"
           required
-          placeholder="••••••••"
+          placeholder="Password"
           error={fieldErrors.password}
         />
 
@@ -145,8 +143,6 @@ export function LoginForm() {
           </Link>
         </p>
       </form>
-
-      {/* <SocialAuth /> */}
     </div>
   );
 }

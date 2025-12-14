@@ -7,3 +7,38 @@
     border: 1.5px solid var(--input-border-color);
     color: var(--login-page-primary-text-color);
 }
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputInner {
+  position: relative;
+}
+
+.inputNormal {
+  border-color: #4b5563;
+}
+
+.inputError {
+  border-color: #ef4444;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--login-page-secondary-text-color);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.errorText {
+  font-size: 12px;
+  color: #f97373;
+}

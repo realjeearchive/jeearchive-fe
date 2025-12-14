@@ -14,17 +14,13 @@ import { signupSchema, type SignupInput } from '@/features/auth/schemas';
 import { signupRequest, type SignupResponse } from '@/features/auth/api';
 import { toast } from 'sonner';
 import { useUserStore } from '@/store';
-// import { useAuthStore } from '@/store';
 
 export function SignupForm() {
   const router = useRouter();
-  // const setUser = useAuthStore((s) => s.setUser);
+  const setProfile = useUserStore((s) => s.setProfile);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const setProfile = useUserStore((s) => s.setProfile);
-
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +50,7 @@ export function SignupForm() {
           }
         });
         setFieldErrors(fieldErrs);
+        toast.error('Please fix the highlighted fields.');
         setLoading(false);
         return;
       }
@@ -64,21 +61,22 @@ export function SignupForm() {
     }
 
     try {
-  const data: SignupResponse = await signupRequest(parsed);
-  setProfile({
-    name: parsed.name,
-    tag: 'JEE Aspirant',
-  });
-  toast.success(data.message || 'OTP sent to your email.');
+      const data: SignupResponse = await signupRequest(parsed);
+      toast.success(data.message || 'OTP sent to your email.');
 
-  router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}`);
-} catch (err) {
-  const message = err instanceof Error ? err.message : 'Something went wrong';
-  setError(message);
-  toast.error(message);
-} finally {
-  setLoading(false);
-}
+      setProfile({
+        name: parsed.name,
+        tag: 'JEE Aspirant',
+      });
+
+      router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,7 +101,7 @@ export function SignupForm() {
           type="text"
           label="Full Name"
           required
-          placeholder="John Doe"
+          placeholder="Full Name"
           error={fieldErrors.name}
         />
 
@@ -113,7 +111,7 @@ export function SignupForm() {
           type="email"
           label="Email address"
           required
-          placeholder="you@example.com"
+          placeholder="Email"
           error={fieldErrors.email}
         />
 
@@ -123,7 +121,7 @@ export function SignupForm() {
           type="password"
           label="Password"
           required
-          placeholder="••••••••"
+          placeholder="Password"
           error={fieldErrors.password}
         />
 
@@ -133,7 +131,7 @@ export function SignupForm() {
           type="password"
           label="Confirm Password"
           required
-          placeholder="••••••••"
+          placeholder="Confirm Password"
           error={fieldErrors.confirmPassword}
         />
 
