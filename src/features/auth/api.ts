@@ -1,4 +1,3 @@
-// src/features/auth/api.ts
 import type { SignupInput, LoginInput } from './schemas';
 
 const API_BASE_URL =
@@ -14,7 +13,6 @@ async function handleJson<T>(res: Response): Promise<T> {
     throw new Error(message);
   }
 
-  // Your ApiResponse shape is { message, data?: {...} }
   if (data && data.data !== undefined) {
     return { ...data, ...data.data } as T;
   }
@@ -22,7 +20,6 @@ async function handleJson<T>(res: Response): Promise<T> {
   return data as T;
 }
 
-// ===== Types that match backend =====
 
 export interface SignupResponse {
   message: string;
@@ -56,14 +53,12 @@ export interface RefreshTokenResponse {
   message: string;
 }
 
-// ===== API calls =====
 
-// POST /auth/signup
 export async function signupRequest(payload: SignupInput) {
   const res = await fetch(`${API_BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', // set refresh cookie in future if needed
+    credentials: 'include', 
     body: JSON.stringify({
       name: payload.name,
       email: payload.email,
@@ -74,7 +69,6 @@ export async function signupRequest(payload: SignupInput) {
   return handleJson<SignupResponse>(res);
 }
 
-// POST /auth/verifySignUpOTP  (signup verification)
 export async function verifyOtpRequest(params: { email: string; otp: string }) {
   const res = await fetch(`${API_BASE_URL}/auth/verifySignUpOTP`, {
     method: 'POST',
@@ -83,11 +77,9 @@ export async function verifyOtpRequest(params: { email: string; otp: string }) {
     body: JSON.stringify(params),
   });
 
-  // data.data = { accessToken }
   return handleJson<VerifyOtpResponse>(res);
 }
 
-// POST /auth/login
 export async function loginRequest(payload: LoginInput & { remberMe?: boolean }) {
   const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
@@ -99,7 +91,6 @@ export async function loginRequest(payload: LoginInput & { remberMe?: boolean })
   return handleJson<LoginResponse>(res);
 }
 
-// POST /auth/passwordEmailVerification
 export async function passwordEmailVerificationRequest(params: {
   email: string;
 }) {
@@ -113,7 +104,6 @@ export async function passwordEmailVerificationRequest(params: {
   return handleJson<PasswordEmailVerificationResponse>(res);
 }
 
-// POST /auth/verifyPasswordOTP
 export async function verifyPasswordOtpRequest(params: {
   email: string;
   otp: string;
@@ -128,7 +118,6 @@ export async function verifyPasswordOtpRequest(params: {
   return handleJson<VerifyPasswordOtpResponse>(res);
 }
 
-// POST /auth/passwordChange  (requires Authorization: Bearer accessToken)
 export async function passwordChangeRequest(params: {
   password: string;
   accessToken: string;
@@ -146,11 +135,10 @@ export async function passwordChangeRequest(params: {
   return handleJson<PasswordChangeResponse>(res);
 }
 
-// GET /auth/refershToken
 export async function refreshTokenRequest() {
   const res = await fetch(`${API_BASE_URL}/auth/refershToken`, {
     method: 'GET',
-    credentials: 'include', // send refreshToken cookie
+    credentials: 'include',
   });
 
   return handleJson<RefreshTokenResponse>(res);
