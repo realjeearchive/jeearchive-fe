@@ -10,7 +10,7 @@ interface AuthState {
   setAccessToken: (token: string | null) => void;
   setLoading: (value: boolean) => void;
   initFromRefresh: () => Promise<void>;
-  logout: () => void; // frontend-only, backend clears cookie via expiry
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,14 +25,13 @@ export const useAuthStore = create<AuthState>()(
 
         setLoading: (value) => set({ isLoading: value }),
 
-        // Called once on app mount to convert refreshToken -> accessToken
         initFromRefresh: async () => {
           if (get().initialized) return;
 
           set({ isLoading: true });
 
           try {
-            const data = await refreshTokenRequest(); // GET /auth/refershToken
+            const data = await refreshTokenRequest(); 
             set({
               accessToken: data.accessToken,
               initialized: true,
@@ -48,8 +47,6 @@ export const useAuthStore = create<AuthState>()(
         },
 
         logout: () => {
-          // There is no /logout route yet; clear frontend state.
-          // (Refresh cookie will naturally expire or you can later add /logout.)
           set({ accessToken: null });
         },
       }),
