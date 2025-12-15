@@ -13,7 +13,6 @@ import {
   FiLayers,
   FiBarChart2,
   FiAward,
-  FiUsers,
   FiUser,
   FiSettings,
   FiHelpCircle,
@@ -62,13 +61,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
       label: 'Leaderboards',
       href: '/leaderboards',
       icon: <FiAward size={16} />,
-    },
-    {
-      id: 'friends',
-      label: 'Play with Friends',
-      href: '/play-with-friends',
-      icon: <FiUsers size={16} />,
-    },
+    }
   ];
 
   const secondaryLinks: NavItem[] = [

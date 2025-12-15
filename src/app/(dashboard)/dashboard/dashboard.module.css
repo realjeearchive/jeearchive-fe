@@ -25,6 +25,18 @@
 
 .bottomItem {
   flex: 1;
-  min-width: 320px; /* ensures they go side by side on desktop, stack on mobile */
+  min-width: 320px;
+}
+
+
+.listSectionWrapper {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.playFriendsWrapper {
+  margin-top: 24px;
 }
 
