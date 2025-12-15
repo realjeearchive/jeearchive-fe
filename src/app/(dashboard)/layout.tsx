@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
 import styles from "./layout.module.css";
-import { PiSidebar } from "react-icons/pi";
+import { PiSidebar } from "react-icons/pi"; // still used for the floating button
+import Header from "@/components/layout/Header/Header";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -18,7 +19,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className={styles.appWrap}>
-      
       {/* SIDEBAR WRAPPER */}
       <div
         className={`${styles.sidebarContainer} ${
@@ -30,14 +30,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* MAIN CONTENT */}
       <main className={styles.dashboard}>
-        
-        {/* ICON INSIDE MAIN (only when sidebar is hidden) */}
-        {!isSidebarOpen && (
-          <button className={styles.sidebarOpenButton} onClick={toggleSidebar}>
-            <PiSidebar size={22} />
-          </button>
-        )}
 
+        {/* NEW HEADER */}
+        <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+        {/* PAGE CONTENT */}
         <div className={styles.dashboardRight}>{children}</div>
       </main>
     </div>

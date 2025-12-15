@@ -24,18 +24,20 @@
 /* Toggle */
 .sidebarIcon {
   position: absolute;
-  top: 8px;
+  top: 10px;
   right: 8px;
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--dashboard-active-icon-color);
+  color: var(--dashboard-icons-color);
   padding: 4px;
   border-radius: 8px;
 }
 
 .sidebarIcon:hover {
   background-color: var(--dashboard-link-hover-color);
+  color: var(--dashboard-active-icon-color);
+  transition: all ease .3s;
 }
 
 /* Branding */
