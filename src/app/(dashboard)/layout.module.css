@@ -1,8 +1,7 @@
-
 .appWrap {
   display: flex;
   min-height: 100vh;
-  background: var(--dashboard-background-color); /* dark background */
+  background: var(--dashboard-background-color);
   color: #ddd;
   font-family: Inter, sans-serif;
   padding: 10px;
@@ -22,14 +21,22 @@
   overflow: hidden;
 }
 
+/* SCROLL CONTAINER */
 .dashboard {
   flex: 1;
-  padding: 0;
   box-sizing: border-box;
-  overflow-y: auto; 
-  transition: margin-left 0.3s ease;
   padding: 0 10px;
+  overflow-y: auto;              /* scrolling here */
+  transition: margin-left 0.3s ease;
+  scrollbar-width: none;         /* Firefox hide */
+  -ms-overflow-style: none;      /* IE/Edge hide */
 }
+
+/* Chrome / WebKit hide */
+.dashboard::-webkit-scrollbar {
+  display: none;
+}
+
 
 .sidebarOpenButton {
   position: absolute;
