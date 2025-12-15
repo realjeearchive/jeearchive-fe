@@ -1,7 +1,19 @@
 import type { SignupInput, LoginInput } from './schemas';
 
+
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+
+
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+    this.name = 'ApiError';
+  }
+}
+
 
 async function handleJson<T>(res: Response): Promise<T> {
   const data = await res.json().catch(() => null);
@@ -10,7 +22,7 @@ async function handleJson<T>(res: Response): Promise<T> {
     const message =
       (data && (data.message || data.error)) ||
       'Something went wrong. Please try again.';
-    throw new Error(message);
+    throw new ApiError(message, res.status)
   }
 
   if (data && data.data !== undefined) {
@@ -138,8 +150,16 @@ export async function passwordChangeRequest(params: {
 export async function refreshTokenRequest() {
   const res = await fetch(`${API_BASE_URL}/auth/refershToken`, {
     method: 'GET',
+    headers: {
+      'Accept': 'application/json',        
+      'Content-Type': 'application/json',
+    },
     credentials: 'include',
+    cache: 'no-store',                   
   });
 
   return handleJson<RefreshTokenResponse>(res);
 }
+
+
+export const getCurrentSession = refreshTokenRequest;

@@ -31,20 +31,20 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true });
 
           try {
-            const data = await refreshTokenRequest(); 
+            const data = await refreshTokenRequest();
             set({
               accessToken: data.accessToken,
               initialized: true,
             });
           } catch {
             set({
-              accessToken: null,
               initialized: true,
             });
           } finally {
             set({ isLoading: false });
           }
         },
+
 
         logout: () => {
           set({ accessToken: null });

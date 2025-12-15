@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 interface UserProfile {
   name: string;
-  tag?: string; // e.g. "JEE Aspirant"
+  tag?: string;
 }
 
 interface UserState {
