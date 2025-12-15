@@ -9,14 +9,11 @@
   background-color: var(--dashboard-background-color);
 }
 
-
-/* LEFT SECTION */
-
 .leftSection {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-right: 4px; /* small separation from center */
+  padding-right: 4px;
 }
 
 .sidebarToggle {
@@ -67,7 +64,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding-left: 8px; /* replaces previous margin-left */
+  padding-left: 8px;
   font-size: 13px;
 }
 
@@ -84,8 +81,6 @@
   font-weight: 500;
 }
 
-/* RIGHT SECTION */
-
 .rightSection {
   display: flex;
   align-items: center;
@@ -96,8 +91,8 @@
 .primaryButton {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid var(--dashboard-sidebar-border-color);
   background: var(--dashboard-sidebar-background-color);
@@ -117,11 +112,9 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* AVATAR */
-
 .avatar {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   background: var(--dashboard-header-avatar-background-color);
   display: flex;
@@ -132,12 +125,10 @@
 }
 
 .avatarInitial {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
 }
-
-/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .header {
