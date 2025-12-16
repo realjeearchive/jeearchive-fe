@@ -27,9 +27,6 @@ const JeeMains = () => {
 ];
 
 
-
-
-
   return (
     <div className={Styles.jeeMainsPage}>
       <TestListSection heading="Jee Mains" items={jeeMainsYearItems} />
