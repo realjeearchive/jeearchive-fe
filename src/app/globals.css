@@ -81,6 +81,8 @@ body {
     --dashboard-dividerline-color: #272625;
     --dashboard-link-hover-color: #272625;
     --dashboard-active-icon-color: #F4F4F4;
+    --dashboard-highlight-color: #85DBFB;
+    --dashboard-secondary-highlight-color: #283339;
     --dashboard-header-avatar-background-color: #512DA8;
     --dashboard-header-avatar-border-color: #6C4DB6;
     
