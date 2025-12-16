@@ -74,12 +74,26 @@
     position: absolute;
     left: 10px;
     top: 10px;
+    width: 280px;
     z-index: 99;
     background-color: var(--dashboard-sidebar-background-color);
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    
+    /* SLIDE + FADE ANIMATION */
+    transform: translateX(0);
+    opacity: 1;                          /* ← ADD THIS */
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ← all includes opacity */
+  }
+
+  .hideSidebar {
+    transform: translateX(-100%);
+    opacity: 0;                          /* ← ADD THIS */
+    transition: all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ← all includes opacity */
   }
 
   .dashboard {
     margin-left: 0 !important;
   }
 }
+
