@@ -1,4 +1,4 @@
-import TestListSection, {TestListItem} from "@/components/dashboard/TestListSection/TestListSection";
+import TestListSection from "@/components/dashboard/TestListSection/TestListSection";
 import Styles from './jeeMains.module.css';
 
 
