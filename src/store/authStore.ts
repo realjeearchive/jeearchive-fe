@@ -38,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
             });
           } catch {
             set({
+              accessToken: null,   // important: ensure it's cleared on failure
               initialized: true,
             });
           } finally {
@@ -45,15 +46,19 @@ export const useAuthStore = create<AuthState>()(
           }
         },
 
-
         logout: () => {
-          set({ accessToken: null });
+          // optional: call backend logout API here to revoke refresh token
+          set({
+            accessToken: null,
+            initialized: true,  // mark as initialized so initFromRefresh doesn't run again
+          });
         },
       }),
       {
-        name: 'auth',
+        name: "auth",
         partialize: (state) => ({ accessToken: state.accessToken }),
       }
     )
   )
 );
+

@@ -12,11 +12,12 @@ import { verifyOtpRequest, passwordEmailVerificationRequest, type VerifyOtpRespo
 import { useAuthStore } from '@/store';
 import { toast } from 'sonner';
 
+
 export function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') ?? '';
-  // const setUser = useAuthStore((s) => s.setUser);
+  const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -109,9 +110,9 @@ export function VerifyEmail() {
     otp: otpValue,
   });
 
-  setAccessToken(data.accessToken);
+  setAccessToken(data.accessToken); 
   toast.success('Email verified successfully.');
-  router.push('/dashboard');
+  router.push(redirectTo);
 } catch (err) {
   const message = err instanceof Error ? err.message : 'Something went wrong';
   setError(message);

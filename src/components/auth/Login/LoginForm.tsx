@@ -2,7 +2,6 @@
 
 import Styles from './LoginForm.module.css';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { z } from 'zod';
@@ -14,6 +13,8 @@ import { loginSchema, type LoginInput } from '@/features/auth/schemas';
 import { loginRequest, type LoginResponse } from '@/features/auth/api';
 import { useAuthStore } from '@/store';
 import { toast } from 'sonner';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 
 export function LoginForm() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,9 +65,10 @@ export function LoginForm() {
     try {
       const data: LoginResponse = await loginRequest(rawData);
 
-      setAccessToken(data.accessToken);
+      setAccessToken(data.accessToken); 
       toast.success('Logged in successfully.');
-      router.push('/dashboard');
+      const redirectTo = searchParams.get('redirectTo') || '/dashboard';
+      router.replace(redirectTo);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
       setError(message);

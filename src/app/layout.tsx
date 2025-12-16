@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
+import RouteGuard from "@/components/auth/RouteGuard";
 
 
 export const metadata: Metadata = {
@@ -18,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthInitializer>
-          {children}
+          <RouteGuard>{children}</RouteGuard>
         </AuthInitializer>
         <Toaster
           position="top-center"
