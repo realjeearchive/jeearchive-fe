@@ -60,6 +60,25 @@
   transform: translateY(-0.5px);
 }
 
+/* add these */
+
+.iconButtonActive {
+  color: var(--dashboard-primary-text-color);
+}
+
+.iconButtonDisabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.iconButtonDisabled:hover {
+  background: transparent;
+  color: var(--dashboard-icons-color);
+  border-color: transparent;
+  transform: none;
+}
+
+
 .breadcrumb {
   display: flex;
   align-items: center;

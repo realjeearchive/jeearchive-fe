@@ -91,3 +91,13 @@
 .row:hover .chevron {
   transform: translateX(3px);
 }
+
+.rowLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.rowLink + .rowLink .row {
+  border-top: 1px solid var(--dashboard-icons-color);
+}
+

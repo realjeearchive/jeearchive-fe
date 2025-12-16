@@ -7,19 +7,20 @@ import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTyp
 import TestListSection, {
   TestListItem,
 } from "@/components/dashboard/TestListSection/TestListSection";
+import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 
 
 // example data
 const pyqItems: TestListItem[] = [
-  { id: "pyq-2025", title: "2025 PYQs", meta: "19 Tests" },
-  { id: "pyq-2024", title: "2024 PYQs", meta: "20 Tests"  },
-  { id: "pyq-2023-2021", title: "2023 – 2021 PYQs", meta: "72 Tests" },
+  { id: "pyq-2025", title: "2025 PYQs", meta: "19 Tests", href: "/previous-year-questions/jee-mains" },
+  { id: "pyq-2024", title: "2024 PYQs", meta: "20 Tests", href: "/previous-year-questions/jee-mains" },
+  { id: "pyq-2023-2021", title: "2023 – 2021 PYQs", meta: "72 Tests", href: "/previous-year-questions/jee-mains" },
 ];
 
 const chapterItems: TestListItem[] = [
-  { id: "phy", title: "Physics", meta: "159 Tests"},
-  { id: "chem", title: "Chemistry", meta: "160 Tests"},
-  { id: "math", title: "Mathematics", meta: "161 Tests"},
+  { id: "phy", title: "Physics", meta: "159 Tests", href: "/previous-year-questions/jee-mains" },
+  { id: "chem", title: "Chemistry", meta: "160 Tests", href: "/previous-year-questions/jee-mains" },
+  { id: "math", title: "Mathematics", meta: "161 Tests", href: "/previous-year-questions/jee-mains" },
 ];
 
 export default function DashboardPage() {
@@ -47,6 +48,9 @@ export default function DashboardPage() {
       <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 24 }}>
         <TestListSection heading="Previous Year Questions" items={pyqItems} />
         <TestListSection heading="Topic & Chapter-wise Questions" items={chapterItems} />
+      </div>
+      <div className={styles.detailedAnalysisWrapper}>
+        <DetailedAnalysisSection />
       </div>
     </div>
   );

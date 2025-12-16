@@ -17,6 +17,7 @@ import {
   FiSettings,
   FiHelpCircle,
   FiLogOut,
+  FiBookmark,
 } from 'react-icons/fi';
 
 import { useAuthStore, useUserStore } from '@/store';
@@ -61,6 +62,12 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
       label: 'Leaderboards',
       href: '/leaderboards',
       icon: <FiAward size={16} />,
+    },
+    {
+      id: 'bookmarks',
+      label: 'Bookmarks',
+      href: '/bookmarks',
+      icon: <FiBookmark />,
     }
   ];
 

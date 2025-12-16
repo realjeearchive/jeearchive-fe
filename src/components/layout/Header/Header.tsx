@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "./header.module.css";
 import { PiSidebar } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline } from "react-icons/io5";
 import { FiSearch, FiPlus, FiBell } from "react-icons/fi";
 import { HiOutlineViewGrid } from "react-icons/hi";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -13,11 +14,25 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
+  const router = useRouter();
+
+  const [canGoBack] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.history.length > 1;
+  });
+
+  const handleBack = () => {
+    if (!canGoBack) return;
+    router.back();
+  };
+
+  const handleForward = () => {
+    router.forward();
+  };
+
   return (
     <header className={styles.header}>
-      {/* LEFT: sidebar toggle + navigation arrows + breadcrumb */}
       <div className={styles.leftSection}>
-        {/* Sidebar toggle (only when sidebar is hidden) */}
         {!isSidebarOpen && (
           <button
             type="button"
@@ -29,10 +44,20 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         )}
 
         <div className={styles.navArrows}>
-          <button type="button" className={styles.iconButton}>
+          <button
+            type="button"
+            className={`${styles.iconButton} ${
+              canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled
+            }`}
+            onClick={handleBack}
+          >
             <IoChevronBack size={16} />
           </button>
-          <button type="button" className={styles.iconButton}>
+          <button
+            type="button"
+            className={styles.iconButton}
+            onClick={handleForward}
+          >
             <IoChevronForward size={16} />
           </button>
         </div>
@@ -44,7 +69,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         </div>
       </div>
 
-      {/* RIGHT: actions, search, view, calendar, bell, avatar */}
       <div className={styles.rightSection}>
         <button type="button" className={styles.primaryButton}>
           <FiPlus size={14} />
