@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
 import styles from "./layout.module.css";
-import { PiSidebar } from "react-icons/pi"; // still used for the floating button
 import Header from "@/components/layout/Header/Header";
 
 interface DashboardLayoutProps {
