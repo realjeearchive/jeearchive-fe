@@ -16,8 +16,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  // MOBILE OVERLAY - Click to close
+  const handleOverlayClick = () => {
+    if (window.innerWidth <= 900) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <div className={styles.appWrap}>
+      {/* MOBILE OVERLAY - covers screen when sidebar open */}
+      {isSidebarOpen && window.innerWidth <= 900 && (
+        <div 
+          className={styles.mobileOverlay}
+          onClick={handleOverlayClick}
+        />
+      )}
+
       {/* SIDEBAR WRAPPER */}
       <div
         className={`${styles.sidebarContainer} ${
@@ -29,11 +44,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* MAIN CONTENT */}
       <main className={styles.dashboard}>
-
-        {/* NEW HEADER */}
         <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-        {/* PAGE CONTENT */}
         <div className={styles.dashboardRight}>{children}</div>
       </main>
     </div>
