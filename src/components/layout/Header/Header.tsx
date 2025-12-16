@@ -46,9 +46,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         <div className={styles.navArrows}>
           <button
             type="button"
-            className={`${styles.iconButton} ${
-              canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled
-            }`}
+            className={`${styles.iconButton} ${styles.iconButtonActive}`}
             onClick={handleBack}
           >
             <IoChevronBack size={16} />

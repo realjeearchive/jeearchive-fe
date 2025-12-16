@@ -12,9 +12,9 @@ import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSect
 
 // example data
 const pyqItems: TestListItem[] = [
-  { id: "pyq-2025", title: "2025 PYQs", meta: "19 Tests", href: "/previous-year-questions/jee-mains" },
-  { id: "pyq-2024", title: "2024 PYQs", meta: "20 Tests", href: "/previous-year-questions/jee-mains" },
-  { id: "pyq-2023-2021", title: "2023 – 2021 PYQs", meta: "72 Tests", href: "/previous-year-questions/jee-mains" },
+  { id: "pyq-2025", title: "2025 PYQs", meta: "19 Tests", href: "/previous-year-questions/jee-mains/2025" },
+  { id: "pyq-2024", title: "2024 PYQs", meta: "20 Tests", href: "/previous-year-questions/jee-mains/2024" },
+  { id: "pyq-2023", title: "2023 PYQs", meta: "18 Tests", href: "/previous-year-questions/jee-mains/2023" },
 ];
 
 const chapterItems: TestListItem[] = [
