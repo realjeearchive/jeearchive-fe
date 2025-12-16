@@ -144,7 +144,7 @@ export function ResetPasswordForm() {
           type="password"
           label="New password"
           required
-          placeholder="••••••••"
+          placeholder="New password"
           error={fieldErrors.password}
         />
 
@@ -154,7 +154,7 @@ export function ResetPasswordForm() {
           type="password"
           label="Confirm new password"
           required
-          placeholder="••••••••"
+          placeholder="Confirm new password"
           error={fieldErrors.confirmPassword}
         />
 

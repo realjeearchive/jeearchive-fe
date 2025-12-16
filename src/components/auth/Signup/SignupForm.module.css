@@ -31,6 +31,17 @@
     letter-spacing: -1.2px;
 }
 
+@media (max-width: 600px) {
+    .signupFormContainer{
+        width: 90%;
+    }
+    .signupHeading{
+        width: 60%;
+        font-size: 38px;
+    }
+
+}
+
 .onboardingNavigation{
     color: var(--login-page-primary-text-color);
 }

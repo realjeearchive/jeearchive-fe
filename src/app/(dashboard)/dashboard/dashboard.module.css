@@ -40,3 +40,9 @@
   margin-top: 24px;
 }
 
+
+@media (max-width: 600px) {
+  .page {
+    padding: 20px 0;
+  }
+}

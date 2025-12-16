@@ -86,7 +86,7 @@ export function LoginForm() {
           alt="jeearchive-logo"
           width={60}
           height={60}
-          className={Styles.logo}
+          className={Styles.logo} 
         />
         <h2 className={Styles.loginHeading}>Welcome back</h2>
       </div>

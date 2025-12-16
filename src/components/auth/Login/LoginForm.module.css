@@ -14,10 +14,11 @@
     gap: 20px;
 }
 
+
 .loginForm{
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     gap: 10px;
 }
 
@@ -31,6 +32,16 @@
     letter-spacing: -1.2px;
 }
 
+@media (max-width: 600px) {
+    .loginFormContainer{
+        width: 90%;
+    }
+    .loginHeading{
+        width: 60%;
+        font-size: 38px;
+    }
+
+}
 .onboardingNavigation{
     color: var(--login-page-primary-text-color);
 }
