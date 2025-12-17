@@ -21,18 +21,17 @@
   overflow: hidden;
 }
 
-/* SCROLL CONTAINER */
 .dashboard {
   flex: 1;
   box-sizing: border-box;
   padding: 0 10px;
-  overflow-y: auto;              /* scrolling here */
+  overflow-y: auto;              
   transition: margin-left 0.3s ease;
-  scrollbar-width: none;         /* Firefox hide */
-  -ms-overflow-style: none;      /* IE/Edge hide */
+  scrollbar-width: none;         
+  -ms-overflow-style: none;     
 }
 
-/* Chrome / WebKit hide */
+
 .dashboard::-webkit-scrollbar {
   display: none;
 }
@@ -80,16 +79,16 @@
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     
-    /* SLIDE + FADE ANIMATION */
+
     transform: translateX(0);
-    opacity: 1;                          /* ← ADD THIS */
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ← all includes opacity */
+    opacity: 1;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
   }
 
   .hideSidebar {
     transform: translateX(-100%);
-    opacity: 0;                          /* ← ADD THIS */
-    transition: all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* ← all includes opacity */
+    opacity: 0;                          
+    transition: all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
   }
 
   .dashboard {
@@ -97,16 +96,16 @@
   }
 }
 
-/* MOBILE OVERLAY */
+
 .mobileOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.323);  /* semi-transparent black */
-  backdrop-filter: blur(4px);     /* nice blur effect */
-  z-index: 98;                    /* below sidebar (99) */
+  background: rgba(0, 0, 0, 0.323);
+  backdrop-filter: blur(4px); 
+  z-index: 98;                   
   opacity: 0;
   animation: fadeIn 0.2s ease forwards;
 }

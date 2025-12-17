@@ -14,15 +14,15 @@ export default function AuthLayout({
 }) {
   return (
     <div className="onboarding">
-      {/* Carousel is full-screen background */}
+
       <div className="carousel-wrapper">
         <OnboardingCarousel />
       </div>
 
-      {/* Right glass panel on top of carousel */}
       <div className="form-section">
         {children}
       </div>
+      
     </div>
   );
 }
