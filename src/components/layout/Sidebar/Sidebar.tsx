@@ -40,7 +40,8 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
 
   const logoutAuth = useAuthStore((s) => s.logout);
   const profile = useUserStore((s) => s.profile);
-  const setProfile = useUserStore((s) => s.setProfile);
+  const displayName = profile?.name ?? "Guest User";
+  const displayEmail = profile?.email; 
 
   const mainLinks: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: <FiHome size={16} /> },
@@ -91,12 +92,8 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
       .slice(0, 2)
       .join('') || 'GU';
 
-  const displayName = profile?.name || 'Guest User';
-  const displayTag = profile?.tag || 'JEE Aspirant';
-
   const handleLogout = () => {
     logoutAuth();     // clear accessToken from auth store
-    setProfile(null); // clear user profile
     toast.success('Logged out.');
     router.push('/login');
   };
@@ -183,7 +180,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
           </div>
           <div className={styles.footerInfo}>
             <span className={styles.footerName}>{displayName}</span>
-            <span className={styles.footerTag}>{displayTag}</span>
+            <span className={styles.footerTag}>{displayEmail}</span>
           </div>
         </div>
         <button

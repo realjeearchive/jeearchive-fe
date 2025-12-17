@@ -1,9 +1,11 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+// src/store/userStore.ts
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 
-interface UserProfile {
+export interface UserProfile {
+  id: string;
   name: string;
-  tag?: string;
+  email: string;
 }
 
 interface UserState {
@@ -19,7 +21,7 @@ export const useUserStore = create<UserState>()(
         setProfile: (profile) => set({ profile }),
       }),
       {
-        name: 'user-profile',
+        name: "user-profile",
       }
     )
   )

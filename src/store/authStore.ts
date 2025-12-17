@@ -1,6 +1,10 @@
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
-import { refreshTokenRequest } from '@/features/auth/api';
+// src/store/authStore.ts
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
+import { refreshTokenRequest } from "@/features/auth/api";
+import { jwtDecode } from "jwt-decode";
+import type { AccessTokenPayload } from "@/features/auth/types";
+import { useUserStore } from "@/store/userStore";
 
 interface AuthState {
   accessToken: string | null;
@@ -21,7 +25,28 @@ export const useAuthStore = create<AuthState>()(
         isLoading: false,
         initialized: false,
 
-        setAccessToken: (token) => set({ accessToken: token }),
+        setAccessToken: (token) => {
+          set({ accessToken: token });
+
+          const setProfile = useUserStore.getState().setProfile;
+
+          if (!token) {
+            setProfile(null);
+            return;
+          }
+
+          try {
+            const payload = jwtDecode<AccessTokenPayload>(token);
+
+            setProfile({
+              id: payload.id,
+              name: payload.name,
+              email: payload.email,
+            });
+          } catch {
+            setProfile(null);
+          }
+        },
 
         setLoading: (value) => set({ isLoading: value }),
 
@@ -32,25 +57,23 @@ export const useAuthStore = create<AuthState>()(
 
           try {
             const data = await refreshTokenRequest();
-            set({
-              accessToken: data.accessToken,
-              initialized: true,
-            });
+            get().setAccessToken(data.accessToken);
+            set({ initialized: true });
           } catch {
-            set({
-              accessToken: null,   // important: ensure it's cleared on failure
-              initialized: true,
-            });
+            get().setAccessToken(null);
+            set({ initialized: true });
           } finally {
             set({ isLoading: false });
           }
         },
 
         logout: () => {
-          // optional: call backend logout API here to revoke refresh token
+          const setProfile = useUserStore.getState().setProfile;
+          setProfile(null);
+
           set({
             accessToken: null,
-            initialized: true,  // mark as initialized so initFromRefresh doesn't run again
+            initialized: true,
           });
         },
       }),
@@ -61,4 +84,3 @@ export const useAuthStore = create<AuthState>()(
     )
   )
 );
-

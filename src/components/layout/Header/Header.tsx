@@ -7,6 +7,7 @@ import { IoChevronBack, IoChevronForward, IoCalendarOutline } from "react-icons/
 import { FiSearch, FiPlus, FiBell } from "react-icons/fi";
 import { HiOutlineViewGrid } from "react-icons/hi";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -14,7 +15,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
-  const router = useRouter();
+  const router = useRouter();  
+  const profile = useUserStore((s) => s.profile);
+  const initials = profile?.name?.trim()?.charAt(0)?.toUpperCase() || "G";
 
   const [canGoBack] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -90,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         </button>
 
         <div className={styles.avatar}>
-          <span className={styles.avatarInitial}>A</span>
+          <span className={styles.avatarInitial}>{initials}</span>
         </div>
       </div>
     </header>
