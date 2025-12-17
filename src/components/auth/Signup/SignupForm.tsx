@@ -13,11 +13,9 @@ import Logo from '../../../../public/images/logo.png';
 import { signupSchema, type SignupInput } from '@/features/auth/schemas';
 import { signupRequest, type SignupResponse } from '@/features/auth/api';
 import { toast } from 'sonner';
-import { useUserStore } from '@/store';
 
 export function SignupForm() {
   const router = useRouter();
-  const setProfile = useUserStore((s) => s.setProfile);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -64,10 +62,6 @@ export function SignupForm() {
       const data: SignupResponse = await signupRequest(parsed);
       toast.success(data.message || 'OTP sent to your email.');
 
-      setProfile({
-        name: parsed.name,
-        tag: 'JEE Aspirant',
-      });
 
       router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}`);
     } catch (err) {
