@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import './layout.css';
 import { OnboardingCarousel } from '@/components/layout/LoginCarausel';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 
 type FormState = 'collapsed' | 'expanded';
 
