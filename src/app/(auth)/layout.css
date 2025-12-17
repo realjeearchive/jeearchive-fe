@@ -122,7 +122,7 @@
     width: 100vw;
     height: 64px;
     min-height: 64px;
-    background-color: rgb(31, 31, 31);
+    background-color: #1f1f2d;
     border: none;
     border-radius: 0;
     color: var(--login-page-primary-text-color);
@@ -144,7 +144,7 @@
   }
 
   .form-toggle-button:hover {
-    background-color: rgb(31, 31, 31);
+    background-color: #1f1f2d;
     opacity: 0.9;
   }
 
