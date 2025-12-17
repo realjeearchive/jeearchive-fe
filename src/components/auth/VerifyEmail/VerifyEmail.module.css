@@ -66,6 +66,17 @@
   outline: none;
 }
 
+@media (max-width: 600px) {
+    .verificationFormContainer{
+        width: 90%;
+    }
+    .verificationHeading{
+        width: 100%;
+        font-size: 38px;
+    }
+
+}
+
 .otpInput:focus {
   border-color: #3b82f6;
   background: rgba(59, 130, 246, 0.08);

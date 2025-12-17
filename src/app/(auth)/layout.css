@@ -8,7 +8,7 @@
   --transition-duration: 0.35s;
   --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
   --mobile-form-height-collapsed: 64px;
-  --mobile-form-height-expanded: 65vh;
+  --mobile-form-height-expanded: 75vh;
   
   --login-box-1-color: #F94F39;
   --login-box-2-color: #1E7CD3;
@@ -59,6 +59,8 @@
 .form-section:not(.mobile) > * {
   width: 100%;
   max-width: 380px;
+  display: flex;
+  justify-content: center;
 }
 
 @media (max-width: 899px) {
@@ -120,7 +122,7 @@
     width: 100vw;
     height: 64px;
     min-height: 64px;
-    background-color: var(--input-background-color);
+    background-color: rgb(31, 31, 31);
     border: none;
     border-radius: 0;
     color: var(--login-page-primary-text-color);
@@ -142,7 +144,7 @@
   }
 
   .form-toggle-button:hover {
-    background-color: var(--input-background-color);
+    background-color: rgb(31, 31, 31);
     opacity: 0.9;
   }
 
@@ -169,6 +171,7 @@
     -webkit-overflow-scrolling: touch;
     flex: 1;
     margin-top: 20px;
+    padding-bottom: 120px;
     background-color: var(--login-background-color);
   }
 
