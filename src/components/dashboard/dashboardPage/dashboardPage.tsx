@@ -8,6 +8,7 @@ import TestListSection, {
   TestListItem,
 } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
+import { FiAward, FiClock, FiTarget, FiTrendingUp } from 'react-icons/fi';
 
 
 // example data
@@ -27,11 +28,40 @@ export default function DashboardPage() {
   return (
     <div className={styles.page}>
       <div className={styles.kpiRow}>
-        <KpiCard label="Accuracy" value="78%" subLabel="Last 5 tests" />
-        <KpiCard label="Avg Time / Question" value="47 sec" subLabel="Last 5 tests" />
-        <KpiCard label="Your Rank" value="#142" subLabel="Global leaderboard" />
-        <KpiCard label="Practice Streak" value="4 days" subLabel="Daily goal hit" />
+        <KpiCard
+          label="Accuracy"
+          value="78%"
+          subLabel="Last 5 tests"
+          icon={<FiTarget size={18} />}
+          deltaLabel="+24%"
+          tone="mint"
+        />
+        <KpiCard
+          label="Avg Time / Question"
+          value="47 sec"
+          subLabel="Last 5 tests"
+          icon={<FiClock size={18} />}
+          deltaLabel="-12%"
+          tone="mint"
+        />
+        <KpiCard
+          label="Your Rank"
+          value="#142"
+          subLabel="Global leaderboard"
+          icon={<FiAward size={18} />}
+          deltaLabel="+8%"
+          tone="mint"
+        />
+        <KpiCard
+          label="Practice Streak"
+          value="4 days"
+          subLabel="Daily goal hit"
+          icon={<FiTrendingUp size={18} />}
+          deltaLabel="+47%"
+          tone="mint"
+        />
       </div>
+
 
       <div className={styles.growthSection}>
         <ScoreGrowthChart />

@@ -1,28 +1,129 @@
 .card {
   flex: 1;
-  min-width: 180px;
-  padding: 14px 18px;
-  border-radius: 14px;
+  min-width: 178px;
+  padding: 18px 20px;
+  border-radius: 12px;
   background: var(--dashboard-sidebar-background-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
-  /* box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7); */
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* subtle per‑card tint, matched to dashboard theme */
+.card_mint {
+  background: var(--dashboard-sidebar-background-color); /* slightly cooler dark */
+}
+
+.card_peach {
+  background: #2b2521; /* warm dark, hint of brown */
+}
+
+.card_purple {
+  background: #25232b; /* muted purple‑tinted dark */
+}
+
+.card_blue {
+  background: #20262b; /* blue‑tinted dark */
+}
+
+
+/* extras you can try / swap in */
+.card_teal {
+  background: #213231; /* teal‑tinted dark */
+}
+
+.card_amber {
+  background: #312820; /* amber‑tinted dark */
+}
+
+.card_slate {
+  background: #25272c; /* neutral slate dark */
+}
+
+.card_olive {
+  background: #2a2f23; /* olive‑tinted dark */
+}
+
+
+/* top row: icon left, delta right */
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* square icon background */
+.iconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: var(--dashboard-link-hover-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPlaceholder {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: var(--dashboard-background-color);
+}
+
+/* pill with % change */
+.deltaPill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--dashboard-dividerline-color);
+  background: var(--dashboard-background-color);
+  color: var(--dashboard-primary-text-color);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* bottom area */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .label {
-  font-size: 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--dashboard-secondary-text-color);
 }
 
 .value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
+  line-height: 1.2;
   color: var(--dashboard-primary-text-color);
 }
 
 .subLabel {
   font-size: 12px;
   color: var(--dashboard-secondary-text-color);
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 14px 16px;
+  }
+  .value {
+    font-size: 24px;
+  }
+  .iconBox {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .card{
+    padding: 12px 14px;
+  }
 }

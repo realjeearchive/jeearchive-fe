@@ -42,6 +42,9 @@
 
 
 @media (max-width: 600px) {
+  .kpiRow {
+    gap: 10px;
+  }
   .page {
     padding: 20px 0;
   }
