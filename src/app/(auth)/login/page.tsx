@@ -1,5 +1,12 @@
-import { LoginForm } from '@/components/auth/Login/LoginForm';
+"use client";
+
+import { Suspense } from "react";
+import { LoginForm } from "@/components/auth/Login/LoginForm";
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
 }

@@ -1,0 +1,73 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}
+
+.modal {
+  width: min(360px, 90vw);
+  background: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 16px;
+  padding: 20px 22px 18px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+  color: var(--dashboard-primary-text-color);
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.message {
+  margin: 0 0 18px;
+  font-size: 14px;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelButton,
+.logoutButton {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* subtle secondary button */
+.cancelButton {
+  background: var(--dashboard-sidebar-background-color);
+  color: var(--dashboard-secondary-text-color);
+  border-color: var(--dashboard-sidebar-border-color);
+}
+
+.cancelButton:hover {
+  background: var(--dashboard-link-hover-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* primary destructive button */
+.logoutButton {
+  background: var(--dashboard-secondary-highlight-color);
+  color: var(--dashboard-primary-text-color);
+  border-color: var(--dashboard-secondary-highlight-color);
+}
+
+.logoutButton:hover {
+  border-color: var(--dashboard-highlight-color);
+}
