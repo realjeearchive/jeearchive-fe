@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useAuthStore } from "@/store/authStore";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
 import styles from "./layout.module.css";
 import Header from "@/components/layout/Header/Header";
@@ -12,11 +13,25 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
+  const initialized = useAuthStore((s) => s.initialized);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const authed = !!accessToken;
+
+  if (!initialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading your dashboard...
+      </div>
+    );
+  }
+  if (!authed) {
+    return null;
+  }
+
   const toggleSidebar = (): void => {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  // MOBILE OVERLAY - Click to close
   const handleOverlayClick = () => {
     if (window.innerWidth <= 900) {
       setIsSidebarOpen(false);
@@ -25,15 +40,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className={styles.appWrap}>
-      {/* MOBILE OVERLAY - covers screen when sidebar open */}
-      {isSidebarOpen && window.innerWidth <= 900 && (
-        <div 
+      {isSidebarOpen && typeof window !== "undefined" && window.innerWidth <= 900 && (
+        <div
           className={styles.mobileOverlay}
           onClick={handleOverlayClick}
         />
       )}
 
-      {/* SIDEBAR WRAPPER */}
       <div
         className={`${styles.sidebarContainer} ${
           !isSidebarOpen ? styles.hideSidebar : ""
@@ -42,7 +55,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <Sidebar toggleSidebar={toggleSidebar} />
       </div>
 
-      {/* MAIN CONTENT */}
       <main className={styles.dashboard}>
         <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div className={styles.dashboardRight}>{children}</div>

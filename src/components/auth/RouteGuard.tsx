@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/authStore"; // adjust path if different
+import { useAuthStore } from "@/store/authStore";
 
 const PUBLIC_ROUTES = [
   "/login",
@@ -21,7 +21,6 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const accessToken = useAuthStore((s) => s.accessToken);
   const initialized = useAuthStore((s) => s.initialized);
-  const isLoading = useAuthStore((s) => s.isLoading);
   const initFromRefresh = useAuthStore((s) => s.initFromRefresh);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }, [initFromRefresh]);
 
   useEffect(() => {
-    if (!initialized || isLoading) return;
+    if (!initialized) return;
 
     const authed = !!accessToken;
     const onPublic = isPublicRoute(pathname);
@@ -41,10 +40,9 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (authed && onPublic) {
       router.replace("/dashboard");
     }
-  }, [initialized, isLoading, accessToken, pathname, router]);
+  }, [initialized, accessToken, pathname, router]);
 
-  if (!initialized) return null;
-
+  // always render children (no blocking splash)
   return <>{children}</>;
 };
 
