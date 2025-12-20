@@ -1,0 +1,67 @@
+.block {
+  margin-bottom: 20px;
+  color: var(--instruction-page-primary-text-color);
+}
+
+/* section headings: NAVIGATING..., ANSWERING... */
+.sectionTitle {
+  font-size: 18px;             /* match GENERAL INSTRUCTIONS scale */
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 18px 0 10px;
+}
+
+/* small explanatory paragraph */
+.paragraph {
+  margin: 0 0 8px;
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* main numbered lines: 1., 2., 3., 4. */
+.numberList {
+  margin: 0;
+  padding-left: 32px;          /* align with header list */
+  font-size: 18px;
+  line-height: 1.6;
+  list-style-type: decimal;
+}
+
+.numberList li {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* a), b), c) sub‑lists */
+.alphaList {
+  margin: 0 0 12px;
+  padding-left: 42px;          /* a,b,c slightly indented more than numbers */
+  font-size: 18px;
+  line-height: 1.6;
+  list-style-type: lower-alpha;
+}
+
+.alphaList li {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* bold text */
+.bold {
+  font-weight: 800;
+}
+
+/* bold standalone lines (two‑line notes etc.) */
+.strongLine {
+  margin: 8px 0;
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+/* red inline sentence */
+.red {
+  color: var(--instruction-page-red-text-color);
+  font-weight: 600;
+}

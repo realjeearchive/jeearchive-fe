@@ -87,6 +87,15 @@ body {
     --dashboard-header-avatar-border-color: #6C4DB6;
     
 
+    /* Instruction and Exam Screen color definitions */
+
+    --instruction-topHeader-background-color: #BCE8F5;
+    --instruction-page-primary-bg-color: white;
+    --instruction-page-primary-text-color: #212529;
+    --instruction-page-button-bg-color: #3778BD;
+    --instruction-page-red-text-color: #FF0000;
+    
+
 
     
     --radius: 0.625rem;

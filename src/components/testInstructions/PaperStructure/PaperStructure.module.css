@@ -1,0 +1,30 @@
+.block {
+  margin-bottom: 20px;
+  color: var(--instruction-page-primary-text-color);
+}
+
+.sectionTitle {
+  font-size: 18px;             /* same as other section titles */
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 18px 0 10px;
+}
+
+/* 1., 2., 3., 4., 5. list */
+.numberList {
+  margin: 0;
+  padding-left: 32px;          /* align with other numbered lists */
+  font-size: 18px;
+  line-height: 1.6;
+  list-style-type: decimal;
+}
+
+.numberList li {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* matches bold usage in the screenshot */
+.bold {
+  font-weight: 900;
+}

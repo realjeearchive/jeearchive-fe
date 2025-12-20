@@ -1,0 +1,86 @@
+.page {
+  min-height: 100vh;
+  background: #f2f4f7;
+}
+
+/* TOP BAR: fixed */
+.topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: var(--instruction-topHeader-background-color);
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  z-index: 20;
+}
+
+.topBarTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.legendImageBlock {
+  margin: 16px 0 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.legendImage {
+  max-width: 100%;
+  height: auto;
+}
+
+/* MAIN: sits between fixed header and footer */
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) 220px;
+  padding-top: 50px;
+  padding-right: 25px;
+  padding-bottom: 250px;
+  min-height: 100vh;
+  background-color: var(--instruction-page-primary-bg-color);
+}
+
+/* LEFT panel scrolls */
+.instructionsPanel {
+  background: #ffffff;
+  padding: 18px 22px;
+  padding-left: 60px;
+  overflow-y: auto;
+  z-index: 0;
+}
+
+/* list 4–8 after image: same typography as others */
+.continuedList {
+  margin: 0 0 20px;
+  padding-left: 32px;
+  list-style-type: decimal;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.continuedList li {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* RIGHT panel: fixed appearance (no scroll inside main area) */
+.candidatePanelWrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: var(--instruction-page-primary-bg-color);
+  border: 1px solid #d0d5dd;
+  border-left: none;
+  display: flex;
+  justify-content: center;
+  z-index: 21;
+}
+
+.bottomBar {
+  z-index: 100;
+}

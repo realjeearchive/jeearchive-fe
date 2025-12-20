@@ -1,0 +1,26 @@
+.panel {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px 12px;
+  border-left: 1px solid #d0d5dd;
+}
+
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #d9e2ec;
+  border: 2px solid #9fb3c8;
+  margin-bottom: 12px;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #102a43;
+  text-align: center;
+}
