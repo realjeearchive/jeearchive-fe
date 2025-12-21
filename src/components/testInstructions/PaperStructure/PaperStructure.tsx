@@ -5,6 +5,7 @@ interface Props {
 }
 
 export function PaperStructure({ sectionsCount }: Props) {
+    console.log("sectionsCount", sectionsCount);
   return (
     <div className={styles.block}>
       <h2 className={styles.sectionTitle}>
