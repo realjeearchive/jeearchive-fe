@@ -1,0 +1,19 @@
+.palette {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  place-items: center;
+  padding: 0 20px;
+}
+
+.questionButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.questionButton:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}

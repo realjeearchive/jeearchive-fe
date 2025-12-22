@@ -1,19 +1,19 @@
 // src/features/tests/types.ts
 
-// High‑level info for list pages
+// ---------- List / overview ----------
+
 export interface TestSummary {
-  id: string;               // "jee-main-2021-24-feb-shift-1"
+  id: string; // "jee-main-2021-24-feb-shift-1"
   exam: "JEE_MAIN" | "JEE_ADVANCED";
   year: number;
-  shift?: string;           // "24 Feb Shift 1"
-  title: string;            // "JEE Main 2021 (24 Feb Shift 1)"
+  shift?: string;
+  title: string;
   totalQuestions: number;
   durationMinutes: number;
   totalMarks: number;
-  slug?: string;            // optional pretty slug
+  slug?: string;
 }
 
-// Per‑section marking scheme
 export interface SectionMarkingScheme {
   sectionId: string;        // "M_SC", "M_NUM"
   name: string;             // "Mathematics Single Correct"
@@ -24,7 +24,6 @@ export interface SectionMarkingScheme {
   marksUnattempted: number;
 }
 
-// Full details for overview + player header
 export interface TestDetails {
   summary: TestSummary;
   sections: SectionMarkingScheme[];
@@ -32,49 +31,75 @@ export interface TestDetails {
   instructions?: string[];
 }
 
-// Question option (MCQ)
-export interface QuestionOption {
-  id: string;         // "A" | "B" | "C" | "D"
-  text: string;       // plain text or HTML string
-}
+// ---------- Raw question data from backend/dummy ----------
 
-// Question type
 export type QuestionType = "SC" | "NUM"; // Single correct / Numerical
 
-// One question inside a test
+export interface QuestionOption {
+  id: string;       // "A" | "B" | "C" | "D"
+  text: string;     // plain text; later can be HTML/LaTeX
+  imageUrl?: string;
+}
+
 export interface Question {
-  id: string;                 // stable id
+  id: string;
   testId: string;
 
-  questionNumber: number;     // 1..N as shown to user
-  sectionId: string;          // e.g. "M_SC"
+  questionNumber: number;           // 1..N (global)
+  sectionId: string;                // e.g. "M_SC"
   subject: "PHYSICS" | "CHEMISTRY" | "MATHEMATICS";
   type: QuestionType;
 
-  questionText: string;       // HTML string (only English)
-  options?: QuestionOption[]; // required if type === "SC"
+  questionText: string;
+  questionImageUrl?: string;
+  options?: QuestionOption[];
 
-  correctOptionId?: string;   // for SC
-  correctNumericAnswer?: number | string; // for NUM (may be tolerance later)
+  correctOptionId?: string;
+  correctNumericAnswer?: number | string;
 
   difficulty?: "EASY" | "MEDIUM" | "HARD";
-  topic?: string;             // "Differential Calculus"
+  topic?: string;
   subtopic?: string;
-  // you can extend later (solutionText, images, etc.)
 }
 
-// Frontend attempt state (client‑only for now)
-export interface QuestionResponseState {
-  visited: boolean;
-  answerOptionId?: string;    // for SC
-  answerNumericValue?: string;// for NUM, keep as string to match input
-  markedForReview: boolean;
+// ---------- Test-player engine model ----------
+
+// Engine-friendly normalized structures derived in frontend
+
+export type QuestionKind = "single" | "numerical"; // multi not needed yet
+
+export interface TestOption {
+  id: string;
+  label: string; // "A", "B", "C", "D"
+  text: string;
+  imageUrl?: string;
 }
 
-export interface TestAttemptClientState {
-  testId: string;
-  currentQuestionId: string;
-  responses: Record<string, QuestionResponseState>;
-  remainingSeconds: number;
-  status: "not_started" | "in_progress" | "submitted";
+export interface TestQuestion {
+  id: string;
+  index: number; // 1-based within section
+  kind: QuestionKind;
+  contentText: string;
+  contentImageUrl?: string;
+  options: TestOption[]; // empty for numerical
+  correctMarks: number;
+  negativeMarks: number;
+  sectionId: string;
+  globalQuestionNumber: number;
+}
+
+export interface TestSection {
+  id: string;           // "M_SC"
+  label: string;        // "Mathematics Single Correct"
+  longTitle: string;    // "Mathematics Single Correct (Maximum Marks: 80)"
+  subject: "PHYSICS" | "CHEMISTRY" | "MATHEMATICS";
+  questions: TestQuestion[];
+}
+
+export interface TestDefinition {
+  id: string;
+  title: string;
+  durationSeconds: number;
+  candidateName: string;
+  sections: TestSection[];
 }

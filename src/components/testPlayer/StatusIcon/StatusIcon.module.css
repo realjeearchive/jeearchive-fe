@@ -1,0 +1,120 @@
+.iconBase {
+  width: 48px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+
+  flex-shrink: 0;
+}
+
+
+.answered {
+  background: linear-gradient(to bottom, var(--test-player-answered-box-light-bg-color), var(--test-player-answered-box-dark-bg-color));
+  border: 1px solid #A5C077;
+  clip-path: polygon(
+    35% 0%,
+    65% 0%,
+    100% 40%,
+    100% 100%,
+    0% 100%,
+    0% 40%
+  );
+}
+
+
+.notAnswered {
+  background: linear-gradient(to bottom, var(--test-player-not-answered-box-dark-bg-color), var(--test-player-not-answered-box-light-bg-color));
+  border: 1px solid #CD816B;
+  clip-path: polygon(
+    35% 0%,
+    65% 0%,
+    100% 40%,
+    100% 100%,
+    0% 100%,
+    0% 40%
+  );
+  transform: rotate(180deg);
+}
+
+.notVisited {
+  background: linear-gradient(to bottom, var(--test-player-not-visited-box-light-bg-color), var(--test-player-not-visited-box-dark-bg-color)); /* Gray */
+  border: 1px solid #B0B0B0;
+  color: #656565;
+}
+
+.marked {
+  background-color: #815EA0; 
+  border: 1px solid #806F91;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+
+.answeredMarked {
+  background-color: #815EA0; 
+  border: 1px solid #806F91;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+.current {
+  background: linear-gradient(
+    to bottom,
+    #f3a67d,
+    #d87b4a
+  );
+  border: 1px solid #c86a3d;
+}
+
+
+.value.notAnswered {
+  transform: rotate(180deg);
+}
+
+
+.notAnswered .value {
+  transform: rotate(180deg);
+}
+
+
+.answeredMarked {
+  position: relative;
+}
+
+.answeredMarkedInner {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+
+  width: 13px;
+  height: 13px;
+
+  background: linear-gradient(
+    to bottom,
+    var(--test-player-answered-box-light-bg-color),
+    var(--test-player-answered-box-dark-bg-color)
+  );
+
+  border: 1px solid #A5C077;
+  border-radius: 50%;
+
+  /* 🔑 ADD THESE */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.answeredMarkedInner svg {
+  width: 8px;
+  height: 8px;
+  color: #ffffff;
+}

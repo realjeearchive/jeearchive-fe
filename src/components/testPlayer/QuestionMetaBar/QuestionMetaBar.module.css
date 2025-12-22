@@ -1,0 +1,48 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 10px;
+  background: var(--test-player-bg-color);
+
+  border-bottom: 1px solid var(--test-player-border-color);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.questionNo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--test-player-text-color);
+}
+
+.questionId {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+
+.scrollBtn {
+  width: 28px;
+  height: 28px;
+
+  border-radius: 50%;
+  border: none;
+
+  background-color: var(--test-player-blue-button-bg-color);
+  color: var(--test-player-white-text-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.scrollBtn svg {
+  font-size: 16px;
+}

@@ -1,0 +1,36 @@
+.questionText {
+  margin: 12px 0 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--test-player-white-text-color);
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 75%; /* EXACT like NTA */
+  color: var(--test-player-text-color);
+
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.optionRow input {
+  margin-top: 3px;
+}
+
+.optionLabel {
+  font-weight: bold;
+  min-width: 22px;
+}
+
+.optionText {
+  flex: 1;
+}
+

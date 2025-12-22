@@ -1,0 +1,50 @@
+.container {
+  background: var(--test-player-bg-color);
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  color: var(--test-player-text-color);
+  border-radius: 4px;
+}
+
+/* Status Grid Styles */
+.statusGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.statusRow {
+  display: grid;
+  grid-template-columns: 0.75fr 1fr;
+  column-gap: 20px;
+}
+
+.fullRow {
+  width: 100%;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Text beside icons */
+.statusText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statusLabel {
+  font-size: 12px;
+  color: var(--test-player-text-color);
+  white-space: nowrap;
+}
+
+.fullRow .statusLabel {
+  white-space: normal;
+  font-size: 11px;
+}

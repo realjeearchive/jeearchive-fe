@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 6px 10px;
+  background: var(--test-player-bg-color);
+
+  font-size: 13px;
+  color: var(--test-player-text-color);
+
+  border-bottom: 1px solid var(--test-player-border-color);
+}
+
+.left {
+  font-weight: 500;
+}
+
+.right {
+  font-weight: 500;
+}
+
+.positive {
+  color: #15803d;
+}
+
+.negative {
+  color: #b91c1c;
+}

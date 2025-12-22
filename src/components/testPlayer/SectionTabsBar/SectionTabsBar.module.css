@@ -1,0 +1,60 @@
+.root {
+  background: var(--test-player-bg-color);
+  border-bottom: 1px solid var(--test-player-border-color);
+  padding: 4px 8px;
+}
+
+/* Horizontal scrolling container */
+.tabsScroller {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.tabsScroller::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+/* Base tab */
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+
+  border-radius: 3px;
+  border: 1px solid var(--test-player-border-color);
+
+  background: var(--test-player-bg-color);
+  color: var(--test-player-blue-button-bg-color);
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Active tab */
+.active {
+  background: var(--test-player-blue-button-bg-color);
+  border-color: var(--test-player-blue-button-bg-color);
+  color: var(--test-player-white-text-color);
+}
+
+/* Info icon */
+.infoIcon {
+  font-size: 14px;
+  color: var(--test-player-white-text-color);
+  font-weight: 600;
+}
+
+
+.informationIcon{
+  background-color: var(--test-player-i-icon-color);
+  border-radius: 50px;
+  padding: 2px;
+}
+
+

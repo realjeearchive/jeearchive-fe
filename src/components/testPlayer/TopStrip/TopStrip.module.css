@@ -1,0 +1,56 @@
+/* TopStrip.module.css */
+.root {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--test-player-top-strip-bg-color);
+  padding: 3px 20px;
+  color: var(--test-player-top-strip-text-color);
+}
+
+.banner {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.utilities {
+  display: flex;
+  gap: 20px;
+}
+
+.utilButton {
+  border: none;
+  background: transparent;
+  color: var( --test-player-white-text-color);
+  font-size: 14px;
+  padding: 2px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+}
+
+.accessibility{
+    background-color: var(--test-player-top-strip-accessibility-icon-bg-color);
+}
+
+.magnifier{
+    background-color: var(--test-player-top-strip-magnifier-icon-bg-color);
+}
+.instructions{
+    background-color: var(--test-player-i-icon-color);
+}
+
+.questionPaper{
+    background-color: var(--test-player-top-strip-question-icon-bg-color);
+}

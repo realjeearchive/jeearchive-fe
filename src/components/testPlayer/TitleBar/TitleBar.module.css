@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--test-player-bg-color);
+  border-bottom: 1px solid var(--test-player-border-color);
+}
+
+/* Blue pill badge */
+.badge {
+  background-color: var(--test-player-blue-button-bg-color);
+  color: var(--test-player-white-text-color);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  padding: 6px 14px;
+  border-radius: 4px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
