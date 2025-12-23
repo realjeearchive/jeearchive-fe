@@ -19,7 +19,7 @@
   margin: 12px 0 16px;
   font-size: var(--question-font-size);
   line-height: 1.5;
-  color: var(--test-player-white-text-color);
+  color: var(--test-player-text-color);
 }
 
 .optionText {

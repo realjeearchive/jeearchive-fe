@@ -1,6 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
+import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
+import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
+
 import { TopStrip } from "../TopStrip/TopStrip";
 import { TitleBar } from "../TitleBar/TitleBar";
 import { TimeBar } from "../TimeBar/TimeBar";
@@ -9,16 +13,12 @@ import { MarksInfoBar } from "../MarksInfoBar/MarksInfoBar";
 import { QuestionMetaBar } from "../QuestionMetaBar/QuestionMetaBar";
 import { Sidebar } from "../RightColumnSidebar/RightColumnSidebar";
 import { SectionInstructionsBox } from "../SectionInstructionsBox/SectionInstructionsBox";
-import StatusButton from "@/components/testPlayer/StatusButton/StatusButton";
-import styles from "./TestPlayerLayout.module.css";
 import { QuestionBlock } from "../QuestionBlock/QuestionBlock";
-import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
-import { useEffect } from "react";
-import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
+import StatusButton from "../StatusButton/StatusButton";
 import CursorTrail from "../CursorTrail/CursorTrail";
+import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
-  
-
+import styles from "./TestPlayerLayout.module.css";
 
 interface Props {
   year: string;
@@ -37,8 +37,24 @@ export function TestPlayerLayout({ year }: Props) {
   const { theme, setTheme } = useTestPlayerTheme();
   const { cursorTrailEnabled } = useTestPlayerAccessibility();
 
+  useEffect(() => {
+  const handleExit = () => {
+    if (!document.fullscreenElement) {
+      alert("You have exited full screen mode.");
+      // Optional: re-enter fullscreen
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  };
 
-  // restore theme on refresh
+  document.addEventListener("fullscreenchange", handleExit);
+
+  return () => {
+    document.removeEventListener("fullscreenchange", handleExit);
+  };
+}, []);
+
+
+  // Restore theme on refresh
   useEffect(() => {
     const saved = localStorage.getItem("test-player-theme") as
       | "light"
@@ -52,28 +68,31 @@ export function TestPlayerLayout({ year }: Props) {
     return <div className={styles.loading}>Loading test…</div>;
   }
 
-  const activeSection = sections.find(s => s.id === activeSectionId)!;
+  const activeSection = sections.find(
+    (s) => s.id === activeSectionId
+  )!;
   const activeQuestion = questionsById[activeQuestionId];
 
   const activeQuestionState = sections
-    .flatMap(sec => sec.questions)
-    .find(q => q.id === activeQuestionId)!;
+    .flatMap((sec) => sec.questions)
+    .find((q) => q.id === activeQuestionId)!;
 
   return (
-    <div className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}>
-      {/* TOP STRIP */}
+    <div
+      id="test-player-root"
+      className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}
+    >
       <TopStrip testTitle="" />
 
-      {/* MAIN GRID */}
       <div className={styles.mainGrid}>
-        {/* LEFT */}
         <div className={styles.left}>
           <TitleBar year={year} />
           <TimeBar />
           <SectionTabsBar />
           <MarksInfoBar />
 
-          <QuestionMetaBar
+          <div className={styles.QuestionScrollArea}>
+            <QuestionMetaBar
             questionNumber={activeQuestion.globalQuestionNumber}
             questionId={activeQuestion.id}
           />
@@ -95,15 +114,14 @@ export function TestPlayerLayout({ year }: Props) {
               />
             </section>
           </main>
+          </div>
         </div>
 
-        {/* RIGHT SIDEBAR */}
         <aside className={styles.sidebar}>
           <Sidebar />
         </aside>
       </div>
 
-      {/* BOTTOM BAR */}
       <footer className={styles.bottomBar}>
         <StatusButton label="Mark for Review & Next" variant="outline" />
         <StatusButton label="Clear Response" variant="outline" />
@@ -111,7 +129,9 @@ export function TestPlayerLayout({ year }: Props) {
         <StatusButton label="Save & Next" variant="primary" />
         <StatusButton label="Submit" variant="primary" />
       </footer>
+
       {cursorTrailEnabled && <CursorTrail />}
+      <ScreenMagnifier />
     </div>
   );
 }

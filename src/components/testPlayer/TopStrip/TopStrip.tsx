@@ -6,6 +6,8 @@ import styles from "./TopStrip.module.css";
 import { IoAccessibility, IoInformationSharp } from "react-icons/io5";
 import { IoIosPaper } from "react-icons/io";
 import AccessibilityPopup from "../AccessibilityPopup/AccessibilityPopup";
+import { useScreenMagnifier } from "@/features/tests/useScreenMagnifier";
+
 
 interface TopStripProps {
   testTitle: string;
@@ -13,6 +15,8 @@ interface TopStripProps {
 
 export function TopStrip({ testTitle }: TopStripProps) {
   const [openAccessibility, setOpenAccessibility] = useState(false);
+  const { toggle } = useScreenMagnifier();
+
 
   return (
     <>
@@ -33,14 +37,18 @@ export function TopStrip({ testTitle }: TopStripProps) {
             Accessibility
           </button>
 
-          <button type="button" className={styles.utilButton}>
+          <button
+            type="button"
+            className={styles.utilButton}
+            onClick={toggle}
+          >
             <span className={`${styles.icon} ${styles.magnifier}`}>
               <HiOutlineMagnifyingGlassPlus />
             </span>
             Screen Magnifier
           </button>
 
-          <button type="button" className={styles.utilButton}>
+          {/* <button type="button" className={styles.utilButton}>
             <span className={`${styles.icon} ${styles.instructions}`}>
               <IoInformationSharp />
             </span>
@@ -52,7 +60,7 @@ export function TopStrip({ testTitle }: TopStripProps) {
               <IoIosPaper />
             </span>
             Question Paper
-          </button>
+          </button> */}
         </div>
       </div>
 
