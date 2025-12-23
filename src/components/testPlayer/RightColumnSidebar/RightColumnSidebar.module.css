@@ -2,7 +2,7 @@
 .sidebar {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: calc(100vh - 100px);
   border-left: 1px solid var(--test-player-border-color);
   background: var(--test-player-sidebar-bg-color);
   display: flex;
