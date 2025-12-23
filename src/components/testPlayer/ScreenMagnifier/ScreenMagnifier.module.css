@@ -8,6 +8,7 @@
   overflow: hidden;
   cursor: move;
   z-index: 10000;
+  touch-action: none;
 }
 
 /* Close button */

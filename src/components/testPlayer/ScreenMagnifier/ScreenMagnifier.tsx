@@ -33,39 +33,42 @@ export default function ScreenMagnifier() {
   }, [enabled]);
 
   useEffect(() => {
-    if (!enabled) return;
+  if (!enabled) return;
 
-    const move = (e: MouseEvent) => {
-      if (!dragging || !magnifierRef.current) return;
+  const move = (e: PointerEvent) => {
+    if (!dragging || !magnifierRef.current) return;
 
-      const w = magnifierRef.current.offsetWidth;
-      const h = magnifierRef.current.offsetHeight;
+    const w = magnifierRef.current.offsetWidth;
+    const h = magnifierRef.current.offsetHeight;
 
-      const maxX = window.innerWidth - w;
-      const maxY = window.innerHeight - h;
+    const maxX = window.innerWidth - w;
+    const maxY = window.innerHeight - h;
 
-      const nextX = Math.min(
-        Math.max(0, e.clientX - offset.current.x),
-        maxX
-      );
-      const nextY = Math.min(
-        Math.max(0, e.clientY - offset.current.y),
-        maxY
-      );
+    const nextX = Math.min(
+      Math.max(0, e.clientX - offset.current.x),
+      maxX
+    );
+    const nextY = Math.min(
+      Math.max(0, e.clientY - offset.current.y),
+      maxY
+    );
 
-      setPos({ x: nextX, y: nextY });
-    };
+    setPos({ x: nextX, y: nextY });
+  };
 
-    const stop = () => setDragging(false);
+  const stop = () => setDragging(false);
 
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseup", stop);
+  window.addEventListener("pointermove", move);
+  window.addEventListener("pointerup", stop);
+  window.addEventListener("pointercancel", stop);
 
-    return () => {
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseup", stop);
-    };
-  }, [dragging, enabled]);
+  return () => {
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", stop);
+    window.removeEventListener("pointercancel", stop);
+  };
+}, [dragging, enabled]);
+
 
   if (!enabled) return null;
 
@@ -75,7 +78,7 @@ export default function ScreenMagnifier() {
       data-magnifier="true"
       className={styles.magnifier}
       style={{ left: pos.x, top: pos.y }}
-      onMouseDown={(e) => {
+      onPointerDown={(e) => {
         // prevent drag when clicking close
         if ((e.target as HTMLElement).dataset.close) return;
 
