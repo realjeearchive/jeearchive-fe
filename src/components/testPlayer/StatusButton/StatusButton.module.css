@@ -17,8 +17,13 @@
               border-color 0.2s ease;
 }
 
-/* ===================== */
-/* Outline (Mark / Clear) */
+@media (max-width: 700px){
+  .button{
+    min-width: 100px;
+  }
+}
+
+
 .outline {
   background-color: var(--test-player-bg-color);
   color: var(--test-player-text-color);
@@ -29,10 +34,9 @@
   background-color: var(--test-player-buttons-hover-color);
 }
 
-/* ===================== */
-/* Primary (Save & Next / Submit) */
+
 .primary {
-  background-color: var(--test-player-blue-button-bg-color); /* CBT blue */
+  background-color: var(--test-player-blue-button-bg-color); 
   color: var(--test-player-white-text-color);
   border: 1px solid var(--test-player-blue-button-bg-color);
 }
@@ -41,8 +45,7 @@
   background-color: #166a9c;
 }
 
-/* ===================== */
-/* Disabled */
+
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;

@@ -2,7 +2,7 @@
 .sidebar {
   position: sticky;
   top: 0;
-  height: calc(100vh - 100px);
+  height: calc(100vh);
   border-left: 1px solid var(--test-player-border-color);
   background: var(--test-player-sidebar-bg-color);
   display: flex;
@@ -17,6 +17,7 @@
   width: 100%; 
   gap: 12px; 
   border-bottom: 1px solid var(--test-player-border-color);
+  padding-top: 40px;
 }
 
 .profile {

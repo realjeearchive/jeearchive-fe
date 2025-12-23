@@ -1,0 +1,31 @@
+.popup {
+  position: fixed;
+  background-color: var(--test-player-sidebar-bg-color);
+  border: 1px solid var(--test-player-border-color);
+  border-radius: 4px;
+  padding: 12px 14px;
+  width: 320px;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.row span {
+  font-size: 13px;
+  color: #000;
+}
+
+.row small {
+  font-size: 11px;
+  color: #333;
+}

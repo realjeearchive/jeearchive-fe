@@ -4,6 +4,7 @@
   padding: 6px 20px;
   background: var(--test-player-bg-color);
   border-bottom: 1px solid var(--test-player-border-color);
+  padding-top: 36px;
 }
 
 /* Blue pill badge */
@@ -20,4 +21,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+
+@media (max-width: 615px) {
+  .root{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }

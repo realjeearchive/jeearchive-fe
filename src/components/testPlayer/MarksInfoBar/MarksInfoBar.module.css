@@ -1,7 +1,8 @@
 .root {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 
   padding: 6px 20px;
   background: var(--test-player-bg-color);
@@ -10,14 +11,15 @@
   color: var(--test-player-text-color);
 
   border-bottom: 1px solid var(--test-player-border-color);
+
+  /* 🔑 REQUIRED FOR SCROLL */
+  white-space: nowrap;
 }
 
-.left {
-  font-weight: 500;
-}
-
+.left,
 .right {
   font-weight: 500;
+  flex-shrink: 0;   /* 🔑 prevent compression */
 }
 
 .positive {
@@ -26,4 +28,24 @@
 
 .negative {
   color: #b91c1c;
+}
+
+/* Small padding tweak only */
+@media (max-width: 615px) {
+  .root {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* 🔥 Horizontal scroll activation */
+@media (max-width: 520px) {
+  .root {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .root::-webkit-scrollbar {
+    display: none;
+  }
 }

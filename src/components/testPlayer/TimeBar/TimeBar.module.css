@@ -19,3 +19,11 @@
 .right {
   font-weight: 500;
 }
+
+
+@media (max-width: 615px) {
+  .root{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

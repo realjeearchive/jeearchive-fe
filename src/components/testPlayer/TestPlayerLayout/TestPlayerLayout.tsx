@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
@@ -37,30 +37,28 @@ export function TestPlayerLayout({ year }: Props) {
   const { theme, setTheme } = useTestPlayerTheme();
   const { cursorTrailEnabled } = useTestPlayerAccessibility();
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  /* ------------------ RESPONSIVE LOGIC ------------------ */
   useEffect(() => {
-  const handleExit = () => {
-    if (!document.fullscreenElement) {
-      alert("You have exited full screen mode.");
-      // Optional: re-enter fullscreen
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
-  };
+    const checkScreen = () => {
+      const mobile = window.innerWidth < 900;
+      setIsMobile(mobile);
+      if (!mobile) setIsSidebarOpen(false); // reset on desktop
+    };
 
-  document.addEventListener("fullscreenchange", handleExit);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
-  return () => {
-    document.removeEventListener("fullscreenchange", handleExit);
-  };
-}, []);
-
-
-  // Restore theme on refresh
+  /* ------------------ THEME RESTORE ------------------ */
   useEffect(() => {
     const saved = localStorage.getItem("test-player-theme") as
       | "light"
       | "dark"
       | null;
-
     if (saved) setTheme(saved);
   }, [setTheme]);
 
@@ -85,6 +83,7 @@ export function TestPlayerLayout({ year }: Props) {
       <TopStrip testTitle="" />
 
       <div className={styles.mainGrid}>
+        {/* LEFT CONTENT */}
         <div className={styles.left}>
           <TitleBar year={year} />
           <TimeBar />
@@ -93,41 +92,72 @@ export function TestPlayerLayout({ year }: Props) {
 
           <div className={styles.QuestionScrollArea}>
             <QuestionMetaBar
-            questionNumber={activeQuestion.globalQuestionNumber}
-            questionId={activeQuestion.id}
-          />
+              questionNumber={activeQuestion.globalQuestionNumber}
+              questionId={activeQuestion.id}
+            />
 
-          <main className={styles.main}>
-            <section className={styles.questionArea}>
-              <SectionInstructionsBox
-                title={activeSection.label}
-                maxMarks={80}
-                questionCount={activeSection.questions.length}
-              />
+            <main>
+              <section className={styles.questionArea}>
+                <SectionInstructionsBox
+                  title={activeSection.label}
+                  maxMarks={80}
+                  questionCount={activeSection.questions.length}
+                />
 
-              <QuestionBlock
-                question={activeQuestion}
-                questionState={activeQuestionState}
-                onSelectOption={(optId) =>
-                  selectOption(activeQuestion.id, optId)
-                }
-              />
-            </section>
-          </main>
+                <QuestionBlock
+                  question={activeQuestion}
+                  questionState={activeQuestionState}
+                  onSelectOption={(optId) =>
+                    selectOption(activeQuestion.id, optId)
+                  }
+                />
+              </section>
+            </main>
           </div>
         </div>
 
-        <aside className={styles.sidebar}>
+        {/* SIDEBAR */}
+        <aside
+          className={`${styles.sidebar} ${
+            isMobile
+              ? isSidebarOpen
+                ? styles.sidebarOpen
+                : styles.sidebarClosed
+              : ""
+          }`}
+        >
+          {isMobile && (
+            <button
+              className={styles.closeArrow}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              ›
+            </button>
+          )}
           <Sidebar />
         </aside>
       </div>
 
+      {/* MOBILE OPEN BUTTON */}
+      {isMobile && !isSidebarOpen && (
+        <button
+          className={styles.openArrow}
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          ‹
+        </button>
+      )}
+
+      {/* BOTTOM BAR */}
       <footer className={styles.bottomBar}>
-        <StatusButton label="Mark for Review & Next" variant="outline" />
-        <StatusButton label="Clear Response" variant="outline" />
-        <div className={styles.spacer} />
-        <StatusButton label="Save & Next" variant="primary" />
-        <StatusButton label="Submit" variant="primary" />
+        <div className={styles.bottomBarLeft}>
+          <StatusButton label="Mark for Review & Next" variant="outline" />
+          <StatusButton label="Clear Response" variant="outline" />
+        </div>
+        <div className={styles.bottomBarRight}>
+          <StatusButton label="Save & Next" variant="primary" />
+          <StatusButton label="Submit" variant="primary" />
+        </div>
       </footer>
 
       {cursorTrailEnabled && <CursorTrail />}
