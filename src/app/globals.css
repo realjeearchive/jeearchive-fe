@@ -119,23 +119,23 @@ body {
     --test-player-border-color: #cfcfcf;
     --test-player-text-color: #333333;
     --test-player-light-blue-bg-color: #2f6ea4;
-    --test-player-bg-color: white;
+    --test-player-bg-color: #f7f7f7;
+    --test-player-light-bg-color: white;
     --test-player-buttons-hover-color: #f5f5f5;
     --test-player-dark-border-color: #333333;
-
-/* =============================== */
-/* TEST PLAYER – DARK MODE COLORS */
-/* =============================== */
+    --cursor-trail-color: rgb(0, 0, 0);
 
 .dark {
 
   --test-player-white-text-color: white;
   --test-player-text-color: white;
   --test-player-bg-color: #272320;
-  --test-player-buttons-hover-color: black;
+  --test-player-buttons-hover-color: #1E1D1B;
   --test-player-sidebar-bg-color: #1E1D1B;
   --test-player-border-color: #3e3836;
   --test-player-dark-border-color: #443d3b;
+  --test-player-light-bg-color: #1E1D1B;
+  --cursor-trail-color: white;
 }
 
     

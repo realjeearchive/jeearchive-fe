@@ -1,9 +1,31 @@
+.questionWrapper {
+  --question-font-size: 16px;
+}
+
+/* Font size variants */
+.questionWrapper[data-font-size="small"] {
+  --question-font-size: 16px;
+}
+
+.questionWrapper[data-font-size="medium"] {
+  --question-font-size: 18px;
+}
+
+.questionWrapper[data-font-size="large"] {
+  --question-font-size: 22px;
+}
+
 .questionText {
   margin: 12px 0 16px;
-  font-size: 15px;
+  font-size: var(--question-font-size);
   line-height: 1.5;
   color: var(--test-player-white-text-color);
 }
+
+.optionText {
+  font-size: var(--question-font-size);
+}
+
 
 .optionsList {
   display: flex;

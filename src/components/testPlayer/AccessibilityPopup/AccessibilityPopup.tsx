@@ -7,6 +7,8 @@ import { FiMousePointer } from "react-icons/fi";
 import { GiArrowCursor } from "react-icons/gi";
 import { GrCursor } from "react-icons/gr";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
+import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
+
 
 interface Props {
   open: boolean;
@@ -16,6 +18,15 @@ interface Props {
 export default function AccessibilityPopup({ open, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTestPlayerTheme();
+  const {
+  fontSize,
+  setFontSize,
+  cursorTrailEnabled,
+  toggleCursorTrail,
+  cursorSize, setCursorSize
+} = useTestPlayerAccessibility();
+
+
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -57,37 +68,87 @@ export default function AccessibilityPopup({ open, onClose }: Props) {
           {/* Font size */}
           <div className={styles.card}>
             <p className={styles.cardTitle}>Select Font Size</p>
+
             <div className={styles.circleGroup}>
-              <div className={`${styles.circle} ${styles.active}`}>A</div>
-              <div className={styles.circle}>A</div>
-              <div className={styles.circle}>A</div>
+              <div
+                className={`${styles.circle} ${
+                  fontSize === "small" ? styles.active : ""
+                }`}
+                onClick={() => setFontSize("small")}
+              >
+                A
+              </div>
+
+              <div
+                className={`${styles.circle} ${
+                  fontSize === "medium" ? styles.active : ""
+                }`}
+                onClick={() => setFontSize("medium")}
+              >
+                A
+              </div>
+
+              <div
+                className={`${styles.circle} ${
+                  fontSize === "large" ? styles.active : ""
+                }`}
+                onClick={() => setFontSize("large")}
+              >
+                A
+              </div>
             </div>
           </div>
+
 
           {/* Cursor trail */}
           <div className={styles.card}>
             <p className={styles.cardTitle}>Enable Cursor Trail</p>
             <div className={styles.row}>
               <FiMousePointer size={22} />
-              <div className={styles.toggle} />
+
+              <div
+                className={styles.toggle}
+                data-active={cursorTrailEnabled}
+                onClick={toggleCursorTrail}
+              />
             </div>
           </div>
 
+
           {/* Cursor size */}
           <div className={styles.card}>
-            <p className={styles.cardTitle}>Choose Cursor Size</p>
+            <p className={styles.cardTitle}>Choose Cursor Trail Size</p>
+
             <div className={styles.circleGroup}>
-              <div className={`${styles.circle} ${styles.active}`}>
+              <div
+                className={`${styles.circle} ${
+                  cursorSize === "small" ? styles.active : ""
+                }`}
+                onClick={() => setCursorSize("small")}
+              >
                 <FiMousePointer />
               </div>
-              <div className={styles.circle}>
+
+              <div
+                className={`${styles.circle} ${
+                  cursorSize === "medium" ? styles.active : ""
+                }`}
+                onClick={() => setCursorSize("medium")}
+              >
                 <GrCursor />
               </div>
-              <div className={styles.circle}>
+
+              <div
+                className={`${styles.circle} ${
+                  cursorSize === "large" ? styles.active : ""
+                }`}
+                onClick={() => setCursorSize("large")}
+              >
                 <GiArrowCursor />
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>

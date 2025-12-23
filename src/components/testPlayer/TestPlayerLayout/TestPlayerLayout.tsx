@@ -14,6 +14,8 @@ import styles from "./TestPlayerLayout.module.css";
 import { QuestionBlock } from "../QuestionBlock/QuestionBlock";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useEffect } from "react";
+import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
+import CursorTrail from "../CursorTrail/CursorTrail";
 
   
 
@@ -33,6 +35,8 @@ export function TestPlayerLayout({ year }: Props) {
   } = useTestEngineStore((s) => s);
 
   const { theme, setTheme } = useTestPlayerTheme();
+  const { cursorTrailEnabled } = useTestPlayerAccessibility();
+
 
   // restore theme on refresh
   useEffect(() => {
@@ -107,6 +111,7 @@ export function TestPlayerLayout({ year }: Props) {
         <StatusButton label="Save & Next" variant="primary" />
         <StatusButton label="Submit" variant="primary" />
       </footer>
+      {cursorTrailEnabled && <CursorTrail />}
     </div>
   );
 }
