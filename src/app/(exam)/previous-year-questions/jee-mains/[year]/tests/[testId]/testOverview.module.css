@@ -219,5 +219,11 @@
 @media (max-width: 900px) {
   .instructionsPanel {
     padding-bottom: 180px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .topBar{
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
