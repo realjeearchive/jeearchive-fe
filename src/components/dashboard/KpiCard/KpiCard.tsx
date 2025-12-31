@@ -6,8 +6,8 @@ interface KpiCardProps {
   value: string;
   subLabel?: string;
   icon?: React.ReactNode;
-  deltaLabel?: string;        // "+24%" / "-15%"
-  tone?: string; // choose color set
+  deltaLabel?: string;
+  tone?: string;
 }
 
 const KpiCard: React.FC<KpiCardProps> = ({
@@ -18,14 +18,23 @@ const KpiCard: React.FC<KpiCardProps> = ({
   deltaLabel,
   tone = "mint",
 }) => {
+
+  const getDeltaClass = () => {
+    if (!deltaLabel) return "";
+    if (deltaLabel.trim().startsWith("+")) return styles.deltaPositive;
+    if (deltaLabel.trim().startsWith("-")) return styles.deltaNegative;
+    return "";
+  };
+
   return (
     <div className={`${styles.card} ${styles[`card_${tone}`]}`}>
       <div className={styles.headerRow}>
         <div className={styles.iconBox}>
           {icon ?? <span className={styles.iconPlaceholder} />}
         </div>
+
         {deltaLabel && (
-          <div className={styles.deltaPill}>
+          <div className={`${styles.deltaPill} ${getDeltaClass()}`}>
             <span>{deltaLabel}</span>
           </div>
         )}

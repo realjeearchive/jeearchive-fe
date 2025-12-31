@@ -127,3 +127,20 @@
     padding: 12px 14px;
   }
 }
+
+
+.deltaPositive {
+  background: var(--dashboard-positive-delta-bg-color);
+  border-color: var(--dashboard-positive-delta-border-color);
+  color: var(--dashboard-positive-delta-color);
+}
+
+.deltaNegative {
+  background: var(--dashboard-negative-delta-bg-color);
+  border-color: var(--dashboard-negative-delta-border-color);
+  color: var(--dashboard-negative-delta-color);
+}
+
+.deltaPill {
+  transition: all 0.25s ease;
+}

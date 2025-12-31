@@ -85,7 +85,12 @@ body {
     --dashboard-secondary-highlight-color: #283339;
     --dashboard-header-avatar-background-color: #512DA8;
     --dashboard-header-avatar-border-color: #6C4DB6;
-    
+    --dashboard-positive-delta-color: #22C55E;
+    --dashboard-negative-delta-color: #EF4444;
+    --dashboard-positive-delta-bg-color: rgba(34, 197, 94, 0.12);
+    --dashboard-negative-delta-bg-color: rgba(239, 68, 68, 0.12);
+    --dashboard-positive-delta-border-color: rgba(34, 197, 94, 0.45);
+    --dashboard-negative-delta-border-color: rgba(239, 68, 68, 0.45);
 
     /* Instruction page color definitions */
 
