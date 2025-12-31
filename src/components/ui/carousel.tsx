@@ -50,12 +50,10 @@ function Carousel({
   ...props
 }: React.ComponentProps<"div"> & CarouselProps) {
   const [carouselRef, api] = useEmblaCarousel(
-    {
-      ...opts,
-      axis: orientation === "horizontal" ? "x" : "y",
-    },
+    { ...opts, axis: orientation === "horizontal" ? "x" : "y" },
     plugins
   )
+
   const [canScrollPrev, setCanScrollPrev] = React.useState(false)
   const [canScrollNext, setCanScrollNext] = React.useState(false)
 
@@ -65,42 +63,23 @@ function Carousel({
     setCanScrollNext(api.canScrollNext())
   }, [])
 
-  const scrollPrev = React.useCallback(() => {
-    api?.scrollPrev()
-  }, [api])
-
-  const scrollNext = React.useCallback(() => {
-    api?.scrollNext()
-  }, [api])
-
-  const handleKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "ArrowLeft") {
-        event.preventDefault()
-        scrollPrev()
-      } else if (event.key === "ArrowRight") {
-        event.preventDefault()
-        scrollNext()
-      }
-    },
-    [scrollPrev, scrollNext]
-  )
+  const scrollPrev = () => api?.scrollPrev()
+  const scrollNext = () => api?.scrollNext()
 
   React.useEffect(() => {
-    if (!api || !setApi) return
-    setApi(api)
-  }, [api, setApi])
+  if (!api) return
 
-  React.useEffect(() => {
-    if (!api) return
-    onSelect(api)
-    api.on("reInit", onSelect)
-    api.on("select", onSelect)
+  onSelect(api)
 
-    return () => {
-      api?.off("select", onSelect)
-    }
-  }, [api, onSelect])
+  api.on("reInit", onSelect)
+  api.on("select", onSelect)
+
+  return () => {
+    api.off("select", onSelect)
+    api.off("reInit", onSelect)
+  }
+}, [api, onSelect])
+
 
   return (
     <CarouselContext.Provider
@@ -108,8 +87,7 @@ function Carousel({
         carouselRef,
         api,
         opts,
-        orientation:
-          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        orientation,
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -117,16 +95,13 @@ function Carousel({
       }}
     >
       <div
-        onKeyDownCapture={handleKeyDown}
         className={cn(
-          "relative",
-          // Mobile-specific styles for width < 900px
-          "max-md:overflow-hidden max-md:w-full max-md:mx-0 max-md:px-0",
+          "relative overflow-hidden",
+          "max-lg:px-0 max-lg:w-full",   // 👈 ensures mobile edge spacing
           className
         )}
         role="region"
         aria-roledescription="carousel"
-        data-slot="carousel"
         {...props}
       >
         {children}
@@ -135,22 +110,18 @@ function Carousel({
   )
 }
 
+
 function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div
-      ref={carouselRef}
-      className="overflow-hidden"
-      data-slot="carousel-content"
-    >
+    <div ref={carouselRef} className="overflow-hidden">
       <div
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
-          "jeear-carousel-content",
-          // Mobile-specific styles for width < 900px
-          "max-md:w-full max-md:ml-0 max-md:px-0",
+          orientation === "horizontal"
+            ? "-ml-4 max-md:ml-0"   // 👈 disable negative margin on mobile
+            : "-mt-4 flex-col",
           className
         )}
         {...props}
@@ -159,6 +130,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+
 function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   const { orientation } = useCarousel()
 
@@ -166,23 +138,18 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
     <div
       role="group"
       aria-roledescription="slide"
-      data-slot="carousel-item"
       className={cn(
-        // full‑width slide
         "shrink-0 grow-0 basis-full",
-        // center & pad horizontally so radius shows
-        "px-4",
+        "px-4 max-md:px-2",    // 👈 small mobile breathing space
         orientation === "horizontal" ? "" : "pt-4",
-        // rounded card + clip children
         "rounded-3xl overflow-hidden",
-        // Mobile-specific styles for width < 900px
-        "max-md:w-full max-md:min-w-full max-md:px-0 max-md:rounded-3xl max-md:overflow-hidden",
         className
       )}
       {...props}
     />
   )
 }
+
 
 function CarouselPrevious({
   className,

@@ -41,15 +41,15 @@ export function OnboardingCarousel() {
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full h-full"
+      className="w-[71%] max-lg:w-full h-full"
       opts={{
         align: "start",
         loop: true,
       }}
     >
-      <CarouselContent className="h-full">
+      <CarouselContent className="h-full ">
         {onboardingSlides.map((slide) => (
-          <CarouselItem key={slide.id} className="basis-[70%] h-full">
+          <CarouselItem key={slide.id} className="basis-[100%] h-full">
             <div className="p-4 h-screen">
               <Card 
                 className="border-0 h-full relative overflow-hidden"
