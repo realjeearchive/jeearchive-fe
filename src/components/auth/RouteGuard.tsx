@@ -21,26 +21,23 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const accessToken = useAuthStore((s) => s.accessToken);
   const initialized = useAuthStore((s) => s.initialized);
-  const initFromRefresh = useAuthStore((s) => s.initFromRefresh);
+
 
   useEffect(() => {
-    initFromRefresh();
-  }, [initFromRefresh]);
+  if (!initialized) return;
 
-  useEffect(() => {
-    if (!initialized) return;
+  const authed = !!accessToken;
+  const onPublic = isPublicRoute(pathname);
 
-    const authed = !!accessToken;
-    const onPublic = isPublicRoute(pathname);
+  if (!authed && !onPublic) {
+    router.replace(`/login?redirectTo=${encodeURIComponent(pathname)}`);
+  }
 
-    if (!authed && !onPublic) {
-      router.replace(`/login?redirectTo=${encodeURIComponent(pathname)}`);
-    }
+  if (authed && onPublic) {
+    router.replace("/dashboard");
+  }
+}, [initialized, accessToken, pathname]);
 
-    if (authed && onPublic) {
-      router.replace("/dashboard");
-    }
-  }, [initialized, accessToken, pathname, router]);
 
   // always render children (no blocking splash)
   return <>{children}</>;

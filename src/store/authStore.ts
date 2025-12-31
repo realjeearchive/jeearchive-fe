@@ -10,6 +10,7 @@ interface AuthState {
   accessToken: string | null;
   isLoading: boolean;
   initialized: boolean;
+  hasLoggedOut: boolean;
 
   setAccessToken: (token: string | null) => void;
   setLoading: (value: boolean) => void;
@@ -24,6 +25,7 @@ export const useAuthStore = create<AuthState>()(
         accessToken: null,
         isLoading: false,
         initialized: false,
+        hasLoggedOut: false,
 
         setAccessToken: (token) => {
           set({ accessToken: token });
@@ -51,21 +53,22 @@ export const useAuthStore = create<AuthState>()(
         setLoading: (value) => set({ isLoading: value }),
 
         initFromRefresh: async () => {
-          if (get().initialized) return;
+          const { initialized, hasLoggedOut } = get();
+
+          if (initialized || hasLoggedOut) return;
 
           set({ isLoading: true });
 
           try {
             const data = await refreshTokenRequest();
             get().setAccessToken(data.accessToken);
-            set({ initialized: true });
           } catch {
             get().setAccessToken(null);
-            set({ initialized: true });
           } finally {
-            set({ isLoading: false });
+            set({ initialized: true, isLoading: false });
           }
         },
+
 
         logout: () => {
           const setProfile = useUserStore.getState().setProfile;
@@ -79,7 +82,6 @@ export const useAuthStore = create<AuthState>()(
       }),
       {
         name: "auth",
-        partialize: (state) => ({ accessToken: state.accessToken }),
       }
     )
   )
