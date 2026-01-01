@@ -107,7 +107,6 @@
 
   .label { font-size: var(--dashboard-font-xs); }
   .meta { font-size: var(--dashboard-font-xs); }
-  .value { font-size: var(--dashboard-font-sm); }
   .value span { font-size: var(--dashboard-font-xs); }
   .solvedLabel { font-size: var(--dashboard-font-xs); }
 }
