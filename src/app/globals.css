@@ -96,6 +96,18 @@ body {
     --dashboard-chemistry-color: #22C55E; /* your existing green */
     --dashboard-maths-color: #FB7185;     /* reddish orange / coral */
 
+    /* ========== Dashboard Typography Scale ========== */
+
+--dashboard-font-xs: 11px;
+--dashboard-font-sm: 12px;
+--dashboard-font-md: 14px;
+--dashboard-font-lg: 15px;
+--dashboard-font-xl: 28px;
+--dashboard-font-lg-value: 24px;
+--dashboard-font-progress: 22px;
+--dashboard-font-progress-sm: 18px;
+
+
     /* Instruction page color definitions */
 
     --instruction-topHeader-background-color: #BCE8F5;

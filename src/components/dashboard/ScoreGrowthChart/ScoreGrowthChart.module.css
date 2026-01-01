@@ -16,7 +16,7 @@
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--dashboard-font-md);
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
   margin: 0;
@@ -24,7 +24,7 @@
 
 .subtitle {
   margin: 4px 0 0 0;
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   color: var(--dashboard-secondary-text-color);
 }
 

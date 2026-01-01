@@ -12,7 +12,7 @@
 }
 
 .heading {
-  font-size: 16px;
+  font-size: var(--dashboard-font-md);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -68,7 +68,7 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: var(--dashboard-font-md);
   font-weight: 500;
   color: var(--dashboard-primary-text-color);
   white-space: nowrap;
@@ -77,13 +77,13 @@
 }
 
 .meta {
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   color: var(--dashboard-secondary-text-color);
   white-space: nowrap;
 }
 
 .chevron {
-  font-size: 16px;
+  font-size: var(--dashboard-font-md);
   color: var(--dashboard-icons-color);
   transition: transform 0.15s ease;
 }
@@ -100,4 +100,3 @@
 .rowLink + .rowLink .row {
   border-top: 1px solid var(--dashboard-icons-color);
 }
-

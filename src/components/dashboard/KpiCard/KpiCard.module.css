@@ -1,6 +1,6 @@
 .card {
   flex: 1;
-  min-width: 160px;
+  min-width: 145px;
   padding: 18px 20px;
   border-radius: 12px;
   background: var(--dashboard-sidebar-background-color);
@@ -11,50 +11,24 @@
   gap: 16px;
 }
 
-/* subtle per‑card tint, matched to dashboard theme */
-.card_mint {
-  background: var(--dashboard-sidebar-background-color); /* slightly cooler dark */
-}
+/* subtle per-card tint, matched to dashboard theme */
+.card_mint { background: var(--dashboard-sidebar-background-color); }
+.card_peach { background: #2b2521; }
+.card_purple { background: #25232b; }
+.card_blue { background: #20262b; }
+.card_teal { background: #213231; }
+.card_amber { background: #312820; }
+.card_slate { background: #25272c; }
+.card_olive { background: #2a2f23; }
 
-.card_peach {
-  background: #2b2521; /* warm dark, hint of brown */
-}
-
-.card_purple {
-  background: #25232b; /* muted purple‑tinted dark */
-}
-
-.card_blue {
-  background: #20262b; /* blue‑tinted dark */
-}
-
-
-/* extras you can try / swap in */
-.card_teal {
-  background: #213231; /* teal‑tinted dark */
-}
-
-.card_amber {
-  background: #312820; /* amber‑tinted dark */
-}
-
-.card_slate {
-  background: #25272c; /* neutral slate dark */
-}
-
-.card_olive {
-  background: #2a2f23; /* olive‑tinted dark */
-}
-
-
-/* top row: icon left, delta right */
+/* top row */
 .headerRow {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
 
-/* square icon background */
+/* icon */
 .iconBox {
   width: 40px;
   height: 40px;
@@ -72,18 +46,18 @@
   background: var(--dashboard-background-color);
 }
 
-/* pill with % change */
+/* delta pill */
 .deltaPill {
   padding: 4px 12px;
   border-radius: 999px;
   border: 1px solid var(--dashboard-dividerline-color);
   background: var(--dashboard-background-color);
   color: var(--dashboard-primary-text-color);
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
   font-weight: 500;
 }
 
-/* bottom area */
+/* content */
 .content {
   display: flex;
   flex-direction: column;
@@ -91,44 +65,40 @@
 }
 
 .label {
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dashboard-secondary-text-color);
 }
 
 .value {
-  font-size: 28px;
+  font-size: var(--dashboard-font-xl);
   font-weight: 600;
   line-height: 1.2;
   color: var(--dashboard-primary-text-color);
 }
 
 .subLabel {
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   color: var(--dashboard-secondary-text-color);
 }
 
+/* responsive */
 @media (max-width: 600px) {
-  .card {
-    padding: 14px 16px;
-  }
-  .value {
-    font-size: 24px;
-  }
-  .iconBox {
-    width: 36px;
-    height: 36px;
-  }
+  .card { padding: 14px 16px; }
+  .value { font-size: var(--dashboard-font-lg-value); }
+  .iconBox { width: 36px; height: 36px; }
 }
 
 @media (max-width: 406px) {
-  .card{
-    padding: 12px 10px;
-  }
+  .card { padding: 12px 10px; }
+
+  .label { font-size: 10px; }
+  .subLabel { font-size: 10px; }
+  .value { font-size: 20px; }
 }
 
-
+/* delta colors */
 .deltaPositive {
   background: var(--dashboard-positive-delta-bg-color);
   border-color: var(--dashboard-positive-delta-border-color);
@@ -141,6 +111,4 @@
   color: var(--dashboard-negative-delta-color);
 }
 
-.deltaPill {
-  transition: all 0.25s ease;
-}
+.deltaPill { transition: all 0.25s ease; }

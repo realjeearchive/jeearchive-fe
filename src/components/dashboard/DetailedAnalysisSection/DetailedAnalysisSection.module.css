@@ -9,6 +9,7 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   display: flex;
   overflow: hidden;
+  margin-top: 20px;
 }
 
 .accent {
@@ -63,13 +64,13 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: var(--dashboard-font-md);
   font-weight: 500;
   color: var(--dashboard-primary-text-color);
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   color: var(--dashboard-secondary-text-color);
 }
 
@@ -88,7 +89,7 @@
 }
 
 .badge {
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
   padding: 2px 8px;
   border-radius: 999px;
   border: 1px solid var(--dashboard-dividerline-color);
@@ -104,7 +105,7 @@
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   font-weight: 500;
   background: var(--dashboard-highlight-color);
   color: #111111;

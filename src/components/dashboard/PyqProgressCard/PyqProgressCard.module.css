@@ -1,6 +1,6 @@
 .card {
   flex: 1;
-  min-width: 160px;
+  min-width: 145px;
   padding: 18px 20px;
   border-radius: 12px;
   background: var(--dashboard-sidebar-background-color);
@@ -19,14 +19,14 @@
 }
 
 .label {
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dashboard-secondary-text-color);
 }
 
 .meta {
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
   color: var(--dashboard-secondary-text-color);
   opacity: 0.8;
 }
@@ -38,7 +38,6 @@
   align-items: center;
 }
 
-/* ring */
 .circleWrapper {
   position: relative;
   width: 120px;
@@ -74,18 +73,18 @@
 }
 
 .value {
-  font-size: 22px;
+  font-size: var(--dashboard-font-progress);
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
 }
 
 .value span {
-  font-size: 12px;
+  font-size: var(--dashboard-font-sm);
   color: var(--dashboard-secondary-text-color);
 }
 
 .solvedLabel {
-  font-size: 11px;
+  font-size: var(--dashboard-font-xs);
 }
 
 /* subject colors */
@@ -97,23 +96,18 @@
 .chemistry .solvedLabel { color: var(--dashboard-chemistry-color); }
 .maths .solvedLabel { color: var(--dashboard-maths-color); }
 
-/* responsive – mirrors KPI card behavior */
+/* responsive */
 @media (max-width: 600px) {
-  .card {
-    padding: 14px 16px;
-  }
-
-  .value {
-    font-size: 20px;
-  }
+  .card { padding: 14px 16px; }
+  .value { font-size: var(--dashboard-font-progress-sm); }
 }
 
 @media (max-width: 406px) {
-  .card {
-    padding: 12px 10px;
-  }
+  .card { padding: 12px 10px; }
 
-  .value {
-    font-size: 18px;
-  }
+  .label { font-size: var(--dashboard-font-xs); }
+  .meta { font-size: var(--dashboard-font-xs); }
+  .value { font-size: var(--dashboard-font-sm); }
+  .value span { font-size: var(--dashboard-font-xs); }
+  .solvedLabel { font-size: var(--dashboard-font-xs); }
 }
