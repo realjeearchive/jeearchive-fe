@@ -1,6 +1,6 @@
 .card {
   flex: 1;
-  min-width: 178px;
+  min-width: 160px;
   padding: 18px 20px;
   border-radius: 12px;
   background: var(--dashboard-sidebar-background-color);
@@ -122,9 +122,9 @@
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 406px) {
   .card{
-    padding: 12px 14px;
+    padding: 12px 10px;
   }
 }
 
