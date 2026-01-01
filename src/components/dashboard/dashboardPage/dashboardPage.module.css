@@ -21,7 +21,7 @@
 .bottomRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 8px;
 }
 
 .bottomItem {

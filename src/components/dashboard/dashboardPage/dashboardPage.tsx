@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <QuestionTypeBar />
         </div>
       </div>
-      <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ marginTop: 40, display: "flex", flexDirection: "column", gap: 40 }}>
         <TestListSection heading="Previous Year Questions" items={pyqItems} />
         <TestListSection heading="Topic & Chapter-wise Questions" items={chapterItems} />
       </div>

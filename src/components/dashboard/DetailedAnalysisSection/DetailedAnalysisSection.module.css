@@ -4,12 +4,12 @@
 
 .card {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 10px;
   background: #211f1c;
   border: 1px solid var(--dashboard-sidebar-border-color);
   display: flex;
   overflow: hidden;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .accent {
