@@ -9,6 +9,8 @@ import TestListSection, {
 } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 import { FiAward, FiClock, FiTarget, FiTrendingUp } from 'react-icons/fi';
+import PyqProgressCard from "@/components/dashboard/PyqProgressCard/PyqProgressCard";
+
 
 
 // example data
@@ -27,6 +29,13 @@ const chapterItems: TestListItem[] = [
 export default function DashboardPage() {
   return (
     <div className={styles.page}>
+      <div className={styles.progressRow}>
+        <PyqProgressCard label="Physics" solved={2000} total={3000} />
+        <PyqProgressCard label="Chemistry" solved={88} total={3000}  />
+        <PyqProgressCard label="Mathematics" solved={860} total={3000}  />
+      </div>
+
+
       <div className={styles.kpiRow}>
         <KpiCard
           label="Accuracy"

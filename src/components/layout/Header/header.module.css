@@ -25,7 +25,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: var(--dashboard-icons-color);
+  color: var(--dashboard-icons-color); 
   cursor: pointer;
 }
 

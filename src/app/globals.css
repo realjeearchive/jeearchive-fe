@@ -92,6 +92,10 @@ body {
     --dashboard-positive-delta-border-color: rgba(34, 197, 94, 0.45);
     --dashboard-negative-delta-border-color: rgba(239, 68, 68, 0.45);
 
+    --dashboard-physics-color: #60A5FA;   /* calm light blue */
+    --dashboard-chemistry-color: #22C55E; /* your existing green */
+    --dashboard-maths-color: #FB7185;     /* reddish orange / coral */
+
     /* Instruction page color definitions */
 
     --instruction-topHeader-background-color: #BCE8F5;

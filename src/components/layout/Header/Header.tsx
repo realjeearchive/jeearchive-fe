@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import styles from "./header.module.css";
 import { PiSidebar } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline } from "react-icons/io5";
-import { FiSearch, FiPlus, FiBell } from "react-icons/fi";
-import { HiOutlineViewGrid } from "react-icons/hi";
+import { FiSearch, FiPlay, FiBell } from "react-icons/fi";
+import { HiOutlineLightningBolt } from "react-icons/hi";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store";
 
@@ -64,31 +64,31 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         </div>
 
         <div className={styles.breadcrumb}>
-          <span className={styles.breadcrumbFolder}>Tasks</span>
+          <span className={styles.breadcrumbFolder}>Preparation</span>
           <span className={styles.breadcrumbSeparator}>/</span>
-          <span className={styles.breadcrumbCurrent}>All Tasks</span>
+          <span className={styles.breadcrumbCurrent}>Dashboard</span>
         </div>
       </div>
 
       <div className={styles.rightSection}>
+        {/* Start Mock Test */}
         <button type="button" className={styles.primaryButton}>
-          <FiPlus size={14} />
-          <span>New</span>
+          <FiPlay size={14} />
+          <span>Start Test</span>
         </button>
 
-        <button type="button" className={styles.iconButton}>
-          <FiSearch size={16} />
+        {/* Quick Practice Mode */}
+        <button type="button" className={styles.iconButton} title="Quick Practice">
+          <HiOutlineLightningBolt size={16} />
         </button>
 
-        <button type="button" className={styles.iconButton}>
-          <HiOutlineViewGrid size={16} />
-        </button>
-
-        <button type="button" className={styles.iconButton}>
+        {/* Exam Calendar */}
+        <button type="button" className={styles.iconButton} title="Exam Planner">
           <IoCalendarOutline size={16} />
         </button>
 
-        <button type="button" className={styles.iconButton}>
+        {/* Announcements & Alerts */}
+        <button type="button" className={styles.iconButton} title="Notifications">
           <FiBell size={16} />
         </button>
 

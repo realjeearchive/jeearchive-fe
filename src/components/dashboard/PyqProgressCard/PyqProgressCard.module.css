@@ -1,0 +1,119 @@
+.card {
+  flex: 1;
+  min-width: 178px;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* header */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.meta {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
+}
+
+/* main */
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ring */
+.circleWrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.progressSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bg {
+  fill: none;
+  stroke: var(--dashboard-dividerline-color);
+  stroke-width: 5;
+}
+
+.progress {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease, stroke 0.3s ease;
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.value {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.value span {
+  font-size: 12px;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.solvedLabel {
+  font-size: 11px;
+}
+
+/* subject colors */
+.physics .progress { stroke: var(--dashboard-physics-color); }
+.chemistry .progress { stroke: var(--dashboard-chemistry-color); }
+.maths .progress { stroke: var(--dashboard-maths-color); }
+
+.physics .solvedLabel { color: var(--dashboard-physics-color); }
+.chemistry .solvedLabel { color: var(--dashboard-chemistry-color); }
+.maths .solvedLabel { color: var(--dashboard-maths-color); }
+
+/* responsive – mirrors KPI card behavior */
+@media (max-width: 600px) {
+  .card {
+    padding: 14px 16px;
+  }
+
+  .value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .card {
+    padding: 12px 14px;
+  }
+
+  .value {
+    font-size: 18px;
+  }
+}

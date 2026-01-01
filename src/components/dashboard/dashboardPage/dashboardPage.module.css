@@ -1,26 +1,27 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px 10px;
+  padding: 20px 0;
+  gap: 8px;
 }
 
 .kpiRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 4px 0 4px 0; 
+  gap: 8px;
 }
 
-.growthSection {
-  padding: 4px 0;
+.progressRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
+
 
 .bottomRow {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 4px 0 12px 0;
 }
 
 .bottomItem {
