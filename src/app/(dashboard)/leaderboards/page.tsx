@@ -1,7 +1,9 @@
+import Leaderboard from "@/components/leaderboard/leaderboard";
+
 const Leaderboards = () => {
   return (
     <div>
-      Leaderboards page...
+      <Leaderboard/>
     </div>
   );
 };
