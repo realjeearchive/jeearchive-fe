@@ -1,18 +1,18 @@
-
 .themeWrapper {
   --dashboard-accent-gold: #D4AF37;
   --dashboard-accent-bronze: #cd7f32;
   --dashboard-accent-brown: #3E3025;
-  
   --card-glow: 0 0 20px rgba(0,0,0,0.5);
   
   color: var(--dashboard-primary-text-color);
-
   min-height: 100vh;
   padding: 2rem;
   box-sizing: border-box;
+  /* Added overflow-x hidden to prevent full page scroll issues on mobile */
+  overflow-x: hidden; 
 }
 
+/* --- Hero Section (Untouched as requested) --- */
 .heroSection {
   display: flex;
   justify-content: center;
@@ -35,18 +35,15 @@
   transform: translateY(-5px);
 }
 
-/* Order manipulation for mobile/desktop visually */
 .heroCard.rank1 { order: 2; z-index: 2; }
 .heroCard.rank2 { order: 1; }
 .heroCard.rank3 { order: 3; }
 
-/* Avatar Styling */
 .avatarWrapper {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .avatar {
@@ -57,7 +54,6 @@
   border: 3px solid var(--dashboard-sidebar-border-color);
   box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   background: var(--dashboard-sidebar-background-color);
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,15 +72,15 @@
   margin-bottom: 1rem;
   color: var(--dashboard-primary-text-color);
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  text-align: center;
 }
 
-/* Podium Box */
 .podium {
   width: 100%;
   background: linear-gradient(180deg, rgba(62,48,37,0.4) 0%, rgba(30,29,27,0.8) 100%);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-top: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px 12px 0 0; /* Rounded top only to look like standing on ground */
+  border-radius: 12px 12px 0 0;
   backdrop-filter: blur(10px);
   padding: 1.5rem 1rem;
   display: flex;
@@ -104,7 +100,6 @@
   height: 140px;
 }
 
-/* Podium Content */
 .badge {
   display: flex;
   align-items: center;
@@ -136,27 +131,32 @@
   letter-spacing: 1px;
 }
 
+/* --- Stats Pill --- */
 .userStatsPill {
   background: rgba(40, 40, 40, 0.6);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 50px;
   padding: 0.75rem 1.5rem; 
   margin: 0 auto 3rem auto;
-
+  
+  /* Layout */
   width: fit-content;    
-  max-width: 95%;        
+  max-width: 90%; /* Prevents touching screen edges */
   display: flex;         
   flex-direction: row;    
   align-items: center;     
   justify-content: center; 
-  white-space: nowrap;     
+  
+  /* Text handling */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   gap: 8px;                
-
+  
   font-size: 0.9rem;
   color: var(--dashboard-secondary-text-color);
   box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
-
 
 .pillHighlight {
   color: var(--dashboard-primary-text-color);
@@ -169,7 +169,7 @@
 
 /* --- Table Section --- */
 .tableContainer {
-  background-color: var(--dashboard-sidebar-background-color); /* Very dark container bg */
+  background-color: var(--dashboard-sidebar-background-color);
   border-radius: 10px;
   padding: 2rem;
   max-width: 1200px;
@@ -214,7 +214,8 @@
 
 .gridHeader {
   display: grid;
-  grid-template-columns: 80px 1fr 1fr 150px; /* Rank, Address, Volume, Address(Right) */
+  /* Desktop Layout: Rank | Name | Percentile | Score */
+  grid-template-columns: 80px 1fr 1fr 150px;
   padding: 0 1rem 1rem 1rem;
   color: var(--dashboard-icons-color);
   font-size: 0.8rem;
@@ -224,6 +225,7 @@
 
 .gridRow {
   display: grid;
+  /* Desktop Layout: Rank | Name | Percentile | Score */
   grid-template-columns: 80px 1fr 1fr 150px;
   align-items: center;
   padding: 1rem;
@@ -241,7 +243,7 @@
   z-index: 1;
 }
 
-.rankCell {
+.rankCell, .userCell {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -259,17 +261,34 @@
   font-family: monospace;
 }
 
-.userCell {
+/* NEW: Added this because it was used in your React code but missing in CSS */
+.tableAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #333;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--dashboard-primary-text-color);
-  font-weight: 500;
+  border: 1px solid var(--dashboard-sidebar-border-color);
 }
 
-.flag {
-  font-size: 1.2rem;
+.userCell {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+  overflow: hidden;
 }
+
+.userCell span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flag { font-size: 1.2rem; }
 
 .externalLink {
   color: var(--dashboard-icons-color);
@@ -278,48 +297,121 @@
   text-decoration: none;
 }
 
-.externalLink:hover {
-  color: var(--dashboard-primary-text-color);
-}
-
-.volumeCell {
-  color: var(--dashboard-secondary-text-color);
-}
-
 .pointsCell {
   text-align: right;
   color: var(--dashboard-primary-text-color);
   font-family: monospace;
 }
 
-/* --- Responsive --- */
+.volumeCell {
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* --- RESPONSIVE / MOBILE CSS --- */
+
+/* Tablet & Mobile (Width < 768px) */
 @media (max-width: 768px) {
+  .themeWrapper { 
+    padding: 1rem 0; /* Reduced padding for more space */
+  }
   
-  .heroCard.rank1, .heroCard.rank2, .heroCard.rank3 {
-    width: 100%;
-    max-width: 320px;
+  .tableContainer { 
+    padding: 1rem; 
+  }
+  
+  /* Update grid to 3 columns for Tablet/Mobile */
+  /* Hide the 4th column (Score) */
+  .gridHeader, .gridRow {
+    grid-template-columns: 60px 1fr 100px; /* Rank | Name | Percentile */
+    padding: 1rem 0.5rem; /* Tighter padding */
+    gap: 8px
+  }
+  
+  .hiddenMobile { display: none; }
+}
+
+/* Small Mobile (Width < 560px) */
+@media (max-width: 560px) {
+  /* Hero Section adjustments */
+  .heroSection {
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+  .heroCard { width: 30%; } 
+  .heroCard.rank1 { width: 36%; }
+  
+  .avatar {
+    width: 60px; height: 60px;
+    border-width: 2px;
+  }
+  .rank1 .avatar {
+    width: 80px; height: 80px;
+    border-width: 3px;
   }
 
-  .podium {
-    border-radius: 12px;
+  .heroName { font-size: 0.85rem; margin: 0.5rem 0; }
+  .rank1 .heroName { font-size: 1rem; }
+
+  .podium { height: 110px !important; padding: 0.8rem 0.2rem; }
+  .rank1 .podium { height: 140px !important; }
+
+  .badge { font-size: 0.65rem; gap: 3px; }
+  .badge svg { width: 10px; height: 10px; }
+  
+  .prizeValue { font-size: 1rem; }
+  .prizeLabel { font-size: 0.6rem; }
+  
+
+  .userStatsPill {
+    font-size: 10px; 
+    padding: 0.6rem 1rem;
+    width: auto;
+    max-width: 100%; 
+    margin-bottom: 2rem;
   }
   
-  .gridHeader, .gridRow {
-    grid-template-columns: 50px 1fr 80px; /* Hide last col on small mobile */
-  }
-  
-  .hiddenMobile {
-    display: none;
-  }
 
   .tableContainer {
-    padding: 1rem;
+    padding: 1rem 0.5rem; 
+  }
+  
+  .tableHeader {
+    margin-bottom: 1rem;
+  }
+  
+  .tableTitle {
+    font-size: 1rem;
+  }
+  
+  .showAllBtn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+  
+
+  .gridHeader, .gridRow {
+    grid-template-columns: 40px 1fr 90px;
+    gap: 8px;
+    padding: 0.8rem 0.25rem;
+  }
+  
+
+  .rankCircle { display: none; }
+  
+
+  .rankNumber, .userCell, .volumeCell {
+    font-size: 0.85rem;
   }
 }
 
-@media(max-width: 688px){
-    .avatar{
-        width: 15vw;
-        height: 15vw;
-    }
+@media(max-width: 400px) {
+  .showAllBtn{
+    font-size: 10px;
+  }
+  .tableTitle{
+    font-size: 15px;
+  }
+  .gridRow{
+    padding: 0.5rem;
+  }
 }

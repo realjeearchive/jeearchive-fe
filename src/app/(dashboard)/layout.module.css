@@ -31,6 +31,12 @@
   -ms-overflow-style: none;     
 }
 
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 0;
+  }
+}
+
 
 .dashboard::-webkit-scrollbar {
   display: none;

@@ -113,7 +113,6 @@ const HeroCard = ({ user }: { user: User }) => {
 };
 
 const TableRow = ({ user }: { user: User }) => {
-  const initial = getInitial(user.name);
   
   return (
     <div className={styles.gridRow} role="row">
@@ -125,9 +124,6 @@ const TableRow = ({ user }: { user: User }) => {
 
       {/* Student Name with Avatar */}
       <div className={styles.userCell} role="cell">
-        <div className={styles.tableAvatar}>
-          {initial}
-        </div>
         <span>{user.name}</span>
       </div>
 
@@ -167,8 +163,7 @@ const Leaderboard: React.FC = () => {
 
       {/* Personal Stats Pill */}
       <div className={styles.userStatsPill}>
-        You earned <span className={styles.pillHighlight}><DiamondIcon /> 50</span> today and are ranked
-        <span className={styles.pillHighlight}> — </span> out of <span className={styles.pillHighlight}>13,668</span> students
+        <span className={styles.pillHighlight}>All India Rank: — #54</span> out of <span className={styles.pillHighlight}>10,800</span> students
       </div>
 
       <div className={styles.tableContainer}>
