@@ -9,28 +9,14 @@ interface User {
   avatarColor?: string; 
 }
 
-// --- Icons (SVG) ---
+
 const TrophyIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M7 2H17V4H19C20.6569 4 22 5.34315 22 7V8C22 10.2091 20.2091 12 18 12H16.89C16.4251 14.7766 14.0305 17 11.2 17H12.8C12.8 17 13.6 19.4 14.4 20H9.6C10.4 19.4 11.2 17 11.2 17H7.11001C4.27956 17 1.8849 14.7766 1.41999 12H0.309998V11C0.309998 8.79086 2.10086 7 4.30999 7H7V2ZM17 6V10H18C19.1046 10 20 9.10457 20 8V7C20 6.44772 19.5523 6 19 6H17ZM7 10V6H5C4.44772 6 4 6.44772 4 7V8C4 9.10457 4.89543 10 6 10H7Z" />
   </svg>
 );
 
-const DiamondIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11.64 2.23924C11.8329 1.99615 12.1671 1.99615 12.36 2.23924L15.3577 6.01636L21.3256 6.55835C21.6441 6.58728 21.8028 6.96443 21.5898 7.18663L16.208 12.8016L17.7262 21.149C17.7852 21.4735 17.4363 21.7235 17.1528 21.5606L12 18.6L6.84719 21.5606C6.56365 21.7235 6.21484 21.4735 6.27377 21.149L7.79196 12.8016L2.41022 7.18663C2.19725 6.96443 2.35593 6.58728 2.67439 6.55835L8.64234 6.01636L11.64 2.23924Z" />
-  </svg>
-);
 
-const LinkIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-    <polyline points="15 3 21 3 21 9"></polyline>
-    <line x1="10" y1="14" x2="21" y2="3"></line>
-  </svg>
-);
-
-// --- Dummy Data (JEE-style leaderboard) ---
 
 const TOP_USERS: User[] = [
   {

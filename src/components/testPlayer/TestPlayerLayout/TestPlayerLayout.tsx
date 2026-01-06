@@ -40,7 +40,6 @@ export function TestPlayerLayout({ year }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  /* ------------------ RESPONSIVE LOGIC ------------------ */
   useEffect(() => {
     const checkScreen = () => {
       const mobile = window.innerWidth < 900;
@@ -53,7 +52,6 @@ export function TestPlayerLayout({ year }: Props) {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  /* ------------------ THEME RESTORE ------------------ */
   useEffect(() => {
     const saved = localStorage.getItem("test-player-theme") as
       | "light"
