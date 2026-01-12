@@ -12,11 +12,13 @@ export function QuestionMetaBar({
   questionNumber,
   questionId,
 }: QuestionMetaBarProps) {
+  
   const handleScrollDown = () => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
+    // Scroll the question area container
+    const main = document.querySelector('main');
+    if (main) {
+       main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -26,7 +28,7 @@ export function QuestionMetaBar({
           Question No. {questionNumber}
         </span>
         <span className={styles.questionId}>
-          #{questionId}
+          ID: {questionId.slice(0, 8)}...
         </span>
       </div>
 
@@ -34,7 +36,7 @@ export function QuestionMetaBar({
         type="button"
         className={styles.scrollBtn}
         onClick={handleScrollDown}
-        aria-label="Scroll to bottom"
+        title="Scroll to bottom"
       >
         <FaArrowDownLong />
       </button>

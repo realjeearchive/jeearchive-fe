@@ -1,26 +1,30 @@
-// ---------- Test Player Runtime State ----------
+// src/features/tests/playertypes.ts
 
 export type QuestionStatus =
-  | "notVisited"
-  | "notAnswered"
-  | "answered"
-  | "marked"
-  | "answeredMarked";
+  | "notVisited"        // White (Default)
+  | "notAnswered"       // Red (Visited but skipped)
+  | "answered"          // Green (Saved)
+  | "markedForReview"   // Purple (Marked without answer)
+  | "answeredAndMarked"; // Purple with Green Dot (Marked with answer - Evaluated)
 
-export interface QuestionPlayerState {
-  globalQuestionNumber: number; // maps to Question.questionNumber
-  sectionId: string;
-  status: QuestionStatus;
-}
+export type QuestionKind = "single" | "numerical";
 
-export interface TestPlayerState {
-  currentSectionId: string;
-  currentQuestionNumber: number; // global question number
-  questions: QuestionPlayerState[];
-}
-
-export interface QuestionAttempt {
+// The state of a single question during the test
+export interface QuestionState {
   questionId: string;
-  selectedOptionId?: string;
+  globalQuestionNumber: number; // 1 to 75
   status: QuestionStatus;
+  selectedOptionIds: string[]; // Array of IDs (e.g. ["A"])
+  numericAnswer: string | null; // For numerical questions
+  isVisited: boolean;
+}
+
+// Summary stats for the sidebar
+export interface SectionStats {
+  sectionId: string;
+  answered: number;
+  notAnswered: number;
+  notVisited: number;
+  markedForReview: number;
+  answeredAndMarked: number;
 }

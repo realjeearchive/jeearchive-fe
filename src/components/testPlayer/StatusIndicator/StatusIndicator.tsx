@@ -12,67 +12,44 @@ interface StatusCount {
 }
 
 interface StatusIndicatorProps {
-  counts?: StatusCount;
+  counts: StatusCount;
 }
 
-export function StatusIndicator({
-  counts = {
-    answered: 2,
-    notAnswered: 1,
-    notVisited: 19,
-    markedForReview: 2,
-    answeredAndMarked: 2,
-  },
-}: StatusIndicatorProps) {
+export function StatusIndicator({ counts }: StatusIndicatorProps) {
   return (
     <div className={styles.container}>
       <div className={styles.statusGrid}>
-        {/* First Row */}
+        {/* Row 1 */}
         <div className={styles.statusRow}>
           <div className={styles.statusItem}>
-            <StatusIcon width={34} height={28} type="answered" value={counts.answered} />
-            <div className={styles.statusText}>
-              <span className={styles.statusLabel}>Answered</span>
-            </div>
+            <StatusIcon width={30} height={30} type="answered" value={counts.answered} />
+            <span className={styles.statusLabel}>Answered</span>
           </div>
-
           <div className={styles.statusItem}>
-            <StatusIcon width={34} height={28} type="notAnswered" value={counts.notAnswered}  />
-            <div className={styles.statusText}>
-              <span className={styles.statusLabel}>Not Answered</span>
-            </div>
+            <StatusIcon width={30} height={30} type="notAnswered" value={counts.notAnswered} />
+            <span className={styles.statusLabel}>Not Answered</span>
           </div>
         </div>
 
-        {/* Second Row */}
+        {/* Row 2 */}
         <div className={styles.statusRow}>
           <div className={styles.statusItem}>
-            <StatusIcon width={34} height={34} type="notVisited" value={counts.notVisited} />
-            <div className={styles.statusText}>
-              <span className={styles.statusLabel}>Not Visited</span>
-            </div>
+            <StatusIcon width={30} height={30} type="notVisited" value={counts.notVisited} />
+            <span className={styles.statusLabel}>Not Visited</span>
           </div>
-
           <div className={styles.statusItem}>
-            <StatusIcon type="marked" value={counts.markedForReview} />
-            <div className={styles.statusText}>
-              <span className={styles.statusLabel}>Marked for review</span>
-            </div>
+            <StatusIcon width={30} height={30} type="markedForReview" value={counts.markedForReview} />
+            <span className={styles.statusLabel}>Marked for Review</span>
           </div>
         </div>
 
-        {/* Third Row - Full Width */}
+        {/* Row 3 */}
         <div className={styles.fullRow}>
           <div className={styles.statusItem}>
-            <StatusIcon
-              type="answeredMarked"
-              value={counts.answeredAndMarked}
-            />
-            <div className={styles.statusText}>
-              <span className={styles.statusLabel}>
-                Answered and Marked for Review (will also be evaluated)
-              </span>
-            </div>
+            <StatusIcon type="answeredAndMarked" value={counts.answeredAndMarked} width={30} height={30} />
+            <span className={styles.statusLabel}>
+              Answered & Marked for Review (will be evaluated)
+            </span>
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+// TitleBar.tsx
 "use client";
 
 import { useTestEngineStore } from "@/features/tests/testEngineStore";

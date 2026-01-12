@@ -1,3 +1,5 @@
+// QuestionStatusInfoPopup.tsx
+
 "use client";
 
 import styles from "./QuestionStatusInfoPopup.module.css";

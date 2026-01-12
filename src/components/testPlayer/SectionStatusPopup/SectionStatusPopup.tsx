@@ -1,3 +1,5 @@
+// SectionStatusPopup.tsx
+
 "use client";
 
 import { createPortal } from "react-dom";

@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useTestEngineStore } from "@/features/tests/testEngineStore";
+import { useUserStore } from "@/store/userStore";
 import styles from "./RightColumnSidebar.module.css";
 import PlaceholderImage from "@/assets/image/placeholder.png";
 
@@ -8,50 +10,85 @@ import { StatusIndicator } from "../StatusIndicator/StatusIndicator";
 import QuestionPalette from "../QuestionPalette/QuestionPalette";
 
 export function Sidebar() {
+  const user = useUserStore((s) => s.profile);
+  
+  // Store Data
+  const activeSectionId = useTestEngineStore((s) => s.activeSectionId);
+  const sections = useTestEngineStore((s) => s.sections);
+  const questionsById = useTestEngineStore((s) => s.questionsById);
+  const activeQuestionId = useTestEngineStore((s) => s.activeQuestionId);
+  const jumpToQuestion = useTestEngineStore((s) => s.jumpToQuestion);
+
+  // 1. Get Current Section Data
+  const currentSection = sections.find(s => s.id === activeSectionId);
+  
+  if (!currentSection) return null;
+
+  // 2. Prepare Palette Data (Map ONLY current section questions)
+  const paletteQuestions = currentSection.questions.map(q => {
+    const state = questionsById[q.id];
+    return {
+      globalQuestionNumber: q.globalQuestionNumber,
+      questionId: q.id,
+      status: state.status,
+    };
+  });
+
+  // 3. Calculate Stats (For the whole paper usually, or section wise)
+  // Let's calculate for the WHOLE paper as per NTA standard
+  const allStates = Object.values(questionsById);
+  const counts = {
+    answered: allStates.filter(q => q.status === 'answered').length,
+    notAnswered: allStates.filter(q => q.status === 'notAnswered').length,
+    notVisited: allStates.filter(q => q.status === 'notVisited').length,
+    markedForReview: allStates.filter(q => q.status === 'markedForReview').length,
+    answeredAndMarked: allStates.filter(q => q.status === 'answeredAndMarked').length,
+  };
+
+  // Find current question number for the "Highlight" effect
+  const currentQState = questionsById[activeQuestionId || ""];
+  const currentQNum = currentQState ? currentQState.globalQuestionNumber : 0;
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarInner}>
         
-        {/* Student Profile */}
+        {/* Profile Header */}
         <div className={styles.studentProfile}>
           <div className={styles.profile}>
             <Image
               className={styles.profileImage}
-              src={PlaceholderImage}
+              src={PlaceholderImage} // Or user.imageUrl
               alt="Profile"
+              width={40} height={40}
             />
           </div>
-          <div className={styles.studentName}>Utkarsh Singh</div>
+          <div className={styles.studentName}>
+            {user?.name || "Candidate"}
+          </div>
         </div>
 
-        {/* Status Indicator */}
+        {/* Counts Legend */}
         <div className={styles.statusIndicatorContainer}>
-          <StatusIndicator />
+          <StatusIndicator counts={counts} />
         </div>
 
-        {/* Section Header */}
+        {/* Section Label */}
         <div className={styles.sectionHeader}>
-          Mathematics Single Correct
+          {currentSection.label}
         </div>
 
-        {/* Choose Question Text */}
         <div className={styles.chooseQuestion}>
           Choose a Question
         </div>
 
-        {/* Question Palette */}
+        {/* The Grid */}
         <QuestionPalette
-          sectionId="M_SC"
-          questionCount={20}
-          currentQuestionNumber={2}
-          questionStates={[
-            { globalQuestionNumber: 1, status: "notAnswered" },
-            // rest will default to notVisited
-          ]}
-          onQuestionSelect={(qNo: number) => {
-            console.log("Go to question:", qNo);
-          }}
-
+          sectionId={currentSection.id}
+          questionCount={currentSection.questions.length}
+          currentQuestionNumber={currentQNum}
+          questionStates={paletteQuestions}
+          onQuestionSelect={(qId) => jumpToQuestion(qId)}
         />
       </div>
     </aside>

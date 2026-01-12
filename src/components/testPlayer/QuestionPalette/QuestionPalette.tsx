@@ -10,43 +10,31 @@ interface QuestionPaletteProps {
   currentQuestionNumber: number;
   questionStates: {
     globalQuestionNumber: number;
+    questionId: string;
     status: QuestionStatus;
   }[];
-  onQuestionSelect: (questionNumber: number) => void;
+  onQuestionSelect: (questionId: string) => void;
 }
 
 export default function QuestionPalette({
-  sectionId,
-  questionCount,
   currentQuestionNumber,
   questionStates,
   onQuestionSelect,
 }: QuestionPaletteProps) {
   return (
     <div className={styles.palette}>
-      {Array.from({ length: questionCount }, (_, index) => {
-        const qNo = index + 1;
-
-        const state = questionStates.find(
-          (q) => q.globalQuestionNumber === qNo
-        );
-
-        const status: QuestionStatus = state?.status ?? "notVisited";
-
+      {questionStates.map((qState) => {
         return (
           <button
-            key={`${sectionId}-${qNo}`}
+            key={qState.questionId}
             className={styles.questionButton}
-            onClick={() => onQuestionSelect(qNo)}
+            onClick={() => onQuestionSelect(qState.questionId)}
+            aria-label={`Go to question ${qState.globalQuestionNumber}`}
           >
             <StatusIcon
-              type={
-                status === "notVisited" && qNo === currentQuestionNumber
-                  ? "notAnswered"
-                  : status
-              }
-              value={qNo}
-              isCurrent={qNo === currentQuestionNumber}
+              type={qState.status}
+              value={qState.globalQuestionNumber}
+              isCurrent={qState.globalQuestionNumber === currentQuestionNumber}
             />
           </button>
         );

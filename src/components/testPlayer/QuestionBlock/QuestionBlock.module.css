@@ -56,3 +56,35 @@
   flex: 1;
 }
 
+
+
+
+/* src/components/testPlayer/QuestionBlock/QuestionBlock.module.css */
+
+.questionText {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Ensure inline images don't overflow */
+.inlineImageContainer {
+  display: block;
+  margin: 1rem 0;
+  text-align: center; /* Center the images */
+}
+
+.questionImage {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+/* KaTeX Overrides for dark/light mode if needed */
+.katex-block {
+  display: block;
+  margin: 1rem 0;
+  text-align: center;
+  overflow-x: auto; /* Scroll if equation is too wide */
+}

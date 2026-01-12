@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import styles from "./SectionTabsBar.module.css";
 import { IoInformationSharp } from "react-icons/io5";
@@ -13,7 +13,7 @@ export function SectionTabsBar() {
 
   const [popupRect, setPopupRect] = useState<DOMRect | null>(null);
 
-  if (!sections.length) return null;
+  if (!sections || sections.length === 0) return null;
 
   return (
     <div className={styles.root}>
@@ -30,19 +30,18 @@ export function SectionTabsBar() {
               >
                 <span className={styles.label}>{section.label}</span>
 
-              <span
-                className={styles.informationIcon}
-                onMouseEnter={(e) =>
-                  setPopupRect(
-                    (e.currentTarget as HTMLElement).getBoundingClientRect()
-                  )
-                }
-                onMouseLeave={() => setPopupRect(null)}
-              >
-                <IoInformationSharp className={styles.infoIcon} />
-              </span>
+                <span
+                  className={styles.informationIcon}
+                  onMouseEnter={(e) =>
+                    setPopupRect(
+                      (e.currentTarget as HTMLElement).getBoundingClientRect()
+                    )
+                  }
+                  onMouseLeave={() => setPopupRect(null)}
+                >
+                  <IoInformationSharp className={styles.infoIcon} />
+                </span>
               </button>
-
             </div>
           );
         })}

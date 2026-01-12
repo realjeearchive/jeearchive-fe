@@ -51,8 +51,8 @@
 .marked {
   background-color: #815EA0; 
   border: 1px solid #806F91;
-  width: 34px;
-  height: 34px;
+  /* width: 34px; */
+  height: 48px;
   border-radius: 50%;
 }
 
@@ -60,8 +60,8 @@
 .answeredMarked {
   background-color: #815EA0; 
   border: 1px solid #806F91;
-  width: 34px;
-  height: 34px;
+  /* width: 34px; */
+  height: 48px;
   border-radius: 50%;
 }
 

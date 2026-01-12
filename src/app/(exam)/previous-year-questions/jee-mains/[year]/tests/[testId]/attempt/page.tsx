@@ -1,6 +1,5 @@
-// app/(exam)/previous-year-questions/jee-mains/[year]/tests/[testId]/attempt/page.tsx
+// src/app/(exam)/previous-year-questions/jee-mains/[year]/tests/[testId]/attempt/page.tsx
 
-import { getTestAttemptData, buildTestDefinition } from "@/features/tests/api";
 import { AttemptClient } from "./AttemptClient";
 
 interface AttemptPageProps {
@@ -9,16 +8,14 @@ interface AttemptPageProps {
 
 export default async function AttemptPage(props: AttemptPageProps) {
   const { year, testId } = await props.params;
-  const attempt = await getTestAttemptData(testId);
 
-  // later: candidateName from auth/user store
-  const definition = buildTestDefinition(attempt, "Candidate Name");
-
+  // We no longer fetch server-side here because we need the client-side 
+  // accessToken for the API and crypto-js for decryption.
+  
   return (
     <AttemptClient
       year={year}
       testId={testId}
-      definition={definition}
     />
   );
 }
