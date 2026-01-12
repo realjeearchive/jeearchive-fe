@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 type Theme = "light" | "dark";
 
-interface ThemeState {
+interface ThemeState { 
   theme: Theme;
   toggleTheme: () => void;
   setTheme: (theme: Theme) => void;
