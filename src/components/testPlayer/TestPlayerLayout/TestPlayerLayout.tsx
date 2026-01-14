@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
@@ -20,6 +20,7 @@ import CursorTrail from "../CursorTrail/CursorTrail";
 import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
+import { TestDefinition } from "@/features/tests/types";
 
 interface Props {
   year: string;
@@ -29,6 +30,7 @@ export function TestPlayerLayout({ year }: Props) {
   // 1. Connect to Store
   const {
     testId,
+    title, // Needed to reconstruct definition for restore
     sections,
     activeSectionId,
     activeQuestionId,
@@ -38,7 +40,9 @@ export function TestPlayerLayout({ year }: Props) {
     saveAndNext,
     clearResponse,
     markForReview,
-    submitTest
+    submitTest,
+    restoreSession, // The new action
+    syncWithServer, // The new action
   } = useTestEngineStore((s) => s);
 
   const { theme, setTheme } = useTestPlayerTheme();
@@ -46,8 +50,57 @@ export function TestPlayerLayout({ year }: Props) {
 
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Track if we have already restored to prevent loops
+  const hasRestored = useRef(false);
 
-  // 2. Responsive Logic
+  // 2. RESUME & HEARTBEAT LOGIC
+  useEffect(() => {
+    if (!testId) return;
+
+    // A. RESTORE SESSION (Local Storage check)
+    // A. RESTORE SESSION (Local Storage check)
+    if (!hasRestored.current) {
+      const savedDataString = localStorage.getItem(`test_progress_${testId}`);
+      
+      if (savedDataString) {
+        try {
+          const savedData = JSON.parse(savedDataString);
+          
+          if (savedData.testId === testId) {
+            console.log("Found saved session, restoring...");
+            
+            // FIX: Construct object matching the Interface strictly
+            const currentDef: TestDefinition = {
+              id: testId,
+              title: title,
+              sections: sections, 
+              durationSeconds: savedData.timeLeftSeconds, // Restore saved time
+              // If TestDefinition has other mandatory fields (like 'instructions'), add dummies or existing values here:
+              // instructions: "", 
+            };
+
+            // Remove 'as any', pass the typed object
+            restoreSession(savedData, currentDef);
+            
+            hasRestored.current = true;
+          }
+        } catch (e) {
+          console.error("Failed to restore session", e);
+        }
+      }
+    }
+
+    // B. HEARTBEAT (Server Sync every 60s)
+    const intervalId = setInterval(() => {
+      syncWithServer();
+    }, 60000); // 1 minute
+
+    return () => clearInterval(intervalId);
+  }, [testId, title, sections, restoreSession, syncWithServer]);
+
+
+  // 3. Responsive Logic
   useEffect(() => {
     const checkScreen = () => {
       const mobile = window.innerWidth < 900;
@@ -59,18 +112,15 @@ export function TestPlayerLayout({ year }: Props) {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // 3. Theme Logic
+  // 4. Theme Logic
   useEffect(() => {
     const saved = localStorage.getItem("test-player-theme") as "light" | "dark" | null;
     if (saved) setTheme(saved);
   }, [setTheme]);
 
-  // 4. Keyboard Shortcuts (Optional UX)
+  // 5. Keyboard Shortcuts
   const handleKeyNavigation = useCallback((e: KeyboardEvent) => {
-    // Only triggering Next if not inside an input field
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-    
-    // Example: Right Arrow for Save & Next
     // if (e.key === "ArrowRight") saveAndNext(); 
   }, [saveAndNext]);
 
@@ -80,7 +130,7 @@ export function TestPlayerLayout({ year }: Props) {
   }, [handleKeyNavigation]);
 
 
-  // 5. Loading Guard
+  // 6. Loading Guard
   if (!testId || !activeSectionId || !activeQuestionId) {
     return (
       <div className={styles.loadingContainer}>
@@ -90,12 +140,18 @@ export function TestPlayerLayout({ year }: Props) {
     );
   }
 
-  // 6. Active Data Retrieval
+  // 7. Active Data Retrieval
   const activeSection = sections.find((s) => s.id === activeSectionId)!;
   const activeQuestionDef = activeSection.questions.find((q) => q.id === activeQuestionId)!;
   const activeQuestionState = questionsById[activeQuestionId];
 
-  // 7. Button Handlers
+  // Helper for Template Question
+  const templateQuestion = activeSection.questions[0]; 
+  const currentSectionType = templateQuestion?.kind || "single";
+  const posMark = templateQuestion?.correctMarks || 4;
+  const negMark = templateQuestion?.negativeMarks || 1;
+
+  // 8. Button Handlers
   const handleSaveAndNext = () => saveAndNext();
   const handleClearResponse = () => clearResponse();
   const handleMarkForReview = () => markForReview();
@@ -105,18 +161,12 @@ export function TestPlayerLayout({ year }: Props) {
     }
   };
 
-  // --- FIX: Define templateQuestion before using it ---
-  const templateQuestion = activeSection.questions[0]; 
-  const currentSectionType = templateQuestion?.kind || "single";
-  const posMark = templateQuestion?.correctMarks || 4;
-  const negMark = templateQuestion?.negativeMarks || 1;
-
   return (
     <div id="test-player-root" className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}>
-      <TopStrip testTitle="" />
+      <TopStrip testTitle={title} />
 
       <div className={styles.mainGrid}>
-        {/* LEFT COLUMN: Question Area */}
+        {/* LEFT COLUMN */}
         <div className={styles.left}>
           <TitleBar year={year} />
           <TimeBar />
@@ -150,7 +200,7 @@ export function TestPlayerLayout({ year }: Props) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Sidebar */}
+        {/* RIGHT COLUMN */}
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && (
             <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)} style={{opacity: isSidebarOpen ? 1 : 0}}>›</button>
@@ -164,7 +214,7 @@ export function TestPlayerLayout({ year }: Props) {
         <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)}>‹</button>
       )}
 
-      {/* FOOTER: Action Buttons */}
+      {/* FOOTER */}
       <footer className={styles.bottomBar}>
         <div className={styles.bottomBarLeft}>
           <StatusButton label="Mark for Review & Next" variant="outline" onClick={handleMarkForReview} />

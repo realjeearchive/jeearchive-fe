@@ -20,6 +20,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.26",
+    "html-react-parser": "^5.2.11",
     "jwt-decode": "^4.0.0",
     "katex": "^0.16.27",
     "lucide-react": "^0.553.0",

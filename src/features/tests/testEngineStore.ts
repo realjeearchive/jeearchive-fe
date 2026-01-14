@@ -1,8 +1,28 @@
-// src/features/tests/testEngineStore.ts
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { TestDefinition, TestQuestion, TestSection } from "./types";
+import { TestDefinition, TestSection } from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
+
+// --- HELPER: Save to LocalStorage ---
+const saveToLocal = (state: TestEngineState) => {
+  if (!state.testId) return;
+  
+  // We save the critical data needed to restore the session
+  const payload = {
+    testId: state.testId,
+    questionsById: state.questionsById,
+    timeLeftSeconds: state.timeLeftSeconds,
+    activeQuestionId: state.activeQuestionId,
+    activeSectionId: state.activeSectionId,
+    timestamp: Date.now(),
+  };
+
+  try {
+    localStorage.setItem(`test_progress_${state.testId}`, JSON.stringify(payload));
+  } catch (e) {
+    console.warn("Failed to save progress to local storage", e);
+  }
+};
 
 interface TestEngineState {
   // --- STATE ---
@@ -10,37 +30,28 @@ interface TestEngineState {
   testId: string | null;
   title: string;
   sections: TestSection[];
-  
-  // Timer
   timeLeftSeconds: number;
-  
-  // Navigation
   activeSectionId: string | null;
   activeQuestionId: string | null;
-  
-  // Question States (The "User's Answers")
   questionsById: Record<string, QuestionState>;
 
   // --- ACTIONS ---
-  
-  // 1. Setup
   initFromDefinition: (def: TestDefinition) => void;
   
-  // 2. Navigation
-  setActiveSection: (sectionId: string) => void;
+  // NEW: Restore from LocalStorage
+  restoreSession: (savedData: any, def: TestDefinition) => void; 
+  
+  setActiveSectionId: (sectionId: string) => void;
   jumpToQuestion: (questionId: string) => void;
+  selectOption: (questionId: string, value: string) => void;
   
-  // 3. User Interaction
-  selectOption: (questionId: string, value: string) => void; // Value can be OptionID or Numeric Answer
-  
-  // 4. Control Panel Buttons (NTA Logic)
   saveAndNext: () => void;
   markForReview: () => void;
   clearResponse: () => void;
   
-  // 5. System
   tickTimer: () => void;
   submitTest: () => void;
+  syncWithServer: () => Promise<void>;
 }
 
 export const useTestEngineStore = create<TestEngineState>()(
@@ -57,7 +68,6 @@ export const useTestEngineStore = create<TestEngineState>()(
 
     // --- 1. SETUP ---
     initFromDefinition: (def) => {
-      // Create initial state for every question
       const initialQuestionsState: Record<string, QuestionState> = {};
       
       def.sections.forEach((sec) => {
@@ -73,17 +83,15 @@ export const useTestEngineStore = create<TestEngineState>()(
         });
       });
 
-      // Set first section and question as active
       const firstSection = def.sections[0];
       const firstQuestion = firstSection?.questions[0];
 
-      // Mark first question as "Not Answered" (Red) immediately upon visit if not answered
       if (firstQuestion) {
         initialQuestionsState[firstQuestion.id].isVisited = true;
         initialQuestionsState[firstQuestion.id].status = "notAnswered";
       }
 
-      set({
+      const newState = {
         isInitialized: true,
         testId: def.id,
         title: def.title,
@@ -92,62 +100,88 @@ export const useTestEngineStore = create<TestEngineState>()(
         activeSectionId: firstSection?.id || null,
         activeQuestionId: firstQuestion?.id || null,
         questionsById: initialQuestionsState,
+      };
+
+      set(newState);
+      // We don't saveToLocal here yet, user hasn't done anything.
+    },
+
+    // --- NEW: RESTORE SESSION ---
+    restoreSession: (savedData, def) => {
+      // 1. We still need the definition for structure (sections, labels, correct marks etc)
+      // but we overwrite the dynamic parts (answers, time) from savedData.
+      
+      set({
+        isInitialized: true,
+        testId: def.id,
+        title: def.title,
+        sections: def.sections, // Structure comes from API
+        
+        // Restore Dynamic Data
+        timeLeftSeconds: savedData.timeLeftSeconds,
+        activeSectionId: savedData.activeSectionId,
+        activeQuestionId: savedData.activeQuestionId,
+        questionsById: savedData.questionsById,
       });
+      
+      console.log("Session Restored from LocalStorage");
     },
 
     // --- 2. NAVIGATION ---
-    setActiveSection: (sectionId) => {
-      const { sections, questionsById } = get();
+    setActiveSectionId: (sectionId) => {
+      const { sections } = get();
       const targetSection = sections.find((s) => s.id === sectionId);
       if (!targetSection || !targetSection.questions.length) return;
 
-      // When switching sections, jump to the first question of that section
       const firstQ = targetSection.questions[0];
       const qId = firstQ.id;
 
       set((state) => {
         const newQs = { ...state.questionsById };
-        // Mark new question as visited/notAnswered if it was 'notVisited'
         if (newQs[qId].status === "notVisited") {
           newQs[qId].status = "notAnswered";
           newQs[qId].isVisited = true;
         }
-        return {
+        
+        const nextState = {
           activeSectionId: sectionId,
           activeQuestionId: qId,
           questionsById: newQs,
         };
+        
+        // Save navigation change? Optional, but good for resuming exactly where left off.
+        saveToLocal({ ...state, ...nextState });
+        
+        return nextState;
       });
     },
 
     jumpToQuestion: (questionId) => {
       set((state) => {
         const newQs = { ...state.questionsById };
-        
-        // Mark target as visited
         if (newQs[questionId].status === "notVisited") {
           newQs[questionId].status = "notAnswered";
           newQs[questionId].isVisited = true;
         }
 
-        // Find which section this question belongs to
         const section = state.sections.find((s) => 
           s.questions.some((q) => q.id === questionId)
         );
 
-        return {
+        const nextState = {
           activeQuestionId: questionId,
           activeSectionId: section?.id || state.activeSectionId,
           questionsById: newQs,
         };
+        
+        saveToLocal({ ...state, ...nextState });
+        return nextState;
       });
     },
 
-    // --- 3. INTERACTION ---
+    // --- 3. INTERACTION (CRITICAL SAVE POINT) ---
     selectOption: (questionId, value) => {
       const { sections } = get();
-      
-      // Determine question type (Single vs Numerical)
       const section = sections.find(s => s.questions.some(q => q.id === questionId));
       const questionDef = section?.questions.find(q => q.id === questionId);
       const isNumerical = questionDef?.kind === "numerical";
@@ -157,28 +191,28 @@ export const useTestEngineStore = create<TestEngineState>()(
         const newState = { ...prev };
 
         if (isNumerical) {
-          newState.numericAnswer = value; // value is the text typed
+          newState.numericAnswer = value; 
         } else {
-          // Radio button behavior (replace existing selection)
           newState.selectedOptionIds = [value]; 
         }
 
-        return {
+        const nextState = {
           questionsById: {
             ...state.questionsById,
             [questionId]: newState,
           },
         };
+
+        // INSTANT LOCAL SAVE
+        saveToLocal({ ...state, ...nextState });
+
+        return nextState;
       });
     },
 
-    // --- 4. BUTTON LOGIC (NTA RULES) ---
-
-    // HELPER: Move to next question automatically
-    // We define this logic inside the actions to avoid code duplication
-    
+    // --- 4. BUTTON LOGIC ---
     saveAndNext: () => {
-      const { activeQuestionId, questionsById, sections } = get();
+      const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
 
       const currentQ = questionsById[activeQuestionId];
@@ -186,20 +220,24 @@ export const useTestEngineStore = create<TestEngineState>()(
         currentQ.selectedOptionIds.length > 0 || 
         (currentQ.numericAnswer !== null && currentQ.numericAnswer !== "");
 
-      // 1. Update Status
       const newStatus: QuestionStatus = hasAnswer ? "answered" : "notAnswered";
 
-      set((state) => ({
-        questionsById: {
-          ...state.questionsById,
-          [activeQuestionId]: {
-            ...state.questionsById[activeQuestionId],
-            status: newStatus,
+      set((state) => {
+        const nextState = {
+          questionsById: {
+            ...state.questionsById,
+            [activeQuestionId]: {
+              ...state.questionsById[activeQuestionId],
+              status: newStatus,
+            },
           },
-        },
-      }));
+        };
+        
+        // Save before moving
+        saveToLocal({ ...state, ...nextState });
+        return nextState;
+      });
 
-      // 2. Move Next
       moveToNextQuestion(get, set);
     },
 
@@ -212,22 +250,24 @@ export const useTestEngineStore = create<TestEngineState>()(
         currentQ.selectedOptionIds.length > 0 || 
         (currentQ.numericAnswer !== null && currentQ.numericAnswer !== "");
 
-      // NTA Logic:
-      // If answered -> "Answered & Marked for Review" (Purple + Green) -> EVALUATED
-      // If empty -> "Marked for Review" (Purple) -> NOT EVALUATED
       const newStatus: QuestionStatus = hasAnswer 
         ? "answeredAndMarked" 
         : "markedForReview";
 
-      set((state) => ({
-        questionsById: {
-          ...state.questionsById,
-          [activeQuestionId]: {
-            ...state.questionsById[activeQuestionId],
-            status: newStatus,
+      set((state) => {
+        const nextState = {
+          questionsById: {
+            ...state.questionsById,
+            [activeQuestionId]: {
+              ...state.questionsById[activeQuestionId],
+              status: newStatus,
+            },
           },
-        },
-      }));
+        };
+        
+        saveToLocal({ ...state, ...nextState });
+        return nextState;
+      });
 
       moveToNextQuestion(get, set);
     },
@@ -236,17 +276,25 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { activeQuestionId } = get();
       if (!activeQuestionId) return;
 
-      set((state) => ({
-        questionsById: {
-          ...state.questionsById,
-          [activeQuestionId]: {
-            ...state.questionsById[activeQuestionId],
-            selectedOptionIds: [],
-            numericAnswer: null,
-            status: "notAnswered", // Reset to Red (visited but empty)
+      set((state) => {
+        // 1. Explicitly type the new status
+        const newStatus: QuestionStatus = "notAnswered";
+
+        const nextState = {
+          questionsById: {
+            ...state.questionsById,
+            [activeQuestionId]: {
+              ...state.questionsById[activeQuestionId],
+              selectedOptionIds: [],
+              numericAnswer: null,
+              status: newStatus, // Now TS knows this is valid
+            },
           },
-        },
-      }));
+        };
+        
+        saveToLocal({ ...state, ...nextState });
+        return nextState;
+      });
     },
 
     // --- 5. SYSTEM ---
@@ -256,13 +304,49 @@ export const useTestEngineStore = create<TestEngineState>()(
         submitTest();
         return;
       }
+      
+      // OPTIONAL: We can save time every 10 seconds to avoid spamming disk I/O
+      // but strictly speaking, browsers handle this fine.
+      // For now, let's NOT save on every tick to keep performance high. 
+      // We rely on the "Periodic Server Sync" or user interaction to save time checkpoints.
+      
       set({ timeLeftSeconds: timeLeftSeconds - 1 });
     },
 
+    // --- 6. SERVER SYNC (Heartbeat) ---
+    syncWithServer: async () => {
+      const { testId, questionsById, timeLeftSeconds, activeQuestionId, activeSectionId } = get();
+      if (!testId) return;
+
+      const payload = {
+        testId,
+        timeLeftSeconds,
+        activeQuestionId,
+        activeSectionId,
+        questionsById, // Sends the entire map (simplest for now)
+        timestamp: Date.now(),
+      };
+
+      try {
+        await fetch("/api/tests/save-progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        console.log("Auto-saved to server");
+      } catch (err) {
+        console.warn("Server sync failed (offline?), data remains safe in LocalStorage");
+      }
+    },
+
     submitTest: () => {
-      // This will handle auto-submission
+      // Clear local storage on submit so user can't "resume" a finished test
+      const { testId } = get();
+      if (testId) {
+        localStorage.removeItem(`test_progress_${testId}`);
+      }
+      
       console.log("Test Submitted!");
-      // Here you would trigger a router push to /result or open a modal
       alert("Test Submitted Successfully!");
     },
   }),
@@ -270,20 +354,17 @@ export const useTestEngineStore = create<TestEngineState>()(
   )
 );
 
-// --- INTERNAL HELPER FOR "NEXT" LOGIC ---
-// --- INTERNAL HELPER FOR "NEXT" LOGIC ---
+// --- HELPER FOR "NEXT" LOGIC ---
 function moveToNextQuestion(
   get: () => TestEngineState, 
   set: (fn: (state: TestEngineState) => Partial<TestEngineState>) => void
 ) {
   const { sections, activeQuestionId } = get();
   
-  // Flatten all questions to find the index
   const allQuestions = sections.flatMap((s) => s.questions);
   const currentIndex = allQuestions.findIndex((q) => q.id === activeQuestionId);
 
   if (currentIndex < allQuestions.length - 1) {
-    // Go to next
     const nextQ = allQuestions[currentIndex + 1];
     
     set((state) => {
@@ -297,17 +378,20 @@ function moveToNextQuestion(
         };
       }
       
-      // Check if we changed sections (e.g., from Physics Q30 to Chemistry Q1)
       const nextSectionId = nextQ.sectionId;
 
-      return {
+      const nextState = {
         activeQuestionId: nextQ.id,
         activeSectionId: nextSectionId,
         questionsById: newQs,
       };
+
+      // Save the move
+      saveToLocal({ ...state, ...nextState });
+
+      return nextState;
     });
   } else {
-    // End of test - usually we just stay on the last question or show a message
     console.log("End of questions reached");
   }
 }

@@ -15,6 +15,20 @@
   --question-font-size: 22px;
 }
 
+@media(max-width: 600px) {
+  .questionWrapper[data-font-size="small"] {
+    --question-font-size: 12px;
+  }
+
+  .questionWrapper[data-font-size="medium"] {
+    --question-font-size: 14px;
+  }
+
+  .questionWrapper[data-font-size="large"] {
+    --question-font-size: 16px;
+  }
+}
+
 .questionText {
   margin: 12px 0 16px;
   font-size: var(--question-font-size);
