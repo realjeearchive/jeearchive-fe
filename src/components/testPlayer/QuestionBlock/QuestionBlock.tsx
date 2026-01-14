@@ -88,9 +88,9 @@ export function QuestionBlock({
 
                 <div className={styles.optionContent}>
                   {/* Option Text */}
-                  <span className={styles.optionText}>
+                  {/* <span className={styles.optionText}>
                     <Latex>{opt.text}</Latex>
-                  </span>
+                  </span> */}
                   {/* Option Image */}
                   {opt.imageUrl && (
                      // eslint-disable-next-line @next/next/no-img-element

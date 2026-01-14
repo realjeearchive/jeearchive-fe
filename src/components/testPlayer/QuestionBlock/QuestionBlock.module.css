@@ -92,3 +92,8 @@
   text-align: center;
   overflow-x: auto; /* Scroll if equation is too wide */
 }
+
+.optImage{
+  width: 100%;
+  height: 200px;
+}
