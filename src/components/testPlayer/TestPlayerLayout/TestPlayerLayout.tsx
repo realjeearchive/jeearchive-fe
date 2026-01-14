@@ -105,6 +105,12 @@ export function TestPlayerLayout({ year }: Props) {
     }
   };
 
+  // --- FIX: Define templateQuestion before using it ---
+  const templateQuestion = activeSection.questions[0]; 
+  const currentSectionType = templateQuestion?.kind || "single";
+  const posMark = templateQuestion?.correctMarks || 4;
+  const negMark = templateQuestion?.negativeMarks || 1;
+
   return (
     <div id="test-player-root" className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}>
       <TopStrip testTitle="" />
@@ -127,11 +133,13 @@ export function TestPlayerLayout({ year }: Props) {
               <section className={styles.questionArea}>
                 <SectionInstructionsBox
                   title={activeSection.label}
-                  maxMarks={activeSection.questions.length * 4}
+                  maxMarks={activeSection.questions.length * posMark} 
                   questionCount={activeSection.questions.length}
+                  sectionType={currentSectionType}
+                  positiveMark={posMark} 
+                  negativeMark={negMark} 
                 />
 
-                {/* We will update this in Part 3 */}
                 <QuestionBlock
                   question={activeQuestionDef}
                   questionState={activeQuestionState}

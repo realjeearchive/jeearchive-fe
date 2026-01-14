@@ -4,13 +4,12 @@ import { useEffect } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import styles from "./TimeBar.module.css";
 
-// Helper to format 10800s -> "03:00:00"
+// Helper to format seconds -> "mm:ss" (e.g., 3700s -> "61:40")
 function formatTime(seconds: number) {
-  const h = Math.floor(seconds / 3600).toString().padStart(2, "0");
-  const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, "0");
+  // Calculate total minutes (including hours)
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
   const s = Math.floor(seconds % 60).toString().padStart(2, "0");
   
-  if (parseInt(h) > 0) return `${h}:${m}:${s}`;
   return `${m}:${s}`;
 }
 

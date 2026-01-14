@@ -76,7 +76,7 @@
 
 .questionImage {
   max-width: 100%;
-  height: 200px;
+  height: 150px;
 }
 
 @media (max-width: 600px) {
@@ -95,11 +95,29 @@
 
 .optImage{
   width: 100%;
-  height: 200px;
+  height: 150px;
 }
 
 :global(.dark) .questionImage,
 :global(.dark) .optImage {
   /* Invert colors. Good for black-on-white diagrams. */
   filter: invert(1) hue-rotate(180deg);
+}
+
+.mainAnswerArea{
+  display: flex;
+  gap: 8px;
+}
+
+.numericalLabel{
+  font-size: var(--question-font-size);
+  line-height: 1.5;
+  color: var(--test-player-text-color);
+}
+
+.numericalInput{
+  padding: 2px 8px;
+  font-size: var(--question-font-size);
+  border : 1px solid var(--test-player-border-color);
+  color: var(--test-player-text-color);
 }
