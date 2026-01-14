@@ -145,7 +145,7 @@ export function TestPlayerLayout({ year }: Props) {
         {/* RIGHT COLUMN: Sidebar */}
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && (
-            <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)}>›</button>
+            <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)} style={{opacity: isSidebarOpen ? 1 : 0}}>›</button>
           )}
           <Sidebar />
         </aside>

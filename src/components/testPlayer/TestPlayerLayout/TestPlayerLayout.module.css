@@ -127,13 +127,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
+    width: 20px;
     height: 60px;
   }
 
   .closeArrow {
     position: absolute;
-    left: -30px;
+    left: -20px;
     top: 50%;
     transform: translateY(-50%);
     width: 36px;
@@ -145,8 +145,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 30px;
+    width: 20px;
     height: 60px;
+    opacity: 0;
+
   }
 }
 

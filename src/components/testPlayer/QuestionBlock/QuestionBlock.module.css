@@ -62,9 +62,9 @@
 /* src/components/testPlayer/QuestionBlock/QuestionBlock.module.css */
 
 .questionText {
-  font-size: 1.1em;
+  font-size: var(--question-font-size);
   line-height: 1.6;
-  color: #333;
+  color: var(--test-player-text-color);
 }
 
 /* Ensure inline images don't overflow */
@@ -76,9 +76,13 @@
 
 .questionImage {
   max-width: 100%;
-  height: auto;
-  border: 1px solid #eee;
-  border-radius: 4px;
+  height: 200px;
+}
+
+@media (max-width: 600px) {
+  .questionImage {
+    height: auto;
+  }
 }
 
 /* KaTeX Overrides for dark/light mode if needed */
