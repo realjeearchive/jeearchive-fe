@@ -97,3 +97,9 @@
   width: 100%;
   height: 200px;
 }
+
+:global(.dark) .questionImage,
+:global(.dark) .optImage {
+  /* Invert colors. Good for black-on-white diagrams. */
+  filter: invert(1) hue-rotate(180deg);
+}
