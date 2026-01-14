@@ -7,6 +7,9 @@ import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccess
 import Latex from "@/components/testPlayer/Latex/Latex";
 import parse, { DOMNode } from 'html-react-parser';
 
+// --- RESTORED IMPORT ---
+import VirtualNumpad from "../VirtualNumpad/VirtualNumpad"; 
+
 interface Props {
   question: TestQuestion;
   questionState: QuestionState;
@@ -21,7 +24,7 @@ export function QuestionBlock({
   const { fontSize } = useTestPlayerAccessibility();
   const isSelected = (optId: string) => questionState.selectedOptionIds.includes(optId);
 
-  // --- CONTENT RENDERER ---
+  // --- CONTENT RENDERER (Preserving your HTML parser update) ---
   const renderContent = (text: string, images: string[]) => {
     if (!text) return null;
 
@@ -29,6 +32,7 @@ export function QuestionBlock({
     const parts = text.split(regex);
 
     return parts.map((part, i) => {
+      // Image Handling
       if (i % 2 === 1) {
         const imgIndex = parseInt(part, 10);
         if (images && images[imgIndex]) {
@@ -46,6 +50,7 @@ export function QuestionBlock({
         return null; 
       }
 
+      // Text Handling with HTML Parsing + Latex
       const options = {
         replace: (domNode: DOMNode) => {
           if (domNode.type === 'text') {
@@ -63,7 +68,6 @@ export function QuestionBlock({
     return text.replace(/!\[image_\d+\]\(\d+\)/g, "").trim();
   };
 
-  // Generate a unique ID for the numerical input if needed
   const numericalInputId = `numerical-input-${question.id}`;
 
   return (
@@ -76,7 +80,7 @@ export function QuestionBlock({
         </div>
       </div>
 
-      {/* 2. OPTIONS */}
+      {/* 2. OPTIONS (Multiple Choice) */}
       {question.kind === "single" && (
         <div className={styles.optionsList}>
           {question.options.map((opt) => {
@@ -89,8 +93,8 @@ export function QuestionBlock({
                   <input
                     type="radio"
                     name={question.id}
-                    id={`radio-${opt.id}`} // Good practice
-                    aria-label={visibleText || "Option"} // Accessiblity fallback
+                    id={`radio-${opt.id}`}
+                    aria-label={visibleText || "Option"} 
                     checked={checked}
                     onChange={() => onSelectOption(opt.id)}
                   />
@@ -102,7 +106,6 @@ export function QuestionBlock({
                       <Latex>{visibleText}</Latex>
                     </span>
                   )}
-                  
                   {opt.imageUrl && (
                      // eslint-disable-next-line @next/next/no-img-element
                     <img src={opt.imageUrl} alt="Option Figure" className={styles.optImage} />
@@ -114,24 +117,34 @@ export function QuestionBlock({
         </div>
       )}
 
-      {/* 3. NUMERICAL (FIXED ACCESSIBILITY) */}
+      {/* 3. NUMERICAL (RESTORED Virtual Numpad) */}
       {question.kind === "numerical" && (
         <div className={styles.numericalWrapper}>
-          {/* Linked Label */}
-          <label htmlFor={numericalInputId} className={styles.numericalLabel}>
-            Enter answer:
-          </label>
-          <input
-            id={numericalInputId} // Matches htmlFor
-            type="text"
-            className={styles.numericalInput}
-            value={questionState.numericAnswer || ""}
-            placeholder="Type your answer here..." // Added placeholder as secondary fix
-            onChange={(e) => {
-              const val = e.target.value;
-              if (/^-?\d*\.?\d*$/.test(val)) onSelectOption(val);
-            }}
+          <div className={styles.mainAnswerArea}>
+            <label htmlFor={numericalInputId} className={styles.numericalLabel}>
+              Enter Answer:
+            </label>
+            
+            {/* Read-Only Input (Security for CBT) */}
+            <input
+              id={numericalInputId}
+              type="text"
+              className={styles.numericalInput}
+              value={questionState.numericAnswer || ""}
+              readOnly 
+              placeholder="Use Numpad below"
+            />
+          </div>
+          
+          {/* Virtual Numpad Component */}
+          <VirtualNumpad 
+            initialValue={questionState.numericAnswer || ""}
+            onChange={(val) => onSelectOption(val)}
           />
+          
+          <p style={{fontSize: '0.85em', color: '#666', marginTop: '8px'}}>
+            * Use the on-screen keypad to enter your answer.
+          </p>
         </div>
       )}
     </div>
