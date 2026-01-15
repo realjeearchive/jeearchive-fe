@@ -1,95 +1,81 @@
+/* src/components/testPlayer/SectionTabsBar/SectionTabsBar.module.css */
+
 .root {
   background: var(--test-player-bg-color);
   border-bottom: 1px solid var(--test-player-border-color);
-  padding: 6px 20px;
+  padding: 8px 20px;
+
+  /* --- FLEXBOX SCROLLING LOGIC --- */
+  display: flex;            /* Makes children sit in a row */
+  align-items: center;      /* Vertically centers them */
+  gap: 12px;                /* Adds the missing gap between tabs */
+  
+  overflow-x: auto;         /* Enables horizontal scrolling */
+  flex-wrap: nowrap;        /* CRITICAL: Forces items to stay on one line */
+  white-space: nowrap;      /* Prevents text inside from wrapping */
+
+  /* Hide Scrollbar (Clean Look) */
+  scrollbar-width: none;    /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* Horizontal scrolling container */
-.tabsScroller {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-}
-
-.tabsScroller::-webkit-scrollbar {
-  display: none; /* Chrome */
+/* Hide scrollbar for Chrome/Safari/Opera */
+.root::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 13px;
+  justify-content: center;
+  gap: 8px;
+  
+  padding: 6px 16px;
+  font-size: 14px;
   font-weight: 500;
-  border-radius: 3px;
+  border-radius: 4px; /* Slightly rounder for modern look */
   border: 1px solid var(--test-player-border-color);
   background: var(--test-player-bg-color);
   color: var(--test-player-blue-button-bg-color);
   cursor: pointer;
-  white-space: nowrap;
+  
+  /* CRITICAL: Prevents the tab from getting squashed on small screens */
+  flex-shrink: 0; 
+  
+  transition: all 0.2s ease;
 }
 
 .active {
   background: var(--test-player-blue-button-bg-color);
   border-color: var(--test-player-blue-button-bg-color);
-  color: var(--test-player-white-text-color);
+  color: #fff; /* Force white text on active */
 }
 
-/* Info icon */
+/* Wrapper for the (i) icon to make it easy to hover */
 .infoIcon {
-  font-size: 14px;
-  color: var(--test-player-white-text-color);
-  font-weight: 600;
-}
-
-
-.informationIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--test-player-i-icon-color);
-  border-radius: 50%;
-  padding: 2px;
-  cursor: pointer;
+  
+  /* Make the icon slightly visible/styled if needed */
+  opacity: 0.9;
+  transition: opacity 0.2s;
+  color: inherit; /* Takes parent text color (Blue or White) */
 }
 
-.tabWrapper {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
+.infoIcon:hover {
+  opacity: 1;
 }
 
-.infoWrapper {
-  position: relative;
-  margin-left: 4px;
-  cursor: pointer;
-}
-
-.tabItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-
-.infoAnchor {
-  position: relative;
-  margin-left: 4px;
-}
-
-.infoIcon {
-  font-size: 14px;
-  color: var(--test-player-white-text-color);
-}
-
+/* Mobile Adjustments */
 @media (max-width: 615px) {
-  .root{
-    padding-left: 10px;
-    padding-right: 10px;
+  .root {
+    padding: 8px 10px; /* Reduce padding on mobile to save space */
+    gap: 8px; /* Slightly smaller gap on mobile */
+  }
+  
+  .tab {
+    padding: 5px 12px;
+    font-size: 13px;
   }
 }
-
-
-

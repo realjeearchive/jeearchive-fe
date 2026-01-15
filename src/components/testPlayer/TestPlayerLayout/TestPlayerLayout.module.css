@@ -1,18 +1,27 @@
+/* src/features/tests/testPlayerLayout/TestPlayerLayout.module.css */
+
 .page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh; /* Changed to fixed height to stop window scroll */
   background: var(--test-player-bg-color);
+  overflow: hidden; /* Prevent body scroll */
 }
 
 .mainGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   width: 100%;
+  flex: 1; /* Take remaining height */
+  overflow: hidden; /* Lock the grid */
 }
 
 .left {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; /* Force children to handle overflow */
 }
 
 .questionArea {
@@ -40,6 +49,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 50;
 }
 
 .bottomBarLeft{
@@ -69,15 +79,30 @@
   text-align: center;
 }
 
+/* --- SCROLL FIX START --- */
 .QuestionScrollArea {
-  overflow-y: auto;
-  padding-bottom: 160px;
-  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  flex: 1;          /* Grow to fill .left */
+  overflow: hidden; /* Don't scroll this wrapper */
+  padding-bottom: 0;
 }
 
-.QuestionScrollArea::-webkit-scrollbar {
-  display: none;
+/* Target the <main> tag specifically for scrolling */
+.QuestionScrollArea main {
+  flex: 1;
+  overflow-y: auto;   /* This enables the scrollbar here */
+  scroll-behavior: smooth;
+  padding-bottom: 80px; /* Space for the bottom bar */
+  
+  scrollbar-width: none; /* Hide scrollbar Firefox */
 }
+
+.QuestionScrollArea main::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+/* --- SCROLL FIX END --- */
+
 
 /* ================= DESKTOP SIDEBAR ================= */
 .sidebar {
@@ -86,6 +111,7 @@
   height: 100vh;
   background: var(--test-player-sidebar-bg-color);
   border-left: 1px solid var(--test-player-border-color);
+  overflow-y: auto; /* Allow sidebar itself to scroll if needed */
 }
 
 /* ================= MOBILE ONLY ================= */
@@ -156,4 +182,28 @@
   .questionArea{
     padding: 3 10px;
   }
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 1rem;
+  color: #666;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

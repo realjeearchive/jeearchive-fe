@@ -14,10 +14,16 @@ export function QuestionMetaBar({
 }: QuestionMetaBarProps) {
   
   const handleScrollDown = () => {
-    // Scroll the question area container
-    const main = document.querySelector('main');
-    if (main) {
-       main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
+    // FIX: Target the specific scrollable container by ID
+    const scrollContainer = document.getElementById('question-content-area');
+    
+    if (scrollContainer) {
+       scrollContainer.scrollTo({ 
+         top: scrollContainer.scrollHeight, 
+         behavior: 'smooth' 
+       });
+    } else {
+      console.warn("Scroll container 'question-content-area' not found.");
     }
   };
 

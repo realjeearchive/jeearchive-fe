@@ -168,7 +168,7 @@ export function TestPlayerLayout({ year }: Props) {
       <div className={styles.mainGrid}>
         {/* LEFT COLUMN */}
         <div className={styles.left}>
-          <TitleBar year={year} />
+          <TitleBar />
           <TimeBar />
           <SectionTabsBar />
           <MarksInfoBar />
@@ -179,7 +179,7 @@ export function TestPlayerLayout({ year }: Props) {
               questionId={activeQuestionDef.id}
             />
 
-            <main>
+            <main id="question-content-area">
               <section className={styles.questionArea}>
                 <SectionInstructionsBox
                   title={activeSection.label}

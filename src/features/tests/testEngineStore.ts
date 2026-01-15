@@ -3,12 +3,75 @@ import { devtools } from "zustand/middleware";
 import { TestDefinition, TestSection } from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
 
+// --- TYPES ---
+
+// 1. Metadata Interface (Matches backend response)
+export interface TestMetadata {
+  year: number | string;
+  day: string;
+  month: string;
+  date: string;
+  shift: string;
+  mode: string;
+  exam: string;
+}
+
+// 2. Saved Session Interface (The shape of data in localStorage)
+export interface SavedSessionData {
+  testId: string;
+  questionsById: Record<string, QuestionState>;
+  timeLeftSeconds: number;
+  activeQuestionId: string | null;
+  activeSectionId: string | null;
+  timestamp: number;
+}
+
+// 3. Combined Definition Type (Structure + Metadata)
+export type TestDefinitionWithMetadata = TestDefinition & Partial<TestMetadata>;
+
+
+interface TestEngineState {
+  // --- STATE ---
+  isInitialized: boolean;
+  testId: string | null;
+  title: string;
+  
+  // Metadata for TitleBar
+  metadata: TestMetadata | null;
+  
+  sections: TestSection[];
+  timeLeftSeconds: number;
+  activeSectionId: string | null;
+  activeQuestionId: string | null;
+  questionsById: Record<string, QuestionState>;
+
+  // --- ACTIONS ---
+  
+  // Updated: Accepts definition merged with optional metadata
+  initFromDefinition: (def: TestDefinitionWithMetadata) => void;
+  
+  // Updated: Strongly typed arguments
+  restoreSession: (savedData: SavedSessionData, def: TestDefinitionWithMetadata) => void; 
+  
+  syncWithServer: () => Promise<void>;
+  
+  setActiveSectionId: (sectionId: string) => void;
+  jumpToQuestion: (questionId: string) => void;
+  selectOption: (questionId: string, value: string) => void;
+  
+  saveAndNext: () => void;
+  markForReview: () => void;
+  clearResponse: () => void;
+  
+  tickTimer: () => void;
+  submitTest: () => void;
+}
+
 // --- HELPER: Save to LocalStorage ---
 const saveToLocal = (state: TestEngineState) => {
   if (!state.testId) return;
   
-  // We save the critical data needed to restore the session
-  const payload = {
+  const payload: SavedSessionData = {
     testId: state.testId,
     questionsById: state.questionsById,
     timeLeftSeconds: state.timeLeftSeconds,
@@ -24,42 +87,14 @@ const saveToLocal = (state: TestEngineState) => {
   }
 };
 
-interface TestEngineState {
-  // --- STATE ---
-  isInitialized: boolean;
-  testId: string | null;
-  title: string;
-  sections: TestSection[];
-  timeLeftSeconds: number;
-  activeSectionId: string | null;
-  activeQuestionId: string | null;
-  questionsById: Record<string, QuestionState>;
-
-  // --- ACTIONS ---
-  initFromDefinition: (def: TestDefinition) => void;
-  
-  // NEW: Restore from LocalStorage
-  restoreSession: (savedData: any, def: TestDefinition) => void; 
-  
-  setActiveSectionId: (sectionId: string) => void;
-  jumpToQuestion: (questionId: string) => void;
-  selectOption: (questionId: string, value: string) => void;
-  
-  saveAndNext: () => void;
-  markForReview: () => void;
-  clearResponse: () => void;
-  
-  tickTimer: () => void;
-  submitTest: () => void;
-  syncWithServer: () => Promise<void>;
-}
-
+// --- STORE IMPLEMENTATION ---
 export const useTestEngineStore = create<TestEngineState>()(
   devtools((set, get) => ({
     // Initial State
     isInitialized: false,
     testId: null,
     title: "",
+    metadata: null,
     sections: [],
     timeLeftSeconds: 0,
     activeSectionId: null,
@@ -95,6 +130,18 @@ export const useTestEngineStore = create<TestEngineState>()(
         isInitialized: true,
         testId: def.id,
         title: def.title,
+        
+        // Extract Metadata (Now safely typed via TestDefinitionWithMetadata)
+        metadata: {
+          year: def.year || "2025",
+          day: def.day || "",
+          month: def.month || "",
+          date: def.date || "",
+          shift: def.shift || "",
+          mode: def.mode || "online",
+          exam: def.exam || "JEE_MAIN",
+        },
+
         sections: def.sections,
         timeLeftSeconds: def.durationSeconds,
         activeSectionId: firstSection?.id || null,
@@ -103,21 +150,29 @@ export const useTestEngineStore = create<TestEngineState>()(
       };
 
       set(newState);
-      // We don't saveToLocal here yet, user hasn't done anything.
     },
 
-    // --- NEW: RESTORE SESSION ---
+    // --- 2. RESTORE SESSION ---
     restoreSession: (savedData, def) => {
-      // 1. We still need the definition for structure (sections, labels, correct marks etc)
-      // but we overwrite the dynamic parts (answers, time) from savedData.
-      
+      // Reconstruct metadata safely using the typed 'def'
+      const restoredMetadata: TestMetadata = {
+         year: def.year || "2025",
+         day: def.day || "",
+         month: def.month || "",
+         date: def.date || "",
+         shift: def.shift || "",
+         mode: def.mode || "online",
+         exam: def.exam || "JEE_MAIN",
+      };
+
       set({
         isInitialized: true,
         testId: def.id,
         title: def.title,
-        sections: def.sections, // Structure comes from API
+        metadata: restoredMetadata, 
+        sections: def.sections,
         
-        // Restore Dynamic Data
+        // Restore Dynamic Data from the strictly typed savedData object
         timeLeftSeconds: savedData.timeLeftSeconds,
         activeSectionId: savedData.activeSectionId,
         activeQuestionId: savedData.activeQuestionId,
@@ -127,7 +182,7 @@ export const useTestEngineStore = create<TestEngineState>()(
       console.log("Session Restored from LocalStorage");
     },
 
-    // --- 2. NAVIGATION ---
+    // --- 3. NAVIGATION ---
     setActiveSectionId: (sectionId) => {
       const { sections } = get();
       const targetSection = sections.find((s) => s.id === sectionId);
@@ -149,9 +204,7 @@ export const useTestEngineStore = create<TestEngineState>()(
           questionsById: newQs,
         };
         
-        // Save navigation change? Optional, but good for resuming exactly where left off.
         saveToLocal({ ...state, ...nextState });
-        
         return nextState;
       });
     },
@@ -179,7 +232,7 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    // --- 3. INTERACTION (CRITICAL SAVE POINT) ---
+    // --- 4. INTERACTION ---
     selectOption: (questionId, value) => {
       const { sections } = get();
       const section = sections.find(s => s.questions.some(q => q.id === questionId));
@@ -203,14 +256,12 @@ export const useTestEngineStore = create<TestEngineState>()(
           },
         };
 
-        // INSTANT LOCAL SAVE
         saveToLocal({ ...state, ...nextState });
-
         return nextState;
       });
     },
 
-    // --- 4. BUTTON LOGIC ---
+    // --- 5. BUTTON LOGIC ---
     saveAndNext: () => {
       const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
@@ -233,7 +284,6 @@ export const useTestEngineStore = create<TestEngineState>()(
           },
         };
         
-        // Save before moving
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
@@ -277,7 +327,6 @@ export const useTestEngineStore = create<TestEngineState>()(
       if (!activeQuestionId) return;
 
       set((state) => {
-        // 1. Explicitly type the new status
         const newStatus: QuestionStatus = "notAnswered";
 
         const nextState = {
@@ -287,7 +336,7 @@ export const useTestEngineStore = create<TestEngineState>()(
               ...state.questionsById[activeQuestionId],
               selectedOptionIds: [],
               numericAnswer: null,
-              status: newStatus, // Now TS knows this is valid
+              status: newStatus,
             },
           },
         };
@@ -297,33 +346,26 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    // --- 5. SYSTEM ---
+    // --- 6. SYSTEM ---
     tickTimer: () => {
       const { timeLeftSeconds, submitTest } = get();
       if (timeLeftSeconds <= 0) {
         submitTest();
         return;
       }
-      
-      // OPTIONAL: We can save time every 10 seconds to avoid spamming disk I/O
-      // but strictly speaking, browsers handle this fine.
-      // For now, let's NOT save on every tick to keep performance high. 
-      // We rely on the "Periodic Server Sync" or user interaction to save time checkpoints.
-      
       set({ timeLeftSeconds: timeLeftSeconds - 1 });
     },
 
-    // --- 6. SERVER SYNC (Heartbeat) ---
     syncWithServer: async () => {
       const { testId, questionsById, timeLeftSeconds, activeQuestionId, activeSectionId } = get();
       if (!testId) return;
 
-      const payload = {
+      const payload: SavedSessionData = {
         testId,
         timeLeftSeconds,
         activeQuestionId,
         activeSectionId,
-        questionsById, // Sends the entire map (simplest for now)
+        questionsById,
         timestamp: Date.now(),
       };
 
@@ -340,7 +382,6 @@ export const useTestEngineStore = create<TestEngineState>()(
     },
 
     submitTest: () => {
-      // Clear local storage on submit so user can't "resume" a finished test
       const { testId } = get();
       if (testId) {
         localStorage.removeItem(`test_progress_${testId}`);
@@ -386,7 +427,6 @@ function moveToNextQuestion(
         questionsById: newQs,
       };
 
-      // Save the move
       saveToLocal({ ...state, ...nextState });
 
       return nextState;

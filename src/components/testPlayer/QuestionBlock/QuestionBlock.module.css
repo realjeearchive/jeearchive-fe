@@ -1,137 +1,145 @@
+/* --- FONT SCALING VARIABLES --- */
 .questionWrapper {
   --question-font-size: 16px;
 }
 
-/* Font size variants */
-.questionWrapper[data-font-size="small"] {
-  --question-font-size: 16px;
-}
-
-.questionWrapper[data-font-size="medium"] {
-  --question-font-size: 18px;
-}
-
-.questionWrapper[data-font-size="large"] {
-  --question-font-size: 22px;
-}
+.questionWrapper[data-font-size="small"] { --question-font-size: 16px; }
+.questionWrapper[data-font-size="medium"] { --question-font-size: 18px; }
+.questionWrapper[data-font-size="large"] { --question-font-size: 22px; }
 
 @media(max-width: 600px) {
-  .questionWrapper[data-font-size="small"] {
-    --question-font-size: 12px;
-  }
-
-  .questionWrapper[data-font-size="medium"] {
-    --question-font-size: 14px;
-  }
-
-  .questionWrapper[data-font-size="large"] {
-    --question-font-size: 16px;
-  }
+  .questionWrapper[data-font-size="small"] { --question-font-size: 12px; }
+  .questionWrapper[data-font-size="medium"] { --question-font-size: 14px; }
+  .questionWrapper[data-font-size="large"] { --question-font-size: 16px; }
 }
 
+/* --- TEXT STYLES --- */
 .questionText {
   margin: 12px 0 16px;
   font-size: var(--question-font-size);
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--test-player-text-color);
 }
 
 .optionText {
   font-size: var(--question-font-size);
+  flex: 1;
 }
 
-
+/* --- OPTION LIST LAYOUT --- */
 .optionsList {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: 75%; /* EXACT like NTA */
+  width: 75%; /* Matches NTA Interface style */
   color: var(--test-player-text-color);
-
 }
 
 .optionRow {
   display: flex;
-  align-items: center;
+  align-items: center; /* Aligns checkbox to top of content */
   gap: 10px;
   cursor: pointer;
 }
 
-.optionRow input {
-  margin-top: 3px;
-}
 
 .optionLabel {
   font-weight: bold;
   min-width: 22px;
 }
 
-.optionText {
-  flex: 1;
+.optionContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
+/* --- IMAGE HANDLING (UNIFORM SIZES) --- */
 
-
-
-/* src/components/testPlayer/QuestionBlock/QuestionBlock.module.css */
-
-.questionText {
-  font-size: var(--question-font-size);
-  line-height: 1.6;
-  color: var(--test-player-text-color);
-}
-
-/* Ensure inline images don't overflow */
 .inlineImageContainer {
   display: block;
   margin: 1rem 0;
-  text-align: center; /* Center the images */
+  width: 100%;
+  text-align: center;
 }
 
+/* 1. Main Question Images */
 .questionImage {
-  max-width: 100%;
-  height: 150px;
+  height: 180px;        /* Fixed uniform height */
+  width: 100%;          /* Full available width */
+  max-width: 600px;     /* Don't stretch too wide */
+  object-fit: contain;  /* Fits inside box without distortion */
+  background-color: rgba(0,0,0,0.02); /* Subtle frame */
+  border-radius: 4px;
 }
 
+/* 2. Option Images */
+.optImage {
+  display: block;
+  margin-top: 8px;
+  height: 120px;       /* Smaller fixed height for options */
+  width: 100%;
+  max-width: 350px;    /* Limit width for cleanliness */
+  object-fit: contain; /* Essential: keeps aspect ratio */
+  object-position: left center; /* Align image to start of text */
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 4px;
+}
+
+/* Mobile Adjustments */
 @media (max-width: 600px) {
+  .optionsList {
+    width: 100%;
+  }
   .questionImage {
-    height: auto;
+    height: 150px;
+  }
+  .optImage {
+    height: 100px;
   }
 }
 
-/* KaTeX Overrides for dark/light mode if needed */
+/* Dark Mode Support */
+:global(.dark) .questionImage,
+:global(.dark) .optImage {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+  background-color: transparent;
+}
+
+/* KaTeX Formula Scroll */
 .katex-block {
   display: block;
   margin: 1rem 0;
   text-align: center;
-  overflow-x: auto; /* Scroll if equation is too wide */
+  overflow-x: auto;
 }
 
-.optImage{
-  width: 100%;
-  height: 150px;
-}
-
-:global(.dark) .questionImage,
-:global(.dark) .optImage {
-  /* Invert colors. Good for black-on-white diagrams. */
-  filter: invert(1) hue-rotate(180deg);
-}
-
-.mainAnswerArea{
+/* --- NUMERICAL INPUT AREA --- */
+.numericalWrapper {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.numericalLabel{
+.mainAnswerArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.numericalLabel {
   font-size: var(--question-font-size);
   line-height: 1.5;
   color: var(--test-player-text-color);
 }
 
-.numericalInput{
-  padding: 2px 8px;
+.numericalInput {
+  padding: 6px 12px;
   font-size: var(--question-font-size);
-  border : 1px solid var(--test-player-border-color);
+  border: 1px solid var(--test-player-border-color);
   color: var(--test-player-text-color);
+  background: var(--test-player-bg-secondary);
+  border-radius: 4px;
+  width: 180px;
 }
