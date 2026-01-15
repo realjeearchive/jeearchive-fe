@@ -35,9 +35,16 @@ async function handleJson<T>(res: Response): Promise<T> {
 // --- API Requests ---
 
 // 1. Fetch List of Papers (for Dashboard)
-export async function fetchPapersByYear(params: { year: string; accessToken: string }) {
+export async function fetchPapersByYear(params: { 
+  year: string; 
+  accessToken: string;
+  examName?: 'JEE_MAIN' | 'JEE_ADVANCED'; // NEW PARAMETER
+}) {
+  // Default to JEE_MAIN if not provided
+  const exam = params.examName || 'JEE_MAIN';
+
   const res = await fetch(
-    `${API_BASE_URL}/paper/get?year=${params.year}&examName=JEE_MAIN`, 
+    `${API_BASE_URL}/paper/get?year=${params.year}&examName=${exam}`, 
     {
       method: 'GET',
       headers: {

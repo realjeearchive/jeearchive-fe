@@ -69,8 +69,6 @@
   width: 100%;          /* Full available width */
   max-width: 600px;     /* Don't stretch too wide */
   object-fit: contain;  /* Fits inside box without distortion */
-  background-color: rgba(0,0,0,0.02); /* Subtle frame */
-  border-radius: 4px;
 }
 
 /* 2. Option Images */
@@ -82,8 +80,6 @@
   max-width: 350px;    /* Limit width for cleanliness */
   object-fit: contain; /* Essential: keeps aspect ratio */
   object-position: left center; /* Align image to start of text */
-  background-color: rgba(0,0,0,0.02);
-  border-radius: 4px;
 }
 
 /* Mobile Adjustments */

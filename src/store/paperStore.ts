@@ -11,8 +11,9 @@ interface PaperState {
   error: string | null;
 
   // Actions
-  getPapers: (year: string) => Promise<void>;
-  resetPapers: () => void; // Useful for cleanup when unmounting
+  // UPDATED: Accepts optional examType
+  getPapers: (year: string, examType?: 'JEE_MAIN' | 'JEE_ADVANCED') => Promise<void>;
+  resetPapers: () => void; 
 }
 
 export const usePaperStore = create<PaperState>()(
@@ -22,7 +23,8 @@ export const usePaperStore = create<PaperState>()(
       isLoading: false,
       error: null,
 
-      getPapers: async (year) => {
+      // UPDATED Implementation
+      getPapers: async (year, examType = 'JEE_MAIN') => {
         set({ isLoading: true, error: null });
 
         try {
@@ -36,7 +38,12 @@ export const usePaperStore = create<PaperState>()(
             return;
           }
 
-          const response = await fetchPapersByYear({ year, accessToken });
+          // Pass the examType to the API
+          const response = await fetchPapersByYear({ 
+            year, 
+            accessToken, 
+            examName: examType 
+          });
 
           if (response.success) {
             set({ papers: response.data, isLoading: false });
@@ -44,7 +51,6 @@ export const usePaperStore = create<PaperState>()(
             set({ error: response.message, isLoading: false });
           }
         } catch (err) {
-          // FIX: Use type narrowing instead of 'any'
           let errorMessage = 'Failed to connect to server';
 
           if (err instanceof Error) {
@@ -62,7 +68,7 @@ export const usePaperStore = create<PaperState>()(
       },
     }),
     {
-      name: 'paper-store', // Name for DevTools
+      name: 'paper-store',
     }
   )
 );
