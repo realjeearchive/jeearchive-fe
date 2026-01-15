@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation'; // Import Router
+import { useRouter } from 'next/navigation';
 import Styles from "../jeeMains.module.css";
 import { usePaperStore } from "@/store/paperStore";
 import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
-import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup'
+import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup';
+// 1. Import the Loader
+import { Loader } from "@/components/ui/loader";
 
 interface YearPageProps {
   params: Promise<{ year: string }>;
@@ -13,40 +15,31 @@ interface YearPageProps {
 
 export default function JeeMainsYearPage(props: YearPageProps) {
   const { year } = use(props.params);
-  const router = useRouter(); // Initialize Router
+  const router = useRouter(); 
   
-  // Store
   const { papers, isLoading, error, getPapers } = usePaperStore();
 
-  // Local State for Popup
   const [selectedTest, setSelectedTest] = useState<TestListItem | null>(null);
   const [isResume, setIsResume] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
-  // Fetch papers
   useEffect(() => {
     if (year) {
       getPapers(year);
     }
   }, [year, getPapers]);
 
-  // Transform Data
   const formattedItems = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Main ${paper.year} ${paper.date} ${paper.month} ${paper.shift}`,
     meta: `Full Test • ${paper.totalMarks} Marks`,
-    // We still keep the href for SEO, but we intercept it on click
     href: `/previous-year-questions/jee-mains/${year}/tests/${paper.id}` 
   }));
 
   // --- HANDLERS ---
-
-  // 1. When user clicks a test in the list
   const handleTestClick = (item: TestListItem) => {
-    // Check Local Storage for existing progress
     const savedProgress = localStorage.getItem(`test_progress_${item.id}`);
     
-    // Determine if it's a Resume or Start
     if (savedProgress) {
       setIsResume(true);
     } else {
@@ -57,28 +50,37 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     setShowPopup(true);
   };
 
-  // 2. When user confirms in the popup
   const handleConfirmStart = () => {
     if (selectedTest) {
       setShowPopup(false);
-      // Navigate to the test page
       router.push(selectedTest.href);
     }
   };
 
-  // 3. Close popup
   const handleClosePopup = () => {
     setShowPopup(false);
     setSelectedTest(null);
   };
 
-
   // --- RENDERING STATES ---
 
+  // 2. Updated Loading State with Reusable Loader
   if (isLoading) {
     return (
       <div className={Styles.jeeMainsPage}>
-        <div className={Styles.loadingContainer}><p>Loading papers...</p></div>
+        {/* We use inline flex styles here to guarantee centering without editing CSS modules */}
+        <div 
+          className={Styles.loadingContainer} 
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '60vh', 
+            width: '100%' 
+          }}
+        >
+           <Loader label="Loading papers..." size="h-6 w-6" />
+        </div>
       </div>
     );
   }
@@ -104,14 +106,12 @@ export default function JeeMainsYearPage(props: YearPageProps) {
 
   return (
     <div className={Styles.jeeMainsPage}>
-      {/* The List */}
       <TestListSection2 
         heading={`JEE Main ${year}`} 
         items={formattedItems} 
-        onItemClick={handleTestClick} // Pass the interceptor
+        onItemClick={handleTestClick} 
       />
 
-      {/* The Popup Bridge */}
       <StartTestPopup 
         isOpen={showPopup}
         testTitle={selectedTest?.title || "Test"}

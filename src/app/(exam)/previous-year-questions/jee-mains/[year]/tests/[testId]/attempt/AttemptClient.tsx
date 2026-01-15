@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { TestPlayerLayout } from "@/components/testPlayer/TestPlayerLayout/TestPlayerLayout";
 import { fetchTestContent } from "@/features/tests/api";
+import { Loader } from "@/components/ui/loader"; // 1. Import Loader
 
 interface AttemptClientProps {
   year: string;
@@ -27,7 +28,6 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
           setError("Failed to load test definition.");
         }
       } catch (err) {
-        // FIX: Properly handle 'unknown' error type
         console.error(err);
         let msg = "Something went wrong loading the test.";
         
@@ -48,10 +48,11 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
     }
   }, [testId, initFromDefinition]);
 
+  // 2. Updated Loading State with Reusable Loader
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-zinc-900 text-white">
-        <p>Decrypting Test Data...</p>
+        <Loader label="Loading your test..." size="h-6 w-6" />
       </div>
     );
   }

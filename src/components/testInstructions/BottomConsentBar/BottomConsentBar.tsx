@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"; 
 import styles from "./BottomConsentBar.module.css";
 
 interface Props {
@@ -10,16 +12,28 @@ interface Props {
 
 export function BottomConsentBar({ attemptHref, note }: Props) {
   const router = useRouter();
+  
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleBegin = async () => {
-    // Request fullscreen (CBT style)
-    const el = document.documentElement;
-
-    if (el.requestFullscreen) {
-      await el.requestFullscreen();
+    // 1. VALIDATION
+    if (!isChecked) {
+      // Simpler message for students
+      toast.error("Please read and agree to the instructions.");
+      return; 
     }
 
-    // Navigate AFTER fullscreen
+    // 2. Request fullscreen
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      try {
+        await el.requestFullscreen();
+      } catch (err) {
+        console.error("Fullscreen request failed", err);
+      }
+    }
+
+    // 3. Navigate
     router.push(attemptHref);
   };
 
@@ -32,7 +46,8 @@ export function BottomConsentBar({ attemptHref, note }: Props) {
           <label className={styles.checkboxRow}>
             <input
               type="checkbox"
-              defaultChecked
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
               className={styles.checkbox}
             />
             <span className={styles.checkboxText}>
@@ -54,6 +69,10 @@ export function BottomConsentBar({ attemptHref, note }: Props) {
             type="button"
             className={styles.readyButton}
             onClick={handleBegin}
+            style={{ 
+              opacity: isChecked ? 1 : 0.7, 
+              cursor: 'pointer' 
+            }}
           >
             I am ready to begin
           </button>
