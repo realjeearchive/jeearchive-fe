@@ -1,80 +1,124 @@
-// src/app/(dashboard)/previous-year-questions/jee-mains/[year]/page.tsx
 'use client';
 
-import { useEffect, use } from 'react';
-import TestListSection from "@/components/dashboard/TestListSection/TestListSection";
+import { useEffect, useState, use } from 'react';
+import { useRouter } from 'next/navigation'; // Import Router
 import Styles from "../jeeMains.module.css";
 import { usePaperStore } from "@/store/paperStore";
+import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
+import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup'
 
 interface YearPageProps {
   params: Promise<{ year: string }>;
 }
 
 export default function JeeMainsYearPage(props: YearPageProps) {
-  // 1. Unwrap params using React.use()
   const { year } = use(props.params);
-
-  // 2. Connect to the Zustand Store
+  const router = useRouter(); // Initialize Router
+  
+  // Store
   const { papers, isLoading, error, getPapers } = usePaperStore();
 
-  // 3. Fetch papers
+  // Local State for Popup
+  const [selectedTest, setSelectedTest] = useState<TestListItem | null>(null);
+  const [isResume, setIsResume] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+  // Fetch papers
   useEffect(() => {
     if (year) {
       getPapers(year);
     }
   }, [year, getPapers]);
 
-  // 4. Transform API data for TestListSection
-  // Updated to include 'meta' and 'href' properly
+  // Transform Data
   const formattedItems = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Main ${paper.year} ${paper.date} ${paper.month} ${paper.shift}`,
-    // Meta: Display helpful info like "Full Test • 300 Marks"
     meta: `Full Test • ${paper.totalMarks} Marks`,
-    // Href: Points to the specific test overview page
+    // We still keep the href for SEO, but we intercept it on click
     href: `/previous-year-questions/jee-mains/${year}/tests/${paper.id}` 
   }));
 
-  // 5. Loading State
+  // --- HANDLERS ---
+
+  // 1. When user clicks a test in the list
+  const handleTestClick = (item: TestListItem) => {
+    // Check Local Storage for existing progress
+    const savedProgress = localStorage.getItem(`test_progress_${item.id}`);
+    
+    // Determine if it's a Resume or Start
+    if (savedProgress) {
+      setIsResume(true);
+    } else {
+      setIsResume(false);
+    }
+
+    setSelectedTest(item);
+    setShowPopup(true);
+  };
+
+  // 2. When user confirms in the popup
+  const handleConfirmStart = () => {
+    if (selectedTest) {
+      setShowPopup(false);
+      // Navigate to the test page
+      router.push(selectedTest.href);
+    }
+  };
+
+  // 3. Close popup
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedTest(null);
+  };
+
+
+  // --- RENDERING STATES ---
+
   if (isLoading) {
     return (
       <div className={Styles.jeeMainsPage}>
-        <div className={Styles.loadingContainer}>
-           <p>Loading papers...</p>
-        </div>
+        <div className={Styles.loadingContainer}><p>Loading papers...</p></div>
       </div>
     );
   }
 
-  // 6. Error State
   if (error) {
     return (
       <div className={Styles.jeeMainsPage}>
         <div className={Styles.errorContainer}>
           <p>Error: {error}</p>
-          <button onClick={() => getPapers(year)} className={Styles.retryBtn}>
-            Retry
-          </button>
+          <button onClick={() => getPapers(year)} className={Styles.retryBtn}>Retry</button>
         </div>
       </div>
     );
   }
 
-  // 7. Empty State
   if (!formattedItems || formattedItems.length === 0) {
     return (
       <div className={Styles.jeeMainsPage}>
-        <p className={Styles.emptyMessage}>
-          Papers for JEE Main {year} are not available yet.
-        </p>
+        <p className={Styles.emptyMessage}>Papers for JEE Main {year} are not available yet.</p>
       </div>
     );
   }
 
-  // 8. Success State
   return (
     <div className={Styles.jeeMainsPage}>
-      <TestListSection heading={`JEE Main ${year}`} items={formattedItems} />
+      {/* The List */}
+      <TestListSection2 
+        heading={`JEE Main ${year}`} 
+        items={formattedItems} 
+        onItemClick={handleTestClick} // Pass the interceptor
+      />
+
+      {/* The Popup Bridge */}
+      <StartTestPopup 
+        isOpen={showPopup}
+        testTitle={selectedTest?.title || "Test"}
+        isResume={isResume}
+        onClose={handleClosePopup}
+        onConfirm={handleConfirmStart}
+      />
     </div>
   );
 }
