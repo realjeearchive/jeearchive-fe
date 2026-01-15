@@ -114,3 +114,10 @@
 .confirmBtn:hover {
   opacity: 0.9;
 }
+
+@media (max-width: 480px) {
+  .confirmBtn, .cancelBtn {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
