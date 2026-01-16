@@ -154,10 +154,11 @@
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    background: black;
+    background: rgba(0, 0, 0, 0.55);
     color: white;
     padding: 10px;
     border-radius: 6px 0 0 6px;
+    border: 1px solid rgba(0, 0, 0, 0.205);
     z-index: 1300;
     cursor: pointer;
     display: flex;
@@ -169,12 +170,13 @@
 
   .closeArrow {
     position: absolute;
-    left: -20px;
+    left: -19px;
     top: 50%;
     transform: translateY(-50%);
     width: 36px;
     height: 36px;
-    background: black;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 0, 0, 0.205);
     color: white;
     border-radius: 6px 0 0 6px;
     cursor: pointer;
@@ -183,6 +185,7 @@
     align-items: center;
     width: 20px;
     height: 60px;
+    z-index: 99;
 
   }
 }

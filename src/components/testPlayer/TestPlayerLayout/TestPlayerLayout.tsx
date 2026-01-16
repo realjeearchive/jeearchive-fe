@@ -219,8 +219,11 @@ export function TestPlayerLayout({ year }: Props) {
         </div>
 
         {/* RIGHT COLUMN */}
+        {/* RIGHT COLUMN */}
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
-          {isMobile && (
+          
+          {/* LOGIC: Show Close Arrow ONLY if Mobile AND Sidebar is Open */}
+          {isMobile && isSidebarOpen && (
             <button 
               className={styles.closeArrow} 
               onClick={() => setIsSidebarOpen(false)} 
@@ -229,15 +232,21 @@ export function TestPlayerLayout({ year }: Props) {
             </button>
           )}
           
-          {/* Wrapper for scrolling */}
           <div className={styles.sidebarContent}>
             <Sidebar />
           </div>
         </aside>
       </div>
 
+      {/* Mobile Toggle */}
+      {/* LOGIC: Show Open Arrow ONLY if Mobile AND Sidebar is Closed (!isSidebarOpen) */}
       {isMobile && !isSidebarOpen && (
-        <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)}>‹</button>
+        <button 
+          className={styles.openArrow} 
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          ‹
+        </button>
       )}
 
       <footer className={styles.bottomBar}>
