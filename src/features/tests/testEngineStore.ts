@@ -5,7 +5,7 @@ import { QuestionState, QuestionStatus } from "./playertypes";
 
 // --- TYPES ---
 
-// 1. Metadata Interface (Matches backend response)
+// 1. Metadata Interface
 export interface TestMetadata {
   year: number | string;
   day: string;
@@ -16,43 +16,43 @@ export interface TestMetadata {
   exam: string;
 }
 
-// 2. Saved Session Interface (The shape of data in localStorage)
+// 2. Saved Session Interface
 export interface SavedSessionData {
   testId: string;
   questionsById: Record<string, QuestionState>;
+  
+  // NEW: Save section times
+  sectionTimeSpent: Record<string, number>; 
+  
   timeLeftSeconds: number;
   activeQuestionId: string | null;
   activeSectionId: string | null;
   timestamp: number;
 }
 
-// 3. Combined Definition Type (Structure + Metadata)
+// 3. Combined Definition Type
 export type TestDefinitionWithMetadata = TestDefinition & Partial<TestMetadata>;
-
 
 interface TestEngineState {
   // --- STATE ---
   isInitialized: boolean;
   testId: string | null;
   title: string;
-  
-  // Metadata for TitleBar
   metadata: TestMetadata | null;
-  
   sections: TestSection[];
+  
   timeLeftSeconds: number;
+  
+  // NEW: Track time spent per section (SectionID -> Seconds)
+  sectionTimeSpent: Record<string, number>;
+
   activeSectionId: string | null;
   activeQuestionId: string | null;
   questionsById: Record<string, QuestionState>;
 
   // --- ACTIONS ---
-  
-  // Updated: Accepts definition merged with optional metadata
   initFromDefinition: (def: TestDefinitionWithMetadata) => void;
-  
-  // Updated: Strongly typed arguments
   restoreSession: (savedData: SavedSessionData, def: TestDefinitionWithMetadata) => void; 
-  
   syncWithServer: () => Promise<void>;
   
   setActiveSectionId: (sectionId: string) => void;
@@ -74,6 +74,7 @@ const saveToLocal = (state: TestEngineState) => {
   const payload: SavedSessionData = {
     testId: state.testId,
     questionsById: state.questionsById,
+    sectionTimeSpent: state.sectionTimeSpent, // Save section times
     timeLeftSeconds: state.timeLeftSeconds,
     activeQuestionId: state.activeQuestionId,
     activeSectionId: state.activeSectionId,
@@ -97,6 +98,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     metadata: null,
     sections: [],
     timeLeftSeconds: 0,
+    sectionTimeSpent: {}, // Init empty
     activeSectionId: null,
     activeQuestionId: null,
     questionsById: {},
@@ -104,8 +106,12 @@ export const useTestEngineStore = create<TestEngineState>()(
     // --- 1. SETUP ---
     initFromDefinition: (def) => {
       const initialQuestionsState: Record<string, QuestionState> = {};
+      const initialSectionTimes: Record<string, number> = {};
       
       def.sections.forEach((sec) => {
+        // Initialize Section Timer
+        initialSectionTimes[sec.id] = 0;
+
         sec.questions.forEach((q) => {
           initialQuestionsState[q.id] = {
             questionId: q.id,
@@ -114,7 +120,10 @@ export const useTestEngineStore = create<TestEngineState>()(
             selectedOptionIds: [],
             numericAnswer: null,
             isVisited: false,
-          };
+            // Initialize Question Timer
+            // Note: Ensure your QuestionState interface has this field
+            timeSpentSeconds: 0, 
+          } as QuestionState; 
         });
       });
 
@@ -130,8 +139,6 @@ export const useTestEngineStore = create<TestEngineState>()(
         isInitialized: true,
         testId: def.id,
         title: def.title,
-        
-        // Extract Metadata (Now safely typed via TestDefinitionWithMetadata)
         metadata: {
           year: def.year || "2025",
           day: def.day || "",
@@ -141,9 +148,9 @@ export const useTestEngineStore = create<TestEngineState>()(
           mode: def.mode || "online",
           exam: def.exam || "JEE_MAIN",
         },
-
         sections: def.sections,
         timeLeftSeconds: def.durationSeconds,
+        sectionTimeSpent: initialSectionTimes,
         activeSectionId: firstSection?.id || null,
         activeQuestionId: firstQuestion?.id || null,
         questionsById: initialQuestionsState,
@@ -154,7 +161,6 @@ export const useTestEngineStore = create<TestEngineState>()(
 
     // --- 2. RESTORE SESSION ---
     restoreSession: (savedData, def) => {
-      // Reconstruct metadata safely using the typed 'def'
       const restoredMetadata: TestMetadata = {
          year: def.year || "2025",
          day: def.day || "",
@@ -172,8 +178,9 @@ export const useTestEngineStore = create<TestEngineState>()(
         metadata: restoredMetadata, 
         sections: def.sections,
         
-        // Restore Dynamic Data from the strictly typed savedData object
+        // Restore Dynamic Data
         timeLeftSeconds: savedData.timeLeftSeconds,
+        sectionTimeSpent: savedData.sectionTimeSpent || {}, // Restore section times
         activeSectionId: savedData.activeSectionId,
         activeQuestionId: savedData.activeQuestionId,
         questionsById: savedData.questionsById,
@@ -346,18 +353,45 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    // --- 6. SYSTEM ---
+    // --- 6. SYSTEM (UPDATED TIMER) ---
     tickTimer: () => {
-      const { timeLeftSeconds, submitTest } = get();
+      const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById } = get();
+      
       if (timeLeftSeconds <= 0) {
         submitTest();
         return;
       }
-      set({ timeLeftSeconds: timeLeftSeconds - 1 });
+
+      // 1. Decrement Global Time
+      const newTimeLeft = timeLeftSeconds - 1;
+
+      // 2. Increment Section Time (if active)
+      const newSectionTimes = { ...sectionTimeSpent };
+      if (activeSectionId) {
+        newSectionTimes[activeSectionId] = (newSectionTimes[activeSectionId] || 0) + 1;
+      }
+
+      // 3. Increment Question Time (if active)
+      const newQuestionsById = { ...questionsById };
+      if (activeQuestionId && newQuestionsById[activeQuestionId]) {
+        // Safe check for 'timeSpentSeconds' property existence
+        const currentSpent = newQuestionsById[activeQuestionId].timeSpentSeconds || 0;
+        
+        newQuestionsById[activeQuestionId] = {
+          ...newQuestionsById[activeQuestionId],
+          timeSpentSeconds: currentSpent + 1
+        };
+      }
+
+      set({ 
+        timeLeftSeconds: newTimeLeft,
+        sectionTimeSpent: newSectionTimes,
+        questionsById: newQuestionsById
+      });
     },
 
     syncWithServer: async () => {
-      const { testId, questionsById, timeLeftSeconds, activeQuestionId, activeSectionId } = get();
+      const { testId, questionsById, sectionTimeSpent, timeLeftSeconds, activeQuestionId, activeSectionId } = get();
       if (!testId) return;
 
       const payload: SavedSessionData = {
@@ -366,6 +400,7 @@ export const useTestEngineStore = create<TestEngineState>()(
         activeQuestionId,
         activeSectionId,
         questionsById,
+        sectionTimeSpent, // Included in sync
         timestamp: Date.now(),
       };
 
@@ -388,7 +423,7 @@ export const useTestEngineStore = create<TestEngineState>()(
       }
       
       console.log("Test Submitted!");
-      alert("Test Submitted Successfully!");
+      // You can add navigation logic here or trigger a modal
     },
   }),
   { name: "TestEngineStore" }

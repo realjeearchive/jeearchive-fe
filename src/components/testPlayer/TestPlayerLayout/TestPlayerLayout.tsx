@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useTestEngineStore } from "@/features/tests/testEngineStore";
-import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
+import { 
+  useTestEngineStore, 
+  TestDefinitionWithMetadata  // <--- Import this
+} from "@/features/tests/testEngineStore";import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
 
 // Components
@@ -20,7 +22,7 @@ import CursorTrail from "../CursorTrail/CursorTrail";
 import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
-import { TestDefinition } from "@/features/tests/types";
+// import { TestDefinition } from "@/features/tests/types"; // You might need to update this import based on your new types file location if it changed
 
 interface Props {
   year: string;
@@ -30,7 +32,7 @@ export function TestPlayerLayout({ year }: Props) {
   // 1. Connect to Store
   const {
     testId,
-    title, // Needed to reconstruct definition for restore
+    title,
     sections,
     activeSectionId,
     activeQuestionId,
@@ -41,8 +43,9 @@ export function TestPlayerLayout({ year }: Props) {
     clearResponse,
     markForReview,
     submitTest,
-    restoreSession, // The new action
-    syncWithServer, // The new action
+    restoreSession,
+    syncWithServer,
+    tickTimer, // <--- NEW: Import the timer action
   } = useTestEngineStore((s) => s);
 
   const { theme, setTheme } = useTestPlayerTheme();
@@ -51,14 +54,12 @@ export function TestPlayerLayout({ year }: Props) {
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Track if we have already restored to prevent loops
   const hasRestored = useRef(false);
 
   // 2. RESUME & HEARTBEAT LOGIC
   useEffect(() => {
     if (!testId) return;
 
-    // A. RESTORE SESSION (Local Storage check)
     // A. RESTORE SESSION (Local Storage check)
     if (!hasRestored.current) {
       const savedDataString = localStorage.getItem(`test_progress_${testId}`);
@@ -70,17 +71,19 @@ export function TestPlayerLayout({ year }: Props) {
           if (savedData.testId === testId) {
             console.log("Found saved session, restoring...");
             
-            // FIX: Construct object matching the Interface strictly
-            const currentDef: TestDefinition = {
-              id: testId,
+            // Construct the definition object typed strictly
+            const currentDef: TestDefinitionWithMetadata = {
+              id: testId!, // We know it's not null here because it matched savedData.testId
               title: title,
               sections: sections, 
-              durationSeconds: savedData.timeLeftSeconds, // Restore saved time
-              // If TestDefinition has other mandatory fields (like 'instructions'), add dummies or existing values here:
-              // instructions: "", 
+              durationSeconds: savedData.timeLeftSeconds,
+              // Optional metadata fields
+              year: year,
+              mode: "online", 
+              exam: "JEE_MAIN" // or pass dynamically if available
             };
 
-            // Remove 'as any', pass the typed object
+            // No 'as any' needed anymore
             restoreSession(savedData, currentDef);
             
             hasRestored.current = true;
@@ -94,11 +97,23 @@ export function TestPlayerLayout({ year }: Props) {
     // B. HEARTBEAT (Server Sync every 60s)
     const intervalId = setInterval(() => {
       syncWithServer();
-    }, 60000); // 1 minute
+    }, 60000); 
 
     return () => clearInterval(intervalId);
-  }, [testId, title, sections, restoreSession, syncWithServer]);
+  }, [testId, title, sections, restoreSession, syncWithServer, year]);
 
+  // --- NEW: TIMER EFFECT ---
+  // This drives the clock and the time tracking metrics
+  useEffect(() => {
+    if (!testId) return;
+
+    const timerId = setInterval(() => {
+      tickTimer();
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [testId, tickTimer]);
+  // ------------------------
 
   // 3. Responsive Logic
   useEffect(() => {
@@ -145,13 +160,12 @@ export function TestPlayerLayout({ year }: Props) {
   const activeQuestionDef = activeSection.questions.find((q) => q.id === activeQuestionId)!;
   const activeQuestionState = questionsById[activeQuestionId];
 
-  // Helper for Template Question
   const templateQuestion = activeSection.questions[0]; 
   const currentSectionType = templateQuestion?.kind || "single";
   const posMark = templateQuestion?.correctMarks || 4;
   const negMark = templateQuestion?.negativeMarks || 1;
 
-  // 8. Button Handlers
+  // 8. Handlers
   const handleSaveAndNext = () => saveAndNext();
   const handleClearResponse = () => clearResponse();
   const handleMarkForReview = () => markForReview();
@@ -166,7 +180,6 @@ export function TestPlayerLayout({ year }: Props) {
       <TopStrip testTitle={title} />
 
       <div className={styles.mainGrid}>
-        {/* LEFT COLUMN */}
         <div className={styles.left}>
           <TitleBar />
           <TimeBar />
@@ -206,25 +219,22 @@ export function TestPlayerLayout({ year }: Props) {
             <button 
               className={styles.closeArrow} 
               onClick={() => setIsSidebarOpen(false)} 
-              // Removed opacity style here, we will handle it in CSS for cleaner transitions
             >
               ›
             </button>
           )}
           
-          {/* NEW WRAPPER: Handles scrolling so the arrow isn't clipped */}
+          {/* Wrapper for scrolling */}
           <div className={styles.sidebarContent}>
             <Sidebar />
           </div>
         </aside>
       </div>
 
-      {/* Mobile Toggle */}
       {isMobile && !isSidebarOpen && (
         <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)}>‹</button>
       )}
 
-      {/* FOOTER */}
       <footer className={styles.bottomBar}>
         <div className={styles.bottomBarLeft}>
           <StatusButton label="Mark for Review & Next" variant="outline" onClick={handleMarkForReview} />

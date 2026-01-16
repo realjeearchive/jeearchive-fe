@@ -17,6 +17,9 @@ export interface QuestionState {
   selectedOptionIds: string[]; // Array of IDs (e.g. ["A"])
   numericAnswer: string | null; // For numerical questions
   isVisited: boolean;
+  
+  // NEW: Metric to track time spent on this specific question
+  timeSpentSeconds: number; 
 }
 
 // Summary stats for the sidebar
