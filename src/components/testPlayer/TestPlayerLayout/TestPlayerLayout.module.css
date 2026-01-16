@@ -93,7 +93,7 @@
   flex: 1;
   overflow-y: auto;   /* This enables the scrollbar here */
   scroll-behavior: smooth;
-  padding-bottom: 80px; /* Space for the bottom bar */
+  padding-bottom: 120px; /* Space for the bottom bar */
   
   scrollbar-width: none; /* Hide scrollbar Firefox */
 }
@@ -187,6 +187,10 @@
     height: 60px;
     z-index: 99;
 
+  }
+
+  .QuestionScrollArea main{
+    padding-bottom: 140px; 
   }
 }
 
