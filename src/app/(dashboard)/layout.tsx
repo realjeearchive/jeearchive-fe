@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import Sidebar from "@/components/layout/Sidebar/Sidebar";
 import styles from "./layout.module.css";
@@ -11,11 +11,27 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  // Default to true (desktop-first approach)
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
   const initialized = useAuthStore((s) => s.initialized);
   const accessToken = useAuthStore((s) => s.accessToken);
   const authed = !!accessToken;
+
+  // --- NEW CODE START ---
+  // This effect runs once when the component mounts on the client
+  useEffect(() => {
+    const handleInitialResize = () => {
+      if (window.innerWidth <= 900) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    handleInitialResize();
+  }, []); // Empty dependency array ensures this runs only once on mount
+  // --- NEW CODE END ---
 
   if (!initialized) {
     return (
@@ -40,6 +56,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className={styles.appWrap}>
+      {/* Note: Using 'window' in JSX condition can cause hydration mismatch warnings. 
+         It is safer to rely on CSS media queries or the isSidebarOpen state alone, 
+         but we will keep your existing logic for now.
+      */}
       {isSidebarOpen && typeof window !== "undefined" && window.innerWidth <= 900 && (
         <div
           className={styles.mobileOverlay}
