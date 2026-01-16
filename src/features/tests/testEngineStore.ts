@@ -411,6 +411,7 @@ export const useTestEngineStore = create<TestEngineState>()(
           body: JSON.stringify(payload),
         });
         console.log("Auto-saved to server");
+        console.log("savedData: ", payload);
       } catch (err) {
         console.warn("Server sync failed (offline?), data remains safe in LocalStorage");
       }
