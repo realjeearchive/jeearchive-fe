@@ -1,9 +1,9 @@
-// src/app/(dashboard)/previous-year-questions/jee-mains/[year]/tests/[testId]/page.tsx
 'use client';
 
 import { use, useEffect, useMemo } from 'react';
 import { usePaperStore } from "@/store/paperStore";
 import { TestOverviewPageClient } from "./testOverviewPageClient";
+import { Loader } from "@/components/ui/loader"; // 1. Import Loader
 
 interface TestOverviewPageProps {
   params: Promise<{ year: string; testId: string }>;
@@ -16,26 +16,23 @@ export default function TestOverviewPage(props: TestOverviewPageProps) {
   // 2. Connect to Store
   const { papers, getPapers, isLoading } = usePaperStore();
 
-  // 3. DERIVED STATE (Fix: No useState, no useEffect for selection)
-  // We calculate this immediately. If 'papers' updates, this updates.
+  // 3. DERIVED STATE
   const selectedPaper = useMemo(() => {
     return papers.find((p) => p.id === testId);
   }, [papers, testId]);
 
-  // 4. Data Fetching Effect (Only runs if data is MISSING)
+  // 4. Data Fetching Effect
   useEffect(() => {
-    // Only fetch if we have no papers and we aren't already loading
     if (papers.length === 0 && !isLoading) {
        getPapers(year);
     }
   }, [papers.length, year, getPapers, isLoading]);
 
   // 5. Loading State
-  // We show loading if the global loader is true OR if we have no paper yet
   if (isLoading || (!selectedPaper && papers.length === 0)) {
     return (
-      <div style={{ padding: '2rem', color: '#888' }}>
-        Loading Test Details...
+      <div className="flex h-[60vh] w-full items-center justify-center">
+        <Loader label="6tails..." size="h-6 w-6" />
       </div>
     );
   }

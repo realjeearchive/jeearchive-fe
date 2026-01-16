@@ -203,9 +203,19 @@ export function TestPlayerLayout({ year }: Props) {
         {/* RIGHT COLUMN */}
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && (
-            <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)} style={{opacity: isSidebarOpen ? 1 : 0}}>›</button>
+            <button 
+              className={styles.closeArrow} 
+              onClick={() => setIsSidebarOpen(false)} 
+              // Removed opacity style here, we will handle it in CSS for cleaner transitions
+            >
+              ›
+            </button>
           )}
-          <Sidebar />
+          
+          {/* NEW WRAPPER: Handles scrolling so the arrow isn't clipped */}
+          <div className={styles.sidebarContent}>
+            <Sidebar />
+          </div>
         </aside>
       </div>
 
