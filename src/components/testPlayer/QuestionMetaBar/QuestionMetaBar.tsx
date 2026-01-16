@@ -1,29 +1,27 @@
 "use client";
 
 import styles from "./QuestionMetaBar.module.css";
-import { FaArrowDownLong } from "react-icons/fa6";
+import { FaArrowDownLong, FaBookmark, FaRegBookmark } from "react-icons/fa6";
 
 interface QuestionMetaBarProps {
   questionNumber: number;
-  questionId: string;
+  isBookmarked: boolean;       // Changed from questionId
+  onToggleBookmark: () => void; // New handler
 }
 
 export function QuestionMetaBar({
   questionNumber,
-  questionId,
+  isBookmarked,
+  onToggleBookmark,
 }: QuestionMetaBarProps) {
   
   const handleScrollDown = () => {
-    // FIX: Target the specific scrollable container by ID
     const scrollContainer = document.getElementById('question-content-area');
-    
     if (scrollContainer) {
        scrollContainer.scrollTo({ 
          top: scrollContainer.scrollHeight, 
          behavior: 'smooth' 
        });
-    } else {
-      console.warn("Scroll container 'question-content-area' not found.");
     }
   };
 
@@ -33,9 +31,16 @@ export function QuestionMetaBar({
         <span className={styles.questionNo}>
           Question No. {questionNumber}
         </span>
-        <span className={styles.questionId}>
-          ID: {questionId.slice(0, 8)}...
-        </span>
+        
+        {/* NEW: Bookmark Button instead of ID */}
+        <button 
+          className={`${styles.bookmarkBtn} ${isBookmarked ? styles.active : ''}`}
+          onClick={onToggleBookmark}
+          title={isBookmarked ? "Remove Bookmark" : "Bookmark this question"}
+        >
+          {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
+          <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
+        </button>
       </div>
 
       <button

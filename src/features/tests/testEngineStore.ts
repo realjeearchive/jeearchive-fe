@@ -21,7 +21,7 @@ export interface SavedSessionData {
   testId: string;
   questionsById: Record<string, QuestionState>;
   
-  // NEW: Save section times
+  // Save section times
   sectionTimeSpent: Record<string, number>; 
   
   timeLeftSeconds: number;
@@ -43,7 +43,7 @@ interface TestEngineState {
   
   timeLeftSeconds: number;
   
-  // NEW: Track time spent per section (SectionID -> Seconds)
+  // Track time spent per section (SectionID -> Seconds)
   sectionTimeSpent: Record<string, number>;
 
   activeSectionId: string | null;
@@ -58,6 +58,9 @@ interface TestEngineState {
   setActiveSectionId: (sectionId: string) => void;
   jumpToQuestion: (questionId: string) => void;
   selectOption: (questionId: string, value: string) => void;
+  
+  // NEW: Action to toggle bookmark status
+  toggleBookmark: (questionId: string) => void;
   
   saveAndNext: () => void;
   markForReview: () => void;
@@ -74,7 +77,7 @@ const saveToLocal = (state: TestEngineState) => {
   const payload: SavedSessionData = {
     testId: state.testId,
     questionsById: state.questionsById,
-    sectionTimeSpent: state.sectionTimeSpent, // Save section times
+    sectionTimeSpent: state.sectionTimeSpent,
     timeLeftSeconds: state.timeLeftSeconds,
     activeQuestionId: state.activeQuestionId,
     activeSectionId: state.activeSectionId,
@@ -120,9 +123,10 @@ export const useTestEngineStore = create<TestEngineState>()(
             selectedOptionIds: [],
             numericAnswer: null,
             isVisited: false,
-            // Initialize Question Timer
-            // Note: Ensure your QuestionState interface has this field
             timeSpentSeconds: 0, 
+            
+            // NEW: Initialize Bookmark State
+            isBookmarked: false,
           } as QuestionState; 
         });
       });
@@ -160,6 +164,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     },
 
     // --- 2. RESTORE SESSION ---
+    // --- 2. RESTORE SESSION ---
     restoreSession: (savedData, def) => {
       const restoredMetadata: TestMetadata = {
          year: def.year || "2025",
@@ -171,6 +176,25 @@ export const useTestEngineStore = create<TestEngineState>()(
          exam: def.exam || "JEE_MAIN",
       };
 
+      // --- DATA HEALING: Fix stale data from LocalStorage ---
+      // We loop through the saved questions and force-add missing fields 
+      // like 'isBookmarked' if they don't exist in the old save.
+      const healedQuestionsById = { ...savedData.questionsById };
+      
+      Object.keys(healedQuestionsById).forEach((key) => {
+        const q = healedQuestionsById[key];
+        
+        // 1. Fix missing Bookmark
+        if (typeof q.isBookmarked === 'undefined') {
+          q.isBookmarked = false;
+        }
+        
+        // 2. Fix missing Time (just in case)
+        if (typeof q.timeSpentSeconds === 'undefined') {
+          q.timeSpentSeconds = 0;
+        }
+      });
+
       set({
         isInitialized: true,
         testId: def.id,
@@ -178,15 +202,16 @@ export const useTestEngineStore = create<TestEngineState>()(
         metadata: restoredMetadata, 
         sections: def.sections,
         
-        // Restore Dynamic Data
         timeLeftSeconds: savedData.timeLeftSeconds,
-        sectionTimeSpent: savedData.sectionTimeSpent || {}, // Restore section times
+        sectionTimeSpent: savedData.sectionTimeSpent || {},
         activeSectionId: savedData.activeSectionId,
         activeQuestionId: savedData.activeQuestionId,
-        questionsById: savedData.questionsById,
+        
+        // Use the HEALED data instead of raw savedData
+        questionsById: healedQuestionsById, 
       });
       
-      console.log("Session Restored from LocalStorage");
+      console.log("Session Restored and Healed from LocalStorage");
     },
 
     // --- 3. NAVIGATION ---
@@ -268,7 +293,30 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    // --- 5. BUTTON LOGIC ---
+    // --- 5. NEW: TOGGLE BOOKMARK ---
+    toggleBookmark: (questionId) => {
+      set((state) => {
+        const currentQ = state.questionsById[questionId];
+        if (!currentQ) return state; // Safety check
+
+        const nextState = {
+          questionsById: {
+            ...state.questionsById,
+            [questionId]: {
+              ...currentQ,
+              isBookmarked: !currentQ.isBookmarked
+            }
+          }
+        };
+        
+        // Autosave immediately on toggle
+        saveToLocal({ ...state, ...nextState });
+        
+        return nextState;
+      });
+    },
+
+    // --- 6. BUTTON LOGIC ---
     saveAndNext: () => {
       const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
@@ -353,7 +401,7 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    // --- 6. SYSTEM (UPDATED TIMER) ---
+    // --- 7. SYSTEM (TIMER) ---
     tickTimer: () => {
       const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById } = get();
       
@@ -399,8 +447,8 @@ export const useTestEngineStore = create<TestEngineState>()(
         timeLeftSeconds,
         activeQuestionId,
         activeSectionId,
-        questionsById,
-        sectionTimeSpent, // Included in sync
+        questionsById, // Includes isBookmarked state
+        sectionTimeSpent,
         timestamp: Date.now(),
       };
 
@@ -424,7 +472,6 @@ export const useTestEngineStore = create<TestEngineState>()(
       }
       
       console.log("Test Submitted!");
-      // You can add navigation logic here or trigger a modal
     },
   }),
   { name: "TestEngineStore" }

@@ -37,6 +37,8 @@ export function TestPlayerLayout({ year }: Props) {
     activeSectionId,
     activeQuestionId,
     questionsById,
+    toggleBookmark,
+
     // Actions
     selectOption,
     saveAndNext,
@@ -189,7 +191,10 @@ export function TestPlayerLayout({ year }: Props) {
           <div className={styles.QuestionScrollArea}>
             <QuestionMetaBar
               questionNumber={activeQuestionState.globalQuestionNumber}
-              questionId={activeQuestionDef.id}
+              
+              // PASS NEW PROPS
+              isBookmarked={activeQuestionState.isBookmarked}
+              onToggleBookmark={() => toggleBookmark(activeQuestionId)}
             />
 
             <main id="question-content-area">
