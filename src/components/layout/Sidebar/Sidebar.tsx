@@ -101,6 +101,13 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
     setShowLogoutModal(false);
   };
 
+  // --- NEW FUNCTION: Closes sidebar only on mobile ---
+  const handleMobileNav = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 900) {
+      toggleSidebar();
+    }
+  };
+
   const handleConfirmLogout = () => {
     // clear auth + user state
     logoutAuth();
@@ -149,6 +156,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
                   <li key={link.id}>
                     <Link
                       href={link.href}
+                      onClick={handleMobileNav} // Added click handler
                       className={`${styles.navItem} ${
                         isActive(link.href) ? styles.navItemActive : ""
                       }`}
@@ -171,6 +179,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
                   <li key={link.id}>
                     <Link
                       href={link.href}
+                      onClick={handleMobileNav} // Added click handler
                       className={`${styles.navItem} ${
                         isActive(link.href) ? styles.navItemActive : ""
                       }`}
