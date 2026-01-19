@@ -100,3 +100,30 @@
 .rowLink + .rowLink .row {
   border-top: 1px solid var(--dashboard-icons-color);
 }
+
+@media (max-width: 600px) {
+  .heading {
+    font-size: var(--dashboard-font-sm);
+    letter-spacing: 0.04em;
+  }
+
+  .title {
+    font-size: var(--dashboard-font-sm);
+  }
+
+  .meta {
+    font-size: var(--dashboard-font-xs);
+  }
+
+  .chevron {
+    font-size: var(--dashboard-font-sm);
+  }
+
+  .row {
+    padding: 10px 0;
+  }
+
+  .left {
+    gap: 8px;
+  }
+}

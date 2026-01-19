@@ -99,7 +99,7 @@ body {
     /* ========== Dashboard Typography Scale ========== */
 
 --dashboard-font-xs: 11px;
---dashboard-font-sm: 12px;
+--dashboard-font-sm: 12px; 
 --dashboard-font-md: 14px;
 --dashboard-font-lg: 15px;
 --dashboard-font-xl: 28px;
