@@ -2,8 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import styles from "./TestListSection2.module.css";
 import { FiChevronRight } from "react-icons/fi";
+import styles from "./TestListSection2.module.css";
 
 export interface TestListItem {
   id: string;
@@ -15,7 +15,7 @@ export interface TestListItem {
 interface TestListSectionProps {
   heading: string;
   items: TestListItem[];
-  // NEW: Optional prop to intercept click
+  // Callback to handle click (opens popup) instead of instant navigation
   onItemClick?: (item: TestListItem) => void;
 }
 
@@ -36,10 +36,9 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
             key={item.id}
             href={item.href}
             className={styles.rowLink}
-            // NEW: Intercept click if handler is provided
             onClick={(e) => {
               if (onItemClick) {
-                e.preventDefault(); // Stop instant navigation
+                e.preventDefault(); // Stop navigation to open popup first
                 onItemClick(item);
               }
             }}

@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
-import { 
-  useTestEngineStore, 
-  TestDefinitionWithMetadata  // <--- Import this
-} from "@/features/tests/testEngineStore";import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
+import { useEffect, useState, useCallback } from "react";
+import { useTestEngineStore } from "@/features/tests/testEngineStore";
+import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
 
 // Components
@@ -22,7 +20,6 @@ import CursorTrail from "../CursorTrail/CursorTrail";
 import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
-// import { TestDefinition } from "@/features/tests/types"; // You might need to update this import based on your new types file location if it changed
 
 interface Props {
   year: string;
@@ -31,13 +28,14 @@ interface Props {
 export function TestPlayerLayout({ year }: Props) {
   // 1. Connect to Store
   const {
+    // State
     testId,
     title,
     sections,
     activeSectionId,
     activeQuestionId,
     questionsById,
-    toggleBookmark,
+    isInitialized,
 
     // Actions
     selectOption,
@@ -45,79 +43,43 @@ export function TestPlayerLayout({ year }: Props) {
     clearResponse,
     markForReview,
     submitTest,
-    restoreSession,
-    syncWithServer,
-    tickTimer, // <--- NEW: Import the timer action
+    toggleBookmark,
+    syncWithServer, // <--- API Sync
+    tickTimer,      // <--- Global Timer
   } = useTestEngineStore((s) => s);
 
+  // 2. Theme & Accessibility
   const { theme, setTheme } = useTestPlayerTheme();
   const { cursorTrailEnabled } = useTestPlayerAccessibility();
 
+  // 3. UI State
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const hasRestored = useRef(false);
 
-  // 2. RESUME & HEARTBEAT LOGIC
+  // 4. HEARTBEAT SYSTEM (Background Sync)
+  // Syncs to backend every 3 minutes (180,000ms)
   useEffect(() => {
-    if (!testId) return;
+    if (!isInitialized || !testId) return;
 
-    // A. RESTORE SESSION (Local Storage check)
-    if (!hasRestored.current) {
-      const savedDataString = localStorage.getItem(`test_progress_${testId}`);
-      
-      if (savedDataString) {
-        try {
-          const savedData = JSON.parse(savedDataString);
-          
-          if (savedData.testId === testId) {
-            console.log("Found saved session, restoring...");
-            
-            // Construct the definition object typed strictly
-            const currentDef: TestDefinitionWithMetadata = {
-              id: testId!, // We know it's not null here because it matched savedData.testId
-              title: title,
-              sections: sections, 
-              durationSeconds: savedData.timeLeftSeconds,
-              // Optional metadata fields
-              year: year,
-              mode: "online", 
-              exam: "JEE_MAIN" // or pass dynamically if available
-            };
-
-            // No 'as any' needed anymore
-            restoreSession(savedData, currentDef);
-            
-            hasRestored.current = true;
-          }
-        } catch (e) {
-          console.error("Failed to restore session", e);
-        }
-      }
-    }
-
-    // B. HEARTBEAT (Server Sync every 60s)
-    const intervalId = setInterval(() => {
+    const syncInterval = setInterval(() => {
       syncWithServer();
-    }, 60000); 
+    }, 180000); 
 
-    return () => clearInterval(intervalId);
-  }, [testId, title, sections, restoreSession, syncWithServer, year]);
+    return () => clearInterval(syncInterval);
+  }, [isInitialized, testId, syncWithServer]);
 
-  // --- NEW: TIMER EFFECT ---
-  // This drives the clock and the time tracking metrics
+  // 5. GLOBAL TIMER (1-second tick)
   useEffect(() => {
-    if (!testId) return;
+    if (!isInitialized) return;
 
     const timerId = setInterval(() => {
       tickTimer();
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [testId, tickTimer]);
-  // ------------------------
+  }, [isInitialized, tickTimer]);
 
-  // 3. Responsive Logic
+  // 6. Responsive Logic
   useEffect(() => {
     const checkScreen = () => {
       const mobile = window.innerWidth < 900;
@@ -129,50 +91,57 @@ export function TestPlayerLayout({ year }: Props) {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
-  // 4. Theme Logic
+  // 7. Theme Persistence
   useEffect(() => {
     const saved = localStorage.getItem("test-player-theme") as "light" | "dark" | null;
     if (saved) setTheme(saved);
   }, [setTheme]);
 
-  // 5. Keyboard Shortcuts
+  // 8. Keyboard Shortcuts
   const handleKeyNavigation = useCallback((e: KeyboardEvent) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    // Example: ArrowRight for Next (Commented out for safety)
     // if (e.key === "ArrowRight") saveAndNext(); 
-  }, [saveAndNext]);
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyNavigation);
     return () => window.removeEventListener("keydown", handleKeyNavigation);
   }, [handleKeyNavigation]);
 
+  // --- RENDER GUARDS ---
 
-  // 6. Loading Guard
-  if (!testId || !activeSectionId || !activeQuestionId) {
+  if (!isInitialized || !activeSectionId || !activeQuestionId) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
-        <p>Loading Test Environment...</p>
+        <p>Loading Question Data...</p>
       </div>
     );
   }
 
-  // 7. Active Data Retrieval
-  const activeSection = sections.find((s) => s.id === activeSectionId)!;
-  const activeQuestionDef = activeSection.questions.find((q) => q.id === activeQuestionId)!;
-  const activeQuestionState = questionsById[activeQuestionId];
+  // --- ACTIVE DATA RESOLUTION ---
+  const activeSection = sections.find((s) => s.id === activeSectionId);
+  if (!activeSection) return <div>Error: Active section not found.</div>;
 
+  const activeQuestionDef = activeSection.questions.find((q) => q.id === activeQuestionId);
+  if (!activeQuestionDef) return <div>Error: Active question not found.</div>;
+
+  const activeQuestionState = questionsById[activeQuestionId];
+  if (!activeQuestionState) return <div>Error: Question state missing.</div>;
+
+  // Metadata for Header
   const templateQuestion = activeSection.questions[0]; 
   const currentSectionType = templateQuestion?.kind || "single";
   const posMark = templateQuestion?.correctMarks || 4;
-  const negMark = templateQuestion?.negativeMarks || 1;
+  const negMark = templateQuestion?.negativeMarks || 1; // Default to 1 if missing
 
-  // 8. Handlers
+  // Handlers
   const handleSaveAndNext = () => saveAndNext();
   const handleClearResponse = () => clearResponse();
   const handleMarkForReview = () => markForReview();
   const handleSubmit = () => {
-    if (window.confirm("Are you sure you want to submit the test?")) {
+    if (window.confirm("Are you sure you want to submit the test? This action cannot be undone.")) {
       submitTest();
     }
   };
@@ -182,6 +151,7 @@ export function TestPlayerLayout({ year }: Props) {
       <TopStrip testTitle={title} />
 
       <div className={styles.mainGrid}>
+        {/* LEFT COLUMN: Question Area */}
         <div className={styles.left}>
           <TitleBar />
           <TimeBar />
@@ -191,8 +161,6 @@ export function TestPlayerLayout({ year }: Props) {
           <div className={styles.QuestionScrollArea}>
             <QuestionMetaBar
               questionNumber={activeQuestionState.globalQuestionNumber}
-              
-              // PASS NEW PROPS
               isBookmarked={activeQuestionState.isBookmarked}
               onToggleBookmark={() => toggleBookmark(activeQuestionId)}
             />
@@ -218,11 +186,9 @@ export function TestPlayerLayout({ year }: Props) {
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
-        {/* RIGHT COLUMN */}
+        {/* RIGHT COLUMN: Sidebar */}
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
-          
-          {/* LOGIC: Show Close Arrow ONLY if Mobile AND Sidebar is Open */}
+          {/* Mobile Close Button */}
           {isMobile && isSidebarOpen && (
             <button 
               className={styles.closeArrow} 
@@ -238,8 +204,7 @@ export function TestPlayerLayout({ year }: Props) {
         </aside>
       </div>
 
-      {/* Mobile Toggle */}
-      {/* LOGIC: Show Open Arrow ONLY if Mobile AND Sidebar is Closed (!isSidebarOpen) */}
+      {/* Mobile Open Button */}
       {isMobile && !isSidebarOpen && (
         <button 
           className={styles.openArrow} 
@@ -249,6 +214,7 @@ export function TestPlayerLayout({ year }: Props) {
         </button>
       )}
 
+      {/* FOOTER */}
       <footer className={styles.bottomBar}>
         <div className={styles.bottomBarLeft}>
           <StatusButton label="Mark for Review & Next" variant="outline" onClick={handleMarkForReview} />
@@ -260,6 +226,7 @@ export function TestPlayerLayout({ year }: Props) {
         </div>
       </footer>
 
+      {/* Accessibility Tools */}
       {cursorTrailEnabled && <CursorTrail />}
       <ScreenMagnifier />
     </div>

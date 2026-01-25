@@ -1,28 +1,28 @@
-/* src/components/popups/StartTestPopup/StartTestPopup.module.css */
-
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
   backdrop-filter: blur(3px);
+  animation: fadeIn 0.2s ease-out;
 }
 
 .modal {
-  background: var(--dashboard-sidebar-background-color); /* #1E1D1B */
-  border: 1px solid var(--dashboard-sidebar-border-color); /* #36312F */
-  padding: 24px;
+  background: var(--dashboard-sidebar-background-color); 
+  border: 1px solid var(--dashboard-sidebar-border-color); 
+  padding: 32px 24px;
   border-radius: 12px;
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
   animation: popIn 0.2s ease-out;
 }
 
@@ -31,93 +31,143 @@
   to { transform: scale(1); opacity: 1; }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Close Button */
+.closeIconBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-secondary-text-color);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeIconBtn:hover {
+  background: var(--dashboard-link-hover-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* Icons */
 .iconWrapper {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  
-  /* Use your link hover color for a subtle dark circle background */
-  background: var(--dashboard-link-hover-color); /* #272625 */
-  
-  /* Use primary text color or a specific accent if you have one */
-  color: var(--dashboard-primary-text-color); /* #F4F4F4 */
-  
   font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 20px;
   border: 1px solid var(--dashboard-dividerline-color);
+}
+
+.startIcon {
+  background: rgba(59, 130, 246, 0.1); 
+  color: #60a5fa; 
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.resumeIcon {
+  background: rgba(16, 185, 129, 0.1); 
+  color: #34d399; 
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.content {
+  margin-bottom: 28px;
 }
 
 .title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--dashboard-primary-text-color); /* #F4F4F4 */
-  margin-bottom: 8px;
+  color: var(--dashboard-primary-text-color);
+  margin-bottom: 10px;
 }
 
 .message {
   font-size: 14px;
-  color: var(--dashboard-secondary-text-color); /* #B5B4B4 */
+  color: var(--dashboard-secondary-text-color);
   line-height: 1.6;
-  margin-bottom: 24px;
 }
 
+/* Actions Container */
 .actions {
   display: flex;
   gap: 12px;
   justify-content: center;
+  width: 100%;
 }
 
-/* Cancel Button: Outline Style */
-.cancelBtn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  
-  border: 1px solid var(--dashboard-sidebar-border-color); /* #36312F */
-  background: transparent;
-  color: var(--dashboard-secondary-text-color); /* #B5B4B4 */
-  
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cancelBtn:hover {
-  background: var(--dashboard-link-hover-color); /* #272625 */
-  color: var(--dashboard-primary-text-color);
-}
-
-/* Confirm Button: Primary Action */
-/* I'll use a slightly brighter color for the CTA, or a solid white/grey based on your palette */
-.confirmBtn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  
-  /* Use a contrasting background for the main action */
-  background: var(--dashboard-primary-text-color); /* #F4F4F4 */
-  color: var(--dashboard-background-color); /* #272320 (Dark Text on Light Button) */
-  
+/* Base Button Style */
+.startBtn, .resumeBtn, .restartBtn {
+  padding: 12px 20px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: opacity 0.2s;
+  transition: all 0.2s ease;
+  flex: 1; /* Make buttons equal width */
 }
 
-.confirmBtn:hover {
-  opacity: 0.9;
+/* Start (Single Button) */
+.startBtn {
+  background: #3b82f6; /* Blue */
+  color: white;
+  border: none;
+  width: 100%; /* Full width for single button */
+}
+.startBtn:hover {
+  background: #2563eb;
+}
+
+/* Resume (Primary Action) */
+.resumeBtn {
+  background: #10b981; /* Green */
+  color: white;
+  border: none;
+}
+.resumeBtn:hover {
+  background: #059669;
+}
+
+/* Restart (Secondary/Neutral Action) */
+.restartBtn {
+  background: transparent;
+  /* Use your dashboard border variable for a subtle outline */
+  border: 1px solid var(--dashboard-sidebar-border-color); 
+  /* Use secondary text color for the "off/grey" look */
+  color: var(--dashboard-secondary-text-color); 
+}
+
+.restartBtn:hover {
+  /* Use your dashboard hover color */
+  background: var(--dashboard-link-hover-color);
+  /* Brighten text to primary color on hover */
+  color: var(--dashboard-primary-text-color);
+  /* Make border slightly more visible */
+  border-color: var(--dashboard-secondary-text-color);
+}
+.btnIcon {
+  font-size: 16px;
 }
 
 @media (max-width: 480px) {
-  .confirmBtn, .cancelBtn {
-    font-size: 14px;
-    padding: 8px;
+  .actions {
+    flex-direction: column-reverse;
   }
 }

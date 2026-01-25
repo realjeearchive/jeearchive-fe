@@ -1,44 +1,39 @@
+// src/components/testInstructions/BottomConsentBar/BottomConsentBar.tsx
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import styles from "./BottomConsentBar.module.css";
 
 interface Props {
-  attemptHref: string;
   note: string;
+  onConsent: () => void;
+  customLabel?: string;
 }
 
-export function BottomConsentBar({ attemptHref, note }: Props) {
-  const router = useRouter();
-  
+export function BottomConsentBar({ note, onConsent, customLabel = "I am ready to begin" }: Props) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleBegin = async () => {
-    // 1. VALIDATION
     if (!isChecked) {
-      // Simpler message for students
       toast.error("Please read and agree to the instructions.");
       return; 
     }
 
-    // 2. Request fullscreen
     const el = document.documentElement;
     if (el.requestFullscreen) {
       try {
         await el.requestFullscreen();
       } catch (err) {
-        console.error("Fullscreen request failed", err);
+        console.error("Fullscreen failed", err);
       }
     }
 
-    // 3. Navigate
-    router.push(attemptHref);
+    onConsent();
   };
 
   return (
-    <footer className={styles.bottomBar}>
+    <div className={styles.bottomBar}>
       <div className={styles.inner}>
         <div className={styles.left}>
           <p className={styles.noteRed}>{note}</p>
@@ -51,15 +46,7 @@ export function BottomConsentBar({ attemptHref, note }: Props) {
               className={styles.checkbox}
             />
             <span className={styles.checkboxText}>
-              I have read and understood the instructions. All computer
-              hardware allotted to me are in proper working condition. I
-              declare that I am not in possession of / not wearing / not
-              carrying any prohibited gadget like mobile phone, bluetooth
-              devices etc. If any prohibited material with me into the
-              Examination Hall, I agree that in case of not adhering to the
-              instructions, I shall be liable to be debarred from this Test
-              and/or to disciplinary action, which may include ban from
-              future Tests / Examinations.
+              I have read and understood the instructions. All computer hardware allotted to me are in proper working condition. I declare that I am not in possession of / not wearing / not carrying any prohibited gadget like mobile phone, bluetooth devices etc. If any prohibited material with me into the Examination Hall, I agree that in case of not adhering to the instructions, I shall be liable to be debarred from this Test and/or to disciplinary action, which may include ban from future Tests / Examinations.
             </span>
           </label>
         </div>
@@ -74,10 +61,10 @@ export function BottomConsentBar({ attemptHref, note }: Props) {
               cursor: 'pointer' 
             }}
           >
-            I am ready to begin
+            {customLabel}
           </button>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

@@ -74,7 +74,7 @@ export async function signupRequest(payload: SignupInput) {
     body: JSON.stringify({
       name: payload.name,
       email: payload.email,
-      password: payload.password,
+      password: payload.password, 
     }),
   });
 

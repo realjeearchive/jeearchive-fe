@@ -1,123 +1,7 @@
-// // src/features/tests/types.ts
-
-// // ---------- List / overview ----------
-
-// export interface TestSummary {
-//   id: string; // "jee-main-2021-24-feb-shift-1"
-//   exam: "JEE_MAIN" | "JEE_ADVANCED";
-//   year: number;
-//   shift?: string;
-//   title: string;
-//   totalQuestions: number;
-//   durationMinutes: number;
-//   totalMarks: number;
-//   slug?: string;
-// }
-
-// export interface SectionMarkingScheme {
-//   sectionId: string;        // "M_SC", "M_NUM"
-//   name: string;             // "Mathematics Single Correct"
-//   subject: "PHYSICS" | "CHEMISTRY" | "MATHEMATICS";
-//   questionCount: number;
-//   marksCorrect: number;
-//   marksIncorrect: number;
-//   marksUnattempted: number;
-// }
-
-// export interface TestDetails {
-//   summary: TestSummary;
-//   sections: SectionMarkingScheme[];
-//   syllabusSummary?: string;
-//   instructions?: string[];
-// }
-
-// // ---------- Raw question data from backend/dummy ----------
-
-// export type QuestionType = "SC" | "NUM"; // Single correct / Numerical
-
-// export interface QuestionOption {
-//   id: string;       // "A" | "B" | "C" | "D"
-//   text: string;     // plain text; later can be HTML/LaTeX
-//   imageUrl?: string;
-// }
-
-// export interface Question {
-//   id: string;
-//   testId: string;
-
-//   questionNumber: number;           // 1..N (global)
-//   sectionId: string;                // e.g. "M_SC"
-//   subject: "PHYSICS" | "CHEMISTRY" | "MATHEMATICS";
-//   type: QuestionType;
-
-//   questionText: string;
-//   questionImageUrl?: string;
-//   options?: QuestionOption[];
-
-//   correctOptionId?: string;
-//   correctNumericAnswer?: number | string;
-
-//   difficulty?: "EASY" | "MEDIUM" | "HARD";
-//   topic?: string;
-//   subtopic?: string;
-// }
-
-// // ---------- Test-player engine model ----------
-
-// // Engine-friendly normalized structures derived in frontend
-
-// export type QuestionKind = "single" | "numerical"; // multi not needed yet
-
-// export interface TestOption {
-//   id: string;
-//   label: string; // "A", "B", "C", "D"
-//   text: string;
-//   imageUrl?: string;
-// }
-
-// export interface TestQuestion {
-//   id: string;
-//   index: number; // 1-based within section
-//   kind: QuestionKind;
-//   contentText: string;
-//   contentImageUrl?: string;
-//   options: TestOption[]; // empty for numerical
-//   correctMarks: number;
-//   negativeMarks: number;
-//   sectionId: string;
-//   globalQuestionNumber: number;
-// }
-
-// export interface TestSection {
-//   id: string;           // "M_SC"
-//   label: string;        // "Mathematics Single Correct"
-//   longTitle: string;    // "Mathematics Single Correct (Maximum Marks: 80)"
-//   subject: "PHYSICS" | "CHEMISTRY" | "MATHEMATICS";
-//   questions: TestQuestion[];
-// }
-
-// export interface TestDefinition {
-//   id: string;
-//   title: string;
-//   durationSeconds: number;
-//   candidateName: string;
-//   sections: TestSection[];
-// }
-
-
-
-// trying with real backend data
-
-// ==========================================
-// 1. Raw Backend Data Types (Matches API Response)
-// ==========================================
-
 // src/features/tests/types.ts
 
-// --- BACKEND TYPES (Matches your JSON exactly) ---
-// src/features/tests/types.ts
+// --- 1. BACKEND DATA ENTITIES (Matches DB/API) ---
 
-// --- BACKEND TYPES ---
 export interface BackendOptionsObject {
   id: string;
   questionId: string;
@@ -131,20 +15,36 @@ export interface BackendOptionsObject {
   optionDimage: string[];
 }
 
+export interface BackendAttemptStatus {
+  // Backend sends mixed types for userAnswer (string, array, or null)
+  userAnswer: string | string[] | null; 
+  isVisited: boolean;
+  markedForReview: boolean;
+  timeSpent: number;
+  status: "NOT_VISITED" | "NOT_ANSWERED" | "ANSWERED" | "ATTEMPTED" | "REVIEW";
+}
+
 export interface BackendQuestion {
   id: string;
   content: string;
   subject: string;
-  type: string;
-  image: string[]; // <--- Backend sends an ARRAY
+  type: string; // "SingleChoice", "Integer", etc.
+  image: string[]; // Backend sends an ARRAY
   positiveMarks: number;
   negativeMarks: number;
   options: BackendOptionsObject;
   correctAnswer: string[];
   solution?: { text: string; image: string[] };
+
+  // NEW: The Attempt Status coming from "Get Session" API
+  // It is optional because raw paper fetch might not have it
+  attemptStatus?: BackendAttemptStatus;
+  
+  questionNumber?: number; 
 }
 
-// --- ENGINE TYPES ---
+// --- 2. ENGINE TYPES (Frontend Internal State) ---
+
 export interface TestOption {
   id: string;
   label: string;
@@ -159,11 +59,9 @@ export interface TestQuestion {
   kind: "single" | "numerical";
   contentText: string;
   
-  // FIX: Add this field to hold the full array of images
+  // Images for the question content
   images: string[]; 
-  
-  // Keep this for compatibility, but we will use 'images' primarily
-  contentImageUrl: string | null;
+  contentImageUrl: string | null; // Compatibility field
   
   options: TestOption[];
   correctMarks: number;
@@ -185,15 +83,16 @@ export interface TestDefinition {
   sections: TestSection[];
 }
 
+// --- 3. PAPER LIST TYPES ---
 
 export interface Paper {
   id: string;
   examId: string;
   year: number;
-  day: string;   // e.g., "Wednesday"
-  month: string; // e.g., "April"
-  date: string;  // e.g., "2"
-  shift: string; // e.g., "Morning"
+  day: string;
+  month: string;
+  date: string;
+  shift: string;
   mode: string;
   totalMarks: number;
   totalDuration: number;
@@ -201,10 +100,68 @@ export interface Paper {
   totalSingleChoice: number;
   totalMultiChoice: number;
   totalInteger: number;
+  exam?: { name: string };
 }
 
 export interface PaperApiResponse {
   message: string;
   data: Paper[];
   success: boolean;
+}
+
+// --- 4. SESSION & API RESPONSE TYPES (New) ---
+
+// Response for: GET /api/testStatus/getPaper?testStatusId=...
+export interface SessionDataResponse {
+  testId: string;
+  timeLeft: number;
+  activeSection: string | null;
+  activeQuestionId: string | null;
+  status: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
+  paper: Paper;
+  questions: BackendQuestion[];
+}
+
+// Response for: GET /api/testStatus/lastTestDetails?paperId=...
+export interface LastTestStatusData {
+  status?: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
+  created_at?: string;
+  testId?: string; // This is the SESSION ID
+}
+
+export interface LastTestStatusResponse {
+  message: string;
+  success: boolean;
+  data: LastTestStatusData; // Can be empty object {} if no test found
+}
+
+// Response for: POST /api/testStatus/create
+export interface CreateTestResponse {
+  message: string;
+  success: boolean;
+  data: {
+    testId: string; // The new Session ID
+    status: string;
+    message: string;
+  };
+}
+
+// Payload for: POST /api/testStatus/update
+export interface UpdateTestStatusPayload {
+  testId: string;
+  paperId: string;
+  timeLeft: number;
+  activeSection: string | null;
+  activeQuestionId: string | null;
+  state: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
+  timeStamp: string;
+  created_at?: string;
+  questionStatus: Array<{
+    questionId: string;
+    userAnswer: string | null;
+    isVisited: boolean;
+    markedForReview: boolean;
+    timeSpent: number;
+    status: string;
+  }>;
 }

@@ -1,49 +1,39 @@
-import { create } from "zustand";
+// src/features/tests/testEngineStore.ts
+import { create, StoreApi, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
-import { TestDefinition, TestSection } from "./types";
+import { 
+  TestSection, 
+  TestQuestion, 
+  TestOption, 
+  SessionDataResponse, 
+  BackendQuestion, 
+  BackendOptionsObject 
+} from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
+import { updateTestSession } from "./api"; 
 
 // --- TYPES ---
 
-// 1. Metadata Interface
-export interface TestMetadata {
-  year: number | string;
-  day: string;
-  month: string;
-  date: string;
-  shift: string;
-  mode: string;
-  exam: string;
-}
-
-// 2. Saved Session Interface
 export interface SavedSessionData {
   testId: string;
   questionsById: Record<string, QuestionState>;
-  
-  // Save section times
   sectionTimeSpent: Record<string, number>; 
-  
   timeLeftSeconds: number;
   activeQuestionId: string | null;
   activeSectionId: string | null;
   timestamp: number;
 }
 
-// 3. Combined Definition Type
-export type TestDefinitionWithMetadata = TestDefinition & Partial<TestMetadata>;
-
 interface TestEngineState {
   // --- STATE ---
   isInitialized: boolean;
   testId: string | null;
+  paperId: string | null; 
   title: string;
-  metadata: TestMetadata | null;
+  
   sections: TestSection[];
   
   timeLeftSeconds: number;
-  
-  // Track time spent per section (SectionID -> Seconds)
   sectionTimeSpent: Record<string, number>;
 
   activeSectionId: string | null;
@@ -51,21 +41,17 @@ interface TestEngineState {
   questionsById: Record<string, QuestionState>;
 
   // --- ACTIONS ---
-  initFromDefinition: (def: TestDefinitionWithMetadata) => void;
-  restoreSession: (savedData: SavedSessionData, def: TestDefinitionWithMetadata) => void; 
+  initFromBackendSession: (apiData: SessionDataResponse) => void;
   syncWithServer: () => Promise<void>;
   
   setActiveSectionId: (sectionId: string) => void;
   jumpToQuestion: (questionId: string) => void;
   selectOption: (questionId: string, value: string) => void;
-  
-  // NEW: Action to toggle bookmark status
   toggleBookmark: (questionId: string) => void;
   
   saveAndNext: () => void;
   markForReview: () => void;
   clearResponse: () => void;
-  
   tickTimer: () => void;
   submitTest: () => void;
 }
@@ -77,7 +63,7 @@ const saveToLocal = (state: TestEngineState) => {
   const payload: SavedSessionData = {
     testId: state.testId,
     questionsById: state.questionsById,
-    sectionTimeSpent: state.sectionTimeSpent,
+    sectionTimeSpent: state.sectionTimeSpent, 
     timeLeftSeconds: state.timeLeftSeconds,
     activeQuestionId: state.activeQuestionId,
     activeSectionId: state.activeSectionId,
@@ -91,130 +77,253 @@ const saveToLocal = (state: TestEngineState) => {
   }
 };
 
-// --- STORE IMPLEMENTATION ---
+// --- HELPER: Map Backend Status to Frontend Status ---
+const mapBackendStatusToFrontend = (
+  apiStatus: string | undefined, 
+  isVisited: boolean, 
+  markedForReview: boolean
+): QuestionStatus => {
+  if (apiStatus === "ATTEMPTED" || apiStatus === "ANSWERED") {
+    return markedForReview ? "answeredAndMarked" : "answered";
+  }
+  if (markedForReview) return "markedForReview";
+  if ((apiStatus === "NOT_ANSWERED" || apiStatus === "NOT_VISITED") && isVisited) {
+    return "notAnswered";
+  }
+  return "notVisited";
+};
+
+// --- HELPER: Reconstruct Sections ---
+function mapQuestionsToSections(backendQuestions: BackendQuestion[]): { sections: TestSection[], qMap: Record<string, QuestionState> } {
+  const subjects = new Set<string>();
+  backendQuestions.forEach(q => {
+    if (q.subject) subjects.add(q.subject);
+  });
+
+  const sections: TestSection[] = [];
+  const qMap: Record<string, QuestionState> = {};
+  let globalCounter = 0;
+
+  Array.from(subjects).forEach(subject => {
+    const subjectQs = backendQuestions.filter((q) => q.subject === subject);
+    
+    // Split into MCQ (Section A) and Numerical (Section B)
+    const mcqs = subjectQs.filter((q) => q.type !== 'Integer' && q.type !== 'Numerical');
+    const nums = subjectQs.filter((q) => q.type === 'Integer' || q.type === 'Numerical');
+
+    // Helper to process a sub-batch
+    const processBatch = (qs: BackendQuestion[], labelSuffix: string) => {
+      if (qs.length === 0) return;
+      
+      const sectionId = `sec-${sections.length}`;
+      const mappedQuestions: TestQuestion[] = qs.map((q, idx) => {
+        globalCounter++;
+        
+        const isInteger = q.type === 'Integer' || q.type === 'Numerical';
+        const imgArray = Array.isArray(q.image) ? q.image : (q.image ? [q.image] : []);
+        
+        const optionsList: TestOption[] = [];
+        if (!isInteger && q.options) {
+           ['A', 'B', 'C', 'D'].forEach(lbl => {
+             const tKey = `option${lbl}text` as keyof BackendOptionsObject;
+             const iKey = `option${lbl}image` as keyof BackendOptionsObject;
+             
+             const textVal = q.options[tKey];
+             const imgVal = q.options[iKey];
+
+             optionsList.push({
+               id: lbl,
+               label: lbl,
+               text: typeof textVal === 'string' ? textVal : '',
+               imageUrl: (Array.isArray(imgVal) && imgVal.length > 0) ? imgVal[0] : null
+             });
+           });
+        }
+
+        const att = q.attemptStatus || { 
+            userAnswer: null, 
+            isVisited: false, 
+            markedForReview: false, 
+            timeSpent: 0, 
+            status: "NOT_VISITED" 
+        };
+        
+        let selectedIds: string[] = [];
+        let numAns: string | null = null;
+
+        if (isInteger) {
+          if (att.userAnswer) numAns = String(att.userAnswer);
+        } else {
+          if (att.userAnswer) {
+             selectedIds = Array.isArray(att.userAnswer) ? att.userAnswer : [att.userAnswer as string];
+          }
+        }
+
+        const qStatus = mapBackendStatusToFrontend(att.status, att.isVisited, att.markedForReview);
+
+        qMap[q.id] = {
+          questionId: q.id,
+          globalQuestionNumber: globalCounter,
+          status: qStatus,
+          isVisited: att.isVisited || false,
+          timeSpentSeconds: att.timeSpent || 0,
+          isBookmarked: false,
+          selectedOptionIds: selectedIds,
+          numericAnswer: numAns
+        };
+
+        return {
+          id: q.id,
+          index: idx + 1,
+          globalQuestionNumber: globalCounter,
+          kind: isInteger ? 'numerical' : 'single',
+          contentText: q.content || "",
+          images: imgArray,
+          contentImageUrl: imgArray[0] || null,
+          options: optionsList,
+          correctMarks: q.positiveMarks || 4,
+          negativeMarks: q.negativeMarks || 0,
+          sectionId: sectionId
+        };
+      });
+
+      sections.push({
+        id: sectionId,
+        label: `${subject} ${labelSuffix}`,
+        subject: subject,
+        questions: mappedQuestions
+      });
+    };
+
+    processBatch(mcqs, "(Section A)");
+    processBatch(nums, "(Section B)");
+  });
+
+  return { sections, qMap };
+}
+
+// --- NEXT QUESTION HELPER (Strictly Typed) ---
+function moveToNextQuestion(
+  get: StoreApi<TestEngineState>['getState'],
+  set: StoreApi<TestEngineState>['setState']
+) {
+  const { sections, activeQuestionId, questionsById } = get();
+  
+  const allQuestions = sections.flatMap((s) => s.questions);
+  const currentIndex = allQuestions.findIndex((q) => q.id === activeQuestionId);
+
+  if (currentIndex < allQuestions.length - 1) {
+    const nextQ = allQuestions[currentIndex + 1];
+    
+    // We prepare the new state object first
+    const newQs = { ...questionsById };
+    
+    if (newQs[nextQ.id].status === "notVisited") {
+      newQs[nextQ.id] = {
+        ...newQs[nextQ.id],
+        status: "notAnswered",
+        isVisited: true
+      };
+    }
+    
+    // Set state
+    set({
+      activeQuestionId: nextQ.id,
+      activeSectionId: nextQ.sectionId,
+      questionsById: newQs,
+    });
+
+    // Save to local using the FRESH state
+    saveToLocal(get());
+  } else {
+    console.log("End of questions reached");
+  }
+}
+
+// --- STORE DEFINITION ---
 export const useTestEngineStore = create<TestEngineState>()(
   devtools((set, get) => ({
-    // Initial State
     isInitialized: false,
     testId: null,
+    paperId: null,
     title: "",
-    metadata: null,
     sections: [],
     timeLeftSeconds: 0,
-    sectionTimeSpent: {}, // Init empty
+    sectionTimeSpent: {}, 
     activeSectionId: null,
     activeQuestionId: null,
     questionsById: {},
 
-    // --- 1. SETUP ---
-    initFromDefinition: (def) => {
-      const initialQuestionsState: Record<string, QuestionState> = {};
-      const initialSectionTimes: Record<string, number> = {};
-      
-      def.sections.forEach((sec) => {
-        // Initialize Section Timer
-        initialSectionTimes[sec.id] = 0;
+    initFromBackendSession: (apiData: SessionDataResponse) => {
+      const { paper, questions, timeLeft, testId, activeQuestionId } = apiData;
+      const { sections, qMap } = mapQuestionsToSections(questions);
 
-        sec.questions.forEach((q) => {
-          initialQuestionsState[q.id] = {
-            questionId: q.id,
-            globalQuestionNumber: q.globalQuestionNumber,
-            status: "notVisited",
-            selectedOptionIds: [],
-            numericAnswer: null,
-            isVisited: false,
-            timeSpentSeconds: 0, 
-            
-            // NEW: Initialize Bookmark State
-            isBookmarked: false,
-          } as QuestionState; 
-        });
-      });
-
-      const firstSection = def.sections[0];
-      const firstQuestion = firstSection?.questions[0];
-
-      if (firstQuestion) {
-        initialQuestionsState[firstQuestion.id].isVisited = true;
-        initialQuestionsState[firstQuestion.id].status = "notAnswered";
+      const initialQ = activeQuestionId || (sections[0]?.questions[0]?.id) || null;
+      let initialSec = null;
+      if (initialQ) {
+        initialSec = sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null;
       }
-
-      const newState = {
-        isInitialized: true,
-        testId: def.id,
-        title: def.title,
-        metadata: {
-          year: def.year || "2025",
-          day: def.day || "",
-          month: def.month || "",
-          date: def.date || "",
-          shift: def.shift || "",
-          mode: def.mode || "online",
-          exam: def.exam || "JEE_MAIN",
-        },
-        sections: def.sections,
-        timeLeftSeconds: def.durationSeconds,
-        sectionTimeSpent: initialSectionTimes,
-        activeSectionId: firstSection?.id || null,
-        activeQuestionId: firstQuestion?.id || null,
-        questionsById: initialQuestionsState,
-      };
-
-      set(newState);
-    },
-
-    // --- 2. RESTORE SESSION ---
-    // --- 2. RESTORE SESSION ---
-    restoreSession: (savedData, def) => {
-      const restoredMetadata: TestMetadata = {
-         year: def.year || "2025",
-         day: def.day || "",
-         month: def.month || "",
-         date: def.date || "",
-         shift: def.shift || "",
-         mode: def.mode || "online",
-         exam: def.exam || "JEE_MAIN",
-      };
-
-      // --- DATA HEALING: Fix stale data from LocalStorage ---
-      // We loop through the saved questions and force-add missing fields 
-      // like 'isBookmarked' if they don't exist in the old save.
-      const healedQuestionsById = { ...savedData.questionsById };
-      
-      Object.keys(healedQuestionsById).forEach((key) => {
-        const q = healedQuestionsById[key];
-        
-        // 1. Fix missing Bookmark
-        if (typeof q.isBookmarked === 'undefined') {
-          q.isBookmarked = false;
-        }
-        
-        // 2. Fix missing Time (just in case)
-        if (typeof q.timeSpentSeconds === 'undefined') {
-          q.timeSpentSeconds = 0;
-        }
-      });
 
       set({
         isInitialized: true,
-        testId: def.id,
-        title: def.title,
-        metadata: restoredMetadata, 
-        sections: def.sections,
-        
-        timeLeftSeconds: savedData.timeLeftSeconds,
-        sectionTimeSpent: savedData.sectionTimeSpent || {},
-        activeSectionId: savedData.activeSectionId,
-        activeQuestionId: savedData.activeQuestionId,
-        
-        // Use the HEALED data instead of raw savedData
-        questionsById: healedQuestionsById, 
+        testId: testId,
+        paperId: paper.id, 
+        title: `${paper.year} ${paper.shift || ''}`,
+        timeLeftSeconds: timeLeft, 
+        activeQuestionId: initialQ,
+        activeSectionId: initialSec,
+        questionsById: qMap,
+        sections: sections,
+        sectionTimeSpent: {}, 
       });
       
-      console.log("Session Restored and Healed from LocalStorage");
+      saveToLocal(get());
     },
 
-    // --- 3. NAVIGATION ---
+    syncWithServer: async () => {
+      const state = get();
+      if (!state.testId || !state.paperId) return;
+
+      const questionStatusArray = Object.values(state.questionsById).map(q => {
+        let backendStatus = "NOT_VISITED";
+        if (q.status === "answered" || q.status === "answeredAndMarked") backendStatus = "ATTEMPTED";
+        else if (q.status === "markedForReview") backendStatus = "REVIEW";
+        else if (q.status === "notAnswered") backendStatus = "NOT_ANSWERED";
+        
+        let finalAns: string | null = null;
+        if (q.numericAnswer) finalAns = q.numericAnswer;
+        else if (q.selectedOptionIds.length > 0) finalAns = q.selectedOptionIds[0];
+
+        return {
+          questionId: q.questionId,
+          userAnswer: finalAns,
+          isVisited: q.isVisited,
+          markedForReview: q.status === "markedForReview" || q.status === "answeredAndMarked",
+          timeSpent: q.timeSpentSeconds,
+          status: backendStatus
+        };
+      });
+
+      const payload = {
+        testId: state.testId,
+        paperId: state.paperId,
+        timeLeft: state.timeLeftSeconds,
+        activeSection: "Chemistry", 
+        activeQuestionId: state.activeQuestionId,
+        state: "IN_PROGRESS" as const,
+        timeStamp: new Date().toISOString(),
+        questionStatus: questionStatusArray
+      };
+
+      try {
+        console.log("Syncing to server...");
+        await updateTestSession(payload);
+        console.log("Sync successful");
+      } catch (err) {
+        console.warn("Sync failed", err);
+      }
+    },
+
     setActiveSectionId: (sectionId) => {
       const { sections } = get();
       const targetSection = sections.find((s) => s.id === sectionId);
@@ -229,13 +338,11 @@ export const useTestEngineStore = create<TestEngineState>()(
           newQs[qId].status = "notAnswered";
           newQs[qId].isVisited = true;
         }
-        
         const nextState = {
           activeSectionId: sectionId,
           activeQuestionId: qId,
           questionsById: newQs,
         };
-        
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
@@ -248,28 +355,27 @@ export const useTestEngineStore = create<TestEngineState>()(
           newQs[questionId].status = "notAnswered";
           newQs[questionId].isVisited = true;
         }
-
         const section = state.sections.find((s) => 
           s.questions.some((q) => q.id === questionId)
         );
-
         const nextState = {
           activeQuestionId: questionId,
           activeSectionId: section?.id || state.activeSectionId,
           questionsById: newQs,
         };
-        
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
     },
 
-    // --- 4. INTERACTION ---
     selectOption: (questionId, value) => {
       const { sections } = get();
-      const section = sections.find(s => s.questions.some(q => q.id === questionId));
-      const questionDef = section?.questions.find(q => q.id === questionId);
-      const isNumerical = questionDef?.kind === "numerical";
+      let isNumerical = false;
+      for (const s of sections) {
+        if (s.questions.some(q => q.id === questionId && q.kind === "numerical")) {
+          isNumerical = true; break;
+        }
+      }
 
       set((state) => {
         const prev = state.questionsById[questionId];
@@ -287,17 +393,15 @@ export const useTestEngineStore = create<TestEngineState>()(
             [questionId]: newState,
           },
         };
-
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
     },
 
-    // --- 5. NEW: TOGGLE BOOKMARK ---
     toggleBookmark: (questionId) => {
       set((state) => {
         const currentQ = state.questionsById[questionId];
-        if (!currentQ) return state; // Safety check
+        if (!currentQ) return state; 
 
         const nextState = {
           questionsById: {
@@ -308,15 +412,11 @@ export const useTestEngineStore = create<TestEngineState>()(
             }
           }
         };
-        
-        // Autosave immediately on toggle
         saveToLocal({ ...state, ...nextState });
-        
         return nextState;
       });
     },
 
-    // --- 6. BUTTON LOGIC ---
     saveAndNext: () => {
       const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
@@ -338,7 +438,6 @@ export const useTestEngineStore = create<TestEngineState>()(
             },
           },
         };
-        
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
@@ -369,7 +468,6 @@ export const useTestEngineStore = create<TestEngineState>()(
             },
           },
         };
-        
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
@@ -383,7 +481,6 @@ export const useTestEngineStore = create<TestEngineState>()(
 
       set((state) => {
         const newStatus: QuestionStatus = "notAnswered";
-
         const nextState = {
           questionsById: {
             ...state.questionsById,
@@ -395,13 +492,11 @@ export const useTestEngineStore = create<TestEngineState>()(
             },
           },
         };
-        
         saveToLocal({ ...state, ...nextState });
         return nextState;
       });
     },
 
-    // --- 7. SYSTEM (TIMER) ---
     tickTimer: () => {
       const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById } = get();
       
@@ -410,21 +505,15 @@ export const useTestEngineStore = create<TestEngineState>()(
         return;
       }
 
-      // 1. Decrement Global Time
       const newTimeLeft = timeLeftSeconds - 1;
-
-      // 2. Increment Section Time (if active)
       const newSectionTimes = { ...sectionTimeSpent };
       if (activeSectionId) {
         newSectionTimes[activeSectionId] = (newSectionTimes[activeSectionId] || 0) + 1;
       }
 
-      // 3. Increment Question Time (if active)
       const newQuestionsById = { ...questionsById };
       if (activeQuestionId && newQuestionsById[activeQuestionId]) {
-        // Safe check for 'timeSpentSeconds' property existence
         const currentSpent = newQuestionsById[activeQuestionId].timeSpentSeconds || 0;
-        
         newQuestionsById[activeQuestionId] = {
           ...newQuestionsById[activeQuestionId],
           timeSpentSeconds: currentSpent + 1
@@ -438,83 +527,15 @@ export const useTestEngineStore = create<TestEngineState>()(
       });
     },
 
-    syncWithServer: async () => {
-      const { testId, questionsById, sectionTimeSpent, timeLeftSeconds, activeQuestionId, activeSectionId } = get();
-      if (!testId) return;
-
-      const payload: SavedSessionData = {
-        testId,
-        timeLeftSeconds,
-        activeQuestionId,
-        activeSectionId,
-        questionsById, // Includes isBookmarked state
-        sectionTimeSpent,
-        timestamp: Date.now(),
-      };
-
-      try {
-        await fetch("/api/tests/save-progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        console.log("Auto-saved to server");
-        console.log("savedData: ", payload);
-      } catch (err) {
-        console.warn("Server sync failed (offline?), data remains safe in LocalStorage");
-      }
-    },
-
     submitTest: () => {
       const { testId } = get();
+      get().syncWithServer();
       if (testId) {
         localStorage.removeItem(`test_progress_${testId}`);
       }
-      
       console.log("Test Submitted!");
     },
   }),
   { name: "TestEngineStore" }
   )
 );
-
-// --- HELPER FOR "NEXT" LOGIC ---
-function moveToNextQuestion(
-  get: () => TestEngineState, 
-  set: (fn: (state: TestEngineState) => Partial<TestEngineState>) => void
-) {
-  const { sections, activeQuestionId } = get();
-  
-  const allQuestions = sections.flatMap((s) => s.questions);
-  const currentIndex = allQuestions.findIndex((q) => q.id === activeQuestionId);
-
-  if (currentIndex < allQuestions.length - 1) {
-    const nextQ = allQuestions[currentIndex + 1];
-    
-    set((state) => {
-      const newQs = { ...state.questionsById };
-      
-      if (newQs[nextQ.id].status === "notVisited") {
-        newQs[nextQ.id] = {
-          ...newQs[nextQ.id],
-          status: "notAnswered",
-          isVisited: true
-        };
-      }
-      
-      const nextSectionId = nextQ.sectionId;
-
-      const nextState = {
-        activeQuestionId: nextQ.id,
-        activeSectionId: nextSectionId,
-        questionsById: newQs,
-      };
-
-      saveToLocal({ ...state, ...nextState });
-
-      return nextState;
-    });
-  } else {
-    console.log("End of questions reached");
-  }
-}
