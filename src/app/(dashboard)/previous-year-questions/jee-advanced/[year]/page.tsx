@@ -1,10 +1,9 @@
-// src/app/(dashboard)/previous-year-questions/jee-advanced/[year]/page.tsx
 'use client';
 
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
-import Styles from '../jeeAdvanced.module.css'; // Ensure this points to your correct CSS file
+import Styles from '../jeeAdvanced.module.css'; 
 import { usePaperStore } from "@/store/paperStore";
 import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup';
@@ -30,7 +29,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
   const [isResume, setIsResume] = useState(false);
 
-  // 1. Fetch Papers (JEE_ADVANCED)
+  // 1. Fetch Papers
   useEffect(() => {
     if (year) {
       getPapers(year, 'JEE_ADVANCED');
@@ -45,9 +44,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     href: `/previous-year-questions/jee-advanced/${year}/tests/${paper.id}` 
   }));
 
-  // --- HANDLERS ---
-
-  // A. CLICK: Check Status
+  // 3. CLICK: Check Status
   const handleTestClick = async (item: TestListItem) => {
     setSelectedPaperId(item.id);
     setSelectedTitle(item.title);
@@ -56,7 +53,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     try {
       const res = await fetchLastTestStatus(item.id);
       
-      // If we find an active session, enable Resume Mode
+      // Check if session exists (IN_PROGRESS or PAUSED)
       if (res.success && res.data && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
         setIsResume(true);
         setExistingSessionId(res.data.testId || null);
@@ -68,7 +65,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
       setShowPopup(true);
     } catch (e) {
       console.error(e);
-      // Fallback: Assume start new
       setIsResume(false);
       setShowPopup(true);
     } finally {
@@ -76,7 +72,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     }
   };
 
-  // B. ACTION: FRESH START & RESTART
+  // 4. ACTION: Start New or Restart
   const handleStartOrRestart = async () => {
     if (!selectedPaperId) return;
 
@@ -85,7 +81,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
       
       if (res.success && res.data?.testId) {
         setShowPopup(false);
-        // Navigate with SID
         router.push(`/previous-year-questions/jee-advanced/${year}/tests/${selectedPaperId}?sid=${res.data.testId}`);
       } else {
         throw new Error(res.message || "Failed to start test.");
@@ -97,7 +92,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     }
   };
 
-  // C. ACTION: RESUME
+  // 5. ACTION: Resume
   const handleResume = () => {
     if (!selectedPaperId || !existingSessionId) {
       toast.error("Cannot resume: Session ID missing.");
@@ -147,7 +142,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
       )}
 
       <TestListSection2 
-        heading={`JEE Advanced ${year}`} 
+        heading={`JEE Advanced ${year} Papers`} 
         items={formattedItems} 
         onItemClick={handleTestClick} 
       />
@@ -157,7 +152,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
         testTitle={selectedTitle}
         isResume={isResume}
         onClose={handleClosePopup}
-        // Map new actions
+        // FIX: Passing the new action handlers
         onStart={handleStartOrRestart}
         onResume={handleResume}
         onRestart={handleStartOrRestart}
