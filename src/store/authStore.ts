@@ -45,6 +45,8 @@ export const useAuthStore = create<AuthState>()(
 
         initFromRefresh: async () => {
           const { initialized, hasLoggedOut } = get();
+          
+          // This will now work correctly because 'initialized' resets to false on page load
           if (initialized || hasLoggedOut) return;
 
           set({ isLoading: true });
@@ -55,6 +57,7 @@ export const useAuthStore = create<AuthState>()(
               get().setAccessToken(data.accessToken);
             }
           } catch {
+            // If refresh fails, clear token but mark as initialized so we don't loop
             set({ accessToken: null });
           } finally {
             set({ initialized: true, isLoading: false });
@@ -70,7 +73,17 @@ export const useAuthStore = create<AuthState>()(
           });
         },
       }),
-      { name: "auth" }
+      {
+        name: "auth", // unique name for localStorage key
+        
+        // ---------------------------------------------------------
+        // CRITICAL FIX: Only persist the accessToken.
+        // Everything else resets on page reload.
+        // ---------------------------------------------------------
+        partialize: (state) => ({
+          accessToken: state.accessToken,
+        }),
+      }
     )
   )
 );

@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/store/authStore";
 import type { SignupInput, LoginInput } from './schemas';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api';
 
 export class ApiError extends Error {
   status: number;
@@ -39,7 +39,7 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
   // 3. Intercept 401
-  if (response.status === 401) {
+  if (response.status === 401 || response.status === 403) {
     // Don't retry if the refresh endpoint itself fails
     if (endpoint.includes('refershToken')) {
       return response;
