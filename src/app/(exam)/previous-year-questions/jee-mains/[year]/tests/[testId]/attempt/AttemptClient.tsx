@@ -1,55 +1,102 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
-import { TestPlayerLayout } from "@/components/testPlayer/TestPlayerLayout/TestPlayerLayout";
 import { fetchTestSession } from "@/features/tests/api";
+import { TestPlayerLayout } from "@/components/testPlayer/TestPlayerLayout/TestPlayerLayout";
 import { Loader } from "@/components/ui/loader";
+import type {
+  HierarchicalSessionData,
+  SessionDataResponse,
+} from "@/features/tests/types";
 
 interface AttemptClientProps {
   year: string;
-  testId: string; // Note: In the URL path, this is the Paper ID
+  testId: string;
+}
+
+/**
+ * Type guard to check wrapped API response
+ */
+function isWrappedSessionResponse(
+  response: unknown
+): response is { data: HierarchicalSessionData } {
+  return (
+    typeof response === "object" &&
+    response !== null &&
+    "data" in response &&
+    typeof (response as { data: unknown }).data === "object" &&
+    (response as { data: unknown }).data !== null &&
+    "session" in (response as { data: HierarchicalSessionData }).data
+  );
+}
+
+/**
+ * Type guard to check direct session payload
+ */
+function isDirectSessionResponse(
+  response: unknown
+): response is HierarchicalSessionData {
+  return (
+    typeof response === "object" &&
+    response !== null &&
+    "session" in (response as HierarchicalSessionData)
+  );
 }
 
 export function AttemptClient({ year, testId }: AttemptClientProps) {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("sid"); // This is the actual Session ID
+  const sessionId = searchParams.get("sid");
 
-  const initFromBackendSession = useTestEngineStore(s => s.initFromBackendSession);
-  const isInitialized = useTestEngineStore(s => s.isInitialized);
-  
+  const initAuth = useAuthStore((s) => s.initFromRefresh);
+  const authInitialized = useAuthStore((s) => s.initialized);
+
+  const initFromBackendSession = useTestEngineStore(
+    (s) => s.initFromBackendSession
+  );
+  const isInitialized = useTestEngineStore((s) => s.isInitialized);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Ref to ensure we don't fetch twice in React Strict Mode
+
   const hasFetched = useRef(false);
 
   useEffect(() => {
     async function loadSession() {
-      // 1. Validation
       if (!sessionId) {
-        setError("Invalid Session ID. Please go back and restart the test.");
+        setError("Invalid Session ID. Please go back.");
         setLoading(false);
         return;
       }
 
-      // 2. Prevent Duplicate Fetch
+      if (!authInitialized) {
+        await initAuth();
+      }
+
       if (hasFetched.current) return;
       hasFetched.current = true;
 
       try {
-        console.log("Fetching Session:", sessionId);
-        const response = await fetchTestSession(sessionId);
+        const response: SessionDataResponse | HierarchicalSessionData =
+          await fetchTestSession(sessionId);
 
-        if (response.success && response.data) {
-          // 3. Hydrate the Store
-          initFromBackendSession(response.data);
-        } else {
-          setError("Failed to retrieve test session data.");
+        let sessionData: HierarchicalSessionData | null = null;
+
+        if (isWrappedSessionResponse(response)) {
+          sessionData = response.data;
+        } else if (isDirectSessionResponse(response)) {
+          sessionData = response;
         }
+
+        if (!sessionData) {
+          throw new Error("Invalid session payload");
+        }
+
+        initFromBackendSession(sessionData);
       } catch (err) {
-        console.error("Session Load Error:", err);
+        console.error("Session load failed:", err);
         setError("Network error. Could not load the test.");
       } finally {
         setLoading(false);
@@ -57,13 +104,13 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
     }
 
     loadSession();
-  }, [sessionId, initFromBackendSession]);
+  }, [sessionId, authInitialized, initAuth, initFromBackendSession]);
 
-  // --- RENDER STATES ---
+  // ---------------- UI STATES ----------------
 
   if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-zinc-900 text-white">
+      <div className="flex h-screen items-center justify-center bg-zinc-900">
         <Loader label="Initializing Test Environment..." size="h-6 w-6" />
       </div>
     );
@@ -71,11 +118,11 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
 
   if (error) {
     return (
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-zinc-900 text-red-500">
-        <p className="text-lg font-semibold">Error: {error}</p>
-        <a 
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-zinc-900 text-red-500">
+        <p className="text-lg font-semibold">{error}</p>
+        <a
           href={`/previous-year-questions/jee-mains/${year}/tests/${testId}`}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           Return to Instructions
         </a>
@@ -83,10 +130,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
     );
   }
 
-  // Only render layout if initialized to prevent flashes
-  if (!isInitialized) {
-    return null; 
-  }
+  if (!isInitialized) return null;
 
   return <TestPlayerLayout year={year} />;
 }

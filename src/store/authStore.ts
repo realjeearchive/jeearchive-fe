@@ -1,4 +1,5 @@
 // src/store/authStore.ts
+
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { refreshTokenRequest } from "@/features/auth/api";
@@ -11,9 +12,7 @@ interface AuthState {
   isLoading: boolean;
   initialized: boolean;
   hasLoggedOut: boolean;
-
   setAccessToken: (token: string | null) => void;
-  setLoading: (value: boolean) => void;
   initFromRefresh: () => Promise<void>;
   logout: () => void;
 }
@@ -30,59 +29,48 @@ export const useAuthStore = create<AuthState>()(
         setAccessToken: (token) => {
           set({ accessToken: token });
 
-          const setProfile = useUserStore.getState().setProfile;
-
-          if (!token) {
-            setProfile(null);
-            return;
-          }
+          if (!token) return;
 
           try {
             const payload = jwtDecode<AccessTokenPayload>(token);
-
-            setProfile({
+            useUserStore.getState().setProfile({
               id: payload.id,
               name: payload.name,
               email: payload.email,
             });
           } catch {
-            setProfile(null);
+            console.warn("Invalid token decode");
           }
         },
 
-        setLoading: (value) => set({ isLoading: value }),
-
         initFromRefresh: async () => {
           const { initialized, hasLoggedOut } = get();
-
           if (initialized || hasLoggedOut) return;
 
           set({ isLoading: true });
 
           try {
             const data = await refreshTokenRequest();
-            get().setAccessToken(data.accessToken);
+            if (data?.accessToken) {
+              get().setAccessToken(data.accessToken);
+            }
           } catch {
-            get().setAccessToken(null);
+            set({ accessToken: null });
           } finally {
             set({ initialized: true, isLoading: false });
           }
         },
 
-
         logout: () => {
-          const setProfile = useUserStore.getState().setProfile;
-          setProfile(null);
-
+          useUserStore.getState().setProfile(null);
           set({
             accessToken: null,
             initialized: true,
+            hasLoggedOut: true,
           });
         },
       }),
-      {
-        name: "auth",
-      }
+      { name: "auth" }
     )
   )
 );

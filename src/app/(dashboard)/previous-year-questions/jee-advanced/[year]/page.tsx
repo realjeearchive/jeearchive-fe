@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
-import Styles from '../jeeAdvanced.module.css'; 
+import Styles from '../jeeAdvanced.module.css'; // Verify this path matches your CSS folder
 import { usePaperStore } from "@/store/paperStore";
 import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup';
@@ -17,10 +17,8 @@ interface YearPageProps {
 export default function JeeAdvancedYearPage(props: YearPageProps) {
   const { year } = use(props.params);
   const router = useRouter(); 
-  
   const { papers, isLoading, error, getPapers } = usePaperStore();
 
-  // --- STATE ---
   const [showPopup, setShowPopup] = useState(false);
   const [selectedPaperId, setSelectedPaperId] = useState<string | null>(null);
   const [selectedTitle, setSelectedTitle] = useState("");
@@ -29,14 +27,12 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
   const [isResume, setIsResume] = useState(false);
 
-  // 1. Fetch Papers
   useEffect(() => {
     if (year) {
       getPapers(year, 'JEE_ADVANCED');
     }
   }, [year, getPapers]);
 
-  // 2. Transform Data
   const formattedItems: TestListItem[] = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Advanced ${paper.year} ${paper.date || ''} ${paper.shift ? `(${paper.shift})` : ''}`,
@@ -44,7 +40,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     href: `/previous-year-questions/jee-advanced/${year}/tests/${paper.id}` 
   }));
 
-  // 3. CLICK: Check Status
   const handleTestClick = async (item: TestListItem) => {
     setSelectedPaperId(item.id);
     setSelectedTitle(item.title);
@@ -53,10 +48,9 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     try {
       const res = await fetchLastTestStatus(item.id);
       
-      // Check if session exists (IN_PROGRESS or PAUSED)
-      if (res.success && res.data && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
+      if (res.success && res.data && res.data.testId && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
         setIsResume(true);
-        setExistingSessionId(res.data.testId || null);
+        setExistingSessionId(res.data.testId);
       } else {
         setIsResume(false);
         setExistingSessionId(null);
@@ -72,7 +66,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     }
   };
 
-  // 4. ACTION: Start New or Restart
   const handleStartOrRestart = async () => {
     if (!selectedPaperId) return;
 
@@ -87,12 +80,10 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
       }
     } catch (e) {
       console.error(e);
-      const msg = e instanceof Error ? e.message : "Failed to initiate test session";
-      toast.error(msg);
+      toast.error(e instanceof Error ? e.message : "Failed to create session");
     }
   };
 
-  // 5. ACTION: Resume
   const handleResume = () => {
     if (!selectedPaperId || !existingSessionId) {
       toast.error("Cannot resume: Session ID missing.");
@@ -108,8 +99,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     setSelectedPaperId(null);
   };
 
-  // --- RENDER ---
-
   if (isLoading) {
     return (
       <div className={Styles.jeeAdvancedPage}>
@@ -120,7 +109,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     );
   }
 
-  // Empty State Check
   if (!formattedItems || formattedItems.length === 0) {
     return (
       <div className={Styles.jeeAdvancedPage}>
@@ -152,7 +140,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
         testTitle={selectedTitle}
         isResume={isResume}
         onClose={handleClosePopup}
-        // FIX: Passing the new action handlers
         onStart={handleStartOrRestart}
         onResume={handleResume}
         onRestart={handleStartOrRestart}

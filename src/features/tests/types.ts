@@ -1,6 +1,6 @@
 // src/features/tests/types.ts
 
-// --- 1. BACKEND DATA ENTITIES (Matches DB/API) ---
+// --- 1. BACKEND DATA ENTITIES ---
 
 export interface BackendOptionsObject {
   id: string;
@@ -16,7 +16,6 @@ export interface BackendOptionsObject {
 }
 
 export interface BackendAttemptStatus {
-  // Backend sends mixed types for userAnswer (string, array, or null)
   userAnswer: string | string[] | null; 
   isVisited: boolean;
   markedForReview: boolean;
@@ -26,21 +25,17 @@ export interface BackendAttemptStatus {
 
 export interface BackendQuestion {
   id: string;
+  questionNumber?: number;
   content: string;
   subject: string;
-  type: string; // "SingleChoice", "Integer", etc.
-  image: string[]; // Backend sends an ARRAY
+  type: string; 
+  image: string[]; 
   positiveMarks: number;
   negativeMarks: number;
   options: BackendOptionsObject;
   correctAnswer: string[];
   solution?: { text: string; image: string[] };
-
-  // NEW: The Attempt Status coming from "Get Session" API
-  // It is optional because raw paper fetch might not have it
   attemptStatus?: BackendAttemptStatus;
-  
-  questionNumber?: number; 
 }
 
 // --- 2. ENGINE TYPES (Frontend Internal State) ---
@@ -56,13 +51,10 @@ export interface TestQuestion {
   id: string;
   index: number;
   globalQuestionNumber: number;
-  kind: "single" | "numerical";
+  kind: "single" | "numerical" | "multi" | "comprehension"; 
   contentText: string;
-  
-  // Images for the question content
   images: string[]; 
-  contentImageUrl: string | null; // Compatibility field
-  
+  contentImageUrl: string | null;
   options: TestOption[];
   correctMarks: number;
   negativeMarks: number;
@@ -83,24 +75,68 @@ export interface TestDefinition {
   sections: TestSection[];
 }
 
-// --- 3. PAPER LIST TYPES ---
+// --- 3. SESSION & API TYPES ---
 
 export interface Paper {
   id: string;
   examId: string;
   year: number;
-  day: string;
-  month: string;
-  date: string;
-  shift: string;
-  mode: string;
+  
+  // NEW FIELDS added to match backend data
+  day?: string;
+  month?: string;
+  date?: string;
+  shift?: string;
+  mode?: string;
+  
   totalMarks: number;
   totalDuration: number;
   totalQuestions: number;
-  totalSingleChoice: number;
-  totalMultiChoice: number;
-  totalInteger: number;
+  
+  totalSingleChoice?: number;
+  totalMultiChoice?: number;
+  totalInteger?: number;
+  
   exam?: { name: string };
+}
+
+export interface SessionMeta {
+  testId: string;
+  timeLeft: number;
+  activeSection: string | null;
+  activeQuestionId: string | null;
+  status: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
+  startTime?: string;
+}
+
+export interface HierarchicalSessionData {
+  session: SessionMeta;
+  paper: Paper;
+  [key: string]: unknown; // Allows dynamic subject keys like "Physics"
+}
+
+export interface SessionDataResponse {
+  message: string;
+  data: HierarchicalSessionData; 
+  success: boolean;
+}
+
+export interface LastTestStatusResponse {
+  message: string;
+  success: boolean;
+  data: {
+    status?: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
+    testId?: string;
+  };
+}
+
+export interface CreateTestResponse {
+  message: string;
+  success: boolean;
+  data: {
+    testId: string;
+    status: string;
+  };
 }
 
 export interface PaperApiResponse {
@@ -109,44 +145,6 @@ export interface PaperApiResponse {
   success: boolean;
 }
 
-// --- 4. SESSION & API RESPONSE TYPES (New) ---
-
-// Response for: GET /api/testStatus/getPaper?testStatusId=...
-export interface SessionDataResponse {
-  testId: string;
-  timeLeft: number;
-  activeSection: string | null;
-  activeQuestionId: string | null;
-  status: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
-  paper: Paper;
-  questions: BackendQuestion[];
-}
-
-// Response for: GET /api/testStatus/lastTestDetails?paperId=...
-export interface LastTestStatusData {
-  status?: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
-  created_at?: string;
-  testId?: string; // This is the SESSION ID
-}
-
-export interface LastTestStatusResponse {
-  message: string;
-  success: boolean;
-  data: LastTestStatusData; // Can be empty object {} if no test found
-}
-
-// Response for: POST /api/testStatus/create
-export interface CreateTestResponse {
-  message: string;
-  success: boolean;
-  data: {
-    testId: string; // The new Session ID
-    status: string;
-    message: string;
-  };
-}
-
-// Payload for: POST /api/testStatus/update
 export interface UpdateTestStatusPayload {
   testId: string;
   paperId: string;
@@ -155,7 +153,6 @@ export interface UpdateTestStatusPayload {
   activeQuestionId: string | null;
   state: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
   timeStamp: string;
-  created_at?: string;
   questionStatus: Array<{
     questionId: string;
     userAnswer: string | null;

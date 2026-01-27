@@ -1,4 +1,3 @@
-// src/app/(exam)/previous-year-questions/jee-advanced/[year]/tests/[testId]/attempt/page.tsx
 import { AttemptClient } from "./AttemptClient";
 
 interface AttemptPageProps {

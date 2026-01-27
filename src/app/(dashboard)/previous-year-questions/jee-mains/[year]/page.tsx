@@ -17,6 +17,8 @@ interface YearPageProps {
 export default function JeeMainsYearPage(props: YearPageProps) {
   const { year } = use(props.params);
   const router = useRouter(); 
+  
+  // Store hooks
   const { papers, isLoading, error, getPapers } = usePaperStore();
 
   // --- POPUP STATE ---
@@ -29,12 +31,14 @@ export default function JeeMainsYearPage(props: YearPageProps) {
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
   const [isResume, setIsResume] = useState(false);
 
+  // 1. Fetch Papers on Mount
   useEffect(() => {
     if (year) {
       getPapers(year, 'JEE_MAIN');
     }
   }, [year, getPapers]);
 
+  // 2. Transform Data for UI
   const formattedItems: TestListItem[] = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Main ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`,
@@ -42,7 +46,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     href: `/previous-year-questions/jee-mains/${year}/tests/${paper.id}` 
   }));
 
-  // 1. CLICK: Check Status first
+  // 3. HANDLE CLICK: Check Status first
   const handleTestClick = async (item: TestListItem) => {
     setSelectedPaperId(item.id);
     setSelectedTitle(item.title);
@@ -51,10 +55,10 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     try {
       const res = await fetchLastTestStatus(item.id);
       
-      // If we find an active session, enable Resume Mode
-      if (res.success && res.data && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
+      // If active session found (IN_PROGRESS or PAUSED), offer Resume
+      if (res.success && res.data && res.data.testId && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
         setIsResume(true);
-        setExistingSessionId(res.data.testId || null);
+        setExistingSessionId(res.data.testId);
       } else {
         setIsResume(false);
         setExistingSessionId(null);
@@ -62,8 +66,8 @@ export default function JeeMainsYearPage(props: YearPageProps) {
       
       setShowPopup(true);
     } catch (e) {
-      console.error(e);
-      // Fallback: Assume fresh start if check fails
+      console.error("Status check failed", e);
+      // Fallback to fresh start if check fails
       setIsResume(false);
       setShowPopup(true);
     } finally {
@@ -71,31 +75,29 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     }
   };
 
-  // --- ACTIONS ---
-
-  // ACTION A: FRESH START & RESTART (Identical logic: Create new session -> Navigate)
+  // 4. ACTION: FRESH START / RESTART
+  // Creates a NEW session ID and overwrites any old progress
   const handleStartOrRestart = async () => {
     if (!selectedPaperId) return;
 
     try {
-      // 1. Call Create API
       const res = await createTestSession(selectedPaperId);
       
       if (res.success && res.data?.testId) {
-        // 2. Navigate with NEW Session ID
         setShowPopup(false);
+        // Navigate to Instructions Page with NEW Session ID
         router.push(`/previous-year-questions/jee-mains/${year}/tests/${selectedPaperId}?sid=${res.data.testId}`);
       } else {
         throw new Error(res.message || "Failed to start test.");
       }
     } catch (e) {
       console.error(e);
-      const msg = e instanceof Error ? e.message : "Failed to initiate test session";
-      toast.error(msg);
+      toast.error(e instanceof Error ? e.message : "Failed to create session");
     }
   };
 
-  // ACTION B: RESUME (Navigate with EXISTING Session ID)
+  // 5. ACTION: RESUME
+  // Uses the EXISTING session ID
   const handleResume = () => {
     if (!selectedPaperId || !existingSessionId) {
       toast.error("Cannot resume: Session ID missing.");
@@ -103,7 +105,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     }
     
     setShowPopup(false);
-    // Directly navigate, preserving the old session
+    // Navigate to Instructions Page with EXISTING Session ID
     router.push(`/previous-year-questions/jee-mains/${year}/tests/${selectedPaperId}?sid=${existingSessionId}`);
   };
 
@@ -123,7 +125,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     );
   }
 
-  // --- EMPTY STATE CHECK ---
+  // Empty State
   if (!formattedItems || formattedItems.length === 0) {
     return (
       <div className={Styles.jeeMainsPage}>
@@ -155,10 +157,9 @@ export default function JeeMainsYearPage(props: YearPageProps) {
         testTitle={selectedTitle}
         isResume={isResume}
         onClose={handleClosePopup}
-        // Map the new actions
-        onStart={handleStartOrRestart}   // Scenario 1
-        onResume={handleResume}          // Scenario 2 (Right)
-        onRestart={handleStartOrRestart} // Scenario 2 (Left)
+        onStart={handleStartOrRestart}
+        onResume={handleResume}
+        onRestart={handleStartOrRestart}
       />
     </div>
   );

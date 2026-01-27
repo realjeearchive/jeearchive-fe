@@ -1,16 +1,16 @@
-// src/app/(exam)/previous-year-questions/jee-advanced/[year]/tests/[testId]/testOverviewPageClient.tsx
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; 
 import Image from "next/image";
 import { toast } from "sonner";
-import layoutStyles from "./testOverview.module.css";
 import { CandidatePanel } from "@/components/testInstructions/CandidatePanel/CandidatePanel";
 import { InstructionsHeader } from "@/components/testInstructions/InstructionsHeader/InstructionsHeader";
 import { NavigationAndAnswering } from "@/components/testInstructions/NavigationAndAnswering/NavigationAndAnswering";
 import { PaperStructure } from "@/components/testInstructions/PaperStructure/PaperStructure";
 import { BottomConsentBar } from "@/components/testInstructions/BottomConsentBar/BottomConsentBar";
+// Ensure this path matches your file structure exactly
+import layoutStyles from "./testOverview.module.css"; 
 import instructionsLegend from "@/assets/image/instructions.png";
 
 interface Props {
@@ -29,24 +29,32 @@ export function TestOverviewPageClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sid");
-  
+
   const [showMobilePanel, setShowMobilePanel] = useState(false);
 
   const handleBegin = () => {
+    // 1. Validation: Ensure we have a session ID
     if (!sessionId) {
-      toast.error("Session ID missing. Please go back and restart.");
+      toast.error("Session ID missing. Please return to the dashboard and restart.");
       return;
     }
-    // Correct URL for Advanced Attempt
-    router.push(`/previous-year-questions/jee-advanced/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
+    
+    // 2. Navigation: Go to Attempt Page with SID
+    router.push(`/previous-year-questions/jee-mains/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
   };
 
   return (
     <div className={layoutStyles.page}>
       <header className={layoutStyles.topBar}>
         <div className={layoutStyles.topBarTitle}>Instructions</div>
-        <button className={layoutStyles.menuIcon} onClick={() => setShowMobilePanel(true)}>
-          <span className={layoutStyles.menuIconBar} /><span className={layoutStyles.menuIconBar} /><span className={layoutStyles.menuIconBar} />
+        <button 
+          className={layoutStyles.menuIcon} 
+          onClick={() => setShowMobilePanel(true)}
+          aria-label="Open candidate panel"
+        >
+          <span className={layoutStyles.menuIconBar} />
+          <span className={layoutStyles.menuIconBar} />
+          <span className={layoutStyles.menuIconBar} />
         </button>
       </header>
 
@@ -57,8 +65,8 @@ export function TestOverviewPageClient({
             <Image src={instructionsLegend} alt="Legend" className={layoutStyles.legendImage} priority />
           </div>
           <ol className={layoutStyles.continuedList} start={4}>
-            <li>The Marked for Review status...</li>
-            <li>You can click on the arrow...</li>
+            <li>The Marked for Review status for a question simply indicates that you would like to look at the question again.</li>
+            <li>You can click on the &quot;&gt;&quot; arrow which appears to the left of question palette to collapse question palette thereby maximizing the question window.</li>
             <li>Click on the checkbox below to proceed...</li>
           </ol>
           <NavigationAndAnswering />

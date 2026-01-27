@@ -1,4 +1,4 @@
-// src/app/(dashboard)/previous-year-questions/jee-mains/[year]/tests/[testId]/page.tsx
+// src/app/(exam)/previous-year-questions/jee-advanced/[year]/tests/[testId]/page.tsx
 'use client';
 
 import { use, useEffect, useMemo } from 'react';
@@ -11,25 +11,19 @@ interface TestOverviewPageProps {
 }
 
 export default function TestOverviewPage(props: TestOverviewPageProps) {
-  // 1. Unwrap params
   const { year, testId } = use(props.params);
-
-  // 2. Connect to Store
   const { papers, getPapers, isLoading } = usePaperStore();
 
-  // 3. DERIVED STATE
   const selectedPaper = useMemo(() => {
     return papers.find((p) => p.id === testId);
   }, [papers, testId]);
 
-  // 4. Data Fetching Effect
   useEffect(() => {
     if (papers.length === 0 && !isLoading) {
-       getPapers(year);
+       getPapers(year, 'JEE_MAIN');
     }
   }, [papers.length, year, getPapers, isLoading]);
 
-  // 5. Loading State
   if (isLoading || (!selectedPaper && papers.length === 0)) {
     return (
       <div className="flex h-[60vh] w-full items-center justify-center">
@@ -38,24 +32,20 @@ export default function TestOverviewPage(props: TestOverviewPageProps) {
     );
   }
 
-  // 6. Error/Not Found State
   if (!selectedPaper) {
     return (
-      <div style={{ padding: '2rem', color: 'red' }}>
+      <div className="p-8 text-red-500 text-center">
         Paper not found. Please go back to the list.
       </div>
     );
   }
 
-  // 7. Success State
-  const title = `JEE Main ${selectedPaper.year} - ${selectedPaper.date} ${selectedPaper.month} (${selectedPaper.shift})`;
+  const title = `JEE Main ${selectedPaper.year} ${selectedPaper.date || ''} (${selectedPaper.shift || 'Paper'})`;
 
   return (
     <TestOverviewPageClient
       summaryTitle={title}
       sectionsCount={3}
-      // Pass "#" because the Client Component now handles navigation dynamically
-      // FIX: Pass the missing props required for the Backend Sync
       paperId={testId} 
       year={year}
     />

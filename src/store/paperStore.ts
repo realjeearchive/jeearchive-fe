@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { Paper } from '@/features/tests/types';
 import { fetchPapersByYear } from '@/features/tests/api';
-import { useAuthStore } from '@/store/authStore';
 
 interface PaperState {
   papers: Paper[];
@@ -11,7 +10,6 @@ interface PaperState {
   error: string | null;
 
   // Actions
-  // UPDATED: Accepts optional examType
   getPapers: (year: string, examType?: 'JEE_MAIN' | 'JEE_ADVANCED') => Promise<void>;
   resetPapers: () => void; 
 }
@@ -23,25 +21,14 @@ export const usePaperStore = create<PaperState>()(
       isLoading: false,
       error: null,
 
-      // UPDATED Implementation
       getPapers: async (year, examType = 'JEE_MAIN') => {
         set({ isLoading: true, error: null });
 
         try {
-          const accessToken = useAuthStore.getState().accessToken;
-
-          if (!accessToken) {
-            set({ 
-              isLoading: false, 
-              error: 'Authentication required. Please log in.' 
-            });
-            return;
-          }
-
-          // Pass the examType to the API
+          // No need to check for token here; api.ts will handle it
           const response = await fetchPapersByYear({ 
             year, 
-            accessToken, 
+            accessToken: "", // Wrapper ignores this
             examName: examType 
           });
 

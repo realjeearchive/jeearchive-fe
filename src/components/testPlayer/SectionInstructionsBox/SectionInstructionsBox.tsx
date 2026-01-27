@@ -12,9 +12,10 @@ interface Props {
   title: string;
   maxMarks: number;
   questionCount: number;
-  sectionType: "single" | "numerical";
-  positiveMark: number; // New Prop
-  negativeMark: number; // New Prop
+  // FIXED: Accepts all 4 question types defined in the store
+  sectionType: "single" | "numerical" | "multi" | "comprehension";
+  positiveMark: number;
+  negativeMark: number;
 }
 
 export function SectionInstructionsBox({
@@ -26,10 +27,44 @@ export function SectionInstructionsBox({
   negativeMark,
 }: Props) {
   const [open, setOpen] = useState(true);
-  const countWord = numberToWords(questionCount);
-
-  // Format negative mark display (e.g. if 1 -> "-1", if 0 -> "0")
+  
+  // Safe handling for helper function
+  const countWord = typeof numberToWords === 'function' ? numberToWords(questionCount) : questionCount;
   const negativeMarkDisplay = negativeMark > 0 ? `-${negativeMark}` : "0";
+
+  const renderSpecificInstructions = () => {
+    switch (sectionType) {
+      case "numerical":
+        return (
+          <>
+            <li>The answer to each question is a <strong>NUMERICAL VALUE</strong>.</li>
+            <li>For each question, enter the correct numerical value (in integer or decimal notation).</li>
+          </>
+        );
+      case "multi":
+        return (
+          <>
+            <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONE OR MORE THAN ONE</strong> of these four options is the correct answer.</li>
+            <li>For each question, choose ALL the options corresponding to the correct answer.</li>
+          </>
+        );
+      case "comprehension":
+        return (
+          <>
+            <li>This section contains questions based on a <strong>PARAGRAPH</strong>.</li>
+            <li>Choose the correct option corresponding to the question.</li>
+          </>
+        );
+      case "single":
+      default:
+        return (
+          <>
+            <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> of these four options is the correct answer.</li>
+            <li>For each question, choose the option corresponding to the correct answer.</li>
+          </>
+        );
+    }
+  };
 
   return (
     <div className={styles.box}>
@@ -43,11 +78,7 @@ export function SectionInstructionsBox({
         </span>
 
         <span className={styles.icon}>
-          {open ? (
-            <MdOutlineKeyboardArrowUp size={22} />
-          ) : (
-            <MdOutlineKeyboardArrowDown size={22} />
-          )}
+          {open ? <MdOutlineKeyboardArrowUp size={22} /> : <MdOutlineKeyboardArrowDown size={22} />}
         </span>
       </button>
 
@@ -62,37 +93,17 @@ export function SectionInstructionsBox({
               This section contains <strong>{countWord} ({questionCount})</strong> questions.
             </li>
 
-            {sectionType === "single" ? (
-              <>
-                <li>
-                  Each question has <strong>FOUR</strong> options (A), (B), (C) and (D).{" "}
-                  <strong>ONLY ONE</strong> of these four options is the correct answer.
-                </li>
-                <li>
-                  For each question, choose the option corresponding to the correct answer.
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  The answer to each question is a <strong>NUMERICAL VALUE</strong>.
-                </li>
-                <li>
-                  For each question, enter the correct numerical value (in integer or decimal notation).
-                </li>
-              </>
-            )}
+            {renderSpecificInstructions()}
 
             <li>
               Answer to each question will be evaluated{" "}
               <u>according to the following marking scheme</u>:
               <ul className={styles.subList}>
                 <li>
-                  <em>Full Marks</em> : +{positiveMark} if <strong>ONLY</strong> the correct{" "}
-                  {sectionType === "single" ? "option is chosen" : "answer is entered"}
+                  <em>Full Marks</em> : +{positiveMark} if <strong>{sectionType === 'multi' ? "ALL correct options" : "CORRECT answer"}</strong> is/are chosen.
                 </li>
                 <li>
-                  <em>Zero Marks</em> : 0 if {sectionType === "single" ? "none of the options is chosen" : "the question is unanswered"}
+                  <em>Zero Marks</em> : 0 if the question is unanswered.
                 </li>
                 <li>
                   <em>Negative Marks</em> : {negativeMarkDisplay} in all other cases.

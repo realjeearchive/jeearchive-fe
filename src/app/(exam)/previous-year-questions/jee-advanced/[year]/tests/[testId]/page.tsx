@@ -34,7 +34,7 @@ export default function TestOverviewPage(props: TestOverviewPageProps) {
 
   if (!selectedPaper) {
     return (
-      <div style={{ padding: '2rem', color: 'red' }}>
+      <div className="p-8 text-red-500 text-center">
         Test not found. Please go back to the list.
       </div>
     );

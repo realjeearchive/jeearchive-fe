@@ -1,7 +1,6 @@
 // src/features/tests/api.ts
 import { decryptData } from "@/lib/decrypt";
-import { useAuthStore } from "@/store/authStore";
-import { ApiError } from "@/features/auth/api"; 
+import { authenticatedFetch, ApiError } from "@/features/auth/api"; 
 import { 
   PaperApiResponse,
   TestDefinition, 
@@ -16,87 +15,54 @@ import {
   BackendOptionsObject
 } from "./types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/api';
-
-// --- Helper Functions ---
-
-function getToken(): string | null {
-  return useAuthStore.getState().accessToken;
-}
-
-function getHeaders(): HeadersInit {
-  const token = getToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-  };
-}
-
+// --- RESPONSE HANDLER ---
 async function handleJson<T>(res: Response): Promise<T> {
   const data: unknown = await res.json().catch(() => null);
 
   if (!res.ok) {
-    let message = 'Something went wrong. Please try again.';
-    
+    let message = 'Something went wrong.';
     if (data && typeof data === 'object' && 'message' in data) {
-      message = (data as { message: string }).message;
-    } else if (data && typeof data === 'object' && 'error' in data) {
-      message = (data as { error: string }).error;
+      message = String((data as { message: unknown }).message);
     }
-    
     throw new ApiError(message, res.status);
   }
 
-  // Unwrap { data: ... } structure if present
-  if (data && typeof data === 'object' && 'data' in data && (data as { data: unknown }).data !== undefined) {
-    return { ...data, ...(data as { data: object }).data } as T;
+  // FIXED: Strict Spread logic for Tests API
+  if (data && typeof data === 'object' && 'data' in data) {
+    const wrapper = data as Record<string, unknown>;
+    // Ensure inner data is object and NOT array
+    if (wrapper.data && typeof wrapper.data === 'object' && !Array.isArray(wrapper.data)) {
+        // 
+        return { ...wrapper, ...(wrapper.data as object) } as T;
+    }
   }
 
   return data as T;
 }
 
 // ==========================================
-// 1. PAPER LIST & CONTENT
+// API CALLS
 // ==========================================
 
 export async function fetchPapersByYear(params: { 
   year: string; 
-  accessToken: string;
+  accessToken: string; 
   examName?: 'JEE_MAIN' | 'JEE_ADVANCED'; 
 }) {
-  const exam = params.examName || 'JEE_MAIN';
-  const res = await fetch(
-    `${API_BASE_URL}/paper/get?year=${params.year}&examName=${exam}`, 
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${params.accessToken}`,
-      },
-      credentials: 'include',
-    }
+  const res = await authenticatedFetch(
+    `/paper/get?year=${params.year}&examName=${params.examName || 'JEE_MAIN'}`, 
+    { method: 'GET' }
   );
   return handleJson<PaperApiResponse>(res);
 }
 
 export async function fetchTestContent(paperId: string): Promise<TestDefinition | null> {
-  const accessToken = getToken();
-  if (!accessToken) throw new Error("Unauthorized: No access token found.");
-
-  const res = await fetch(`${API_BASE_URL}/question/paperQuestions/${paperId}`, {
+  const res = await authenticatedFetch(`/question/paperQuestions/${paperId}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    },
-    credentials: 'include',
   });
 
-  if (!res.ok) throw new ApiError("Failed to fetch questions", res.status);
-
-  const json = await res.json() as { data: string };
-  const encryptedPayload = json.data;
-  const decryptedData = decryptData<unknown>(encryptedPayload);
+  const json = await handleJson<{ data: string }>(res);
+  const decryptedData = decryptData<unknown>(json.data);
 
   if (!decryptedData) throw new Error("Decryption failed");
 
@@ -114,71 +80,38 @@ export async function fetchTestContent(paperId: string): Promise<TestDefinition 
   return mapBackendDataToDefinition(paperId, questionsArray);
 }
 
-// ==========================================
-// 2. SESSION MANAGEMENT
-// ==========================================
-
 export async function fetchLastTestStatus(paperId: string) {
-  const res = await fetch(`${API_BASE_URL}/testStatus/lastTestDetails?paperId=${paperId}`, {
-    method: 'GET',
-    headers: getHeaders(),
-    credentials: 'include',
+  const res = await authenticatedFetch(`/testStatus/lastTestDetails?paperId=${paperId}`, {
+    method: 'GET'
   });
-  // We handle the JSON manually to allow 404s/empty states if needed, 
-  // but using handleJson keeps error handling consistent.
   return handleJson<LastTestStatusResponse>(res);
 }
 
 export async function createTestSession(paperId: string) {
-  const token = getToken();
-  
-  if (!token) {
-    console.error("Create Session Failed: No Access Token found.");
-    throw new Error("Authentication missing. Please log in again.");
-  }
-
-  if (!paperId) {
-    throw new Error("Invalid Test ID.");
-  }
-
-  const payload = { paperId };
-
-  const res = await fetch(`${API_BASE_URL}/testStatus/create`, {
+  const res = await authenticatedFetch(`/testStatus/create`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    credentials: 'include',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ paperId }),
   });
-  
   return handleJson<CreateTestResponse>(res);
 }
 
 export async function fetchTestSession(testStatusId: string) {
-  const res = await fetch(`${API_BASE_URL}/testStatus/getPaper?testStatusId=${testStatusId}`, {
-    method: 'GET',
-    headers: getHeaders(),
-    credentials: 'include',
+  const res = await authenticatedFetch(`/testStatus/getPaper?testStatusId=${testStatusId}`, {
+    method: 'GET'
   });
-  
-  // Unwrap the specific data structure for session loading
-  return handleJson<{ success: boolean; message: string; data: SessionDataResponse }>(res);
+  return handleJson<SessionDataResponse>(res);
 }
 
 export async function updateTestSession(payload: UpdateTestStatusPayload) {
-  const res = await fetch(`${API_BASE_URL}/testStatus/update`, {
+  const res = await authenticatedFetch(`/testStatus/update`, {
     method: 'POST',
-    headers: getHeaders(),
-    credentials: 'include',
     body: JSON.stringify(payload),
+    keepalive: true, 
   });
   return handleJson<{ success: boolean; message: string }>(res);
 }
 
-// --- MAPPERS ---
-
+// --- MAPPERS (Unchanged) ---
 function mapBackendDataToDefinition(paperId: string, questions: BackendQuestion[]): TestDefinition {
   const subjects = new Set<string>();
   questions.forEach(q => { if (q.subject) subjects.add(q.subject); });
@@ -200,7 +133,6 @@ function mapBackendDataToDefinition(paperId: string, questions: BackendQuestion[
         questions: mcqs.map((q, idx) => mapSingleQuestion(q, ++globalCounter, sectionId, idx + 1))
       });
     }
-
     if (nums.length > 0) {
       const sectionId = `sec-${sections.length}`;
       sections.push({
@@ -220,17 +152,21 @@ function mapBackendDataToDefinition(paperId: string, questions: BackendQuestion[
   };
 }
 
-function mapSingleQuestion(q: BackendQuestion, globalIndex: number, sectionId: string, localIndex: number): TestQuestion {
-  const isInteger = q.type === 'Integer' || q.type === 'Numerical';
+export function mapSingleQuestion(q: BackendQuestion, globalIndex: number, sectionId: string, localIndex: number): TestQuestion {
+  let kind: TestQuestion['kind'] = 'single';
+  const typeStr = q.type.toLowerCase();
+  
+  if (typeStr.includes('integer') || typeStr.includes('numerical')) kind = 'numerical';
+  else if (typeStr.includes('multi')) kind = 'multi';
+  else if (typeStr.includes('comprehension')) kind = 'comprehension';
+
   const imgArray = Array.isArray(q.image) ? q.image : (q.image ? [q.image] : []);
 
   const optionsList: TestOption[] = [];
-  if (!isInteger && q.options) {
+  if (kind !== 'numerical' && q.options) {
     ['A', 'B', 'C', 'D'].forEach((lbl) => {
-      // Safe casting using keyof
       const textKey = `option${lbl}text` as keyof BackendOptionsObject;
       const imgKey = `option${lbl}image` as keyof BackendOptionsObject;
-      
       const optText = q.options[textKey];
       const optImgs = q.options[imgKey];
 
@@ -247,13 +183,13 @@ function mapSingleQuestion(q: BackendQuestion, globalIndex: number, sectionId: s
     id: q.id,
     index: localIndex,
     globalQuestionNumber: globalIndex,
-    kind: isInteger ? 'numerical' : 'single',
+    kind: kind,
     contentText: q.content || "",
     images: imgArray, 
     contentImageUrl: imgArray.length > 0 ? imgArray[0] : null,
     options: optionsList,
     correctMarks: q.positiveMarks || 4,
-    negativeMarks: q.negativeMarks || (isInteger ? 0 : -1), 
+    negativeMarks: q.negativeMarks || (kind === 'numerical' ? 0 : -1), 
     sectionId: sectionId
   };
 }
