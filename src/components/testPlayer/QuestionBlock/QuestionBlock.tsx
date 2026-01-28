@@ -5,9 +5,7 @@ import type { TestQuestion } from "@/features/tests/types";
 import type { QuestionState } from "@/features/tests/playertypes";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
 import Latex from "@/components/testPlayer/Latex/Latex";
-import parse, { DOMNode } from 'html-react-parser';
-
-// --- RESTORED IMPORT ---
+import parse, { DOMNode, Element, HTMLReactParserOptions } from 'html-react-parser'; // Import HTMLReactParserOptions if available, or just infer type
 import VirtualNumpad from "../VirtualNumpad/VirtualNumpad"; 
 
 interface Props {
@@ -24,48 +22,45 @@ export function QuestionBlock({
   const { fontSize } = useTestPlayerAccessibility();
   const isSelected = (optId: string) => questionState.selectedOptionIds.includes(optId);
 
-  // --- CONTENT RENDERER (Preserving your HTML parser update) ---
-  const renderContent = (text: string, images: string[]) => {
-    if (!text) return null;
-
-    const regex = /!\[image_\d+\]\((\d+)\)/g;
-    const parts = text.split(regex);
-
-    return parts.map((part, i) => {
-      // Image Handling
-      if (i % 2 === 1) {
-        const imgIndex = parseInt(part, 10);
-        if (images && images[imgIndex]) {
-          return (
-            <div key={i} className={styles.inlineImageContainer}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={images[imgIndex]} 
-                alt={`Figure ${imgIndex}`} 
-                className={styles.questionImage} 
-              />
-            </div>
-          );
-        }
-        return null; 
+  // --- 1. SHARED PARSER OPTIONS ---
+  // We define this once so both the Question Text and Options are rendered identically
+  const parserOptions: HTMLReactParserOptions = {
+    replace: (domNode: DOMNode) => {
+      // Handle Text Nodes -> Wrap in Latex Component to render math like $$x^2$$
+      if (domNode.type === 'text') {
+         // Only wrap if there is actual text content to avoid empty Latex components
+         if (domNode.data && domNode.data.trim() !== '') {
+             return <Latex>{domNode.data}</Latex>;
+         }
       }
 
-      // Text Handling with HTML Parsing + Latex
-      const options = {
-        replace: (domNode: DOMNode) => {
-          if (domNode.type === 'text') {
-             return <Latex>{domNode.data}</Latex>;
-          }
-        }
-      };
-
-      return <span key={i}>{parse(part, options)}</span>;
-    });
+      // Handle Images -> Apply CSS Module Class
+      if (domNode.type === 'tag' && domNode.name === 'img') {
+        const element = domNode as Element; 
+        return (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            {...element.attribs}
+            className={styles.questionImage} 
+            alt={element.attribs.alt || "Figure"}
+          />
+        );
+      }
+    }
   };
 
-  const cleanOptionText = (text: string) => {
-    if (!text) return "";
-    return text.replace(/!\[image_\d+\]\(\d+\)/g, "").trim();
+  // --- CONTENT RENDERER ---
+  const renderContent = (htmlContent: string) => {
+    if (!htmlContent) return null;
+    return <div className={styles.htmlContent}>{parse(htmlContent, parserOptions)}</div>;
+  };
+
+  // --- OPTION RENDERER (FIXED) ---
+  const renderOptionText = (text: string) => {
+      if (!text) return null;
+      // FIXED: Now we parse the HTML in options just like we do for the question
+      // This will handle <p>, <sub>, and embedded Latex $$...$$ correctly.
+      return parse(text, parserOptions); 
   };
 
   const numericalInputId = `numerical-input-${question.id}`;
@@ -76,7 +71,7 @@ export function QuestionBlock({
       {/* 1. QUESTION HEADER */}
       <div className={styles.questionHeader}>
         <div className={styles.questionText}>
-          {renderContent(question.contentText, question.images)}
+          {renderContent(question.contentText)}
         </div>
       </div>
 
@@ -85,7 +80,6 @@ export function QuestionBlock({
         <div className={styles.optionsList}>
           {question.options.map((opt) => {
             const checked = isSelected(opt.id);
-            const visibleText = cleanOptionText(opt.text);
 
             return (
               <label key={opt.id} className={`${styles.optionRow} ${checked ? styles.selected : ""}`}>
@@ -94,20 +88,20 @@ export function QuestionBlock({
                     type="radio"
                     name={question.id}
                     id={`radio-${opt.id}`}
-                    aria-label={visibleText || "Option"} 
+                    aria-label={`Option ${opt.id}`}
                     checked={checked}
                     onChange={() => onSelectOption(opt.id)}
                   />
                 </div>
 
                 <div className={styles.optionContent}>
-                  {visibleText && (
-                    <span className={styles.optionText}>
-                      <Latex>{visibleText}</Latex>
-                    </span>
-                  )}
+                  {/* Render Option Text with the shared parser */}
+                  <span className={styles.optionText}>
+                    {renderOptionText(opt.text)}
+                  </span>
+                  
                   {opt.imageUrl && (
-                     // eslint-disable-next-line @next/next/no-img-element
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={opt.imageUrl} alt="Option Figure" className={styles.optImage} />
                   )}
                 </div>
@@ -117,7 +111,7 @@ export function QuestionBlock({
         </div>
       )}
 
-      {/* 3. NUMERICAL (RESTORED Virtual Numpad) */}
+      {/* 3. NUMERICAL INPUT */}
       {question.kind === "numerical" && (
         <div className={styles.numericalWrapper}>
           <div className={styles.mainAnswerArea}>
@@ -125,7 +119,6 @@ export function QuestionBlock({
               Enter Answer:
             </label>
             
-            {/* Read-Only Input (Security for CBT) */}
             <input
               id={numericalInputId}
               type="text"
@@ -136,7 +129,6 @@ export function QuestionBlock({
             />
           </div>
           
-          {/* Virtual Numpad Component */}
           <VirtualNumpad 
             initialValue={questionState.numericAnswer || ""}
             onChange={(val) => onSelectOption(val)}
