@@ -1,18 +1,14 @@
 "use client";
 
 import styles from "./QuestionMetaBar.module.css";
-import { FaArrowDownLong, FaBookmark, FaRegBookmark } from "react-icons/fa6";
+import { FaArrowDownLong } from "react-icons/fa6";
 
 interface QuestionMetaBarProps {
   questionNumber: number;
-  isBookmarked: boolean;       // Changed from questionId
-  onToggleBookmark: () => void; // New handler
 }
 
 export function QuestionMetaBar({
   questionNumber,
-  isBookmarked,
-  onToggleBookmark,
 }: QuestionMetaBarProps) {
   
   const handleScrollDown = () => {
@@ -31,16 +27,6 @@ export function QuestionMetaBar({
         <span className={styles.questionNo}>
           Question No. {questionNumber}
         </span>
-        
-        {/* NEW: Bookmark Button instead of ID */}
-        <button 
-          className={`${styles.bookmarkBtn} ${isBookmarked ? styles.active : ''}`}
-          onClick={onToggleBookmark}
-          title={isBookmarked ? "Remove Bookmark" : "Bookmark this question"}
-        >
-          {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
-          <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
-        </button>
       </div>
 
       <button
