@@ -132,7 +132,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
 
   if (!isInitialized) return null;
 
-  return <TestPlayerLayout year={year} />;
+  return <TestPlayerLayout />;
 }
 
 export default AttemptClient;

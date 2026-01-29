@@ -21,11 +21,8 @@ import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
 
-interface Props {
-  year: string;
-}
 
-export function TestPlayerLayout({ year }: Props) {
+export function TestPlayerLayout() {
   const {
     testId,
     title,
@@ -39,7 +36,6 @@ export function TestPlayerLayout({ year }: Props) {
     clearResponse,
     markForReview,
     submitTest,
-    toggleBookmark,
     syncWithServer,
     tickTimer,
   } = useTestEngineStore((s) => s);
