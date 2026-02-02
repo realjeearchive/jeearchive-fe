@@ -42,7 +42,6 @@
   cursor: pointer;
 }
 
-
 .optionLabel {
   font-weight: bold;
   min-width: 22px;
@@ -138,4 +137,77 @@
   background: var(--test-player-bg-secondary);
   border-radius: 4px;
   width: 180px;
+}
+
+.comprehensionBox {
+  background: #f8f9fa; /* Light gray background */
+  border-left: 4px solid #3b82f6; /* Blue accent */
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+}
+
+.sectionLabel {
+  font-weight: 700;
+  color: #3b82f6;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.multiHint {
+  font-size: 0.85rem;
+  color: #ea580c; /* Orange hint */
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+/* Dark Mode support (if you use global .dark class) */
+:global(.dark) .comprehensionBox {
+  background: #27272a;
+  border-left-color: #60a5fa;
+}
+
+:global(.dark) .comprehensionText {
+  color: #e5e7eb;
+}
+
+/* ========================================= */
+/* MULTI-CORRECT CIRCULAR CHECKBOX OVERRIDE  */
+/* ========================================= */
+
+.optionRow input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #6b7280;
+  border-radius: 50%; /* Makes it circular */
+  display: grid;
+  place-content: center;
+  margin: 0;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+/* The inner dot (initially hidden) */
+.optionRow input[type="checkbox"]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #2563eb; /* Blue inner dot */
+  background-color: #2563eb;
+}
+
+/* Selected State Border */
+.optionRow input[type="checkbox"]:checked {
+  border-color: #2563eb;
+}
+
+/* Reveal Inner Dot on Select */
+.optionRow input[type="checkbox"]:checked::before {
+  transform: scale(1);
 }

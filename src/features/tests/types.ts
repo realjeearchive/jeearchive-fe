@@ -1,21 +1,26 @@
 // src/features/tests/types.ts
 
-// --- 1. BACKEND DATA ENTITIES ---
+// ==========================================
+// 1. BACKEND DATA ENTITIES (Matches API Response)
+// ==========================================
 
 export interface BackendOptionsObject {
-  id: string;
-  questionId: string;
-  optionAtext: string;
-  optionBtext: string;
-  optionCtext: string;
-  optionDtext: string;
-  optionAimage: string[];
-  optionBimage: string[];
-  optionCimage: string[];
-  optionDimage: string[];
+  id?: string;
+  questionId?: string;
+  // Options text might be missing/empty for Numerical types
+  optionAtext?: string;
+  optionBtext?: string;
+  optionCtext?: string;
+  optionDtext?: string;
+  // Option images
+  optionAimage?: string[];
+  optionBimage?: string[];
+  optionCimage?: string[];
+  optionDimage?: string[];
 }
 
 export interface BackendAttemptStatus {
+  // Supports single string (MCQ/Numeric) or array of strings (Multi-Correct)
   userAnswer: string | string[] | null; 
   isVisited: boolean;
   markedForReview: boolean;
@@ -25,23 +30,26 @@ export interface BackendAttemptStatus {
 
 export interface BackendQuestion {
   id: string;
-  questionNumber?: number;
-  content: string;
+  questionNumber?: number; // Backend provided sequence number
+  content: string;         // HTML string for the question body
+  comprehensionContent?: string; // HTML string for the passage (if applicable)
   subject: string;
-  type: string; 
-  image: string[]; 
+  type: string;            // e.g., "SingleCorrect", "MultiCorrect", "Integer"
+  image?: string[]; 
   positiveMarks: number;
   negativeMarks: number;
-  options: BackendOptionsObject;
-  correctAnswer: string[];
-  solution?: { text: string; image: string[] };
+  options?: BackendOptionsObject; // Optional because numericals might not have it
+  correctAnswer?: string[];
+  solution?: { text: string; image?: string[] };
   attemptStatus?: BackendAttemptStatus;
 }
 
-// --- 2. ENGINE TYPES (Frontend Internal State) ---
+// ==========================================
+// 2. ENGINE TYPES (Frontend Internal State)
+// ==========================================
 
 export interface TestOption {
-  id: string;
+  id: string; // "A", "B", "C", "D"
   label: string;
   text: string;
   imageUrl: string | null;
@@ -49,13 +57,19 @@ export interface TestOption {
 
 export interface TestQuestion {
   id: string;
-  index: number;
-  globalQuestionNumber: number;
+  index: number; // Local index within the section (1, 2, 3...)
+  globalQuestionNumber: number; // Global index (1 to 90...)
   kind: "single" | "numerical" | "multi" | "comprehension"; 
+  
+  // Content
   contentText: string;
+  comprehensionContent?: string | null; // <--- ADDED: To render passage at top
   images: string[]; 
   contentImageUrl: string | null;
+  
   options: TestOption[];
+  
+  // Scoring
   correctMarks: number;
   negativeMarks: number;
   sectionId: string;
@@ -63,7 +77,7 @@ export interface TestQuestion {
 
 export interface TestSection {
   id: string;
-  label: string;
+  label: string; // e.g., "Physics - Section A (MCQ)"
   subject: string;
   questions: TestQuestion[];
 }
@@ -75,14 +89,15 @@ export interface TestDefinition {
   sections: TestSection[];
 }
 
-// --- 3. SESSION & API TYPES ---
+// ==========================================
+// 3. SESSION & API TYPES
+// ==========================================
 
 export interface Paper {
   id: string;
   examId: string;
   year: number;
   
-  // NEW FIELDS added to match backend data
   day?: string;
   month?: string;
   date?: string;
@@ -109,10 +124,11 @@ export interface SessionMeta {
   startTime?: string;
 }
 
+// Dynamic structure because subjects (Physics/Chem/Math) are keys
 export interface HierarchicalSessionData {
   session: SessionMeta;
   paper: Paper;
-  [key: string]: unknown; // Allows dynamic subject keys like "Physics"
+  [key: string]: unknown; 
 }
 
 export interface SessionDataResponse {
@@ -155,7 +171,8 @@ export interface UpdateTestStatusPayload {
   timeStamp: string;
   questionStatus: Array<{
     questionId: string;
-    userAnswer: string | null;
+    // Updated to support Multi-Correct (Array) or Single/Numeric (String)
+    userAnswer: string | string[] | null; 
     isVisited: boolean;
     markedForReview: boolean;
     timeSpent: number;
