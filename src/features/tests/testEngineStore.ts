@@ -6,7 +6,7 @@ import {
   BackendQuestion, 
   BackendAttemptStatus,
   HierarchicalSessionData,
-  UpdateTestStatusPayload // <--- Added Import
+  UpdateTestStatusPayload
 } from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
 import { updateTestSession, mapSingleQuestion } from "./api"; 
@@ -36,7 +36,6 @@ interface TestEngineState {
   questionsById: Record<string, QuestionState>;
   
   createdAt: string | null;
-
   timerId: NodeJS.Timeout | null;
 
   // Actions
@@ -78,14 +77,21 @@ const saveToLocal = (state: TestEngineState) => {
   }
 };
 
+// --- ROBUST STATUS MAPPER (Fixed Type Error) ---
 const mapBackendStatusToFrontend = (
-  apiStatus: string | undefined, 
-  isVisited: boolean, 
-  markedForReview: boolean
+  att: BackendAttemptStatus
 ): QuestionStatus => {
-  if (apiStatus === "ATTEMPTED" || apiStatus === "ANSWERED") return markedForReview ? "answeredAndMarked" : "answered";
-  if (apiStatus === "REVIEW" || markedForReview) return "markedForReview";
-  if ((apiStatus === "NOT_ANSWERED" || apiStatus === "NOT_VISITED") && isVisited) return "notAnswered";
+  // FIX: userAnswer is strictly string[] | null.
+  // We just check if it exists and has length.
+  const hasAnswer = att.userAnswer && att.userAnswer.length > 0;
+
+  if (hasAnswer) {
+    return att.markedForReview ? "answeredAndMarked" : "answered";
+  }
+  
+  if (att.markedForReview) return "markedForReview";
+  if (att.isVisited) return "notAnswered";
+  
   return "notVisited";
 };
 
@@ -141,25 +147,25 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
             status: "NOT_VISITED" 
         };
 
-        // Parse userAnswer from backend
+        // --- DATA PARSING LOGIC (Fixed Type Error) ---
         let selectedIds: string[] = [];
         let numAns: string | null = null;
 
-        if (tq.kind === 'numerical') {
-          if (Array.isArray(att.userAnswer) && att.userAnswer.length > 0) numAns = att.userAnswer[0];
-          else if (typeof att.userAnswer === 'string') numAns = att.userAnswer;
-        } else {
-          if (att.userAnswer) {
-             selectedIds = Array.isArray(att.userAnswer) 
-               ? att.userAnswer 
-               : [att.userAnswer as string];
-          }
+        // If userAnswer exists and has items
+        if (att.userAnswer && att.userAnswer.length > 0) {
+            if (tq.kind === 'numerical') {
+                // For numerical, take the first string in array
+                numAns = att.userAnswer[0];
+            } else {
+                // For MCQ/Multi, use the whole array
+                selectedIds = att.userAnswer;
+            }
         }
 
         qMap[q.id] = {
           questionId: q.id,
           globalQuestionNumber: tq.globalQuestionNumber,
-          status: mapBackendStatusToFrontend(att.status, att.isVisited, att.markedForReview),
+          status: mapBackendStatusToFrontend(att),
           isVisited: att.isVisited || false,
           timeSpentSeconds: att.timeSpent || 0,
           isBookmarked: false,
@@ -190,9 +196,12 @@ function moveToNextQuestion(get: StoreApi<TestEngineState>['getState'], set: Sto
     const nextQ = allQuestions[currentIndex + 1];
     set((state) => {
       const newQs = { ...state.questionsById };
+      
+      // Auto-visit logic
       if (newQs[nextQ.id].status === "notVisited") {
         newQs[nextQ.id] = { ...newQs[nextQ.id], status: "notAnswered", isVisited: true };
       }
+      
       const nextState = { activeQuestionId: nextQ.id, activeSectionId: nextQ.sectionId, questionsById: newQs };
       saveToLocal({ ...state, ...nextState } as TestEngineState);
       return nextState;
@@ -226,6 +235,14 @@ export const useTestEngineStore = create<TestEngineState>()(
       let initialSec = null;
       if (initialQ) initialSec = sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null;
 
+      // Auto-visit logic for initial question
+      if (initialQ && qMap[initialQ]) {
+        if (qMap[initialQ].status === "notVisited") {
+          qMap[initialQ].status = "notAnswered";
+          qMap[initialQ].isVisited = true;
+        }
+      }
+
       const newState = {
         isInitialized: true,
         testId: session.testId,
@@ -251,7 +268,6 @@ export const useTestEngineStore = create<TestEngineState>()(
       const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
       const activeSubject = activeSecObj ? activeSecObj.subject : "General";
 
-      // FIX: Use explicit type to avoid "unexpected any"
       const transformedQuestions: UpdateTestStatusPayload['questionsById'] = {};
 
       Object.values(state.questionsById).forEach((q) => {
@@ -419,7 +435,6 @@ export const useTestEngineStore = create<TestEngineState>()(
 
     startTimer: () => {
       if (get().timerId) return;
-      console.log("Timer started.");
       const id = setInterval(() => { get().tickTimer(); }, 1000);
       set({ timerId: id });
     },
@@ -427,7 +442,6 @@ export const useTestEngineStore = create<TestEngineState>()(
     stopTimer: () => {
       const { timerId } = get();
       if (timerId) {
-        console.log("Timer stopped.");
         clearInterval(timerId);
         set({ timerId: null });
       }
