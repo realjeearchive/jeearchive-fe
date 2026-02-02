@@ -5,7 +5,8 @@ import {
   TestQuestion, 
   BackendQuestion, 
   BackendAttemptStatus,
-  HierarchicalSessionData 
+  HierarchicalSessionData,
+  UpdateTestStatusPayload // <--- Added Import
 } from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
 import { updateTestSession, mapSingleQuestion } from "./api"; 
@@ -19,6 +20,7 @@ export interface SavedSessionData {
   activeQuestionId: string | null;
   activeSectionId: string | null;
   timestamp: number;
+  createdAt: string | null; 
 }
 
 interface TestEngineState {
@@ -33,6 +35,8 @@ interface TestEngineState {
   activeQuestionId: string | null;
   questionsById: Record<string, QuestionState>;
   
+  createdAt: string | null;
+
   timerId: NodeJS.Timeout | null;
 
   // Actions
@@ -65,6 +69,7 @@ const saveToLocal = (state: TestEngineState) => {
     activeQuestionId: state.activeQuestionId,
     activeSectionId: state.activeSectionId,
     timestamp: Date.now(),
+    createdAt: state.createdAt,
   };
   try {
     localStorage.setItem(`test_progress_${state.testId}`, JSON.stringify(payload));
@@ -84,7 +89,7 @@ const mapBackendStatusToFrontend = (
   return "notVisited";
 };
 
-// --- HIERARCHICAL PARSER (Fixed Section Naming) ---
+// --- HIERARCHICAL PARSER ---
 function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestSection[], qMap: Record<string, QuestionState> } {
   const sections: TestSection[] = [];
   const qMap: Record<string, QuestionState> = {};
@@ -93,38 +98,30 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
   const ignoreKeys = ['session', 'paper', 'success', 'message'];
   const subjectKeys = Object.keys(data).filter(k => !ignoreKeys.includes(k));
 
-  // Define preference order for checking types
   const preferredOrder = ["SingleCorrect", "MultiCorrect", "Comprehension", "Integer", "Numerical"];
 
   subjectKeys.forEach(subject => {
     const subjectData = data[subject] as Record<string, BackendQuestion[]>;
     if (!subjectData || typeof subjectData !== 'object') return;
 
-    // Get all keys present in the subject data that have questions
     const availableTypes = Object.keys(subjectData).filter(key => 
       Array.isArray(subjectData[key]) && subjectData[key].length > 0
     );
 
-    // Sort them based on our preferred order
     availableTypes.sort((a, b) => {
       const ixA = preferredOrder.indexOf(a);
       const ixB = preferredOrder.indexOf(b);
-      // If not in our list, put it at the end
       return (ixA === -1 ? 99 : ixA) - (ixB === -1 ? 99 : ixB);
     });
 
-    // Dynamic Section Labeling Counter (A, B, C...)
     let sectionCharIndex = 0;
 
     availableTypes.forEach(typeKey => {
       const questionsList = subjectData[typeKey];
-      // Sort by backend question number
       questionsList.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
 
       const sectionId = `sec-${sections.length}`;
-      
-      // Generate Label: "Physics - Section A (MCQ)"
-      const sectionChar = String.fromCharCode(65 + sectionCharIndex); // 65 is 'A'
+      const sectionChar = String.fromCharCode(65 + sectionCharIndex);
       sectionCharIndex++;
 
       let typeReadable = typeKey;
@@ -144,11 +141,13 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
             status: "NOT_VISITED" 
         };
 
+        // Parse userAnswer from backend
         let selectedIds: string[] = [];
         let numAns: string | null = null;
 
         if (tq.kind === 'numerical') {
-          if (att.userAnswer) numAns = Array.isArray(att.userAnswer) ? att.userAnswer[0] : String(att.userAnswer);
+          if (Array.isArray(att.userAnswer) && att.userAnswer.length > 0) numAns = att.userAnswer[0];
+          else if (typeof att.userAnswer === 'string') numAns = att.userAnswer;
         } else {
           if (att.userAnswer) {
              selectedIds = Array.isArray(att.userAnswer) 
@@ -214,6 +213,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     activeSectionId: null,
     activeQuestionId: null,
     questionsById: {},
+    createdAt: null, 
     timerId: null,
 
     initFromBackendSession: (data: HierarchicalSessionData) => {
@@ -236,7 +236,8 @@ export const useTestEngineStore = create<TestEngineState>()(
         activeSectionId: initialSec,
         questionsById: qMap,
         sections: sections,
-        sectionTimeSpent: {}, 
+        sectionTimeSpent: {},
+        createdAt: session.startTime || new Date().toISOString(),
       };
 
       set(newState);
@@ -250,16 +251,40 @@ export const useTestEngineStore = create<TestEngineState>()(
       const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
       const activeSubject = activeSecObj ? activeSecObj.subject : "General";
 
-      const payload = {
+      // FIX: Use explicit type to avoid "unexpected any"
+      const transformedQuestions: UpdateTestStatusPayload['questionsById'] = {};
+
+      Object.values(state.questionsById).forEach((q) => {
+        let finalAnswer: string[] = [];
+
+        if (q.numericAnswer) {
+          finalAnswer = [q.numericAnswer];
+        } else if (q.selectedOptionIds && q.selectedOptionIds.length > 0) {
+          finalAnswer = q.selectedOptionIds;
+        }
+
+        const isMarked = q.status === "markedForReview" || q.status === "answeredAndMarked";
+
+        transformedQuestions[q.questionId] = {
+          questionId: q.questionId,
+          userAnswer: finalAnswer, 
+          markedForReview: isMarked,
+          isVisited: q.isVisited,
+          timeSpent: q.timeSpentSeconds,
+          status: q.status
+        };
+      });
+
+      const payload: UpdateTestStatusPayload = {
         testId: state.testId,
         paperId: state.paperId,
         timeLeft: state.timeLeftSeconds,
         activeSection: activeSubject, 
         activeQuestionId: state.activeQuestionId,
-        state: "IN_PROGRESS" as const,
+        state: "IN_PROGRESS",
         timeStamp: new Date().toISOString(),
-        questionsById: state.questionsById, 
-        questionStatus: [] 
+        created_at: state.createdAt,
+        questionsById: transformedQuestions
       };
 
       try {

@@ -31,7 +31,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: 75%; /* Matches NTA Interface style */
+  width: 80%; /* Matches NTA Interface style */
   color: var(--test-player-text-color);
 }
 

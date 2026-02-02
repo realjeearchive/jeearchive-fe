@@ -110,7 +110,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-zinc-900">
+      <div className="flex h-screen items-center justify-center bg-zinc-900 text-white">
         <Loader label="Initializing Test Environment..." size="h-6 w-6" />
       </div>
     );

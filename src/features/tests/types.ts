@@ -1,18 +1,16 @@
 // src/features/tests/types.ts
 
 // ==========================================
-// 1. BACKEND DATA ENTITIES (Matches API Response)
+// 1. BACKEND DATA ENTITIES
 // ==========================================
 
 export interface BackendOptionsObject {
   id?: string;
   questionId?: string;
-  // Options text might be missing/empty for Numerical types
   optionAtext?: string;
   optionBtext?: string;
   optionCtext?: string;
   optionDtext?: string;
-  // Option images
   optionAimage?: string[];
   optionBimage?: string[];
   optionCimage?: string[];
@@ -20,8 +18,7 @@ export interface BackendOptionsObject {
 }
 
 export interface BackendAttemptStatus {
-  // Supports single string (MCQ/Numeric) or array of strings (Multi-Correct)
-  userAnswer: string | string[] | null; 
+  userAnswer: string[] | null; // Updated to strict array
   isVisited: boolean;
   markedForReview: boolean;
   timeSpent: number;
@@ -30,26 +27,26 @@ export interface BackendAttemptStatus {
 
 export interface BackendQuestion {
   id: string;
-  questionNumber?: number; // Backend provided sequence number
-  content: string;         // HTML string for the question body
-  comprehensionContent?: string; // HTML string for the passage (if applicable)
+  questionNumber?: number;
+  content: string;
+  comprehensionContent?: string;
   subject: string;
-  type: string;            // e.g., "SingleCorrect", "MultiCorrect", "Integer"
-  image?: string[]; 
+  type: string;
+  image?: string[];
   positiveMarks: number;
   negativeMarks: number;
-  options?: BackendOptionsObject; // Optional because numericals might not have it
+  options?: BackendOptionsObject;
   correctAnswer?: string[];
   solution?: { text: string; image?: string[] };
   attemptStatus?: BackendAttemptStatus;
 }
 
 // ==========================================
-// 2. ENGINE TYPES (Frontend Internal State)
+// 2. ENGINE TYPES
 // ==========================================
 
 export interface TestOption {
-  id: string; // "A", "B", "C", "D"
+  id: string;
   label: string;
   text: string;
   imageUrl: string | null;
@@ -57,19 +54,14 @@ export interface TestOption {
 
 export interface TestQuestion {
   id: string;
-  index: number; // Local index within the section (1, 2, 3...)
-  globalQuestionNumber: number; // Global index (1 to 90...)
-  kind: "single" | "numerical" | "multi" | "comprehension"; 
-  
-  // Content
+  index: number;
+  globalQuestionNumber: number;
+  kind: "single" | "numerical" | "multi" | "comprehension";
   contentText: string;
-  comprehensionContent?: string | null; // <--- ADDED: To render passage at top
-  images: string[]; 
+  comprehensionContent?: string | null;
+  images: string[];
   contentImageUrl: string | null;
-  
   options: TestOption[];
-  
-  // Scoring
   correctMarks: number;
   negativeMarks: number;
   sectionId: string;
@@ -77,7 +69,7 @@ export interface TestQuestion {
 
 export interface TestSection {
   id: string;
-  label: string; // e.g., "Physics - Section A (MCQ)"
+  label: string;
   subject: string;
   questions: TestQuestion[];
 }
@@ -97,21 +89,17 @@ export interface Paper {
   id: string;
   examId: string;
   year: number;
-  
   day?: string;
   month?: string;
   date?: string;
   shift?: string;
   mode?: string;
-  
   totalMarks: number;
   totalDuration: number;
   totalQuestions: number;
-  
   totalSingleChoice?: number;
   totalMultiChoice?: number;
   totalInteger?: number;
-  
   exam?: { name: string };
 }
 
@@ -121,19 +109,18 @@ export interface SessionMeta {
   activeSection: string | null;
   activeQuestionId: string | null;
   status: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
-  startTime?: string;
+  startTime?: string; // We map this to created_at
 }
 
-// Dynamic structure because subjects (Physics/Chem/Math) are keys
 export interface HierarchicalSessionData {
   session: SessionMeta;
   paper: Paper;
-  [key: string]: unknown; 
+  [key: string]: unknown;
 }
 
 export interface SessionDataResponse {
   message: string;
-  data: HierarchicalSessionData; 
+  data: HierarchicalSessionData;
   success: boolean;
 }
 
@@ -161,6 +148,7 @@ export interface PaperApiResponse {
   success: boolean;
 }
 
+
 export interface UpdateTestStatusPayload {
   testId: string;
   paperId: string;
@@ -169,12 +157,13 @@ export interface UpdateTestStatusPayload {
   activeQuestionId: string | null;
   state: "IN_PROGRESS" | "COMPLETED" | "PAUSED";
   timeStamp: string;
-  questionStatus: Array<{
+  created_at: string | null;
+  
+  questionsById: Record<string, {
     questionId: string;
-    // Updated to support Multi-Correct (Array) or Single/Numeric (String)
-    userAnswer: string | string[] | null; 
-    isVisited: boolean;
+    userAnswer: string[]; 
     markedForReview: boolean;
+    isVisited: boolean;
     timeSpent: number;
     status: string;
   }>;
