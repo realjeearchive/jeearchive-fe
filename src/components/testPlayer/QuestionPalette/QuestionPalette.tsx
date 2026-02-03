@@ -7,9 +7,10 @@ import type { QuestionStatus } from "@/features/tests/playertypes";
 interface QuestionPaletteProps {
   sectionId: string;
   questionCount: number;
-  currentQuestionNumber: number;
+  currentQuestionNumber: number; // This should be the local number of the active question
   questionStates: {
     globalQuestionNumber: number;
+    localQuestionNumber: number; // <--- ADD THIS LINE
     questionId: string;
     status: QuestionStatus;
   }[];
@@ -29,12 +30,11 @@ export default function QuestionPalette({
             key={qState.questionId}
             className={styles.questionButton}
             onClick={() => onQuestionSelect(qState.questionId)}
-            aria-label={`Go to question ${qState.globalQuestionNumber}`}
           >
             <StatusIcon
               type={qState.status}
-              value={qState.globalQuestionNumber}
-              isCurrent={qState.globalQuestionNumber === currentQuestionNumber}
+              value={qState.localQuestionNumber} // Error will disappear now
+              isCurrent={qState.localQuestionNumber === currentQuestionNumber}
             />
           </button>
         );

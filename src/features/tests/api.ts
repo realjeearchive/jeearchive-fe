@@ -199,7 +199,6 @@ export function mapSingleQuestion(q: BackendQuestion, globalIndex: number, secti
 
   const optionsList: TestOption[] = [];
   
-  // Populate options for Single, Multi, and Comprehension
   if (kind !== 'numerical' && q.options) {
     ['A', 'B', 'C', 'D'].forEach((lbl) => {
       const textKey = `option${lbl}text` as keyof BackendOptionsObject;
@@ -220,11 +219,10 @@ export function mapSingleQuestion(q: BackendQuestion, globalIndex: number, secti
   return {
     id: q.id,
     index: localIndex,
-    // Use backend questionNumber if available for ordering, fallback to counter
     globalQuestionNumber: q.questionNumber || globalIndex,
+    localQuestionNumber: localIndex, // <--- ADD THIS LINE TO FIX THE ERROR
     kind: kind,
     contentText: q.content || "",
-    // NEW: Map Comprehension Passage
     comprehensionContent: q.comprehensionContent || null,
     images: imgArray, 
     contentImageUrl: imgArray.length > 0 ? imgArray[0] : null,

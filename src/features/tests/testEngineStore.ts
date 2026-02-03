@@ -103,7 +103,6 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
 
   const ignoreKeys = ['session', 'paper', 'success', 'message'];
   const subjectKeys = Object.keys(data).filter(k => !ignoreKeys.includes(k));
-
   const preferredOrder = ["SingleCorrect", "MultiCorrect", "Comprehension", "Integer", "Numerical"];
 
   subjectKeys.forEach(subject => {
@@ -124,21 +123,31 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
 
     availableTypes.forEach(typeKey => {
       const questionsList = subjectData[typeKey];
+      // Maintain backend order for comprehension integrity
       questionsList.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
 
       const sectionId = `sec-${sections.length}`;
       const sectionChar = String.fromCharCode(65 + sectionCharIndex);
       sectionCharIndex++;
 
+      // --- FIX: Define typeReadable here ---
       let typeReadable = typeKey;
       if (typeKey === "SingleCorrect") typeReadable = "MCQ";
       else if (typeKey === "MultiCorrect") typeReadable = "Multi Correct";
       else if (typeKey === "Integer" || typeKey === "Numerical") typeReadable = "Numerical";
 
+      // Reset local counter for the specific section (1, 2, 3...)
+      let localCounter = 0; 
+
       const mappedQuestions = questionsList.map((q, idx) => {
         globalCounter++;
+        localCounter++; 
+        
         const tq = mapSingleQuestion(q, globalCounter, sectionId, idx + 1);
         
+        // Assign the local number to the question object
+        tq.localQuestionNumber = localCounter; 
+
         const att: BackendAttemptStatus = q.attemptStatus || { 
             userAnswer: null, 
             isVisited: false, 
@@ -147,17 +156,13 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
             status: "NOT_VISITED" 
         };
 
-        // --- DATA PARSING LOGIC (Fixed Type Error) ---
         let selectedIds: string[] = [];
         let numAns: string | null = null;
 
-        // If userAnswer exists and has items
         if (att.userAnswer && att.userAnswer.length > 0) {
             if (tq.kind === 'numerical') {
-                // For numerical, take the first string in array
                 numAns = att.userAnswer[0];
             } else {
-                // For MCQ/Multi, use the whole array
                 selectedIds = att.userAnswer;
             }
         }
@@ -165,6 +170,7 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
         qMap[q.id] = {
           questionId: q.id,
           globalQuestionNumber: tq.globalQuestionNumber,
+          localQuestionNumber: tq.localQuestionNumber, 
           status: mapBackendStatusToFrontend(att),
           isVisited: att.isVisited || false,
           timeSpentSeconds: att.timeSpent || 0,

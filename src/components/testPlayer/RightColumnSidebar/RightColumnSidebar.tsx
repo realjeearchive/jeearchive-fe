@@ -12,30 +12,26 @@ import QuestionPalette from "../QuestionPalette/QuestionPalette";
 export function Sidebar() {
   const user = useUserStore((s) => s.profile);
   
-  // Store Data
   const activeSectionId = useTestEngineStore((s) => s.activeSectionId);
   const sections = useTestEngineStore((s) => s.sections);
   const questionsById = useTestEngineStore((s) => s.questionsById);
   const activeQuestionId = useTestEngineStore((s) => s.activeQuestionId);
   const jumpToQuestion = useTestEngineStore((s) => s.jumpToQuestion);
 
-  // 1. Get Current Section Data
   const currentSection = sections.find(s => s.id === activeSectionId);
-  
   if (!currentSection) return null;
 
-  // 2. Prepare Palette Data (Map ONLY current section questions)
+  // FIX: Map localQuestionNumber so the Palette can see it
   const paletteQuestions = currentSection.questions.map(q => {
     const state = questionsById[q.id];
     return {
       globalQuestionNumber: q.globalQuestionNumber,
+      localQuestionNumber: q.localQuestionNumber, // <--- ADDED THIS LINE
       questionId: q.id,
       status: state.status,
     };
   });
 
-  // 3. Calculate Stats (For the whole paper usually, or section wise)
-  // Let's calculate for the WHOLE paper as per NTA standard
   const allStates = Object.values(questionsById);
   const counts = {
     answered: allStates.filter(q => q.status === 'answered').length,
@@ -45,20 +41,18 @@ export function Sidebar() {
     answeredAndMarked: allStates.filter(q => q.status === 'answeredAndMarked').length,
   };
 
-  // Find current question number for the "Highlight" effect
+  // FIX: Use localQuestionNumber for correct highlighting in JEE mode
   const currentQState = questionsById[activeQuestionId || ""];
-  const currentQNum = currentQState ? currentQState.globalQuestionNumber : 0;
+  const currentQNum = currentQState ? currentQState.localQuestionNumber : 0;
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarInner}>
-        
-        {/* Profile Header */}
         <div className={styles.studentProfile}>
           <div className={styles.profile}>
             <Image
               className={styles.profileImage}
-              src={PlaceholderImage} // Or user.imageUrl
+              src={PlaceholderImage}
               alt="Profile"
               width={40} height={40}
             />
@@ -68,12 +62,10 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Counts Legend */}
         <div className={styles.statusIndicatorContainer}>
           <StatusIndicator counts={counts} />
         </div>
 
-        {/* Section Label */}
         <div className={styles.sectionHeader}>
           {currentSection.label}
         </div>
@@ -82,7 +74,6 @@ export function Sidebar() {
           Choose a Question
         </div>
 
-        {/* The Grid */}
         <QuestionPalette
           sectionId={currentSection.id}
           questionCount={currentSection.questions.length}

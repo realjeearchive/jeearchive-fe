@@ -122,7 +122,7 @@ export function TestPlayerLayout() {
           <MarksInfoBar />
           <div className={styles.QuestionScrollArea}>
             <QuestionMetaBar
-              questionNumber={activeQuestionState.globalQuestionNumber}
+              questionNumber={activeQuestionState.localQuestionNumber}
             />
             <main id="question-content-area">
               <section className={styles.questionArea}>

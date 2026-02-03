@@ -56,6 +56,7 @@ export interface TestQuestion {
   id: string;
   index: number;
   globalQuestionNumber: number;
+  localQuestionNumber: number;
   kind: "single" | "numerical" | "multi" | "comprehension";
   contentText: string;
   comprehensionContent?: string | null;

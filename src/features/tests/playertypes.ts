@@ -13,6 +13,7 @@ export type QuestionKind = "single" | "numerical";
 export interface QuestionState {
   questionId: string;
   globalQuestionNumber: number; // 1 to 75
+  localQuestionNumber: number;
   status: QuestionStatus;
   selectedOptionIds: string[]; // Array of IDs (e.g. ["A"])
   numericAnswer: string | null; // For numerical questions
