@@ -12,7 +12,6 @@ export function TopStrip() {
   const [openAccessibility, setOpenAccessibility] = useState(false);
   const { toggle } = useScreenMagnifier();
   
-  // Pull metadata directly from the store
   const metadata = useTestEngineStore((s) => s.paperMetadata);
 
   const formattedBanner = useMemo(() => {
@@ -20,14 +19,16 @@ export function TopStrip() {
 
     const { examName, year, date, month, shift } = metadata;
 
-    // Constructs the string: e.g., "JEE MAIN 2025 24 JAN SHIFT 1"
+    // FIX: Replace underscore in JEE_MAIN with a space
+    const cleanExamName = examName?.replace(/_/g, " ") || "JEE MAIN";
+
     const parts = [
-      examName,
+      cleanExamName,
       year,
       date,
       month,
-      shift ? `SHIFT ${shift}` : ""
-    ].filter(Boolean); // Cleans out any missing fields
+      shift ? `${shift} SHIFT` : ""
+    ].filter(Boolean);
 
     return `${parts.join(" ").toUpperCase()} UPDATED AS PER LATEST NTA PATTERN`;
   }, [metadata]);
@@ -40,34 +41,19 @@ export function TopStrip() {
         </div>
 
         <div className={styles.utilities}>
-          <button
-            type="button"
-            className={styles.utilButton}
-            onClick={() => setOpenAccessibility(true)}
-          >
-            <span className={`${styles.icon} ${styles.accessibility}`}>
-              <IoAccessibility />
-            </span>
+          <button type="button" className={styles.utilButton} onClick={() => setOpenAccessibility(true)}>
+            <span className={`${styles.icon} ${styles.accessibility}`}><IoAccessibility /></span>
             Accessibility
           </button>
 
-          <button
-            type="button"
-            className={styles.utilButton}
-            onClick={toggle}
-          >
-            <span className={`${styles.icon} ${styles.magnifier}`}>
-              <HiOutlineMagnifyingGlassPlus />
-            </span>
+          <button type="button" className={styles.utilButton} onClick={toggle}>
+            <span className={`${styles.icon} ${styles.magnifier}`}><HiOutlineMagnifyingGlassPlus /></span>
             Screen Magnifier
           </button>
         </div>
       </div>
 
-      <AccessibilityPopup
-        open={openAccessibility}
-        onClose={() => setOpenAccessibility(false)}
-      />
+      <AccessibilityPopup open={openAccessibility} onClose={() => setOpenAccessibility(false)} />
     </>
   );
 }

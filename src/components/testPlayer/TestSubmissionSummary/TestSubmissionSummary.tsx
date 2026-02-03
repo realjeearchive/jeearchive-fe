@@ -2,11 +2,34 @@
 
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import styles from "./TestSubmissionSummary.module.css";
 
 export function TestSubmissionSummary() {
-  const { sections, questionsById, title, submitTest } = useTestEngineStore();
+  // Pull metadata and existing store data
+  const { sections, questionsById, paperMetadata, submitTest } = useTestEngineStore();
   const router = useRouter();
+
+  // Create the dynamic formatted header with proper underscore cleaning
+  const formattedHeader = useMemo(() => {
+    if (!paperMetadata) return "JEE TEST UPDATED AS PER LATEST NTA PATTERN";
+
+    const { examName, year, date, month, shift } = paperMetadata;
+
+    // Clean "JEE_MAIN" to "JEE MAIN"
+    const cleanExamName = examName?.replace(/_/g, " ") || "JEE MAIN";
+
+    // Construct parts in proper order: Year, Date, Month, Shift
+    const parts = [
+      cleanExamName,
+      year,
+      date,
+      month,
+      shift ? `${shift} SHIFT` : ""
+    ].filter(Boolean);
+
+    return `${parts.join(" ").toUpperCase()} UPDATED AS PER LATEST NTA PATTERN`;
+  }, [paperMetadata]);
 
   const summaryData = sections.map((section) => {
     const sectionQuestions = section.questions;
@@ -40,9 +63,9 @@ export function TestSubmissionSummary() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* Exact Banner from Image 3 */}
+      {/* Banner matches TopStrip formatting exactly */}
       <header className={styles.topBanner}>
-        {title.toUpperCase()} UPDATED AS PER LATEST NTA PATTERN
+        {formattedHeader}
       </header>
       
       <div className={styles.contentContainer}>

@@ -26,7 +26,7 @@ export function SectionInstructionsBox({
   positiveMark,
   negativeMark,
 }: Props) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   
   // Safe handling for helper function
   const countWord = typeof numberToWords === 'function' ? numberToWords(questionCount) : questionCount;
