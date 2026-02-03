@@ -20,6 +20,7 @@ import CursorTrail from "../CursorTrail/CursorTrail";
 import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
+import { useRouter } from "next/navigation";
 
 export function TestPlayerLayout() {
   const {
@@ -43,6 +44,7 @@ export function TestPlayerLayout() {
   const { cursorTrailEnabled } = useTestPlayerAccessibility();
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const router = useRouter();
 
   // OPTIMIZED: 2 Minute Sync Interval
   useEffect(() => {
@@ -108,9 +110,8 @@ export function TestPlayerLayout() {
   const negMark = templateQuestion?.negativeMarks || 1;
 
   const handleSubmit = () => {
-    if (window.confirm("Are you sure you want to submit the test?")) {
-      submitTest();
-    }
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/submit`);
   };
 
   return (

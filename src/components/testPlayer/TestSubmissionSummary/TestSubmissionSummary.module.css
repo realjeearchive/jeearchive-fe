@@ -1,0 +1,89 @@
+.pageWrapper {
+  width: 100%;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.topBanner {
+  background-color: #333;
+  color: #fbef3f;
+  padding: 8px 15px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: left;
+}
+
+.contentContainer {
+  padding: 20px;
+  width: 100%;
+}
+
+.tableContainer {
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.summaryTable {
+  width: 100%; /* Full width as requested */
+  border-collapse: collapse;
+  border: 1px solid #757575;
+}
+
+.summaryTable th {
+  background-color: #f5f5f5;
+  border: 1px solid #757575;
+  padding: 10px;
+  text-align: left;
+  font-size: 13px;
+  color: #212121;
+}
+
+.summaryTable td {
+  border: 1px solid #757575;
+  padding: 10px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.actionSection {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.promptText {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+.btnRow {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.noBtn, .yesBtn {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+/* Gray button from image */
+.noBtn {
+  background-color: #616e7c;
+  color: white;
+}
+
+/* Red button from image */
+.yesBtn {
+  background-color: #d63031;
+  color: white;
+}
+
+.noBtn:hover, .yesBtn:hover {
+  opacity: 0.9;
+}
