@@ -21,7 +21,6 @@ import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
 
-
 export function TestPlayerLayout() {
   const {
     testId,
@@ -45,9 +44,12 @@ export function TestPlayerLayout() {
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // OPTIMIZED: 2 Minute Sync Interval
   useEffect(() => {
     if (!isInitialized || !testId) return;
-    const syncInterval = setInterval(() => { syncWithServer(); }, 180000); 
+    const syncInterval = setInterval(() => { 
+      syncWithServer(); 
+    }, 120000); // 2 Minutes
     return () => clearInterval(syncInterval);
   }, [isInitialized, testId, syncWithServer]);
 

@@ -34,6 +34,7 @@ interface TestEngineState {
   activeSectionId: string | null;
   activeQuestionId: string | null;
   questionsById: Record<string, QuestionState>;
+  changedQuestionIds: Set<string>; 
   
   createdAt: string | null;
   timerId: NodeJS.Timeout | null;
@@ -77,22 +78,16 @@ const saveToLocal = (state: TestEngineState) => {
   }
 };
 
-// --- ROBUST STATUS MAPPER (Fixed Type Error) ---
 const mapBackendStatusToFrontend = (
   att: BackendAttemptStatus
 ): QuestionStatus => {
-  // FIX: userAnswer is strictly string[] | null.
-  // We just check if it exists and has length.
   const hasAnswer = att.userAnswer && att.userAnswer.length > 0;
-
   if (hasAnswer) {
-    return att.markedForReview ? "answeredAndMarked" : "answered";
+    return att.markedForReview ? ("answeredAndMarked" as QuestionStatus) : ("answered" as QuestionStatus);
   }
-  
-  if (att.markedForReview) return "markedForReview";
-  if (att.isVisited) return "notAnswered";
-  
-  return "notVisited";
+  if (att.markedForReview) return "markedForReview" as QuestionStatus;
+  if (att.isVisited) return "notAnswered" as QuestionStatus;
+  return "notVisited" as QuestionStatus;
 };
 
 // --- HIERARCHICAL PARSER ---
@@ -123,20 +118,14 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
 
     availableTypes.forEach(typeKey => {
       const questionsList = subjectData[typeKey];
-      // Maintain backend order for comprehension integrity
       questionsList.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
 
       const sectionId = `sec-${sections.length}`;
       const sectionChar = String.fromCharCode(65 + sectionCharIndex);
       sectionCharIndex++;
 
-      // --- FIX: Define typeReadable here ---
-      let typeReadable = typeKey;
-      if (typeKey === "SingleCorrect") typeReadable = "MCQ";
-      else if (typeKey === "MultiCorrect") typeReadable = "Multi Correct";
-      else if (typeKey === "Integer" || typeKey === "Numerical") typeReadable = "Numerical";
+      const typeReadable = typeKey === "SingleCorrect" ? "MCQ" : (typeKey === "MultiCorrect" ? "Multi Correct" : "Numerical");
 
-      // Reset local counter for the specific section (1, 2, 3...)
       let localCounter = 0; 
 
       const mappedQuestions = questionsList.map((q, idx) => {
@@ -144,8 +133,6 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
         localCounter++; 
         
         const tq = mapSingleQuestion(q, globalCounter, sectionId, idx + 1);
-        
-        // Assign the local number to the question object
         tq.localQuestionNumber = localCounter; 
 
         const att: BackendAttemptStatus = q.attemptStatus || { 
@@ -156,17 +143,6 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
             status: "NOT_VISITED" 
         };
 
-        let selectedIds: string[] = [];
-        let numAns: string | null = null;
-
-        if (att.userAnswer && att.userAnswer.length > 0) {
-            if (tq.kind === 'numerical') {
-                numAns = att.userAnswer[0];
-            } else {
-                selectedIds = att.userAnswer;
-            }
-        }
-
         qMap[q.id] = {
           questionId: q.id,
           globalQuestionNumber: tq.globalQuestionNumber,
@@ -175,8 +151,8 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
           isVisited: att.isVisited || false,
           timeSpentSeconds: att.timeSpent || 0,
           isBookmarked: false,
-          selectedOptionIds: selectedIds,
-          numericAnswer: numAns
+          selectedOptionIds: (tq.kind !== 'numerical' && att.userAnswer) ? att.userAnswer : [],
+          numericAnswer: (tq.kind === 'numerical' && att.userAnswer) ? att.userAnswer[0] : null
         };
         return tq;
       });
@@ -200,15 +176,21 @@ function moveToNextQuestion(get: StoreApi<TestEngineState>['getState'], set: Sto
 
   if (currentIndex < allQuestions.length - 1) {
     const nextQ = allQuestions[currentIndex + 1];
-    set((state) => {
+    set((state): Partial<TestEngineState> => {
       const newQs = { ...state.questionsById };
+      const newChanges = new Set(state.changedQuestionIds);
       
-      // Auto-visit logic
       if (newQs[nextQ.id].status === "notVisited") {
-        newQs[nextQ.id] = { ...newQs[nextQ.id], status: "notAnswered", isVisited: true };
+        newQs[nextQ.id] = { ...newQs[nextQ.id], status: "notAnswered" as QuestionStatus, isVisited: true };
+        newChanges.add(nextQ.id); 
       }
       
-      const nextState = { activeQuestionId: nextQ.id, activeSectionId: nextQ.sectionId, questionsById: newQs };
+      const nextState = { 
+        activeQuestionId: nextQ.id, 
+        activeSectionId: nextQ.sectionId, 
+        questionsById: newQs,
+        changedQuestionIds: newChanges 
+      };
       saveToLocal({ ...state, ...nextState } as TestEngineState);
       return nextState;
     });
@@ -228,25 +210,20 @@ export const useTestEngineStore = create<TestEngineState>()(
     activeSectionId: null,
     activeQuestionId: null,
     questionsById: {},
+    changedQuestionIds: new Set(),
     createdAt: null, 
     timerId: null,
 
     initFromBackendSession: (data: HierarchicalSessionData) => {
-      const { session, paper } = data; 
+      const { session, paper } = data;
       const { sections, qMap } = parseHierarchicalData(data);
 
-      let initialQ = session.activeQuestionId;
-      if (!initialQ || !qMap[initialQ]) initialQ = sections[0]?.questions[0]?.id || null;
-      
-      let initialSec = null;
-      if (initialQ) initialSec = sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null;
+      const initialQ = session.activeQuestionId || (sections[0]?.questions[0]?.id || null);
+      const initialSec = initialQ ? (sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null) : null;
 
-      // Auto-visit logic for initial question
-      if (initialQ && qMap[initialQ]) {
-        if (qMap[initialQ].status === "notVisited") {
-          qMap[initialQ].status = "notAnswered";
+      if (initialQ && qMap[initialQ]?.status === "notVisited") {
+          qMap[initialQ].status = "notAnswered" as QuestionStatus;
           qMap[initialQ].isVisited = true;
-        }
       }
 
       const newState = {
@@ -271,26 +248,24 @@ export const useTestEngineStore = create<TestEngineState>()(
       const state = get();
       if (!state.testId || !state.paperId) return;
 
+      const idsToSync = new Set(state.changedQuestionIds);
+      if (state.activeQuestionId) idsToSync.add(state.activeQuestionId);
+
+      if (idsToSync.size === 0) return;
+
       const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
       const activeSubject = activeSecObj ? activeSecObj.subject : "General";
 
       const transformedQuestions: UpdateTestStatusPayload['questionsById'] = {};
 
-      Object.values(state.questionsById).forEach((q) => {
-        let finalAnswer: string[] = [];
-
-        if (q.numericAnswer) {
-          finalAnswer = [q.numericAnswer];
-        } else if (q.selectedOptionIds && q.selectedOptionIds.length > 0) {
-          finalAnswer = q.selectedOptionIds;
-        }
-
-        const isMarked = q.status === "markedForReview" || q.status === "answeredAndMarked";
+      idsToSync.forEach((id) => {
+        const q = state.questionsById[id];
+        if (!q) return;
 
         transformedQuestions[q.questionId] = {
           questionId: q.questionId,
-          userAnswer: finalAnswer, 
-          markedForReview: isMarked,
+          userAnswer: q.numericAnswer ? [q.numericAnswer] : q.selectedOptionIds, 
+          markedForReview: q.status === "markedForReview" || q.status === "answeredAndMarked",
           isVisited: q.isVisited,
           timeSpent: q.timeSpentSeconds,
           status: q.status
@@ -311,6 +286,7 @@ export const useTestEngineStore = create<TestEngineState>()(
 
       try {
         await updateTestSession(payload);
+        set({ changedQuestionIds: new Set() });
       } catch (err) {
         console.warn("Sync failed", err);
       }
@@ -320,75 +296,61 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { sections } = get();
       const targetSection = sections.find((s) => s.id === sectionId);
       if (!targetSection || !targetSection.questions.length) return;
-      const firstQ = targetSection.questions[0];
-      const qId = firstQ.id;
-
-      set((state) => {
-        const newQs = { ...state.questionsById };
-        if (newQs[qId].status === "notVisited") {
-          newQs[qId].status = "notAnswered";
-          newQs[qId].isVisited = true;
-        }
-        const nextState = { activeSectionId: sectionId, activeQuestionId: qId, questionsById: newQs };
-        saveToLocal({ ...state, ...nextState } as TestEngineState);
-        return nextState;
-      });
+      get().jumpToQuestion(targetSection.questions[0].id);
     },
 
     jumpToQuestion: (questionId) => {
-      set((state) => {
+      set((state): Partial<TestEngineState> => {
         const newQs = { ...state.questionsById };
+        const newChanges = new Set(state.changedQuestionIds);
+        
         if (newQs[questionId].status === "notVisited") {
-          newQs[questionId].status = "notAnswered";
+          newQs[questionId].status = "notAnswered" as QuestionStatus;
           newQs[questionId].isVisited = true;
+          newChanges.add(questionId);
         }
+
         const section = state.sections.find((s) => s.questions.some((q) => q.id === questionId));
-        const nextState = { activeQuestionId: questionId, activeSectionId: section?.id || state.activeSectionId, questionsById: newQs };
+        const nextState = { 
+          activeQuestionId: questionId, 
+          activeSectionId: section?.id || state.activeSectionId, 
+          questionsById: newQs,
+          changedQuestionIds: newChanges
+        };
         saveToLocal({ ...state, ...nextState } as TestEngineState);
         return nextState;
       });
     },
 
     selectOption: (questionId, value) => {
-      const { sections } = get();
-      let isNumerical = false;
-      let isMulti = false;
-      
-      for (const s of sections) {
-        const q = s.questions.find(fq => fq.id === questionId);
-        if (q) {
-          isNumerical = q.kind === "numerical";
-          isMulti = q.kind === "multi";
-          break;
-        }
-      }
-
-      set((state) => {
+      set((state): Partial<TestEngineState> => {
         const prev = state.questionsById[questionId];
-        const newState = { ...prev };
+        const qDef = state.sections.flatMap(s => s.questions).find(q => q.id === questionId);
         
-        if (isNumerical) {
-          newState.numericAnswer = value; 
-        } else if (isMulti) {
-          const current = newState.selectedOptionIds;
-          newState.selectedOptionIds = current.includes(value) 
-            ? current.filter(id => id !== value) 
-            : [...current, value];
-        } else {
-          newState.selectedOptionIds = [value]; 
-        }
+        let newIds = [...prev.selectedOptionIds];
+        let newNum = prev.numericAnswer;
 
-        const nextState = { questionsById: { ...state.questionsById, [questionId]: newState } };
+        if (qDef?.kind === "numerical") newNum = value;
+        else if (qDef?.kind === "multi") newIds = newIds.includes(value) ? newIds.filter(id => id !== value) : [...newIds, value];
+        else newIds = [value];
+
+        const nextState = { 
+          questionsById: { ...state.questionsById, [questionId]: { ...prev, selectedOptionIds: newIds, numericAnswer: newNum } },
+          changedQuestionIds: new Set(state.changedQuestionIds).add(questionId)
+        };
         saveToLocal({ ...state, ...nextState } as TestEngineState);
         return nextState;
       });
     },
 
     toggleBookmark: (questionId) => {
-      set((state) => {
+      set((state): Partial<TestEngineState> => {
         const currentQ = state.questionsById[questionId];
         if (!currentQ) return {}; 
-        const nextState = { questionsById: { ...state.questionsById, [questionId]: { ...currentQ, isBookmarked: !currentQ.isBookmarked } } };
+        const nextState = { 
+          questionsById: { ...state.questionsById, [questionId]: { ...currentQ, isBookmarked: !currentQ.isBookmarked } },
+          changedQuestionIds: new Set(state.changedQuestionIds).add(questionId)
+        };
         saveToLocal({ ...state, ...nextState } as TestEngineState);
         return nextState;
       });
@@ -397,29 +359,35 @@ export const useTestEngineStore = create<TestEngineState>()(
     saveAndNext: () => {
       const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
-      const currentQ = questionsById[activeQuestionId];
-      const hasAnswer = currentQ.selectedOptionIds.length > 0 || (currentQ.numericAnswer !== null && currentQ.numericAnswer !== "");
+      const q = questionsById[activeQuestionId];
+      const hasAns = q.selectedOptionIds.length > 0 || (q.numericAnswer !== null && q.numericAnswer !== "");
       
-      const newStatus: QuestionStatus = hasAnswer ? "answered" : "notAnswered";
-
-      set((state) => {
-        const nextState = { questionsById: { ...state.questionsById, [activeQuestionId]: { ...state.questionsById[activeQuestionId], status: newStatus } } };
-        saveToLocal({ ...state, ...nextState } as TestEngineState);
-        return nextState;
-      });
+      set((state): Partial<TestEngineState> => ({
+        questionsById: { 
+            ...state.questionsById, 
+            [activeQuestionId]: { ...q, status: (hasAns ? "answered" : "notAnswered") as QuestionStatus } 
+        },
+        changedQuestionIds: new Set(state.changedQuestionIds).add(activeQuestionId)
+      }));
       moveToNextQuestion(get, set);
     },
 
     markForReview: () => {
       const { activeQuestionId, questionsById } = get();
       if (!activeQuestionId) return;
-      const currentQ = questionsById[activeQuestionId];
-      const hasAnswer = currentQ.selectedOptionIds.length > 0 || (currentQ.numericAnswer !== null && currentQ.numericAnswer !== "");
+      const q = questionsById[activeQuestionId];
+      const hasAns = q.selectedOptionIds.length > 0 || (q.numericAnswer !== null && q.numericAnswer !== "");
       
-      const newStatus: QuestionStatus = hasAnswer ? "answeredAndMarked" : "markedForReview";
+      const newStatus: QuestionStatus = hasAns ? ("answeredAndMarked" as QuestionStatus) : ("markedForReview" as QuestionStatus);
 
-      set((state) => {
-        const nextState = { questionsById: { ...state.questionsById, [activeQuestionId]: { ...state.questionsById[activeQuestionId], status: newStatus } } };
+      set((state): Partial<TestEngineState> => {
+        const nextState = { 
+          questionsById: { 
+            ...state.questionsById, 
+            [activeQuestionId]: { ...state.questionsById[activeQuestionId], status: newStatus } 
+          },
+          changedQuestionIds: new Set(state.changedQuestionIds).add(activeQuestionId)
+        };
         saveToLocal({ ...state, ...nextState } as TestEngineState);
         return nextState;
       });
@@ -430,10 +398,19 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { activeQuestionId } = get();
       if (!activeQuestionId) return;
       
-      const newStatus: QuestionStatus = "notAnswered";
-
-      set((state) => {
-        const nextState = { questionsById: { ...state.questionsById, [activeQuestionId]: { ...state.questionsById[activeQuestionId], selectedOptionIds: [], numericAnswer: null, status: newStatus } } };
+      set((state): Partial<TestEngineState> => {
+        const nextState = { 
+          questionsById: { 
+            ...state.questionsById, 
+            [activeQuestionId]: { 
+              ...state.questionsById[activeQuestionId], 
+              selectedOptionIds: [], 
+              numericAnswer: null, 
+              status: "notAnswered" as QuestionStatus 
+            } 
+          },
+          changedQuestionIds: new Set(state.changedQuestionIds).add(activeQuestionId)
+        };
         saveToLocal({ ...state, ...nextState } as TestEngineState);
         return nextState;
       });
@@ -454,7 +431,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     },
 
     tickTimer: () => {
-      const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById } = get();
+      const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById, changedQuestionIds } = get();
       if (timeLeftSeconds <= 0) { 
         submitTest(); 
         get().stopTimer(); 
@@ -462,17 +439,20 @@ export const useTestEngineStore = create<TestEngineState>()(
       }
       
       const newTimeLeft = timeLeftSeconds - 1;
-      if (newTimeLeft % 180 === 0 && newTimeLeft !== 0) get().syncWithServer();
+      if (newTimeLeft % 120 === 0 && newTimeLeft !== 0) get().syncWithServer();
 
       const newSectionTimes = { ...sectionTimeSpent };
       if (activeSectionId) newSectionTimes[activeSectionId] = (newSectionTimes[activeSectionId] || 0) + 1;
 
       const newQuestionsById = { ...questionsById };
+      const newChanges = new Set(changedQuestionIds);
+
       if (activeQuestionId && newQuestionsById[activeQuestionId]) {
-        const currentSpent = newQuestionsById[activeQuestionId].timeSpentSeconds || 0;
-        newQuestionsById[activeQuestionId] = { ...newQuestionsById[activeQuestionId], timeSpentSeconds: currentSpent + 1 };
+        newQuestionsById[activeQuestionId].timeSpentSeconds += 1;
+        newChanges.add(activeQuestionId);
       }
-      set({ timeLeftSeconds: newTimeLeft, sectionTimeSpent: newSectionTimes, questionsById: newQuestionsById });
+
+      set({ timeLeftSeconds: newTimeLeft, sectionTimeSpent: newSectionTimes, questionsById: newQuestionsById, changedQuestionIds: newChanges });
     },
 
     submitTest: () => {
@@ -483,6 +463,5 @@ export const useTestEngineStore = create<TestEngineState>()(
       console.log("Test Submitted!");
     },
   }),
-  { name: "TestEngineStore" }
-  )
+  { name: "TestEngineStore" }),
 );
