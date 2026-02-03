@@ -35,6 +35,13 @@ interface TestEngineState {
   activeQuestionId: string | null;
   questionsById: Record<string, QuestionState>;
   changedQuestionIds: Set<string>; 
+  paperMetadata: {
+    year: number;
+    month?: string;
+    date?: string;
+    shift?: string;
+    examName?: string;
+  } | null;
   
   createdAt: string | null;
   timerId: NodeJS.Timeout | null;
@@ -168,7 +175,6 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
   return { sections, qMap };
 }
 
-// --- HELPER: NEXT LOGIC ---
 function moveToNextQuestion(get: StoreApi<TestEngineState>['getState'], set: StoreApi<TestEngineState>['setState']) {
   const { sections, activeQuestionId } = get();
   const allQuestions = sections.flatMap((s) => s.questions);
@@ -197,7 +203,6 @@ function moveToNextQuestion(get: StoreApi<TestEngineState>['getState'], set: Sto
   }
 }
 
-// --- STORE IMPLEMENTATION ---
 export const useTestEngineStore = create<TestEngineState>()(
   devtools((set, get) => ({
     isInitialized: false,
@@ -211,6 +216,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     activeQuestionId: null,
     questionsById: {},
     changedQuestionIds: new Set(),
+    paperMetadata: null,
     createdAt: null, 
     timerId: null,
 
@@ -237,6 +243,13 @@ export const useTestEngineStore = create<TestEngineState>()(
         questionsById: qMap,
         sections: sections,
         sectionTimeSpent: {},
+        paperMetadata: {
+          year: paper.year,
+          month: paper.month,
+          date: paper.date,
+          shift: paper.shift,
+          examName: paper.exam?.name || "JEE MAIN",
+        },
         createdAt: session.startTime || new Date().toISOString(),
       };
 

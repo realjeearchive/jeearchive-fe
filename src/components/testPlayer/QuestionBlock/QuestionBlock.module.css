@@ -211,3 +211,50 @@
 .optionRow input[type="checkbox"]:checked::before {
   transform: scale(1);
 }
+
+
+/* src/components/testPlayer/QuestionBlock/QuestionBlock.module.css */
+
+.htmlContent {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Force LIST-I and LIST-II into a two-column layout if they come as specific tags or tables */
+.htmlContent table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.htmlContent td, .htmlContent th {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+/* Handle Match the following lists (often delivered as <p> or <div> blocks) */
+.htmlContent p {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+/* Custom CSS to detect "LIST-I" and "LIST-II" patterns and split them */
+/* If the backend sends raw strings, the parser handles them as <Latex> or text nodes */
+
+.questionText {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Styling for tables inside questions to look like standard JEE interface */
+.htmlContent table {
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.htmlContent th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}

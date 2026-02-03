@@ -22,16 +22,21 @@ export function QuestionBlock({
   const { fontSize } = useTestPlayerAccessibility();
   const isSelected = (optId: string) => questionState.selectedOptionIds.includes(optId);
 
-  // --- 1. SHARED PARSER OPTIONS ---
-  const parserOptions: HTMLReactParserOptions = {
-    replace: (domNode: DOMNode) => {
-      if (domNode.type === 'text') {
-         if (domNode.data && domNode.data.trim() !== '') {
-             return <Latex>{domNode.data}</Latex>;
-         }
-      }
-      if (domNode.type === 'tag' && domNode.name === 'img') {
-        const element = domNode as Element; 
+
+// Update the parserOptions to handle table tags correctly if they exist in htmlContent
+const parserOptions: HTMLReactParserOptions = {
+  replace: (domNode: DOMNode) => {
+    if (domNode.type === 'text') {
+       if (domNode.data && domNode.data.trim() !== '') {
+           return <Latex>{domNode.data}</Latex>;
+       }
+    }
+    
+    // Ensure tables from backend are allowed through the parser
+    if (domNode.type === 'tag') {
+      const element = domNode as Element;
+      
+      if (element.name === 'img') {
         return (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -41,8 +46,12 @@ export function QuestionBlock({
           />
         );
       }
+      
+      // If backend sends specific tags for List-I / List-II, you can intercept them here
+      // For now, we let standard HTML (table, tr, td) pass to be styled by CSS
     }
-  };
+  }
+};
 
   const renderContent = (htmlContent: string) => {
     if (!htmlContent) return null;

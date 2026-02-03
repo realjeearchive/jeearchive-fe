@@ -1,28 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { HiOutlineMagnifyingGlassPlus } from "react-icons/hi2";
+import { useState, useMemo } from "react";
+import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import styles from "./TopStrip.module.css";
-import { IoAccessibility, IoInformationSharp } from "react-icons/io5";
-import { IoIosPaper } from "react-icons/io";
+import { IoAccessibility } from "react-icons/io5";
+import { HiOutlineMagnifyingGlassPlus } from "react-icons/hi2";
 import AccessibilityPopup from "../AccessibilityPopup/AccessibilityPopup";
 import { useScreenMagnifier } from "@/features/tests/useScreenMagnifier";
 
-
-interface TopStripProps {
-  testTitle: string;
-}
-
-export function TopStrip({ testTitle }: TopStripProps) {
+export function TopStrip() {
   const [openAccessibility, setOpenAccessibility] = useState(false);
   const { toggle } = useScreenMagnifier();
+  
+  // Pull metadata directly from the store
+  const metadata = useTestEngineStore((s) => s.paperMetadata);
 
+  const formattedBanner = useMemo(() => {
+    if (!metadata) return "JEE TEST UPDATED AS PER LATEST NTA PATTERN";
+
+    const { examName, year, date, month, shift } = metadata;
+
+    // Constructs the string: e.g., "JEE MAIN 2025 24 JAN SHIFT 1"
+    const parts = [
+      examName,
+      year,
+      date,
+      month,
+      shift ? `SHIFT ${shift}` : ""
+    ].filter(Boolean); // Cleans out any missing fields
+
+    return `${parts.join(" ").toUpperCase()} UPDATED AS PER LATEST NTA PATTERN`;
+  }, [metadata]);
 
   return (
     <>
       <div className={styles.root}>
         <div className={styles.banner}>
-          {testTitle} UPDATED AS PER LATEST NTA PATTERN
+          {formattedBanner}
         </div>
 
         <div className={styles.utilities}>
@@ -47,20 +61,6 @@ export function TopStrip({ testTitle }: TopStripProps) {
             </span>
             Screen Magnifier
           </button>
-
-          {/* <button type="button" className={styles.utilButton}>
-            <span className={`${styles.icon} ${styles.instructions}`}>
-              <IoInformationSharp />
-            </span>
-            Instructions
-          </button>
-
-          <button type="button" className={styles.utilButton}>
-            <span className={`${styles.icon} ${styles.questionPaper}`}>
-              <IoIosPaper />
-            </span>
-            Question Paper
-          </button> */}
         </div>
       </div>
 

@@ -116,7 +116,7 @@ export function TestPlayerLayout() {
 
   return (
     <div id="test-player-root" className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}>
-      <TopStrip testTitle={title} />
+      <TopStrip />
       <div className={styles.mainGrid}>
         <div className={styles.left}>
           <TitleBar />
