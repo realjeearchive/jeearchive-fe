@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 import Styles from "../jeeMains.module.css";
 import { usePaperStore } from "@/store/paperStore";
-import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
-import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup';
+import TestListSection2, { TestListItem, TestStatusData } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import { Loader } from "@/components/ui/loader";
 import { fetchLastTestStatus, createTestSession } from "@/features/tests/api";
 
@@ -18,18 +17,12 @@ export default function JeeMainsYearPage(props: YearPageProps) {
   const { year } = use(props.params);
   const router = useRouter(); 
   
-  // Store hooks
-  const { papers, isLoading, error, getPapers } = usePaperStore();
+  const { papers, isLoading, getPapers } = usePaperStore();
 
-  // --- POPUP STATE ---
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedPaperId, setSelectedPaperId] = useState<string | null>(null);
-  const [selectedTitle, setSelectedTitle] = useState("");
-  
-  // Logic State
-  const [isChecking, setIsChecking] = useState(false);
-  const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
-  const [isResume, setIsResume] = useState(false);
+  // --- ACCORDION STATE ---
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null); 
+  const [currentTestStatus, setCurrentTestStatus] = useState<TestStatusData | null>(null);
 
   // 1. Fetch Papers on Mount
   useEffect(() => {
@@ -38,7 +31,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     }
   }, [year, getPapers]);
 
-  // 2. Transform Data for UI
+  // 2. Transform Data
   const formattedItems: TestListItem[] = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Main ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`,
@@ -46,72 +39,68 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     href: `/previous-year-questions/jee-mains/${year}/tests/${paper.id}` 
   }));
 
-  // 3. HANDLE CLICK: Check Status first
-  const handleTestClick = async (item: TestListItem) => {
-    setSelectedPaperId(item.id);
-    setSelectedTitle(item.title);
-    setIsChecking(true);
-    
-    try {
-      const res = await fetchLastTestStatus(item.id);
-      
-      // If active session found (IN_PROGRESS or PAUSED), offer Resume
-      if (res.success && res.data && res.data.testId && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
-        setIsResume(true);
-        setExistingSessionId(res.data.testId);
-      } else {
-        setIsResume(false);
-        setExistingSessionId(null);
-      }
-      
-      setShowPopup(true);
-    } catch (e) {
-      console.error("Status check failed", e);
-      // Fallback to fresh start if check fails
-      setIsResume(false);
-      setShowPopup(true);
-    } finally {
-      setIsChecking(false);
-    }
-  };
-
-  // 4. ACTION: FRESH START / RESTART
-  // Creates a NEW session ID and overwrites any old progress
-  const handleStartOrRestart = async () => {
-    if (!selectedPaperId) return;
-
-    try {
-      const res = await createTestSession(selectedPaperId);
-      
-      if (res.success && res.data?.testId) {
-        setShowPopup(false);
-        // Navigate to Instructions Page with NEW Session ID
-        router.push(`/previous-year-questions/jee-mains/${year}/tests/${selectedPaperId}?sid=${res.data.testId}`);
-      } else {
-        throw new Error(res.message || "Failed to start test.");
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to create session");
-    }
-  };
-
-  // 5. ACTION: RESUME
-  // Uses the EXISTING session ID
-  const handleResume = () => {
-    if (!selectedPaperId || !existingSessionId) {
-      toast.error("Cannot resume: Session ID missing.");
+  // 3. HANDLE EXPANSION (Check Status)
+  const handleToggleExpand = async (paperId: string) => {
+    if (expandedId === paperId) {
+      setExpandedId(null);
+      setCurrentTestStatus(null);
       return;
     }
-    
-    setShowPopup(false);
-    // Navigate to Instructions Page with EXISTING Session ID
-    router.push(`/previous-year-questions/jee-mains/${year}/tests/${selectedPaperId}?sid=${existingSessionId}`);
+
+    setExpandedId(paperId);
+    setLoadingId(paperId);
+    setCurrentTestStatus(null); 
+
+    try {
+      const res = await fetchLastTestStatus(paperId);
+      if (res.success && res.data) {
+        setCurrentTestStatus({
+          // FIX: Use '|| null' to handle undefined safely without 'any'
+          status: res.data.status || null, 
+          testId: res.data.testId
+        });
+      } else {
+        setCurrentTestStatus({ status: null });
+      }
+    } catch (e) {
+      console.error("Status check failed", e);
+      setCurrentTestStatus({ status: null });
+    } finally {
+      setLoadingId(null);
+    }
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setSelectedPaperId(null);
+  // --- ACTIONS ---
+
+  const handleStart = async (paperId: string) => {
+    try {
+      const res = await createTestSession(paperId);
+      if (res.success && res.data?.testId) {
+        router.push(`/previous-year-questions/jee-mains/${year}/tests/${paperId}?sid=${res.data.testId}`);
+      } else {
+        toast.error("Failed to start test session");
+      }
+    } catch (e) {
+      toast.error("Error creating session");
+    }
+  };
+
+  const handleResume = (paperId: string, sessionId: string) => {
+    router.push(`/previous-year-questions/jee-mains/${year}/tests/${paperId}?sid=${sessionId}`);
+  };
+
+  const handleRestart = async (paperId: string) => {
+    if(confirm("Are you sure you want to restart? Your previous progress will be lost.")) {
+       handleStart(paperId); 
+    }
+  };
+
+  const handleAnalytics = (paperId: string) => {
+    router.push(`/analytics/tests/${paperId}`);
+  };
+
+  const handleSolutions = (paperId: string) => {
+    router.push(`/solutions/${paperId}`);
   };
 
   // --- RENDER ---
@@ -125,7 +114,6 @@ export default function JeeMainsYearPage(props: YearPageProps) {
     );
   }
 
-  // Empty State
   if (!formattedItems || formattedItems.length === 0) {
     return (
       <div className={Styles.jeeMainsPage}>
@@ -140,26 +128,20 @@ export default function JeeMainsYearPage(props: YearPageProps) {
 
   return (
     <div className={Styles.jeeMainsPage}>
-      {isChecking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-           <Loader label="Checking Status..." size="h-6 w-6" />
-        </div>
-      )}
-
       <TestListSection2 
         heading={`JEE Main ${year} Papers`} 
         items={formattedItems} 
-        onItemClick={handleTestClick} 
-      />
+        
+        expandedId={expandedId}
+        loadingId={loadingId}
+        currentTestStatus={currentTestStatus}
 
-      <StartTestPopup 
-        isOpen={showPopup}
-        testTitle={selectedTitle}
-        isResume={isResume}
-        onClose={handleClosePopup}
-        onStart={handleStartOrRestart}
+        onToggleExpand={handleToggleExpand}
+        onStart={handleStart}
         onResume={handleResume}
-        onRestart={handleStartOrRestart}
+        onRestart={handleRestart}
+        onViewAnalytics={handleAnalytics}
+        onViewSolutions={handleSolutions}
       />
     </div>
   );

@@ -1,3 +1,4 @@
+/* --- CONTAINER & LAYOUT --- */
 .section {
   display: flex;
   flex-direction: column;
@@ -8,122 +9,182 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2px;
+  padding: 0 4px;
+  margin-bottom: 8px;
 }
 
 .heading {
-  font-size: var(--dashboard-font-md);
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--dashboard-secondary-text-color); /* Muted Gray */
   margin: 0;
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid var(--dashboard-icons-color);
 }
 
+.itemContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+/* --- ROW STYLING --- */
 .row {
   width: 100%;
-  padding: 12px 0;
+  padding: 16px 8px; /* More vertical padding for breathability */
   border: none;
-  outline: none;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.row + .row {
-  border-top: 1px solid var(--dashboard-icons-color);
+  transition: background 0.15s ease;
 }
 
 .row:hover {
-  background: var(--dashboard-link-hover-color);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
+/* Status Indicator Dot */
 .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background-color: var(--dashboard-icons-color);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--dashboard-icons-color); /* Default Gray */
+  flex-shrink: 0;
 }
+
+/* Optional: You can add classes in TSX to change dot color based on status */
+.dotActive { background-color: #f59e0b; } /* Amber for In Progress */
+.dotCompleted { background-color: #10b981; } /* Green for Completed */
 
 .textBlock {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  max-width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .title {
-  font-size: var(--dashboard-font-md);
+  font-size: 0.95rem;
   font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: var(--dashboard-primary-text-color); /* White/Light Gray */
 }
 
 .meta {
-  font-size: var(--dashboard-font-sm);
-  color: var(--dashboard-secondary-text-color);
-  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--dashboard-secondary-text-color); /* Dimmed Gray */
 }
 
 .chevron {
-  font-size: var(--dashboard-font-md);
+  font-size: 1.2rem;
   color: var(--dashboard-icons-color);
-  transition: transform 0.15s ease;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.row:hover .chevron {
-  transform: translateX(3px);
+.itemContainer[data-expanded="true"] .chevron {
+  transform: rotate(90deg);
+  color: var(--dashboard-primary-text-color);
 }
 
-.rowLink {
-  text-decoration: none;
-  color: inherit;
+/* --- ACTION AREA (DROPDOWN) --- */
+.dropdown {
+  overflow: hidden;
+  animation: slideDown 0.25s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-.rowLink + .rowLink .row {
-  border-top: 1px solid var(--dashboard-icons-color);
+.actionsGrid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  /* Align with text: 8px (row padding) + 14px (gap) + 8px (dot width) = ~30px */
+  padding: 0 0 16px 30px; 
 }
 
+/* --- BUTTONS --- */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px; /* Slightly rounded corners */
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Primary Button (Resume/Start) */
+/* Style: Solid accent color but muted to fit dark theme */
+.btnPrimary {
+  background-color: #C97F11; /* Deep Orange to match Logo */
+  color: #ffffff;
+  border: 1px solid #C97F11;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btnPrimary:hover {
+  background-color: #c2410c; /* Darker Orange on hover */
+  border-color: #c2410c;
+  transform: translateY(-1px);
+}
+
+/* Secondary Button (Restart, Analytics) */
+/* Style: Minimalist Outline */
+.btnSecondary {
+  background-color: transparent;
+  color: var(--dashboard-secondary-text-color);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btnSecondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Loading State */
+.loadingContainer {
+  padding: 10px 0 10px 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--dashboard-secondary-text-color);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 100px; }
+}
+
+/* --- MOBILE --- */
 @media (max-width: 600px) {
-  .heading {
-    font-size: var(--dashboard-font-sm);
-    letter-spacing: 0.04em;
+  .actionsGrid {
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 12px;
+    padding-right: 12px;
   }
-
-  .title {
-    font-size: var(--dashboard-font-sm);
-  }
-
-  .meta {
-    font-size: var(--dashboard-font-xs);
-  }
-
-  .chevron {
-    font-size: var(--dashboard-font-sm);
-  }
-
-  .row {
-    padding: 10px 0;
-  }
-
-  .left {
-    gap: 8px;
+  
+  .actionBtn {
+    justify-content: center;
+    width: 100%;
   }
 }
