@@ -3,10 +3,9 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
-import Styles from '../jeeAdvanced.module.css'; // Verify this path matches your CSS folder
+import Styles from '../jeeAdvanced.module.css'; 
 import { usePaperStore } from "@/store/paperStore";
-import TestListSection2, { TestListItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
-import StartTestPopup from '@/components/popups/StartTestPopup/StartTestPopup';
+import TestListSection2, { TestListItem, TestStatusData } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import { Loader } from "@/components/ui/loader";
 import { fetchLastTestStatus, createTestSession } from "@/features/tests/api";
 
@@ -17,22 +16,22 @@ interface YearPageProps {
 export default function JeeAdvancedYearPage(props: YearPageProps) {
   const { year } = use(props.params);
   const router = useRouter(); 
-  const { papers, isLoading, error, getPapers } = usePaperStore();
-
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedPaperId, setSelectedPaperId] = useState<string | null>(null);
-  const [selectedTitle, setSelectedTitle] = useState("");
   
-  const [isChecking, setIsChecking] = useState(false);
-  const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
-  const [isResume, setIsResume] = useState(false);
+  const { papers, isLoading, getPapers } = usePaperStore();
 
+  // --- ACCORDION STATE ---
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null); 
+  const [currentTestStatus, setCurrentTestStatus] = useState<TestStatusData | null>(null);
+
+  // 1. Fetch Papers on Mount
   useEffect(() => {
     if (year) {
       getPapers(year, 'JEE_ADVANCED');
     }
   }, [year, getPapers]);
 
+  // 2. Transform Data
   const formattedItems: TestListItem[] = papers.map((paper) => ({
     id: paper.id,
     title: `JEE Advanced ${paper.year} ${paper.date || ''} ${paper.shift ? `(${paper.shift})` : ''}`,
@@ -40,65 +39,72 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     href: `/previous-year-questions/jee-advanced/${year}/tests/${paper.id}` 
   }));
 
-  const handleTestClick = async (item: TestListItem) => {
-    setSelectedPaperId(item.id);
-    setSelectedTitle(item.title);
-    setIsChecking(true);
-    
-    try {
-      const res = await fetchLastTestStatus(item.id);
-      
-      if (res.success && res.data && res.data.testId && (res.data.status === "IN_PROGRESS" || res.data.status === "PAUSED")) {
-        setIsResume(true);
-        setExistingSessionId(res.data.testId);
-      } else {
-        setIsResume(false);
-        setExistingSessionId(null);
-      }
-      
-      setShowPopup(true);
-    } catch (e) {
-      console.error(e);
-      setIsResume(false);
-      setShowPopup(true);
-    } finally {
-      setIsChecking(false);
-    }
-  };
-
-  const handleStartOrRestart = async () => {
-    if (!selectedPaperId) return;
-
-    try {
-      const res = await createTestSession(selectedPaperId);
-      
-      if (res.success && res.data?.testId) {
-        setShowPopup(false);
-        router.push(`/previous-year-questions/jee-advanced/${year}/tests/${selectedPaperId}?sid=${res.data.testId}`);
-      } else {
-        throw new Error(res.message || "Failed to start test.");
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error(e instanceof Error ? e.message : "Failed to create session");
-    }
-  };
-
-  const handleResume = () => {
-    if (!selectedPaperId || !existingSessionId) {
-      toast.error("Cannot resume: Session ID missing.");
+  // 3. HANDLE EXPANSION (Check Status)
+  const handleToggleExpand = async (paperId: string) => {
+    if (expandedId === paperId) {
+      setExpandedId(null);
+      setCurrentTestStatus(null);
       return;
     }
-    
-    setShowPopup(false);
-    router.push(`/previous-year-questions/jee-advanced/${year}/tests/${selectedPaperId}?sid=${existingSessionId}`);
+
+    setExpandedId(paperId);
+    setLoadingId(paperId);
+    setCurrentTestStatus(null); 
+
+    try {
+      const res = await fetchLastTestStatus(paperId);
+      if (res.success && res.data) {
+        setCurrentTestStatus({
+          // Use '|| null' to handle undefined safely
+          status: res.data.status || null, 
+          testId: res.data.testId
+        });
+      } else {
+        setCurrentTestStatus({ status: null });
+      }
+    } catch (e) {
+      console.error("Status check failed", e);
+      setCurrentTestStatus({ status: null });
+    } finally {
+      setLoadingId(null);
+    }
   };
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
-    setSelectedPaperId(null);
+  // --- ACTIONS ---
+
+  const handleStart = async (paperId: string) => {
+    try {
+      const res = await createTestSession(paperId);
+      if (res.success && res.data?.testId) {
+        // Ensure route is jee-advanced
+        router.push(`/previous-year-questions/jee-advanced/${year}/tests/${paperId}?sid=${res.data.testId}`);
+      } else {
+        toast.error("Failed to start test session");
+      }
+    } catch (e) {
+      toast.error("Error creating session");
+    }
   };
 
+  const handleResume = (paperId: string, sessionId: string) => {
+    router.push(`/previous-year-questions/jee-advanced/${year}/tests/${paperId}?sid=${sessionId}`);
+  };
+
+  const handleRestart = async (paperId: string) => {
+    if(confirm("Are you sure you want to restart? Your previous progress will be lost.")) {
+       handleStart(paperId); 
+    }
+  };
+
+  const handleAnalytics = (paperId: string) => {
+    router.push(`/analytics/tests/${paperId}`);
+  };
+
+  const handleSolutions = (paperId: string) => {
+    router.push(`/solutions/${paperId}`);
+  };
+
+  // --- RENDER ---
   if (isLoading) {
     return (
       <div className={Styles.jeeAdvancedPage}>
@@ -123,26 +129,20 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
 
   return (
     <div className={Styles.jeeAdvancedPage}>
-      {isChecking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-           <Loader label="Checking Status..." size="h-6 w-6" />
-        </div>
-      )}
-
       <TestListSection2 
         heading={`JEE Advanced ${year} Papers`} 
         items={formattedItems} 
-        onItemClick={handleTestClick} 
-      />
+        
+        expandedId={expandedId}
+        loadingId={loadingId}
+        currentTestStatus={currentTestStatus}
 
-      <StartTestPopup 
-        isOpen={showPopup}
-        testTitle={selectedTitle}
-        isResume={isResume}
-        onClose={handleClosePopup}
-        onStart={handleStartOrRestart}
+        onToggleExpand={handleToggleExpand}
+        onStart={handleStart}
         onResume={handleResume}
-        onRestart={handleStartOrRestart}
+        onRestart={handleRestart}
+        onViewAnalytics={handleAnalytics}
+        onViewSolutions={handleSolutions}
       />
     </div>
   );
