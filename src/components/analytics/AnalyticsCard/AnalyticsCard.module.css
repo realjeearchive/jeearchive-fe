@@ -1,0 +1,40 @@
+.card {
+  background-color: var(--dashboard-sidebar-background-color); /* #1E1D1B */
+  border: 1px solid var(--dashboard-sidebar-border-color); /* #36312F */
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%; /* Fill parent grid cell */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--dashboard-secondary-text-color);
+  margin: 0;
+  margin-top: 4px;
+}
+
+.actionSlot {
+  /* For dropdowns or buttons in the card header */
+}
+
+.content {
+  flex: 1;
+  min-height: 0; /* Critical for charts to resize properly */
+  position: relative;
+}

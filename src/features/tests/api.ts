@@ -109,6 +109,15 @@ export async function updateTestSession(payload: UpdateTestStatusPayload) {
   return handleJson<{ success: boolean; message: string }>(res);
 }
 
+// [NEW] Submit Test Session API
+export async function submitTestSession(payload: UpdateTestStatusPayload) {
+  const res = await authenticatedFetch(`/testStatus/submitTest`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  return handleJson<{ success: boolean; message: string }>(res);
+}
+
 // ==========================================
 // MAPPERS
 // ==========================================
@@ -220,7 +229,7 @@ export function mapSingleQuestion(q: BackendQuestion, globalIndex: number, secti
     id: q.id,
     index: localIndex,
     globalQuestionNumber: q.questionNumber || globalIndex,
-    localQuestionNumber: localIndex, // <--- ADD THIS LINE TO FIX THE ERROR
+    localQuestionNumber: localIndex, // Fixed as per previous context
     kind: kind,
     contentText: q.content || "",
     comprehensionContent: q.comprehensionContent || null,

@@ -2,13 +2,15 @@
 
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import styles from "./TestSubmissionSummary.module.css";
+import { toast } from "sonner"; // Optional: assuming you use sonner/hot-toast
 
 export function TestSubmissionSummary() {
   // Pull metadata and existing store data
   const { sections, questionsById, paperMetadata, submitTest } = useTestEngineStore();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Create the dynamic formatted header with proper underscore cleaning
   const formattedHeader = useMemo(() => {
@@ -56,9 +58,22 @@ export function TestSubmissionSummary() {
     return stats;
   });
 
-  const handleFinalSubmit = () => {
-    submitTest();
-    router.push("/dashboard");
+  const handleFinalSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      // Wait for the API call to complete
+      await submitTest();
+      
+      // Only redirect on success
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Submission failed", error);
+      // Optional: Show an error toast here
+      toast.error("Failed to submit test. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -103,11 +118,20 @@ export function TestSubmissionSummary() {
             Are you sure wish to submit this group of questions for marking?
           </p>
           <div className={styles.btnRow}>
-            <button className={styles.noBtn} onClick={() => router.back()}>
+            <button 
+              className={styles.noBtn} 
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+            >
               No! Go Back to Paper
             </button>
-            <button className={styles.yesBtn} onClick={handleFinalSubmit}>
-              Yes! Submit the Test
+            <button 
+              className={styles.yesBtn} 
+              onClick={handleFinalSubmit}
+              disabled={isSubmitting}
+              style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+            >
+              {isSubmitting ? "Submitting..." : "Yes! Submit the Test"}
             </button>
           </div>
         </div>

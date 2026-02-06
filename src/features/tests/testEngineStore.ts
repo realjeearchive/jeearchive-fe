@@ -1,3 +1,4 @@
+// src/features/tests/testEngineStore.ts
 import { create, StoreApi } from "zustand";
 import { devtools } from "zustand/middleware";
 import { 
@@ -9,7 +10,7 @@ import {
   UpdateTestStatusPayload
 } from "./types";
 import { QuestionState, QuestionStatus } from "./playertypes";
-import { updateTestSession, mapSingleQuestion } from "./api"; 
+import { updateTestSession, submitTestSession, mapSingleQuestion } from "./api"; 
 
 // --- TYPES ---
 export interface SavedSessionData {
@@ -59,7 +60,9 @@ interface TestEngineState {
   markForReview: () => void;
   clearResponse: () => void;
   tickTimer: () => void;
-  submitTest: () => void;
+  
+  // [UPDATED] now async
+  submitTest: () => Promise<void>;
   
   startTimer: () => void;
   stopTimer: () => void;
@@ -95,6 +98,51 @@ const mapBackendStatusToFrontend = (
   if (att.markedForReview) return "markedForReview" as QuestionStatus;
   if (att.isVisited) return "notAnswered" as QuestionStatus;
   return "notVisited" as QuestionStatus;
+};
+
+// [NEW] Helper to build consistent payload
+const buildPayload = (state: TestEngineState, status: "IN_PROGRESS" | "COMPLETED"): UpdateTestStatusPayload | null => {
+  if (!state.testId || !state.paperId) return null;
+
+  const idsToSync = new Set(state.changedQuestionIds);
+  // For completion, we might want to ensure everything is synced, 
+  // but usually syncing changed IDs + active is sufficient unless 'COMPLETED' requires a full dump.
+  // Assuming 'changed' is enough for now, plus active.
+  if (state.activeQuestionId) idsToSync.add(state.activeQuestionId);
+
+  // If simply syncing (IN_PROGRESS) and nothing changed, skip
+  if (status === "IN_PROGRESS" && idsToSync.size === 0) return null;
+
+  const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
+  const activeSubject = activeSecObj ? activeSecObj.subject : "General";
+
+  const transformedQuestions: UpdateTestStatusPayload['questionsById'] = {};
+
+  idsToSync.forEach((id) => {
+    const q = state.questionsById[id];
+    if (!q) return;
+
+    transformedQuestions[q.questionId] = {
+      questionId: q.questionId,
+      userAnswer: q.numericAnswer ? [q.numericAnswer] : q.selectedOptionIds, 
+      markedForReview: q.status === "markedForReview" || q.status === "answeredAndMarked",
+      isVisited: q.isVisited,
+      timeSpent: q.timeSpentSeconds,
+      status: q.status
+    };
+  });
+
+  return {
+    testId: state.testId,
+    paperId: state.paperId,
+    timeLeft: state.timeLeftSeconds,
+    activeSection: activeSubject, 
+    activeQuestionId: state.activeQuestionId,
+    state: status,
+    timeStamp: new Date().toISOString(),
+    created_at: state.createdAt,
+    questionsById: transformedQuestions
+  };
 };
 
 // --- HIERARCHICAL PARSER ---
@@ -259,43 +307,9 @@ export const useTestEngineStore = create<TestEngineState>()(
 
     syncWithServer: async () => {
       const state = get();
-      if (!state.testId || !state.paperId) return;
-
-      const idsToSync = new Set(state.changedQuestionIds);
-      if (state.activeQuestionId) idsToSync.add(state.activeQuestionId);
-
-      if (idsToSync.size === 0) return;
-
-      const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
-      const activeSubject = activeSecObj ? activeSecObj.subject : "General";
-
-      const transformedQuestions: UpdateTestStatusPayload['questionsById'] = {};
-
-      idsToSync.forEach((id) => {
-        const q = state.questionsById[id];
-        if (!q) return;
-
-        transformedQuestions[q.questionId] = {
-          questionId: q.questionId,
-          userAnswer: q.numericAnswer ? [q.numericAnswer] : q.selectedOptionIds, 
-          markedForReview: q.status === "markedForReview" || q.status === "answeredAndMarked",
-          isVisited: q.isVisited,
-          timeSpent: q.timeSpentSeconds,
-          status: q.status
-        };
-      });
-
-      const payload: UpdateTestStatusPayload = {
-        testId: state.testId,
-        paperId: state.paperId,
-        timeLeft: state.timeLeftSeconds,
-        activeSection: activeSubject, 
-        activeQuestionId: state.activeQuestionId,
-        state: "IN_PROGRESS",
-        timeStamp: new Date().toISOString(),
-        created_at: state.createdAt,
-        questionsById: transformedQuestions
-      };
+      const payload = buildPayload(state, "IN_PROGRESS");
+      
+      if (!payload) return;
 
       try {
         await updateTestSession(payload);
@@ -447,7 +461,7 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById, changedQuestionIds } = get();
       if (timeLeftSeconds <= 0) { 
         submitTest(); 
-        get().stopTimer(); 
+        // Note: submitTest calls stopTimer inside, but calling it here is safe too
         return; 
       }
       
@@ -468,12 +482,29 @@ export const useTestEngineStore = create<TestEngineState>()(
       set({ timeLeftSeconds: newTimeLeft, sectionTimeSpent: newSectionTimes, questionsById: newQuestionsById, changedQuestionIds: newChanges });
     },
 
-    submitTest: () => {
-      const { testId } = get();
-      get().syncWithServer();
+    // [UPDATE] submitTest Logic
+    submitTest: async () => {
+      const state = get();
+      const payload = buildPayload(state, "COMPLETED");
+
       get().stopTimer();
-      if (testId) localStorage.removeItem(`test_progress_${testId}`);
-      console.log("Test Submitted!");
+      
+      if (payload) {
+        try {
+            await submitTestSession(payload);
+            console.log("Test Submitted Successfully!");
+            
+            // Clean up
+            if (state.testId) {
+                localStorage.removeItem(`test_progress_${state.testId}`);
+            }
+            // Reset changed IDs so we don't try to sync again if something persists
+            set({ changedQuestionIds: new Set() });
+        } catch (err) {
+            console.error("Submission failed", err);
+            // Optionally handle error UI feedback here
+        }
+      }
     },
   }),
   { name: "TestEngineStore" }),
