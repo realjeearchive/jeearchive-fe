@@ -3,8 +3,7 @@
 import React, { use } from "react";
 import { AnalysisLayout } from "@/components/analytics/TestAnalysis/AnalysisLayout";
 import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
-import { FiChevronLeft, FiDownload, FiBookOpen } from "react-icons/fi";
-import Link from "next/link";
+import { FiDownload, FiBookOpen } from "react-icons/fi";
 
 interface PageProps {
   params: Promise<{ testId: string }>;
@@ -14,7 +13,7 @@ export default function SingleTestAnalysisPage(props: PageProps) {
   const { testId } = use(props.params);
 
   return (
-    <div className="p-4 max-w-[1600px] mx-auto min-h-screen">
+    <div className=" max-w-[1600px] mx-auto min-h-screen">
       
       {/* HEADER ROW */}
       <div className="flex flex-col gap-4 mb-6">
@@ -39,11 +38,10 @@ export default function SingleTestAnalysisPage(props: PageProps) {
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-[var(--dashboard-sidebar-border-color)] text-[var(--dashboard-secondary-text-color)] hover:text-[var(--dashboard-primary-text-color)] hover:bg-[rgba(255,255,255,0.03)] transition-all text-xs font-medium">
               <FiDownload size={14} /> Report
             </button>
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[var(--dashboard-highlight-color)] text-black hover:opacity-90 transition-opacity text-xs font-semibold shadow-[0_0_10px_rgba(133,219,251,0.2)]">
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-(--dashboard-core-color) text-black hover:opacity-90 transition-opacity text-xs font-bold shadow-[0_0_10px_rgba(245,158,11,0.25)]">
               <FiBookOpen size={14} /> View Solutions
             </button>
           </div>
-
         </div>
       </div>
 

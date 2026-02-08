@@ -115,3 +115,15 @@ export const SINGLE_TEST_DATA = {
     negativeScore: -9,
   }
 };
+
+
+export const OVERVIEW_COMPARISON = {
+  score: { you: 159, average: 110, topper: 285 },
+  accuracy: { you: 82.35, average: 65, topper: 95 },
+  time: { you: 167, average: 175, topper: 140 }, // in minutes
+  subjects: [
+    { name: "Mathematics", score: 28, total: 100, attempted: 9, correct: 7, wrong: 2, accuracy: 77, time: 63 },
+    { name: "Physics", score: 77, total: 100, attempted: 23, correct: 20, wrong: 3, accuracy: 87, time: 59 },
+    { name: "Chemistry", score: 54, total: 100, attempted: 19, correct: 15, wrong: 4, accuracy: 79, time: 45 },
+  ]
+};

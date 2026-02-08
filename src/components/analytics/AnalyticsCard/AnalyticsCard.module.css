@@ -1,40 +1,47 @@
 .card {
-  background-color: var(--dashboard-sidebar-background-color); /* #1E1D1B */
-  border: 1px solid var(--dashboard-sidebar-border-color); /* #36312F */
-  border-radius: 12px;
-  padding: 20px;
+  width: 100%;
+  background: #211f1c; /* Dashboard Standard */
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 12px 16px; /* Matching Dashboard .content padding */
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  height: 100%; /* Fill parent grid cell */
+  gap: 12px; /* Standard spacing between header and content */
+  height: 100%;
+  overflow: hidden;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .title {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: var(--dashboard-font-md, 1rem); /* 16px */
+  font-weight: 500;
   color: var(--dashboard-primary-text-color);
   margin: 0;
+  line-height: 1.3;
 }
 
 .subtitle {
-  font-size: 0.85rem;
+  font-size: var(--dashboard-font-xs, 0.75rem); /* 12px */
   color: var(--dashboard-secondary-text-color);
   margin: 0;
-  margin-top: 4px;
+  margin-top: 2px;
+  letter-spacing: 0.02em; /* Subtle spacing */
 }
 
 .actionSlot {
-  /* For dropdowns or buttons in the card header */
+  /* Aligns with header actions */
 }
 
 .content {
   flex: 1;
-  min-height: 0; /* Critical for charts to resize properly */
+  min-height: 0;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Inner content gap */
 }

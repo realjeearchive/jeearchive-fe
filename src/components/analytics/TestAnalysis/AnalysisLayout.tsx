@@ -2,19 +2,15 @@
 
 import React, { useState } from "react";
 import { 
-  FiGrid, FiBarChart2, FiActivity, FiClock, FiTarget, 
-  FiTrendingUp, FiList 
+  FiGrid, FiLayers, FiClock, FiList, FiTarget 
 } from "react-icons/fi";
 import { OverviewTab } from "./Overview/OverviewTab";
 
 const MENU_ITEMS = [
   { id: "overview", label: "Overview", icon: FiGrid },
-  { id: "performance", label: "Performance", icon: FiBarChart2 },
-  { id: "score_potential", label: "Score Potential", icon: FiTrendingUp },
-  { id: "attempt_quality", label: "Attempt Quality", icon: FiActivity },
-  { id: "time_analysis", label: "Time Analysis", icon: FiClock },
-  { id: "difficulty", label: "Difficulty", icon: FiTarget },
-  { id: "question_analysis", label: "Qs Breakdown", icon: FiList },
+  { id: "performance", label: "Performance", icon: FiLayers },
+  { id: "time_behavior", label: "Time Analysis", icon: FiClock },
+  { id: "questions", label: "Question Wise", icon: FiList },
 ];
 
 export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => {
@@ -27,13 +23,13 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
         return <OverviewTab />;
       default:
         return (
-          <div className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-[var(--dashboard-dividerline-color)] rounded-xl bg-[rgba(255,255,255,0.01)]">
-             <div className="text-4xl mb-4 grayscale opacity-50">🚧</div>
-             <h3 className="text-lg font-bold text-[var(--dashboard-secondary-text-color)]">
-               {MENU_ITEMS.find(i => i.id === activeTab)?.label}
+          <div className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-[var(--dashboard-sidebar-border-color)] rounded-[10px] bg-[#211f1c]">
+             <div className="text-4xl mb-4 grayscale opacity-30">🚧</div>
+             <h3 className="text-sm font-bold text-[var(--dashboard-secondary-text-color)]">
+               {MENU_ITEMS.find(i => i.id === activeTab)?.label} Analysis
              </h3>
-             <p className="text-sm text-[var(--dashboard-icons-color)]">
-               This analytics module is under construction.
+             <p className="text-xs text-[var(--dashboard-secondary-text-color)] mt-1">
+               Detailed analytics coming in the next update.
              </p>
           </div>
         );
@@ -41,11 +37,11 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       
       {/* 1. STICKY HEADER NAVIGATION */}
-      <div className="sticky top-0 z-20 bg-[var(--dashboard-background-color)]/95 backdrop-blur-md border-b border-[var(--dashboard-dividerline-color)] -mx-6 px-6 pt-2">
-        <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0">
+      <div className="sticky top-0 z-20 bg-[var(--dashboard-background-color)]/95 backdrop-blur-md border-b border-[var(--dashboard-dividerline-color)] -mx-4 px-4">
+        <nav className="flex items-center gap-6 overflow-x-auto no-scrollbar">
           {MENU_ITEMS.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -53,19 +49,19 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`
-                  group relative flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all duration-200
+                  group relative flex items-center gap-2 py-3 text-[13px] font-medium whitespace-nowrap transition-colors duration-200
                   ${isActive 
-                    ? "text-[var(--dashboard-highlight-color)]" 
+                    ? "text-[#F59E0B]" 
                     : "text-[var(--dashboard-secondary-text-color)] hover:text-[var(--dashboard-primary-text-color)]"
                   }
                 `}
               >
-                <item.icon size={16} className={isActive ? "text-[var(--dashboard-highlight-color)]" : "text-[var(--dashboard-icons-color)] group-hover:text-[var(--dashboard-primary-text-color)]"} />
+                <item.icon size={14} className={isActive ? "text-[#F59E0B]" : "text-[var(--dashboard-secondary-text-color)] group-hover:text-[var(--dashboard-primary-text-color)]"} />
                 {item.label}
                 
                 {/* Active Indicator Line */}
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--dashboard-highlight-color)] rounded-t-full shadow-[0_-2px_10px_rgba(133,219,251,0.5)]" />
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#F59E0B] shadow-[0_-1px_6px_rgba(245,158,11,0.4)]" />
                 )}
               </button>
             );
