@@ -1,0 +1,50 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.placeholderCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #211f1c; /* Dashboard Card BG */
+  border: 1px dashed var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  gap: 1rem;
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dashboard-secondary-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--dashboard-secondary-text-color);
+  max-width: 400px;
+  line-height: 1.5;
+}

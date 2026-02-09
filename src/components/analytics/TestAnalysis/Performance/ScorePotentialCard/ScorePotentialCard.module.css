@@ -1,0 +1,125 @@
+.cardContainer {
+  height: 100%;
+  background-color: #211f1c;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: 2px;
+}
+
+/* Main Visual: The Gap Bar */
+.visualContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.barWrapper {
+  display: flex;
+  height: 24px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segment {
+  height: 100%;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.segmentActual {
+  background-color: var(--dashboard-core-color); /* You scored this */
+}
+
+.segmentNegative {
+  background-color: #EF4444; /* Lost this */
+}
+
+.segmentMissed {
+  background-color: #3f3f46; /* Could have scored this */
+}
+
+/* Legend / Stats Row */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--dashboard-dividerline-color);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statLabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+}
+
+.statSub {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* Insight Box */
+.insight {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  line-height: 1.5;
+}
+
+.insightHighlight {
+  color: var(--dashboard-core-color);
+  font-weight: 600;
+}

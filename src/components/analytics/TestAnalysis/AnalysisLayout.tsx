@@ -2,9 +2,13 @@
 
 import React, { useState } from "react";
 import { 
-  FiGrid, FiLayers, FiClock, FiList, FiTarget 
+  FiGrid, FiLayers, FiClock, FiList 
 } from "react-icons/fi";
 import { OverviewTab } from "./Overview/OverviewTab/OverviewTab";
+import { PerformanceTab } from "./Performance/PerformanceTab/PerformanceTab"; 
+import { TimeAnalysisTab } from "./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab"; 
+// 1. IMPORT THE QUESTION WISE TAB
+import { QuestionWiseTab } from "./QuestionWise/QuestionWiseTab"; 
 
 const MENU_ITEMS = [
   { id: "overview", label: "Overview", icon: FiGrid },
@@ -14,25 +18,26 @@ const MENU_ITEMS = [
 ];
 
 export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => {
-  const [activeTab, setActiveTab] = useState("overview");
+  // You can set default back to "overview" now if you want
+  const [activeTab, setActiveTab] = useState("overview"); 
 
   // Render Content Helper
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
         return <OverviewTab />;
+      
+      case "performance":
+        return <PerformanceTab />;
+
+      case "time_behavior":
+        return <TimeAnalysisTab />;
+
+      case "questions":
+        return <QuestionWiseTab />;
+
       default:
-        return (
-          <div className="flex flex-col items-center justify-center min-h-[400px] border border-dashed border-[var(--dashboard-sidebar-border-color)] rounded-[10px] bg-[#211f1c]">
-             <div className="text-4xl mb-4 grayscale opacity-30">🚧</div>
-             <h3 className="text-sm font-bold text-[var(--dashboard-secondary-text-color)]">
-               {MENU_ITEMS.find(i => i.id === activeTab)?.label} Analysis
-             </h3>
-             <p className="text-xs text-[var(--dashboard-secondary-text-color)] mt-1">
-               Detailed analytics coming in the next update.
-             </p>
-          </div>
-        );
+        return null;
     }
   };
 

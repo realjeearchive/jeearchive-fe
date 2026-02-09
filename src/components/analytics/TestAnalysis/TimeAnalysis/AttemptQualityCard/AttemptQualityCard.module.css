@@ -1,0 +1,113 @@
+.cardContainer {
+  height: 100%;
+  background-color: #211f1c;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: 2px;
+}
+
+/* Quadrant List Style */
+.qualityList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.qualityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.qualityRow:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.rowLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.rowDesc {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.rowValue {
+  text-align: right;
+}
+
+.count {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.timeAvg {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  font-family: monospace;
+}
+
+/* Colors for specific types */
+.iconGreen { background: rgba(34, 197, 94, 0.1); color: #22c55e; } /* Perfect */
+.iconAmber { background: rgba(245, 158, 11, 0.1); color: #f59e0b; } /* Overtime */
+.iconRed { background: rgba(239, 68, 68, 0.1); color: #ef4444; } /* Wasted */
+.iconPurple { background: rgba(168, 85, 247, 0.1); color: #a855f7; } /* Rush/Luck */
+
+.textGreen { color: #22c55e; }
+.textAmber { color: #f59e0b; }
+.textRed { color: #ef4444; }
+.textPurple { color: #a855f7; }

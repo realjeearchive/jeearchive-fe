@@ -1,0 +1,99 @@
+.cardContainer {
+  height: 100%;
+  background-color: #211f1c;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px; /* Divider look */
+  background: var(--dashboard-dividerline-color); /* Creates vertical lines */
+  border: 1px solid var(--dashboard-dividerline-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.column {
+  background: #211f1c; /* Cover the gap background */
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+/* Badge for Easy/Med/Hard */
+.badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.badgeEasy { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.badgeMed { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.badgeHard { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Metrics */
+.score {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.total {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.accuracyRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.accuracyValue {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.accuracyLabel {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+}
+
+/* Mini Progress Bar inside column */
+.miniBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 99px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.miniBarFill {
+  height: 100%;
+  border-radius: 99px;
+}
