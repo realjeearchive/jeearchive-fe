@@ -1,0 +1,165 @@
+/* SubjectSummaryTable Container */
+.cardContainer {
+  height: 100%;
+  background-color: #211f1c;
+  display: flex;
+  flex-direction: column;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  width: 100%;
+  /* No negative margins to respect inner card padding */
+}
+
+.table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+/* Table Header */
+.tableHead {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--dashboard-dividerline-color);
+}
+
+.tableHeaderCell {
+  padding: 12px 8px;
+  font-weight: 600;
+}
+
+.tableHeaderCellLeft {
+  padding-left: 4px;
+}
+
+.tableHeaderCellRight {
+  text-align: right;
+}
+
+.tableHeaderCellHiddenSm {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .tableHeaderCellHiddenSm {
+    display: table-cell;
+  }
+}
+
+.tableHeaderCellRightPadding {
+  padding-right: 4px;
+}
+
+/* Table Body */
+.tableRow {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  transition: background-color 0.15s;
+}
+
+.tableRow:last-child {
+  border-bottom: 0;
+}
+
+.tableRow:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.tableCell {
+  padding: 12px 8px;
+  vertical-align: middle;
+}
+
+.tableCellLeft {
+  padding-left: 4px;
+}
+
+.tableCellRight {
+  text-align: right;
+}
+
+.tableCellHiddenSm {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .tableCellHiddenSm {
+    display: table-cell;
+  }
+}
+
+.tableCellRightPadding {
+  padding-right: 4px;
+}
+
+/* Cell Contents */
+.subjectCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subjectIndicator {
+  width: 3px;
+  height: 20px;
+  border-radius: 99px;
+  opacity: 0.8;
+}
+
+.subjectName {
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  font-size: 13px;
+}
+
+.scoreValue {
+  font-weight: 700;
+  font-size: 13px;
+  color: white;
+}
+
+.scoreTotal {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  margin-left: 2px;
+}
+
+.attemptsCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.attemptsValue {
+  font-size: 13px;
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+}
+
+.attemptsLabel {
+  font-size: 9px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: 1px;
+}
+
+.accuracyHigh {
+  font-weight: 700;
+  font-size: 13px;
+  color: #22c55e;
+}
+
+.accuracyLow {
+  font-weight: 700;
+  font-size: 13px;
+  color: #f59e0b;
+}
+
+.timeValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dashboard-secondary-text-color);
+  font-family: monospace;
+}

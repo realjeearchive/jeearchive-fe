@@ -4,6 +4,7 @@ import React from "react";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { DIFFICULTY_STRATEGY } from "@/features/analytics/dummyData";
 import { FiAlertCircle } from "react-icons/fi";
+import styles from "./DifficultyTrap.module.css";
 
 interface TrapBarProps {
   label: string;
@@ -13,19 +14,19 @@ interface TrapBarProps {
 }
 
 const TrapBar = ({ label, count, total, color }: TrapBarProps) => (
-  <div className="mb-4 last:mb-0 group">
-    <div className="flex justify-between items-end mb-1.5">
-      <span className="text-[var(--dashboard-font-xs, 12px)] text-[var(--dashboard-secondary-text-color)] group-hover:text-[var(--dashboard-primary-text-color)] transition-colors font-medium">
+  <div className={styles.trapBarContainer}>
+    <div className={styles.trapBarHeader}>
+      <span className={styles.trapBarLabel}>
         {label}
       </span>
-      <span className="text-[var(--dashboard-font-sm, 14px)] font-semibold text-[var(--dashboard-primary-text-color)]">
-        {count} <span className="text-[10px] opacity-60 font-normal">Qs</span>
+      <span className={styles.trapBarCount}>
+        {count} <span className={styles.trapBarCountUnit}>Qs</span>
       </span>
     </div>
     
-    <div className="w-full bg-[rgba(255,255,255,0.05)] h-1.5 rounded-full overflow-hidden">
+    <div className={styles.progressBarContainer}>
       <div 
-        className="h-full rounded-full transition-all duration-700 ease-out" 
+        className={styles.progressBarFill} 
         style={{ 
           width: `${Math.min((count / total) * 100, 100)}%`, 
           background: color, // Solid color for cleaner look on dark bg
@@ -39,7 +40,7 @@ const TrapBar = ({ label, count, total, color }: TrapBarProps) => (
 export const DifficultyTrap = () => {
   return (
     <AnalyticsCard title="Selection Strategy" subtitle="Where marks are leaking">
-      <div className="flex flex-col h-full justify-center py-1 gap-1">
+      <div className={styles.mainContainer}>
         
         <TrapBar 
           label="Easy Questions Missed" 
@@ -56,10 +57,10 @@ export const DifficultyTrap = () => {
         />
 
         {/* Insight Footer - Styled like a dashboard badge/alert */}
-        <div className="mt-4 pt-3 border-t border-[var(--dashboard-dividerline-color)] flex items-start gap-2.5">
-          <div className="text-[var(--dashboard-highlight-color)] mt-0.5"><FiAlertCircle size={14} /></div>
-          <p className="text-[var(--dashboard-font-xs, 12px)] leading-relaxed text-[var(--dashboard-secondary-text-color)]">
-            <span className="text-[var(--dashboard-primary-text-color)] font-medium">Quick Win:</span> Fixing the <span className="text-[var(--dashboard-highlight-color)]">24 easy misses</span> is your fastest path to +12 marks.
+        <div className={styles.insightFooter}>
+          <div className={styles.insightIcon}><FiAlertCircle size={14} /></div>
+          <p className={styles.insightText}>
+            <span className={styles.insightTextBold}>Quick Win:</span> Fixing the <span className={styles.insightTextHighlight}>24 easy misses</span> is your fastest path to +12 marks.
           </p>
         </div>
 

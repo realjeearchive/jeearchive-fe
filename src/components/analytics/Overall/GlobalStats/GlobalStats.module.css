@@ -1,0 +1,70 @@
+/* GlobalStats Container */
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 8px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* StatItem Component */
+.statItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-radius: 10px;
+  background-color: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  height: 100%;
+  gap: 1rem;
+  min-width: 145px;
+}
+
+.statHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statLabel {
+  font-size: var(--dashboard-font-xs, 12px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.statValue {
+  font-size: var(--dashboard-font-xl, 24px);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--dashboard-primary-text-color);
+  margin-top: 0.25rem;
+}
+
+.iconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

@@ -5,11 +5,12 @@ import { ResponsiveRadar } from "@nivo/radar";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { SUBJECT_STRENGTH_DATA } from "@/features/analytics/dummyData";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
+import styles from "./SubjectRadar.module.css";
 
 export const SubjectRadar = () => {
   return (
     <AnalyticsCard title="Subject Balance" subtitle="Average marks distribution">
-      <div style={{ height: "260px", width: "100%" }}>
+      <div className={styles.chartContainer}>
         <ResponsiveRadar
           data={SUBJECT_STRENGTH_DATA}
           keys={["score"]}

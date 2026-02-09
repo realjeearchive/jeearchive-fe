@@ -1,0 +1,121 @@
+/* SubjectDeepDive Container */
+.container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.cardMinHeight {
+  min-height: 160px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 1rem;
+}
+
+/* Top Row */
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.scoreValue {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.scoreMain {
+  font-size: var(--dashboard-font-xl, 32px);
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.scoreTotal {
+  font-size: var(--dashboard-font-xs, 12px);
+  color: var(--dashboard-secondary-text-color);
+}
+
+.scoreLabel {
+  font-size: var(--dashboard-font-xs, 12px);
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+.accuracySection {
+  text-align: right;
+}
+
+.accuracyValue {
+  font-size: var(--dashboard-font-lg, 18px);
+  font-weight: 700;
+}
+
+.accuracyLabel {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+}
+
+/* Bottom Row */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.negativePill {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.negativePillIcon {
+  color: #ef4444;
+}
+
+.negativePillText {
+  font-size: 11px;
+  font-weight: 500;
+  color: #f87171;
+}
+
+.timePill {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timePillIcon {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.timePillText {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+}

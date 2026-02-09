@@ -1,0 +1,69 @@
+/* OverviewTab Layout */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Strict 8px gap */
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero Row (Score + Percentile) */
+.heroRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem; /* Strict 8px gap */
+  min-height: 220px;
+}
+
+@media (min-width: 1024px) {
+  .heroRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.heroRowScoreCol {
+  grid-column: span 1;
+}
+
+@media (min-width: 1024px) {
+  .heroRowScoreCol {
+    grid-column: span 2;
+  }
+}
+
+.heroRowPercentileCol {
+  grid-column: span 1;
+}
+
+/* Details Row (Subject Table + Benchmarking) */
+.detailsRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem; /* Strict 8px gap */
+}
+
+@media (min-width: 1024px) {
+  .detailsRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.detailsRowSubjectCol {
+  grid-column: span 1;
+  min-height: 300px;
+}
+
+@media (min-width: 1024px) {
+  .detailsRowSubjectCol {
+    grid-column: span 2;
+  }
+}
+
+.detailsRowBenchmarkCol {
+  grid-column: span 1;
+  min-height: 300px;
+}

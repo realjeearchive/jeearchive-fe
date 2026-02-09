@@ -5,6 +5,7 @@ import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import TestListSection2, { TestListItem, TestStatusData } from "@/components/testPlayer/TestListSection2/TestListSection2";
 import { RECENT_TESTS } from "@/features/analytics/dummyData";
 import { useRouter } from "next/navigation";
+import styles from "./RecentTestsList.module.css";
 
 export const RecentTestsList = () => {
   const router = useRouter();
@@ -31,10 +32,10 @@ export const RecentTestsList = () => {
   };
 
   return (
-    <div className="mt-4">
+    <div className={styles.container}>
       <AnalyticsCard title="Recent Test Activity">
         {/* The list component handles its own internal layout, we just frame it */}
-        <div className="-mx-2"> 
+        <div className={styles.listWrapper}> 
           <TestListSection2
             heading=""
             items={items}

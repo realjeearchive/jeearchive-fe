@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { 
   FiGrid, FiLayers, FiClock, FiList, FiTarget 
 } from "react-icons/fi";
-import { OverviewTab } from "./Overview/OverviewTab";
+import { OverviewTab } from "./Overview/OverviewTab/OverviewTab";
 
 const MENU_ITEMS = [
   { id: "overview", label: "Overview", icon: FiGrid },

@@ -1,20 +1,21 @@
 "use client";
 
 import React from "react";
-import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
+import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
 import { OVERVIEW_COMPARISON } from "@/features/analytics/dummyData";
+import styles from "./ComparativeOverview.module.css";
 
 const ComparisonBar = ({ label, value, max, color, isYou = false }: { label: string, value: number, max: number, color: string, isYou?: boolean }) => (
-  <div className="mb-4 last:mb-0">
-    <div className="flex justify-between text-[11px] mb-1.5 font-medium">
-      <span className={`${isYou ? 'text-[var(--dashboard-primary-text-color)]' : 'text-[var(--dashboard-secondary-text-color)]'}`}>
+  <div className={styles.comparisonBar}>
+    <div className={styles.barHeader}>
+      <span className={isYou ? styles.barLabelYou : styles.barLabel}>
         {label}
       </span>
-      <span className="text-[var(--dashboard-primary-text-color)]">{value}</span>
+      <span className={styles.barValue}>{value}</span>
     </div>
-    <div className="w-full bg-[rgba(255,255,255,0.05)] h-1.5 rounded-full overflow-hidden">
+    <div className={styles.progressBarContainer}>
       <div 
-        className="h-full rounded-full transition-all duration-1000 ease-out" 
+        className={styles.progressBarFill} 
         style={{ 
           width: `${(value / max) * 100}%`, 
           backgroundColor: color, 
@@ -31,7 +32,7 @@ export const ComparativeOverview = () => {
 
   return (
     <AnalyticsCard title="Benchmarking" subtitle="Vs. Competition" className="h-full bg-[#211f1c] border-[var(--dashboard-sidebar-border-color)]">
-      <div className="flex flex-col justify-center h-full gap-2">
+      <div className={styles.mainContainer}>
         <ComparisonBar 
           label="YOU" 
           value={score.you} 
@@ -53,9 +54,9 @@ export const ComparativeOverview = () => {
         />
         
         {/* Insight Footer */}
-        <div className="mt-4 pt-3 border-t border-[var(--dashboard-dividerline-color)]">
-           <p className="text-[11px] text-[var(--dashboard-secondary-text-color)] leading-relaxed">
-            <span className="text-[var(--dashboard-primary-text-color)] font-medium">Insight:</span> You trail the topper by <span className="text-[#EF4444] font-medium">-{score.topper - score.you} marks</span>.
+        <div className={styles.insightFooter}>
+           <p className={styles.insightText}>
+            <span className={styles.insightBold}>Insight:</span> You trail the topper by <span className={styles.insightNegative}>-{score.topper - score.you} marks</span>.
            </p>
         </div>
       </div>

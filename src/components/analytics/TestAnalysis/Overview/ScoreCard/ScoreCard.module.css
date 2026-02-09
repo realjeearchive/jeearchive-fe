@@ -1,0 +1,150 @@
+/* ScoreCard Container */
+.cardContainer {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #211f1c;
+  border-color: var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+}
+
+.bgGlow {
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  padding: 150px;
+  background-color: var(--dashboard-core-color);
+  filter: blur(140px);
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  z-index: 10;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 2rem;
+  }
+}
+
+/* Left Section - Big Score */
+.leftSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.scoreContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scoreValue {
+  font-size: 64px;
+  font-weight: 800;
+  color: white;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.scoreLabel {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: 8px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 10px;
+  border-radius: 99px;
+}
+
+/* Divider */
+.divider {
+  display: none;
+  width: 1px;
+  background-color: var(--dashboard-dividerline-color);
+  opacity: 0.6;
+  margin: 1rem 0;
+}
+
+@media (min-width: 768px) {
+  .divider {
+    display: block;
+  }
+}
+
+/* Right Section - Subject Split */
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* SubjectRow Component */
+.subjectRow {
+  width: 100%;
+}
+
+.subjectRowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 6px;
+}
+
+.subjectRowLabel {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.subjectRowScore {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.subjectRowScoreValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+
+.subjectRowScoreTotal {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.subjectProgressBar {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.subjectProgressBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}

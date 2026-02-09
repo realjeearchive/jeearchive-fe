@@ -5,11 +5,12 @@ import { ResponsiveLine } from "@nivo/line";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { SCORE_TREND_DATA } from "@/features/analytics/dummyData";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
+import styles from "./PerformanceGraph.module.css";
 
 export const PerformanceGraph = () => {
   return (
     <AnalyticsCard title="Performance Trend" subtitle="Score progression across tests">
-      <div style={{ height: "260px", width: "100%" }}>
+      <div className={styles.chartContainer}>
         <ResponsiveLine
           data={SCORE_TREND_DATA}
           theme={analyticsChartTheme}

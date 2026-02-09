@@ -1,0 +1,77 @@
+/* ComparativeOverview Container */
+.mainContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: 0.5rem; /* Strict 8px gap for Card content */
+  background-color: #211f1c; /* Inherit BG */
+}
+
+/* ComparisonBar Component */
+.comparisonBar {
+  margin-bottom: 12px;
+}
+
+.comparisonBar:last-child {
+  margin-bottom: 0;
+}
+
+.barHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.barLabel {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.barLabelYou {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 600;
+}
+
+.barValue {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 600;
+}
+
+.progressBarContainer {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  height: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1s ease-out;
+}
+
+/* Insight Footer */
+.insightFooter {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--dashboard-dividerline-color);
+}
+
+.insightText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.5;
+}
+
+.insightBold {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 600;
+}
+
+.insightNegative {
+  color: #ef4444;
+  font-weight: 600;
+}

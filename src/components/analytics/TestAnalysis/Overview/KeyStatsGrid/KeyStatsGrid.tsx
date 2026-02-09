@@ -3,6 +3,7 @@
 import React from "react";
 import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
 import { FiAward, FiClock, FiTarget, FiXCircle, FiCheckCircle, FiPlusCircle } from "react-icons/fi";
+import styles from "./KeyStatsGrid.module.css";
 
 interface StatBoxProps {
   label: string;
@@ -14,48 +15,49 @@ interface StatBoxProps {
   isPositive?: boolean; // Triggers green delta style
 }
 
-const StatBox = ({ label, value, subValue, icon: Icon, color, isNegative, isPositive }: StatBoxProps) => (
-  <div className="flex flex-col justify-between p-[18px] px-[20px] rounded-[10px] bg-[var(--dashboard-sidebar-background-color)] border border-[var(--dashboard-sidebar-border-color)] h-full gap-4 min-w-[145px]">
-    
-    {/* Header: Label + Icon */}
-    <div className="flex items-start justify-between">
-      <div className="flex flex-col gap-1">
-        <p className="text-[10px] tracking-[0.08em] uppercase text-[var(--dashboard-secondary-text-color)] font-medium">
-          {label}
-        </p>
-        <p className="text-[24px] font-semibold leading-tight text-[var(--dashboard-primary-text-color)] mt-1">
-          {value}
-        </p>
-        
-        {/* Delta/SubValue Pill */}
-        {subValue && (
-          <div className={`
-            inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-full text-[10px] font-medium w-fit
-            ${isNegative ? 'bg-[rgba(239,68,68,0.1)] text-[#EF4444] border border-[rgba(239,68,68,0.2)]' : ''}
-            ${isPositive ? 'bg-[rgba(34,197,94,0.1)] text-[#22C55E] border border-[rgba(34,197,94,0.2)]' : ''}
-            ${!isNegative && !isPositive ? 'bg-[rgba(255,255,255,0.03)] text-[var(--dashboard-secondary-text-color)]' : ''}
-          `}>
-            {subValue}
-          </div>
-        )}
-      </div>
+const StatBox = ({ label, value, subValue, icon: Icon, color, isNegative, isPositive }: StatBoxProps) => {
+  let subValueClass = styles.statBoxSubValueNeutral;
+  if (isNegative) subValueClass = styles.statBoxSubValueNegative;
+  if (isPositive) subValueClass = styles.statBoxSubValuePositive;
 
-      {/* Icon Box */}
-      <div 
-        className="w-[40px] h-[40px] rounded-[14px] flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: `${color}15`, color: color }}
-      >
-        <Icon size={18} />
+  return (
+    <div className={styles.statBox}>
+      
+      {/* Header: Label + Icon */}
+      <div className={styles.statBoxHeader}>
+        <div className={styles.statBoxContent}>
+          <p className={styles.statBoxLabel}>
+            {label}
+          </p>
+          <p className={styles.statBoxValue}>
+            {value}
+          </p>
+          
+          {/* Delta/SubValue Pill */}
+          {subValue && (
+            <div className={`${styles.statBoxSubValue} ${subValueClass}`}>
+              {subValue}
+            </div>
+          )}
+        </div>
+
+        {/* Icon Box */}
+        <div 
+          className={styles.iconBox}
+          style={{ backgroundColor: `${color}15`, color: color }}
+        >
+          <Icon size={18} />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const KeyStatsGrid = () => {
   const { meta, stats } = SINGLE_TEST_DATA;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mt-4">
+    <div className={styles.container}>
       <StatBox 
         label="Global Rank" 
         value={meta.rank} 

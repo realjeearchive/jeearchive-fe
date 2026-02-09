@@ -1,0 +1,118 @@
+/* PercentileCard Container */
+.container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  background-color: #1e1d1b;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+/* HOVER: Orange Border Glow */
+.container:hover {
+  border-color: rgba(245, 158, 11, 0.4); 
+}
+
+/* Orange Gradient */
+.bgGradient {
+  position: absolute;
+  inset: 0;
+  /* Converted #F59E0B to rgba(245, 158, 11, ...) */
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 60%);
+  opacity: 0.8;
+}
+
+/* Animated Glow - Core Color */
+.bgGlowAnimated {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: var(--dashboard-core-color); 
+  filter: blur(120px);
+  opacity: 0.1;
+  pointer-events: none;
+  transition: opacity 0.7s;
+}
+
+.container:hover .bgGlowAnimated {
+  opacity: 0.2;
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Icon Box - Core Orange Style */
+.iconBox {
+  padding: 6px;
+  border-radius: 6px;
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  display: flex;
+}
+
+.headerTitle {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dashboard-core-color);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.percentileValue {
+  font-size: 48px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.disclaimer {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.disclaimerDot {
+  width: 4px;
+  height: 4px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background-color: var(--dashboard-secondary-text-color);
+  flex-shrink: 0;
+}
+
+.disclaimerText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.5;
+  opacity: 0.8;
+}
