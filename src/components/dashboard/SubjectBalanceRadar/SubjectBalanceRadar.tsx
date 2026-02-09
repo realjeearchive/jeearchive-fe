@@ -1,16 +1,14 @@
-// src/components/dashboard/SubjectBalanceRadar.tsx
 "use client";
 
 import React from 'react';
 import { ResponsiveRadar } from '@nivo/radar';
 import { dashboardNivoTheme } from '@/theme/nivoTheme';
-import { subjectColors } from '@/theme/nivoColors';
 import styles from './SubjectBalanceRadar.module.css';
 
 const data = [
   { subject: 'Physics', Accuracy: 72 },
   { subject: 'Chemistry', Accuracy: 81 },
-  { subject: 'Mathematics', Accuracy: 65 },
+  { subject: 'Maths', Accuracy: 65 },
 ];
 
 const SubjectBalanceRadar: React.FC = () => {
@@ -18,7 +16,7 @@ const SubjectBalanceRadar: React.FC = () => {
     <div className={styles.card}>
       <h3 className={styles.title}>Subject Balance</h3>
       <p className={styles.subtitle}>
-        Higher and more balanced spikes indicate stronger overall prep.
+        Accuracy distribution across subjects.
       </p>
 
       <div className={styles.chartWrapper}>
@@ -30,18 +28,18 @@ const SubjectBalanceRadar: React.FC = () => {
           maxValue={100}
           margin={{ top: 30, right: 40, bottom: 30, left: 40 }}
           curve="linearClosed"
-          borderWidth={1.5}
-          borderColor={subjectColors.physics}
-          gridLevels={5}
+          borderWidth={2}
+          borderColor="#F59E0B"
+          gridLevels={3}
           gridShape="circular"
           gridLabelOffset={12}
           enableDots={true}
-          dotSize={5}
-          dotColor="var(--dashboard-background-color)"
+          dotSize={6}
+          dotColor="#1E1D1B"
           dotBorderWidth={2}
-          dotBorderColor={subjectColors.physics}
-          colors={[subjectColors.physics]}
-          fillOpacity={0.18}
+          dotBorderColor="#F59E0B"
+          colors={['#F59E0B']}
+          fillOpacity={0.2}
           blendMode="normal"
           isInteractive={true}
         />

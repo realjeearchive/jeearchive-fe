@@ -9,17 +9,19 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
+  transition: all 0.3s ease;
 }
 
-/* subtle per-card tint, matched to dashboard theme */
-.card_mint { background: var(--dashboard-sidebar-background-color); }
-.card_peach { background: #2b2521; }
-.card_purple { background: #25232b; }
-.card_blue { background: #20262b; }
-.card_teal { background: #213231; }
-.card_amber { background: #312820; }
-.card_slate { background: #25272c; }
-.card_olive { background: #2a2f23; }
+/* Hover Effect: Core Orange Border Glow */
+.card:hover {
+  border-color: rgba(245, 158, 11, 0.4); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove old specific tint classes if you want uniformity, or keep them subtle */
+.card_mint, .card_peach, .card_purple, .card_blue, .card_teal, .card_amber, .card_slate, .card_olive {
+  background: var(--dashboard-sidebar-background-color); 
+}
 
 /* top row */
 .headerRow {
@@ -28,15 +30,23 @@
   justify-content: space-between;
 }
 
-/* icon */
+/* icon box - Updated to Core Orange Theme */
 .iconBox {
   width: 40px;
   height: 40px;
-  border-radius: 14px;
-  background: var(--dashboard-link-hover-color);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.1); /* Orange Tint */
+  color: var(--dashboard-core-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  transition: all 0.3s ease;
+}
+
+.card:hover .iconBox {
+  background: rgba(245, 158, 11, 0.2);
+  transform: scale(1.05);
 }
 
 .iconPlaceholder {
@@ -48,13 +58,11 @@
 
 /* delta pill */
 .deltaPill {
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid var(--dashboard-dividerline-color);
-  background: var(--dashboard-background-color);
-  color: var(--dashboard-primary-text-color);
-  font-size: var(--dashboard-font-xs);
-  font-weight: 500;
+  font-size: 11px; /* var(--dashboard-font-xs) */
+  font-weight: 600;
+  border: 1px solid transparent;
 }
 
 /* content */
@@ -65,50 +73,42 @@
 }
 
 .label {
-  font-size: var(--dashboard-font-xs);
+  font-size: 11px; /* var(--dashboard-font-xs) */
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
 }
 
 .value {
-  font-size: var(--dashboard-font-xl);
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 28px; /* var(--dashboard-font-xl) */
+  font-weight: 700;
+  line-height: 1.1;
   color: var(--dashboard-primary-text-color);
 }
 
 .subLabel {
-  font-size: var(--dashboard-font-sm);
+  font-size: 12px; /* var(--dashboard-font-sm) */
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
 }
 
-/* responsive */
-@media (max-width: 600px) {
-  .card { padding: 14px 16px; }
-  .value { font-size: var(--dashboard-font-lg-value); }
-  .iconBox { width: 36px; height: 36px; }
-}
-
-@media (max-width: 406px) {
-  .card { padding: 12px 10px; }
-
-  .label { font-size: 10px; }
-  .subLabel { font-size: 10px; }
-  .value { font-size: 20px; }
-}
-
-/* delta colors */
+/* Delta colors - Refined */
 .deltaPositive {
-  background: var(--dashboard-positive-delta-bg-color);
-  border-color: var(--dashboard-positive-delta-border-color);
-  color: var(--dashboard-positive-delta-color);
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.2);
 }
 
 .deltaNegative {
-  background: var(--dashboard-negative-delta-bg-color);
-  border-color: var(--dashboard-negative-delta-border-color);
-  color: var(--dashboard-negative-delta-color);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
 }
 
-.deltaPill { transition: all 0.25s ease; }
+/* Responsive */
+@media (max-width: 600px) {
+  .card { padding: 14px 16px; }
+  .value { font-size: 24px; }
+  .iconBox { width: 36px; height: 36px; }
+}

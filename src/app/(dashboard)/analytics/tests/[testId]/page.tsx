@@ -34,7 +34,9 @@ export default function SingleTestAnalysisPage(props: PageProps) {
       </div>
 
       {/* CONTENT LAYOUT */}
-      <AnalysisLayout />
+      <div className={styles.contentLayout}>
+        <AnalysisLayout />
+      </div>
 
       {/* FOOTER ACTIONS (Moved to Bottom) */}
       <div className={styles.footerActions}>

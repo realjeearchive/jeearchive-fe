@@ -3,45 +3,70 @@
   min-width: 145px;
   padding: 18px 20px;
   border-radius: 10px;
-  background: var(--dashboard-sidebar-background-color);
+  background-color: #1e1d1b;
   border: 1px solid var(--dashboard-sidebar-border-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden; /* Essential for the gradient to stay inside */
 }
 
-/* header */
+/* Hover Effect: Orange Border Glow */
+.card:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* NEW: Orange Gradient Overlay (Matches PercentileCard style) */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Header */
 .header {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  position: relative;
+  z-index: 2; /* Ensures text is above gradient */
 }
 
 .label {
-  font-size: var(--dashboard-font-xs);
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
 }
 
 .meta {
-  font-size: var(--dashboard-font-xs);
+  font-size: 11px;
   color: var(--dashboard-secondary-text-color);
-  opacity: 0.8;
+  opacity: 0.6;
 }
 
-/* main */
+/* Main Content */
 .main {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 8px 0;
+  position: relative;
+  z-index: 2;
 }
 
 .circleWrapper {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
 }
 
 .progressSvg {
@@ -52,15 +77,15 @@
 
 .bg {
   fill: none;
-  stroke: var(--dashboard-dividerline-color);
-  stroke-width: 5;
+  stroke: rgba(255, 255, 255, 0.04);
+  stroke-width: 6;
 }
 
 .progress {
   fill: none;
-  stroke-width: 5;
+  stroke-width: 6;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.8s ease, stroke 0.3s ease;
+  transition: stroke-dashoffset 1s ease-out;
 }
 
 .center {
@@ -73,40 +98,33 @@
 }
 
 .value {
-  font-size: var(--dashboard-font-progress);
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
 }
 
 .value span {
-  font-size: var(--dashboard-font-sm);
+  font-size: 11px;
   color: var(--dashboard-secondary-text-color);
+  font-weight: 400;
 }
 
 .solvedLabel {
-  font-size: var(--dashboard-font-xs);
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
 }
 
-/* subject colors */
-.physics .progress { stroke: var(--dashboard-physics-color); }
-.chemistry .progress { stroke: var(--dashboard-chemistry-color); }
-.maths .progress { stroke: var(--dashboard-maths-color); }
+/* Subject Specific Colors */
+.physics .progress { stroke: #60A5FA; }
+.physics .value { color: #60A5FA; }
 
-.physics .solvedLabel { color: var(--dashboard-physics-color); }
-.chemistry .solvedLabel { color: var(--dashboard-chemistry-color); }
-.maths .solvedLabel { color: var(--dashboard-maths-color); }
+.chemistry .progress { stroke: #34D399; }
+.chemistry .value { color: #34D399; }
 
-/* responsive */
-@media (max-width: 600px) {
-  .card { padding: 14px 16px; }
-  .value { font-size: var(--dashboard-font-progress-sm); }
-}
-
-@media (max-width: 406px) {
-  .card { padding: 12px 10px; }
-
-  .label { font-size: var(--dashboard-font-xs); }
-  .meta { font-size: var(--dashboard-font-xs); }
-  .value span { font-size: var(--dashboard-font-xs); }
-  .solvedLabel { font-size: var(--dashboard-font-xs); }
-}
+.maths .progress { stroke: var(--dashboard-core-color); }
+.maths .value { color: var(--dashboard-core-color); }

@@ -9,7 +9,7 @@ import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/We
 
 export default function AnalyticsPage() {
   return (
-    <div className="p-2 max-w-[1600px] mx-auto min-h-screen">
+    <div className=" sm:p-2 max-w-[1600px] mx-auto min-h-screen">
       <h1 className="text-xl font-bold text-[var(--dashboard-primary-text-color)] mb-2 px-1">
         Overall Performance
       </h1>

@@ -9,6 +9,12 @@
   padding-left: 10px;
 }
 
+@media (max-width: 600px) {
+  .pageContainer {
+    padding-left: 0;
+  }
+}
+
 /* Header Section */
 .headerWrapper {
   display: flex;
@@ -23,12 +29,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
+
 
 .headerRow {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.contentLayout{
+    z-index: 0;
 }
 
 @media (min-width: 768px) {
