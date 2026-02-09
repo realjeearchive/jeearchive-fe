@@ -12,6 +12,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden; /* Essential for the gradient to stay inside */
+  z-index: 0;
 }
 
 /* Hover Effect: Orange Border Glow */
