@@ -1,0 +1,128 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  align-items: stretch;
+  
+  /* NEW: Padding inside the grid container */
+  padding: 20px; 
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+.optionCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  
+  /* Surface Style */
+  background-color: rgba(255, 255, 255, 0.03); 
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  
+  cursor: default;
+  transition: all 0.2s ease;
+  height: 100%;
+  min-height: 72px;
+}
+
+.labelCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-secondary-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.contentWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.statsText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.6;
+  font-weight: 500;
+}
+
+.userMarkedLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.textGreen { color: #22C55E; }
+.textRed { color: #EF4444; }
+
+/* STATES */
+.correct {
+  border-color: #22C55E;
+  background-color: rgba(34, 197, 94, 0.08); 
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
+}
+.correct .labelCircle {
+  background-color: #22C55E;
+  color: black;
+  border-color: #22C55E;
+}
+
+.wrong {
+  border-color: #EF4444;
+  background-color: rgba(239, 68, 68, 0.08); 
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.1);
+}
+.wrong .labelCircle {
+  background-color: #EF4444;
+  color: white;
+  border-color: #EF4444;
+}
+
+.correctBadge {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  background: #22C55E;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+  z-index: 5;
+  border: 1px solid rgba(255,255,255,0.2);
+}

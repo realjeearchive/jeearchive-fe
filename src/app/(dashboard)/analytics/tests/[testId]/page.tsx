@@ -1,6 +1,7 @@
 "use client";
 
 import React, { use } from "react";
+import { useRouter } from "next/navigation"; // 1. Import Router
 import styles from "./analysis.module.css";
 import { AnalysisLayout } from "@/components/analytics/TestAnalysis/AnalysisLayout";
 import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
@@ -12,6 +13,7 @@ interface PageProps {
 
 export default function SingleTestAnalysisPage(props: PageProps) {
   const { testId } = use(props.params);
+  const router = useRouter(); // 2. Initialize Router
 
   return (
     <div className={styles.pageContainer}>
@@ -38,12 +40,17 @@ export default function SingleTestAnalysisPage(props: PageProps) {
         <AnalysisLayout />
       </div>
 
-      {/* FOOTER ACTIONS (Moved to Bottom) */}
+      {/* FOOTER ACTIONS */}
       <div className={styles.footerActions}>
         <button className={`${styles.btn} ${styles.reportBtn}`}>
           <FiDownload size={14} /> Report
         </button>
-        <button className={`${styles.btn} ${styles.solutionsBtn}`}>
+        
+        {/* 3. Add onClick Handler */}
+        <button 
+          className={`${styles.btn} ${styles.solutionsBtn}`}
+          onClick={() => router.push(`/solutions/${testId}`)}
+        >
           <FiBookOpen size={14} /> View Solutions
         </button>
       </div>

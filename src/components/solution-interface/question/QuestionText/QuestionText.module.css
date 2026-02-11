@@ -1,0 +1,22 @@
+.container {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--dashboard-primary-text-color);
+  font-weight: 400;
+  
+  /* NEW PADDING */
+  padding: 20px;
+}
+
+.imageWrapper {
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  display: inline-block;
+}
+
+.questionImage {
+  max-width: 100%;
+  display: block;
+}

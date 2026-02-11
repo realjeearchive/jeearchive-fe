@@ -1,0 +1,180 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dashboard-sidebar-background-color);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--dashboard-sidebar-border-color);
+}
+
+/* --- ROW 1: TITLE & SETTINGS --- */
+.topRow {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.backBtn {
+  color: var(--dashboard-secondary-text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.backBtn:hover {
+  color: var(--dashboard-primary-text-color);
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mainTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  line-height: 1.2;
+}
+
+.subTitle {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
+}
+
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  background: transparent;
+  color: var(--dashboard-secondary-text-color);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.settingsBtn:hover {
+  border-color: var(--dashboard-dividerline-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* --- ROW 2: SUBJECT TABS --- */
+.tabsRow {
+  height: 48px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 24px;
+  position: relative;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* Continuous Bottom Line */
+.tabsRow::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--dashboard-dividerline-color);
+  z-index: 0;
+  transition: background-color 0.3s ease;
+}
+
+/* Dynamic Line Colors */
+.tabsRowMath::after { background-color: #3B82F6; }
+.tabsRowPhy::after { background-color: #22C55E; }
+.tabsRowChem::after { background-color: #F97316; }
+
+
+/* Tab Style (Base for both Active and Inactive) */
+.tab {
+  display: flex;
+  align-items: center; 
+  gap: 8px;
+  padding: 0 20px;
+  
+  /* FIXED GEOMETRY: Same height/margin for ALL states to prevent jumping */
+  height: 49px; /* Taller than container to overlap line */
+  margin-bottom: -1px; /* Pull down to sit on line */
+  box-sizing: border-box;
+  
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  position: relative;
+  
+  /* Always have a border width, just transparent when inactive */
+  border: 1px solid transparent; 
+  
+  background: transparent;
+  
+  /* FIXED FONT WEIGHT: Stops text width from changing */
+  font-weight: 600; 
+  font-size: 13px;
+  
+  /* Use opacity for inactive state visual difference instead of font-weight */
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.7; 
+  
+  transition: opacity 0.2s, color 0.2s; /* Don't transition layout props */
+  z-index: 1;
+}
+
+.tab:hover {
+  opacity: 1;
+  color: var(--dashboard-primary-text-color);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ACTIVE TAB LOGIC */
+.tab.active {
+  background-color: var(--dashboard-background-color); 
+  color: var(--dashboard-primary-text-color);
+  opacity: 1;
+  z-index: 2; /* Sit on top of the line */
+  
+  /* The "Eraser" border matches background to hide the colored line */
+  border-bottom-color: var(--dashboard-background-color); 
+}
+
+/* Subject Specific Border Colors (Only changes color, not width) */
+.tabMath.active { 
+  border-top-color: #3B82F6; 
+  border-left-color: #3B82F6; 
+  border-right-color: #3B82F6; 
+}
+
+.tabPhy.active { 
+  border-top-color: #22C55E; 
+  border-left-color: #22C55E; 
+  border-right-color: #22C55E; 
+}
+
+.tabChem.active { 
+  border-top-color: #F97316; 
+  border-left-color: #F97316; 
+  border-right-color: #F97316; 
+}
+
+/* Icon Colors */
+.tabMath.active .tabIcon { color: #3B82F6; }
+.tabPhy.active .tabIcon { color: #22C55E; }
+.tabChem.active .tabIcon { color: #F97316; }
+
+.tabIcon { font-size: 16px; opacity: 0.8; }

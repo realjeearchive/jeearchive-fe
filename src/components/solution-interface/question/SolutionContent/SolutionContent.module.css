@@ -1,0 +1,72 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  /* NEW LAYOUT */
+  border-top: 1px solid var(--dashboard-dividerline-color);
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.videoBadge {
+  font-size: 11px;
+  background: transparent;
+  color: var(--dashboard-highlight-color);
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--dashboard-highlight-color);
+  transition: all 0.2s;
+}
+
+.videoBadge:hover {
+  background: rgba(133, 219, 251, 0.1);
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--dashboard-secondary-text-color);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Video Wrapper */
+.videoWrapper {
+  margin-top: 12px;
+  position: relative;
+  padding-bottom: 56.25%; 
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

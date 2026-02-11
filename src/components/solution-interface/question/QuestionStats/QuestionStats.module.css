@@ -1,0 +1,72 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  
+  /* NEW LAYOUT */
+  padding: 20px;
+  border-top: 1px solid var(--dashboard-dividerline-color);
+  background-color: rgba(255, 255, 255, 0.01); /* Optional: distinct footer bg */
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* STAT ITEM */
+.statCard {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.header {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.mainValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  line-height: 1;
+}
+
+.subValue {
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
+}
+
+/* Accuracy Bar */
+.barContainer {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.bgGood { background: #22C55E; }
+.bgBad { background: #EF4444; }
+.bgAvg { background: #F59E0B; }

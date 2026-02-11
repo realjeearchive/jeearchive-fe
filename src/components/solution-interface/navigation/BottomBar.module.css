@@ -1,0 +1,66 @@
+.container {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+/* Navigation Group */
+.navGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px; 
+  /* Transparent bg so it blends with footer */
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.navButton {
+  padding: 10px 24px;
+  border-radius: 8px; 
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--dashboard-secondary-text-color);
+}
+
+.navButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--dashboard-primary-text-color);
+  border-color: var(--dashboard-dividerline-color);
+}
+
+.navButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: transparent;
+  background: transparent;
+}
+
+/* CENTER ACTION: "View Solution" - High Contrast Pill */
+.mainAction {
+  background-color: var(--dashboard-primary-text-color);
+  color: #000 !important; /* Black text */
+  font-weight: 700;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 99px; 
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.mainAction:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.25);
+  background-color: #fff;
+}
