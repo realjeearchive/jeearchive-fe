@@ -102,7 +102,7 @@
 
 @media (max-width: 700px) {
   .header {
-    padding: 16px 16px; /* Less horizontal padding on mobile */
+    padding: 10px 10px; /* Less horizontal padding on mobile */
   }
   
   .rightSection {
