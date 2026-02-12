@@ -24,7 +24,7 @@
 .hideBtn {
   font-size: 11px;
   font-weight: 600;
-  color: var(--dashboard-highlight-color);
+  color: var(--dashboard-primary-text-color);
   background: transparent;
   border: none;
   cursor: pointer;
