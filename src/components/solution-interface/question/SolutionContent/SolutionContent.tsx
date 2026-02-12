@@ -11,11 +11,15 @@ export const SolutionContent = ({ solutionText, videoUrl }: SolutionContentProps
   const [showVideo, setShowVideo] = useState(false);
 
   return (
-    <div className={styles.container}>
+    <div 
+      className={styles.container} 
+      id="detailed-solution-section" /* <--- NEW ID FOR SCROLL TARGET */
+    >
+      
+      {/* Header */}
       <div className={styles.header}>
         <div className={styles.title}>
-          <FiBookOpen size={18} /> 
-          Detailed Solution
+           Detailed Solution
         </div>
         
         {videoUrl && (
@@ -23,24 +27,25 @@ export const SolutionContent = ({ solutionText, videoUrl }: SolutionContentProps
             className={styles.videoBadge}
             onClick={() => setShowVideo(!showVideo)}
           >
-            {showVideo ? "Hide Video" : "Watch Video Solution"}
+            {showVideo ? "Hide Video" : "Watch Video"}
           </button>
         )}
       </div>
 
-      {/* Text Solution */}
+      {/* Text Body */}
       <div className={styles.body} dangerouslySetInnerHTML={{ __html: solutionText }} />
 
-      {/* Video Embed (Conditional) */}
+      {/* Video Embed */}
       {showVideo && videoUrl && (
         <div className={styles.videoWrapper}>
           <iframe 
             src={videoUrl} 
-            title="Video Solution" 
-            allowFullScreen 
+            title="Solution Video" 
+            allowFullScreen
           />
         </div>
       )}
+
     </div>
   );
 };

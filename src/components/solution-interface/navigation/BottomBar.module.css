@@ -6,7 +6,7 @@
   gap: 16px;
   padding: 0 24px;
   width: 100%;
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  box-sizing: border-box;
 }
 
 /* Navigation Group */
@@ -33,11 +33,10 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   background: rgba(255, 255, 255, 0.03);
   color: var(--dashboard-secondary-text-color);
-  white-space: nowrap; /* Prevent text wrapping */
+  white-space: nowrap; 
 }
 
 .navButton:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
   color: var(--dashboard-primary-text-color);
   border-color: var(--dashboard-dividerline-color);
 }
@@ -49,7 +48,7 @@
   background: transparent;
 }
 
-/* CENTER ACTION: "View Solution" - High Contrast Pill */
+/* --- MAIN ACTION: "View Solution" --- */
 .mainAction {
   background-color: var(--dashboard-primary-text-color);
   color: #000 !important; /* Black text */
@@ -57,52 +56,63 @@
   border: none;
   padding: 12px 32px;
   border-radius: 99px; 
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  
+  /* Initial Subtle Shadow */
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
 }
 
+/* --- REFINED SUBTLE HOVER --- */
 .mainAction:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.25);
-  background-color: #fff;
+  /* No vertical movement (transform: none) */
+  /* Just slightly soften the shadow */
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  
+  /* Simple opacity drop to indicate interactivity without changing color */
+  opacity: 0.9; 
 }
+
+/* Active/Click state for better feedback */
+.mainAction:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
 
 /* --- RESPONSIVE STYLES --- */
 
 @media (max-width: 700px) {
   .container {
-    padding: 0 12px; /* Reduce container padding */
+    padding: 0 12px;
     height: 64px;
   }
 
   .navGroup {
     width: 100%;
-    justify-content: space-between; /* Spread buttons out */
+    justify-content: space-between; 
     gap: 8px;
   }
 
   .navButton {
-    padding: 10px 14px; /* Smaller padding */
+    padding: 10px 14px; 
     font-size: 13px;
   }
 }
 
-/* Mobile Icon-Only Mode (Very small screens) */
 @media (max-width: 480px) {
   
-  /* Hide text labels for Previous/Next to save space */
   .btnText {
     display: none;
   }
 
   .navButton {
-    padding: 10px; /* Square buttons for icons */
+    padding: 10px; 
     justify-content: center;
   }
 
-  /* Keep "View Solution" prominent */
   .mainAction {
-    flex: 1; /* Allow it to grow */
+    flex: 1; 
     justify-content: center;
-    padding: 10px 16px; /* Restore padding for pill */
+    padding: 10px 16px; 
   }
 }

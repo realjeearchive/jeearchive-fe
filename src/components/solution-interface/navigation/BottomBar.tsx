@@ -10,6 +10,15 @@ interface BottomBarProps {
 }
 
 export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBarProps) => {
+
+  // NEW: Scroll Handler
+  const handleViewSolution = () => {
+    const solutionSection = document.getElementById("detailed-solution-section");
+    if (solutionSection) {
+      solutionSection.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   return (
     <div className={styles.container}>
       
@@ -25,8 +34,11 @@ export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBa
           <span className={styles.btnText}>Previous</span>
         </button>
 
-        {/* MAIN ACTION */}
-        <button className={`${styles.navButton} ${styles.mainAction}`}>
+        {/* MAIN ACTION: VIEW SOLUTION */}
+        <button 
+          className={`${styles.navButton} ${styles.mainAction}`}
+          onClick={handleViewSolution} // <--- Attached Handler
+        >
           <FiEye size={16} /> 
           <span>View Solution</span>
         </button>
