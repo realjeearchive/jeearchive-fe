@@ -137,3 +137,31 @@
   border-radius: 50%;
   color: white; /* White Tick Icon */
 }
+
+/* --- RESPONSIVE UPDATES --- */
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .grid { 
+    padding: 10px; 
+    gap: 12px;
+  }
+  
+  .optionCard {
+    padding: 14px 16px; /* Compact padding */
+    gap: 12px;
+    min-height: 60px;
+  }
+  
+  .labelCircle {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+  
+  .text {
+    font-size: 14px;
+  }
+}

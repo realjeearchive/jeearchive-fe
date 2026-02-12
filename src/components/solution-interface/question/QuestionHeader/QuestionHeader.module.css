@@ -3,16 +3,30 @@
   align-items: center;
   justify-content: space-between;
   
-  /* NEW LAYOUT */
   padding: 16px 20px;
   border-bottom: 1px solid var(--dashboard-dividerline-color);
   background-color: rgba(255, 255, 255, 0.01); 
+
+  /* --- SCROLL LOGIC --- */
+  overflow-x: auto;      /* Enable horizontal scroll */
+  white-space: nowrap;   /* Prevent wrapping */
+  
+  /* Hide Scrollbar (Clean UI) */
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* IE */
+}
+
+.header::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .leftSection {
   display: flex;
   align-items: center;
   gap: 12px;
+  
+  /* Prevent squishing */
+  flex-shrink: 0; 
 }
 
 /* Q Badge */
@@ -42,6 +56,10 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  
+  /* Prevent squishing & Ensure gap from left section */
+  flex-shrink: 0; 
+  margin-left: 16px; 
 }
 
 .marksBlock {
@@ -66,6 +84,9 @@
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 500;
+  
+  /* Ensure button text doesn't wrap awkwardly */
+  white-space: nowrap; 
 }
 
 .actionBtn:hover {
@@ -77,4 +98,19 @@
 .reportBtn:hover {
   color: #EF4444;
   border-color: rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 700px) {
+  .header {
+    padding: 16px 16px; /* Less horizontal padding on mobile */
+  }
+  
+  .rightSection {
+    gap: 8px;
+    margin-left: 24px; /* Force a bit more space between groups before scroll starts */
+  }
+  
+  .actionBtn {
+    padding: 6px 10px; /* Slightly smaller touch targets */
+  }
 }

@@ -100,3 +100,32 @@
 .attemptBtn:hover {
   background-color: rgba(133, 219, 251, 0.05);
 }
+
+
+/* ... (Keep existing desktop styles) ... */
+
+/* --- RESPONSIVE UPDATES --- */
+@media (max-width: 700px) {
+  .banner {
+    margin: 10px 10px 0 10px;
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+  
+  .footer {
+    padding: 10px;
+  }
+  
+  .footerLabel {
+    font-size: 9px;
+  }
+  
+  .footerContent {
+    font-size: 13px;
+  }
+  
+  .attemptBtn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}

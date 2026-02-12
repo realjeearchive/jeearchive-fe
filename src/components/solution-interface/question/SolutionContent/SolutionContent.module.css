@@ -70,3 +70,25 @@
   height: 100%;
   border: 0;
 }
+
+
+/* --- RESPONSIVE UPDATES --- */
+@media (max-width: 700px) {
+  .container {
+    padding: 16px 10px; /* Reduced padding */
+    gap: 12px;
+  }
+  
+  .title {
+    font-size: 13px;
+  }
+  
+  .videoBadge {
+    padding: 3px 10px;
+    font-size: 10px;
+  }
+  
+  .body {
+    font-size: 14px;
+  }
+}

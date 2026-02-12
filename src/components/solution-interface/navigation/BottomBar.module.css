@@ -6,6 +6,7 @@
   gap: 16px;
   padding: 0 24px;
   width: 100%;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 /* Navigation Group */
@@ -13,7 +14,6 @@
   display: flex;
   align-items: center;
   gap: 16px; 
-  /* Transparent bg so it blends with footer */
   background: transparent;
   padding: 0;
   border: none;
@@ -33,6 +33,7 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   background: rgba(255, 255, 255, 0.03);
   color: var(--dashboard-secondary-text-color);
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .navButton:hover:not(:disabled) {
@@ -63,4 +64,45 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(255, 255, 255, 0.25);
   background-color: #fff;
+}
+
+/* --- RESPONSIVE STYLES --- */
+
+@media (max-width: 700px) {
+  .container {
+    padding: 0 12px; /* Reduce container padding */
+    height: 64px;
+  }
+
+  .navGroup {
+    width: 100%;
+    justify-content: space-between; /* Spread buttons out */
+    gap: 8px;
+  }
+
+  .navButton {
+    padding: 10px 14px; /* Smaller padding */
+    font-size: 13px;
+  }
+}
+
+/* Mobile Icon-Only Mode (Very small screens) */
+@media (max-width: 480px) {
+  
+  /* Hide text labels for Previous/Next to save space */
+  .btnText {
+    display: none;
+  }
+
+  .navButton {
+    padding: 10px; /* Square buttons for icons */
+    justify-content: center;
+  }
+
+  /* Keep "View Solution" prominent */
+  .mainAction {
+    flex: 1; /* Allow it to grow */
+    justify-content: center;
+    padding: 10px 16px; /* Restore padding for pill */
+  }
 }

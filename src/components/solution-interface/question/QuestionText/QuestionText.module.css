@@ -20,3 +20,11 @@
   max-width: 100%;
   display: block;
 }
+
+@media (max-width: 700px) {
+  .container {
+    padding: 16px 10px; /* Top/Bottom slightly more, Sides 10px */
+    font-size: 15px; /* Slightly smaller text */
+    line-height: 1.5;
+  }
+}

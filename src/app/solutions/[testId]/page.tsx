@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // Layout & Structure
@@ -28,6 +28,7 @@ type QuestionStatus = "correct" | "incorrect" | "unattempted";
 interface Option {
   id: string;
   text: string;
+  percentage?: number;
 }
 
 interface QuestionStatsData {
@@ -82,10 +83,10 @@ const TEST_DATA: TestData = {
       hasImage: true,
       imageUrl: "https://via.placeholder.com/600x200/1e1d1b/FFFFFF?text=Diagram+Circle+A+to+B",
       options: [
-        { id: "A", text: "2v sin(θ/2)" },
-        { id: "B", text: "2v cos(θ/2)" },
-        { id: "C", text: "v sin(θ)" },
-        { id: "D", text: "v cos(θ)" },
+        { id: "A", text: "2v sin(θ/2)", percentage: 65 },
+        { id: "B", text: "2v cos(θ/2)", percentage: 15 },
+        { id: "C", text: "v sin(θ)", percentage: 10 },
+        { id: "D", text: "v cos(θ)", percentage: 10 },
       ],
       correctAnswer: "A",
       userAnswer: "A",
@@ -128,10 +129,10 @@ const TEST_DATA: TestData = {
       section: "Single Correct",
       text: "<p>Two blocks of masses m1 = 5kg and m2 = 10kg are connected by a massless string passing over a frictionless pulley. What is the acceleration of the system?</p>",
       options: [
-        { id: "A", text: "5 m/s²" },
-        { id: "B", text: "10 m/s²" },
-        { id: "C", text: "3.33 m/s²" },
-        { id: "D", text: "Zero" },
+        { id: "A", text: "5 m/s²", percentage: 20 },
+        { id: "B", text: "10 m/s²", percentage: 15 },
+        { id: "C", text: "3.33 m/s²", percentage: 42 },
+        { id: "D", text: "Zero", percentage: 23 },
       ],
       correctAnswer: "C",
       userAnswer: "A",
@@ -216,10 +217,10 @@ const TEST_DATA: TestData = {
       section: "Single Correct",
       text: "<p>Which of the following is diamagnetic?</p>",
       options: [
-        { id: "A", text: "O2" },
-        { id: "B", text: "N2" },
-        { id: "C", text: "O2-" },
-        { id: "D", text: "Fe3+" },
+        { id: "A", text: "O2", percentage: 5 },
+        { id: "B", text: "N2", percentage: 88 },
+        { id: "C", text: "O2-", percentage: 4 },
+        { id: "D", text: "Fe3+", percentage: 3 },
       ],
       correctAnswer: "B",
       userAnswer: "B",
@@ -255,10 +256,10 @@ const TEST_DATA: TestData = {
       section: "Single Correct",
       text: "<p>If the function f(x) = (sin 2x) / x for x ≠ 0 is continuous at x=0, find f(0).</p>",
       options: [
-        { id: "A", text: "1" },
-        { id: "B", text: "2" },
-        { id: "C", text: "0" },
-        { id: "D", text: "-1" },
+        { id: "A", text: "1", percentage: 10 },
+        { id: "B", text: "2", percentage: 55 },
+        { id: "C", text: "0", percentage: 15 },
+        { id: "D", text: "-1", percentage: 20 },
       ],
       correctAnswer: "B",
       userAnswer: null,
@@ -298,11 +299,31 @@ const TEST_DATA: TestData = {
 export default function SolutionPage() {
   const router = useRouter();
   
-  // State
+  // 1. STATE MANAGEMENT
   const [activeSubject, setActiveSubject] = useState<Subject>("Physics");
   const [activeQuestionId, setActiveQuestionId] = useState<string>("q1");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Filter Questions for Sidebar based on Subject
+  // 2. EFFECT: Responsive Sidebar Logic
+  useEffect(() => {
+    // Handler to close sidebar automatically on mobile screens
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    // Run on mount
+    handleResize();
+
+    // Listen for resize events
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 3. DATA FILTERS
   const sidebarQuestions = useMemo(() => {
     return TEST_DATA.questions
       .filter((q) => q.subject === activeSubject)
@@ -310,19 +331,17 @@ export default function SolutionPage() {
         id: q.id,
         number: q.number,
         status: q.status,
-        section: q.section as "Single Correct" | "Numerical" // Narrowing for sidebar strict type
+        section: q.section as "Single Correct" | "Numerical"
       }));
   }, [activeSubject]);
 
-  // Get Current Question Data
   const currentQuestion = useMemo(() => {
     return TEST_DATA.questions.find((q) => q.id === activeQuestionId);
   }, [activeQuestionId]);
 
-  // Handlers
+  // 4. HANDLERS
   const handleSubjectChange = (subject: Subject) => {
     setActiveSubject(subject);
-    // Auto-jump to first question of that subject
     const firstQ = TEST_DATA.questions.find(q => q.subject === subject);
     if (firstQ) setActiveQuestionId(firstQ.id);
   };
@@ -331,7 +350,6 @@ export default function SolutionPage() {
     const currentIndex = TEST_DATA.questions.findIndex(q => q.id === activeQuestionId);
     if (currentIndex < TEST_DATA.questions.length - 1) {
       const nextQ = TEST_DATA.questions[currentIndex + 1];
-      // Switch subject if needed
       if (nextQ.subject !== activeSubject) {
         setActiveSubject(nextQ.subject);
       }
@@ -343,7 +361,6 @@ export default function SolutionPage() {
     const currentIndex = TEST_DATA.questions.findIndex(q => q.id === activeQuestionId);
     if (currentIndex > 0) {
       const prevQ = TEST_DATA.questions[currentIndex - 1];
-      // Switch subject if needed
       if (prevQ.subject !== activeSubject) {
         setActiveSubject(prevQ.subject);
       }
@@ -351,17 +368,25 @@ export default function SolutionPage() {
     }
   };
 
-  // Guard clause if ID invalid
   if (!currentQuestion) return <div>Loading...</div>;
 
+  // 5. RENDER
   return (
     <SolutionLayout
+      // Pass State to Layout for CSS Animation
+      isSidebarOpen={isSidebarOpen} 
+      // Close sidebar when clicking backdrop (mobile)
+      onCloseSidebar={() => setIsSidebarOpen(false)}
+
       header={
         <SolutionHeader 
           testName={TEST_DATA.name}
           activeSubject={activeSubject}
           onSubjectChange={handleSubjectChange}
           onBack={() => router.back()}
+          // Pass Toggle Logic to Header
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={() => setIsSidebarOpen(true)}
         />
       }
       sidebar={
@@ -369,7 +394,13 @@ export default function SolutionPage() {
           subjectName={activeSubject}
           questions={sidebarQuestions}
           activeQuestionId={activeQuestionId}
-          onQuestionClick={(id) => setActiveQuestionId(id)}
+          onQuestionClick={(id) => {
+            setActiveQuestionId(id);
+            // Close sidebar on mobile after selecting a question
+            if (window.innerWidth <= 1024) setIsSidebarOpen(false);
+          }}
+          // Pass Close Logic to Sidebar
+          onClose={() => setIsSidebarOpen(false)}
         />
       }
       footer={
@@ -381,6 +412,7 @@ export default function SolutionPage() {
         />
       }
     >
+      {/* Scrollable Main Content */}
       <QuestionMain 
          status={currentQuestion.status}
          topic={currentQuestion.topic}

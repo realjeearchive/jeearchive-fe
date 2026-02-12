@@ -36,12 +36,6 @@ export const QuestionMain = ({ children, status, topic, chapter }: QuestionMainP
             <span className={styles.separator}>•</span> 
             {topic}
           </div>
-          
-          <div className={styles.footerBtnWrapper}>
-            <button className={styles.attemptBtn}>
-              <FiTarget size={14} /> Attempt Similar Qs
-            </button>
-          </div>
         </div>
       )}
 

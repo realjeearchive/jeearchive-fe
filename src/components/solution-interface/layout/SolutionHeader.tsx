@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./SolutionHeader.module.css";
-import { FiArrowLeft, FiSettings } from "react-icons/fi";
+import { FiArrowLeft, FiSettings, FiGrid, FiMenu } from "react-icons/fi"; // Added FiGrid
 import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb"; 
 
 interface SolutionHeaderProps {
@@ -8,16 +8,20 @@ interface SolutionHeaderProps {
   activeSubject: "Physics" | "Chemistry" | "Mathematics";
   onSubjectChange: (subject: "Physics" | "Chemistry" | "Mathematics") => void;
   onBack: () => void;
+  // NEW: Props to control sidebar toggle
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
 }
 
 export const SolutionHeader = ({ 
   testName, 
   activeSubject, 
   onSubjectChange, 
-  onBack 
+  onBack,
+  isSidebarOpen,
+  onToggleSidebar
 }: SolutionHeaderProps) => {
 
-  // Determine the row class based on active subject
   const getTabsRowClass = () => {
     switch(activeSubject) {
       case "Mathematics": return `${styles.tabsRow} ${styles.tabsRowMath}`;
@@ -42,50 +46,47 @@ export const SolutionHeader = ({
           </div>
         </div>
 
-        <button className={styles.settingsBtn}>
-          <FiSettings size={14} /> Settings
-        </button>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          
+          <button className={styles.settingsBtn}>
+            <FiSettings size={14} /> Settings
+          </button>
+
+          {/* TOGGLE BUTTON: Only visible when sidebar is CLOSED */}
+          {!isSidebarOpen && (
+            <button className={styles.settingsBtn} onClick={onToggleSidebar}>
+              <FiMenu size={14} /> Question Panel
+            </button>
+          )}
+
+        </div>
       </div>
 
       {/* --- ROW 2: Subject Tabs --- */}
       <div className={getTabsRowClass()}>
-        
-        {/* MATHEMATICS */}
         <button 
-          className={`
-            ${styles.tab} ${styles.tabMath} 
-            ${activeSubject === "Mathematics" ? styles.active : ""}
-          `}
+          className={`${styles.tab} ${styles.tabMath} ${activeSubject === "Mathematics" ? styles.active : ""}`}
           onClick={() => onSubjectChange("Mathematics")}
         >
           <TbMathFunction className={styles.tabIcon} />
           <span>Mathematics</span>
         </button>
 
-        {/* PHYSICS */}
         <button 
-          className={`
-            ${styles.tab} ${styles.tabPhy} 
-            ${activeSubject === "Physics" ? styles.active : ""}
-          `}
+          className={`${styles.tab} ${styles.tabPhy} ${activeSubject === "Physics" ? styles.active : ""}`}
           onClick={() => onSubjectChange("Physics")}
         >
           <TbAtom className={styles.tabIcon} />
           <span>Physics</span>
         </button>
 
-        {/* CHEMISTRY */}
         <button 
-          className={`
-            ${styles.tab} ${styles.tabChem} 
-            ${activeSubject === "Chemistry" ? styles.active : ""}
-          `}
+          className={`${styles.tab} ${styles.tabChem} ${activeSubject === "Chemistry" ? styles.active : ""}`}
           onClick={() => onSubjectChange("Chemistry")}
         >
           <TbFlask className={styles.tabIcon} />
           <span>Chemistry</span>
         </button>
-
       </div>
 
     </div>

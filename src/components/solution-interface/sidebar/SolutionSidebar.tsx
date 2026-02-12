@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./SolutionSidebar.module.css";
 import { FiMenu } from "react-icons/fi"; 
 
+// ... (Keep your QuestionStatus and other interfaces same) ...
 export interface QuestionStatus {
   id: string; 
   number: number; 
@@ -13,7 +14,8 @@ interface SolutionSidebarProps {
   questions: QuestionStatus[];
   activeQuestionId: string;
   onQuestionClick: (id: string) => void;
-  subjectName: string; 
+  subjectName: string;
+  onClose: () => void; // <--- NEW PROP
 }
 
 type FilterType = "all" | "correct" | "incorrect" | "unattempted";
@@ -22,11 +24,13 @@ export const SolutionSidebar = ({
   questions, 
   activeQuestionId, 
   onQuestionClick, 
-  subjectName 
+  subjectName,
+  onClose // <--- Destructure here
 }: SolutionSidebarProps) => {
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
 
+  // ... (Keep existing counts/filter logic/renderSection exactly the same) ...
   const counts = {
     all: questions.length,
     correct: questions.filter(q => q.status === "correct").length,
@@ -73,7 +77,6 @@ export const SolutionSidebar = ({
     );
   };
 
-  // Helper to determine the container class for colored bottom border
   const getFilterTabsClass = () => {
     switch(activeFilter) {
       case "all": return `${styles.filterTabs} ${styles.filterTabsAll}`;
@@ -90,12 +93,13 @@ export const SolutionSidebar = ({
       {/* HEADER */}
       <div className={styles.header}>
         <span className={styles.subjectTitle}>All {subjectName} Questions</span>
-        <button className={styles.hideBtn}>
+        {/* NEW: OnClick calls onClose */}
+        <button className={styles.hideBtn} onClick={onClose}>
           HIDE <FiMenu />
         </button>
       </div>
 
-      {/* FILTER TABS */}
+      {/* ... (Keep Filter Tabs and Content exactly the same) ... */}
       <div className={getFilterTabsClass()}>
         <button 
           className={`${styles.tab} ${styles.tabAll} ${activeFilter === 'all' ? styles.active : ''}`}
@@ -130,7 +134,6 @@ export const SolutionSidebar = ({
         </button>
       </div>
 
-      {/* SCROLLABLE CONTENT */}
       <div className={styles.content}>
         {sections.map(sec => renderSection(sec))}
         {filteredQuestions.length === 0 && (
