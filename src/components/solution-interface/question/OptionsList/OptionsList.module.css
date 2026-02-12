@@ -4,8 +4,6 @@
   gap: 16px;
   width: 100%;
   align-items: stretch;
-  
-  /* NEW: Padding inside the grid container */
   padding: 20px; 
 }
 
@@ -16,12 +14,11 @@
 .optionCard {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: center; /* Vertically centers the circle and content */
   gap: 16px;
   padding: 18px 24px;
   border-radius: 12px;
   
-  /* Surface Style */
   background-color: rgba(255, 255, 255, 0.03); 
   border: 1px solid rgba(255, 255, 255, 0.05);
   
@@ -50,8 +47,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 6px;
+  justify-content: center; /* Ensures text block is centered */
+  gap: 4px;
+  padding-right: 10px; /* Prevent overlap with absolute label if text is long */
 }
 
 .text {
@@ -61,26 +59,25 @@
   font-weight: 500;
 }
 
-.bottomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 4px;
-}
-
+/* Stats (Percentage) stays in flow, below text */
 .statsText {
   font-size: 11px;
   color: var(--dashboard-secondary-text-color);
   opacity: 0.6;
   font-weight: 500;
+  margin-top: 2px;
 }
 
+/* ABSOLUTE POSITIONED "You marked this" */
 .userMarkedLabel {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
   font-size: 10px;
   font-weight: 700;
   text-transform: lowercase;
   letter-spacing: 0.02em;
+  z-index: 2;
 }
 
 .textGreen { color: #22C55E; }
@@ -111,18 +108,32 @@
 
 .correctBadge {
   position: absolute;
-  top: -10px;
+  top: -12px;
   right: 16px;
-  background: #22C55E;
-  color: white;
+  
+  /* Changed background to dark/transparent so the green circle pops */
+  background: #1E1D1B; /* Or use your sidebar bg variable */
+  color: #22C55E;       /* Green Text */
+  border: 1px solid #22C55E;
+  
   font-size: 10px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 3px 4px 3px 10px; /* Adjusted padding for the circle */
   border-radius: 99px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+  gap: 6px;
   z-index: 5;
-  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* The Green Circular Tick */
+.tickCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: #22C55E; /* Solid Green Background */
+  border-radius: 50%;
+  color: white; /* White Tick Icon */
 }

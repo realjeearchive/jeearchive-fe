@@ -1,34 +1,26 @@
 import React from "react";
 import styles from "./QuestionHeader.module.css";
-import { FiBookmark, FiEdit3, FiAlertTriangle } from "react-icons/fi";
+import { FiBookmark, FiAlertTriangle } from "react-icons/fi";
 
 interface QuestionHeaderProps {
   qNumber: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  type: string;
+  type: string; // e.g. "Single Correct"
   marksPos: number;
   marksNeg: number;
 }
 
 export const QuestionHeader = ({ 
   qNumber, 
-  difficulty, 
   type, 
   marksPos, 
   marksNeg 
 }: QuestionHeaderProps) => {
   
-  const diffClass = 
-    difficulty === "Easy" ? styles.diffEasy : 
-    difficulty === "Medium" ? styles.diffMed : 
-    styles.diffHard;
-
   return (
     <div className={styles.header}>
       <div className={styles.leftSection}>
         <div className={styles.qBadge}>Q{qNumber}</div>
         <div className={styles.metaPill}>{type}</div>
-        <div className={`${styles.metaPill} ${diffClass}`}>{difficulty}</div>
       </div>
 
       <div className={styles.rightSection}>

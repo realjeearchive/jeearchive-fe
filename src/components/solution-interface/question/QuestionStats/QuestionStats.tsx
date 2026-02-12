@@ -1,45 +1,72 @@
 import React from "react";
 import styles from "./QuestionStats.module.css";
+import { FiClock, FiTarget } from "react-icons/fi";
 
 interface QuestionStatsProps {
   userTime: string; // "45s"
   avgTime: string;  // "1m 10s"
-  accuracy: number; // 45% (global accuracy)
+  accuracy: number; // 65
 }
 
 export const QuestionStats = ({ userTime, avgTime, accuracy }: QuestionStatsProps) => {
   
-  // Logic for color
-  let accColorClass = styles.bgAvg;
-  if (accuracy > 70) accColorClass = styles.bgGood;
-  if (accuracy < 40) accColorClass = styles.bgBad;
+  // Logic for accuracy color
+  let colorClass = styles.bgOrange;
+  let textClass = styles.textOrange;
+  
+  if (accuracy >= 70) {
+    colorClass = styles.bgGreen;
+    textClass = styles.textGreen;
+  } else if (accuracy < 40) {
+    colorClass = styles.bgRed;
+    textClass = styles.textRed;
+  }
 
   return (
-    <div className={styles.grid}>
+    <div className={styles.container}>
       
-      {/* Time Stats */}
-      <div className={styles.statCard}>
-        <div className={styles.header}>Time Spent</div>
-        <div className={styles.valueRow}>
-          <span className={styles.mainValue}>{userTime}</span>
-          <span className={styles.subValue}>vs Avg: {avgTime}</span>
+      {/* 1. TIME STATS */}
+      <div className={styles.statBlock}>
+        <div className={`${styles.iconWrapper} ${styles.iconTime}`}>
+          <FiClock size={18} />
+        </div>
+        
+        <div className={styles.content}>
+          <div className={styles.label}>Time Spent</div>
+          <div className={styles.mainValueRow}>
+            <div className={styles.mainValue}>{userTime}</div>
+          </div>
+          <div className={styles.subValue}>
+            <span>Average Time: </span>{avgTime}
+          </div>
         </div>
       </div>
 
-      {/* Accuracy Stats */}
-      <div className={styles.statCard}>
-        <div className={styles.header}>
-          <span>Global Accuracy</span>
-          <span>{accuracy}%</span>
+      {/* DIVIDER LINE */}
+      <div className={styles.divider} />
+
+      {/* 2. ACCURACY STATS */}
+      <div className={styles.statBlock}>
+        <div className={`${styles.iconWrapper} ${styles.iconAcc}`}>
+          <FiTarget size={18} />
         </div>
-        <div className={styles.barContainer}>
-          <div 
-            className={`${styles.barFill} ${accColorClass}`} 
-            style={{ width: `${accuracy}%` }} 
-          />
-        </div>
-        <div className={styles.subValue} style={{ marginTop: 8 }}>
-          {accuracy}% of students got this right.
+
+        <div className={styles.content}>
+          <div className={styles.label}>Global Accuracy</div>
+          
+          <div className={styles.barWrapper}>
+            <div className={styles.barTrack}>
+              <div 
+                className={`${styles.barFill} ${colorClass}`} 
+                style={{ width: `${accuracy}%` }} 
+              />
+            </div>
+            
+            <div className={styles.barLabel}>
+              <span className={textClass}>{accuracy}% Correct</span>
+              <span>{100 - accuracy}% Wrong</span>
+            </div>
+          </div>
         </div>
       </div>
 

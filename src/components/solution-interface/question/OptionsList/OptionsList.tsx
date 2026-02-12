@@ -28,10 +28,13 @@ export const OptionsList = ({ options, correctAnswer, userAnswer }: OptionsListP
         return (
           <div key={opt.id} className={cardClass}>
             
-            {/* Correct Badge (Floating Pill) */}
+            {/* Correct Badge with Circular Tick */}
             {isCorrect && (
               <div className={styles.correctBadge}>
-                Correct <FiCheck size={12} strokeWidth={4} />
+                Correct 
+                <span className={styles.tickCircle}>
+                  <FiCheck size={10} strokeWidth={4} />
+                </span>
               </div>
             )}
 
@@ -44,21 +47,19 @@ export const OptionsList = ({ options, correctAnswer, userAnswer }: OptionsListP
             <div className={styles.contentWrapper}>
               <div className={styles.text}>{opt.text}</div>
 
-              {/* Stats & User Marker Row */}
-              <div className={styles.bottomRow}>
-                {/* % Stats (Left) */}
+              {opt.percentage && (
                 <span className={styles.statsText}>
-                  {opt.percentage ? `${opt.percentage}% marked this` : ""}
+                  {opt.percentage}% marked this
                 </span>
-
-                {/* "You marked this" (Right) */}
-                {isUserSelected && (
-                  <span className={`${styles.userMarkedLabel} ${isCorrect ? styles.textGreen : styles.textRed}`}>
-                    You marked this
-                  </span>
-                )}
-              </div>
+              )}
             </div>
+
+            {/* Absolute Positioned "You marked this" Label */}
+            {isUserSelected && (
+              <span className={`${styles.userMarkedLabel} ${isCorrect ? styles.textGreen : styles.textRed}`}>
+                You marked this
+              </span>
+            )}
 
           </div>
         );

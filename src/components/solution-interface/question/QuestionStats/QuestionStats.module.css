@@ -1,47 +1,84 @@
-.grid {
+.container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr 1px 1fr; /* Two cols + divider line */
+  align-items: center;
+  gap: 0; /* Gap handled by padding inside items */
   
-  /* NEW LAYOUT */
-  padding: 20px;
+  /* Segment Layout */
+  padding: 0;
   border-top: 1px solid var(--dashboard-dividerline-color);
-  background-color: rgba(255, 255, 255, 0.01); /* Optional: distinct footer bg */
+  background-color: rgba(255, 255, 255, 0.005);
+}
+
+/* Vertical Divider Line */
+.divider {
+  width: 1px;
+  height: 60%;
+  background-color: var(--dashboard-sidebar-border-color);
 }
 
 @media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr; }
+  .container {
+    grid-template-columns: 1fr; /* Stack vertically */
+    grid-template-rows: auto 1px auto;
+    gap: 0;
+  }
+  .divider {
+    width: 100%;
+    height: 1px;
+  }
 }
 
-/* STAT ITEM */
-.statCard {
-  background: transparent;
-  border: none;
-  padding: 0;
+/* --- STAT BLOCK --- */
+.statBlock {
+  padding: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* Icon Styling */
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  /* Default subtle look */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* Content Column */
+.content {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.header {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
-  letter-spacing: 0.08em;
+.label {
+  font-size: 11px;
   font-weight: 700;
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
 }
 
-.valueRow {
+/* Values */
+.mainValueRow {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
 .mainValue {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--dashboard-primary-text-color);
   line-height: 1;
@@ -50,23 +87,53 @@
 .subValue {
   font-size: 13px;
   color: var(--dashboard-secondary-text-color);
-  opacity: 0.8;
+  font-weight: 500;
 }
 
-/* Accuracy Bar */
-.barContainer {
+.subValue span {
+  opacity: 0.6;
+}
+
+/* --- ACCURACY BAR --- */
+.barWrapper {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.barTrack {
+  width: 100%;
   height: 6px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 99px;
   overflow: hidden;
-  margin-top: 6px;
+  position: relative;
 }
 
 .barFill {
   height: 100%;
   border-radius: 99px;
+  transition: width 0.5s ease-out;
 }
 
-.bgGood { background: #22C55E; }
-.bgBad { background: #EF4444; }
-.bgAvg { background: #F59E0B; }
+.barLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* Color Modifiers */
+.textGreen { color: #22C55E; }
+.bgGreen { background-color: #22C55E; }
+
+.textRed { color: #EF4444; }
+.bgRed { background-color: #EF4444; }
+
+.textOrange { color: #F59E0B; }
+.bgOrange { background-color: #F59E0B; }
+
+/* Icon specific colors based on context */
+.iconTime { color: #3B82F6; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); }
+.iconAcc { color: #8B5CF6; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); }

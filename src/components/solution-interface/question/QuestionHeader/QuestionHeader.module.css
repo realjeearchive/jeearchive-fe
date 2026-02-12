@@ -4,8 +4,9 @@
   justify-content: space-between;
   
   /* NEW LAYOUT */
-  padding: 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--dashboard-dividerline-color);
+  background-color: rgba(255, 255, 255, 0.01); 
 }
 
 .leftSection {
@@ -19,16 +20,12 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--dashboard-primary-text-color);
-  background: var(--dashboard-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  padding: 4px 10px;
-  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Pills */
+/* Pills (Generic for Type) */
 .metaPill {
   font-size: 11px;
   font-weight: 600;
@@ -39,10 +36,6 @@
   background: rgba(255, 255, 255, 0.05);
   color: var(--dashboard-secondary-text-color);
 }
-
-.diffEasy { color: #22C55E; background: rgba(34, 197, 94, 0.1); }
-.diffMed { color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
-.diffHard { color: #EF4444; background: rgba(239, 68, 68, 0.1); }
 
 /* Right Section */
 .rightSection {
