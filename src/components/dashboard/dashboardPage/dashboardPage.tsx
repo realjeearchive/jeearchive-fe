@@ -13,11 +13,10 @@ import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTyp
 import TestListSection, { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 
-// Icons
+// Icons - Using standard, clean icons
 import { FiAward, FiClock, FiTarget, FiTrendingUp, FiCheckSquare, FiActivity, FiZap, FiLayers } from 'react-icons/fi';
 
-// --- CONSTANT DATA (Does not change with filter) ---
-// Since PYQ progress is cumulative of all attempts
+// --- CONSTANT DATA ---
 const OVERALL_PROGRESS = {
   phy: { solved: 1850, total: 3200 },
   chem: { solved: 2100, total: 3200 },
@@ -27,10 +26,35 @@ const OVERALL_PROGRESS = {
 // --- DATA: MOCK TEST VIEW ---
 const TEST_VIEW_DATA = {
   kpis: [
-    { label: "Mock Accuracy", value: "76.4%", sub: "Avg in last 5 Mocks", delta: "+2.4%", icon: <FiTarget size={18} /> },
-    { label: "Paper Speed", value: "42s", sub: "Avg Time / Question", delta: "-5s", icon: <FiClock size={18} /> },
-    { label: "AIR Prediction", value: "~2,400", sub: "Based on current score", delta: "Top 1.5%", icon: <FiAward size={18} /> },
-    { label: "Mocks Attempted", value: "14", sub: "Full Syllabus Tests", delta: "+2 this week", icon: <FiCheckSquare size={18} /> },
+    { 
+      label: "Mock Accuracy", 
+      value: "76.4%", 
+      sub: "Avg in last 5 Mocks", 
+      delta: "+2.4%", 
+      // Updated to size 16 for subtle look
+      icon: <FiTarget size={16} /> 
+    },
+    { 
+      label: "Paper Speed", 
+      value: "42s", 
+      sub: "Avg Time / Question", 
+      delta: "-5s", 
+      icon: <FiClock size={16} /> 
+    },
+    { 
+      label: "AIR Prediction", 
+      value: "~2,400", 
+      sub: "Based on current score", 
+      delta: "Top 1.5%", 
+      icon: <FiAward size={16} /> 
+    },
+    { 
+      label: "Mocks Attempted", 
+      value: "14", 
+      sub: "Full Syllabus Tests", 
+      delta: "+2 this week", 
+      icon: <FiCheckSquare size={16} /> 
+    },
   ],
   scoreData: [{
     id: 'Mock Score',
@@ -49,10 +73,34 @@ const TEST_VIEW_DATA = {
 // --- DATA: CHAPTER PRACTICE VIEW ---
 const CHAPTER_VIEW_DATA = {
   kpis: [
-    { label: "Practice Accuracy", value: "82%", sub: "Across all topics", delta: "+5.1%", icon: <FiLayers size={18} /> },
-    { label: "Daily Problems", value: "45", sub: "Questions / Day avg", delta: "+12", icon: <FiActivity size={18} /> },
-    { label: "Strong Chapters", value: "28", sub: ">85% Accuracy", delta: "+3 new", icon: <FiZap size={18} /> },
-    { label: "Consistency", value: "12 Days", sub: "Study Streak", delta: "Keep going!", icon: <FiTrendingUp size={18} /> },
+    { 
+      label: "Practice Accuracy", 
+      value: "82%", 
+      sub: "Across all topics", 
+      delta: "+5.1%", 
+      icon: <FiLayers size={16} /> 
+    },
+    { 
+      label: "Daily Problems", 
+      value: "45", 
+      sub: "Questions / Day avg", 
+      delta: "+12", 
+      icon: <FiActivity size={16} /> 
+    },
+    { 
+      label: "Strong Chapters", 
+      value: "28", 
+      sub: ">85% Accuracy", 
+      delta: "+3 new", 
+      icon: <FiZap size={16} /> 
+    },
+    { 
+      label: "Consistency", 
+      value: "12 Days", 
+      sub: "Study Streak", 
+      delta: "Keep going!", 
+      icon: <FiTrendingUp size={16} /> 
+    },
   ],
   scoreData: [{
     id: 'Questions Solved',
@@ -89,13 +137,13 @@ export default function DashboardPage() {
   return (
     <div className={styles.page}>
       
-      {/* 1. Enhanced Header with Dropdown */}
+      {/* 1. Header with Dropdown */}
       <DashboardHeader 
         currentView={viewMode} 
         onViewChange={setViewMode} 
       />
 
-      {/* 2. Static Progress Cards (Always visible, total count) */}
+      {/* 2. Static Progress Cards */}
       <div className={styles.progressRow}>
         <PyqProgressCard 
           label="Physics" 
@@ -114,7 +162,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* 3. Dynamic KPIs based on View Mode */}
+      {/* 3. Dynamic KPIs with Subtle Icons */}
       <div className={styles.kpiRow}>
         {currentData.kpis.map((kpi, i) => (
           <KpiCard
@@ -124,7 +172,6 @@ export default function DashboardPage() {
             subLabel={kpi.sub}
             icon={kpi.icon}
             deltaLabel={kpi.delta}
-            tone="mint"
           />
         ))}
       </div>

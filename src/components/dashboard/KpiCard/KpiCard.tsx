@@ -16,7 +16,6 @@ const KpiCard: React.FC<KpiCardProps> = ({
   subLabel,
   icon,
   deltaLabel,
-  tone = "mint",
 }) => {
 
   const getDeltaClass = () => {
@@ -27,7 +26,7 @@ const KpiCard: React.FC<KpiCardProps> = ({
   };
 
   return (
-    <div className={`${styles.card} ${styles[`card_${tone}`]}`}>
+    <div className={styles.card}>
       <div className={styles.headerRow}>
         <div className={styles.iconBox}>
           {icon ?? <span className={styles.iconPlaceholder} />}
