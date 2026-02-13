@@ -3,23 +3,40 @@
 import React from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { SCORE_TREND_DATA } from "@/features/analytics/dummyData";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
 import styles from "./PerformanceGraph.module.css";
 
-export const PerformanceGraph = () => {
+interface GraphPoint {
+  x: string | number;
+  y: number;
+}
+
+interface PerformanceGraphProps {
+  data: GraphPoint[];
+}
+
+export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
+  
+  // Nivo requires an array of series objects
+  const chartData = [
+    {
+      id: "Score",
+      data: data,
+    },
+  ];
+
   return (
     <AnalyticsCard title="Performance Trend" subtitle="Score progression across tests">
       <div className={styles.chartContainer}>
         <ResponsiveLine
-          data={SCORE_TREND_DATA}
+          data={chartData}
           theme={analyticsChartTheme}
           margin={{ top: 20, right: 20, bottom: 30, left: 30 }}
           xScale={{ type: "point" }}
           yScale={{
             type: "linear",
             min: 0,
-            max: 300, 
+            max: 300, // Fixed max for JEE (or use 'auto' if preferred)
             stacked: false,
             reverse: false,
           }}
@@ -31,7 +48,11 @@ export const PerformanceGraph = () => {
             tickSize: 0,
             tickPadding: 12,
             tickRotation: 0,
-            format: (v) => v.split(' ')[1] || v, // Show only "1", "2" etc if format is "Test 1"
+            // Simple formatter to keep labels short (e.g. "Test 1" -> "1")
+            format: (v) => {
+              if (typeof v === 'string' && v.includes(' ')) return v.split(' ')[1];
+              return v;
+            }, 
           }}
           axisLeft={{
             tickSize: 0,
@@ -62,6 +83,21 @@ export const PerformanceGraph = () => {
           ]}
           fill={[{ match: '*', id: 'gradientA' }]}
           crosshairType="x"
+          // Add tooltip for better UX
+          tooltip={({ point }) => (
+            <div
+              style={{
+                background: "#1E1D1B",
+                padding: "6px 10px",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "4px",
+                color: "#fff",
+                fontSize: "12px",
+              }}
+            >
+              <strong>{point.data.xFormatted}</strong>: {point.data.yFormatted}
+            </div>
+          )}
         />
       </div>
     </AnalyticsCard>

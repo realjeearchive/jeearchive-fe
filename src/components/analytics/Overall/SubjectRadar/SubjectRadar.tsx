@@ -3,17 +3,20 @@
 import React from "react";
 import { ResponsiveRadar } from "@nivo/radar";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { SUBJECT_STRENGTH_DATA } from "@/features/analytics/dummyData";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
 import styles from "./SubjectRadar.module.css";
 
-export const SubjectRadar = () => {
+interface SubjectRadarProps {
+  data: Array<{ subject: string; Accuracy: number }>;
+}
+
+export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
   return (
-    <AnalyticsCard title="Subject Balance" subtitle="Average marks distribution">
+    <AnalyticsCard title="Subject Balance" subtitle="Average accuracy distribution">
       <div className={styles.chartContainer}>
         <ResponsiveRadar
-          data={SUBJECT_STRENGTH_DATA}
-          keys={["score"]}
+          data={data}
+          keys={["Accuracy"]}
           indexBy="subject"
           theme={analyticsChartTheme}
           maxValue={100}

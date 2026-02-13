@@ -5,15 +5,18 @@ import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { FiClock, FiCheckCircle, FiAlertTriangle, FiXCircle, FiActivity } from "react-icons/fi";
 import styles from "./EfficiencyMatrix.module.css";
 
-// Dummy data structure
-const EFFICIENCY_DATA = {
-  fastCorrect: { value: 45, label: "Ideal", status: "good" },
-  slowCorrect: { value: 20, label: "Too Slow", status: "warning" },
-  fastWrong: { value: 15, label: "Rushing", status: "danger" },
-  slowWrong: { value: 20, label: "Gap", status: "critical" }
-};
+interface EfficiencyData {
+  fastCorrect: number;
+  slowCorrect: number;
+  fastWrong: number;
+  slowWrong: number;
+}
 
-export const EfficiencyMatrix = () => {
+interface EfficiencyMatrixProps {
+  data: EfficiencyData;
+}
+
+export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   return (
     <AnalyticsCard 
       title="Speed vs. Accuracy" 
@@ -32,10 +35,10 @@ export const EfficiencyMatrix = () => {
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
-              {EFFICIENCY_DATA.fastCorrect.value}<span className={styles.percent}>%</span>
+              {data.fastCorrect}<span className={styles.percent}>%</span>
             </div>
             <div className={styles.progressBar}>
-              <div className={styles.fillGreen} style={{ width: `${EFFICIENCY_DATA.fastCorrect.value}%` }} />
+              <div className={styles.fillGreen} style={{ width: `${data.fastCorrect}%` }} />
             </div>
             <p className={styles.contextText}>Perfect execution zone</p>
           </div>
@@ -51,10 +54,10 @@ export const EfficiencyMatrix = () => {
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
-              {EFFICIENCY_DATA.slowCorrect.value}<span className={styles.percent}>%</span>
+              {data.slowCorrect}<span className={styles.percent}>%</span>
             </div>
             <div className={styles.progressBar}>
-              <div className={styles.fillBlue} style={{ width: `${EFFICIENCY_DATA.slowCorrect.value}%` }} />
+              <div className={styles.fillBlue} style={{ width: `${data.slowCorrect}%` }} />
             </div>
             <p className={styles.contextText}>Needs speed improvement</p>
           </div>
@@ -70,10 +73,10 @@ export const EfficiencyMatrix = () => {
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
-              {EFFICIENCY_DATA.fastWrong.value}<span className={styles.percent}>%</span>
+              {data.fastWrong}<span className={styles.percent}>%</span>
             </div>
             <div className={styles.progressBar}>
-              <div className={styles.fillOrange} style={{ width: `${EFFICIENCY_DATA.fastWrong.value}%` }} />
+              <div className={styles.fillOrange} style={{ width: `${data.fastWrong}%` }} />
             </div>
             <p className={styles.contextText}>Likely guessing or silly errors</p>
           </div>
@@ -89,10 +92,10 @@ export const EfficiencyMatrix = () => {
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
-              {EFFICIENCY_DATA.slowWrong.value}<span className={styles.percent}>%</span>
+              {data.slowWrong}<span className={styles.percent}>%</span>
             </div>
             <div className={styles.progressBar}>
-              <div className={styles.fillRed} style={{ width: `${EFFICIENCY_DATA.slowWrong.value}%` }} />
+              <div className={styles.fillRed} style={{ width: `${data.slowWrong}%` }} />
             </div>
             <p className={styles.contextText}>Critical conceptual gaps</p>
           </div>

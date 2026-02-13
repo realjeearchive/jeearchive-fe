@@ -1,0 +1,101 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+}
+
+/* Dropdown */
+.dropdownWrapper {
+  position: relative;
+  z-index: 50;
+  min-width: 160px;
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: transparent;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  color: var(--dashboard-primary-text-color);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.trigger:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--dashboard-dividerline-color);
+}
+
+.trigger.active {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: var(--dashboard-core-color);
+}
+
+.icon, .chevron {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.rotate { transform: rotate(180deg); }
+
+/* Menu */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 100%;
+  background: #18181b;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.menuItem {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--dashboard-primary-text-color);
+}
+
+.menuItem.selected {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color);
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .dropdownWrapper { width: 100%; }
+}
