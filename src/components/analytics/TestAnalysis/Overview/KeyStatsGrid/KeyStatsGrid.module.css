@@ -4,6 +4,8 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem; /* Strict 8px gap */
   width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;  transition: all 0.3s ease;
+
 }
 
 @media (min-width: 768px) {

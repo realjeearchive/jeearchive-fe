@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Padding top/side, no bottom padding to sit flush with solution */
+  background: transparent;
+}
+
+.label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.content {
+  font-size: 14px;
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+}
+
+.separator {
+  margin: 0 8px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 10px;
+  }
+}

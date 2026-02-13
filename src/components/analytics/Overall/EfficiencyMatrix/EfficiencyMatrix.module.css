@@ -1,0 +1,147 @@
+/* --- LAYOUT --- */
+.matrixGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+  margin-top: 8px;
+}
+
+/* --- HEADER BADGE --- */
+.headerBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- INDIVIDUAL CARDS --- */
+.matrixCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.matrixCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* Subtle colored glow at top border on hover */
+.cardGreen:hover { border-top-color: #22C55E; }
+.cardBlue:hover { border-top-color: #3B82F6; }
+.cardOrange:hover { border-top-color: #F59E0B; }
+.cardRed:hover { border-top-color: #EF4444; }
+
+/* --- CARD HEADER --- */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.iconBox {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* --- CARD BODY --- */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mainStat {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  line-height: 1;
+}
+
+.percent {
+  font-size: 14px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.contextText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+/* --- PROGRESS BARS --- */
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.fillGreen { height: 100%; border-radius: 99px; background: #22C55E; }
+.fillBlue { height: 100%; border-radius: 99px; background: #3B82F6; }
+.fillOrange { height: 100%; border-radius: 99px; background: #F59E0B; }
+.fillRed { height: 100%; border-radius: 99px; background: #EF4444; }
+
+/* --- COLORS & ACCENTS --- */
+.bgGreen { background: rgba(34, 197, 94, 0.15); color: #22C55E; }
+.textGreen { color: #22C55E; }
+
+.bgBlue { background: rgba(59, 130, 246, 0.15); color: #3B82F6; }
+.textBlue { color: #3B82F6; }
+
+.bgOrange { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+.textOrange { color: #F59E0B; }
+
+.bgRed { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+.textRed { color: #EF4444; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 480px) {
+  .matrixGrid {
+    grid-template-columns: 1fr; /* Stack vertically on mobile */
+  }
+  .matrixCard {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px;
+  }
+  .cardHeader {
+    margin-bottom: 0;
+    margin-right: 16px;
+  }
+  .cardBody {
+    flex: 1;
+  }
+}

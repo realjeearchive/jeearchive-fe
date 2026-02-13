@@ -1,15 +1,14 @@
 import React from "react";
 import styles from "./QuestionMain.module.css";
-import { FiAlertCircle, FiTarget } from "react-icons/fi"; // Added FiTarget for the button icon
+import { FiAlertCircle } from "react-icons/fi";
 
 interface QuestionMainProps {
   children: React.ReactNode;
   status?: "correct" | "incorrect" | "unattempted";
-  topic?: string;
-  chapter?: string;
+  // Removed chapter/topic props from here as they are now used in QuestionMeta
 }
 
-export const QuestionMain = ({ children, status, topic, chapter }: QuestionMainProps) => {
+export const QuestionMain = ({ children, status }: QuestionMainProps) => {
   return (
     <div className={styles.container}>
       
@@ -21,23 +20,8 @@ export const QuestionMain = ({ children, status, topic, chapter }: QuestionMainP
         </div>
       )}
 
-      {/* 2. Main Children */}
+      {/* 2. Main Children (Header, Text, Options, Meta, Solution, Stats) */}
       {children}
-
-      {/* 3. Footer Meta Info */}
-      {(chapter || topic) && (
-        <div className={styles.footer}>
-          <div className={styles.footerLabel}>
-            Chapter & Topic
-          </div>
-          
-          <div className={styles.footerContent}>
-            {chapter} 
-            <span className={styles.separator}>•</span> 
-            {topic}
-          </div>
-        </div>
-      )}
 
     </div>
   );

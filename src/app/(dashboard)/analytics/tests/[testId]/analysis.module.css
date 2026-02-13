@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   padding-bottom: 2rem; /* Add padding so buttons don't touch edge */
-  padding-left: 10px;
+
 }
 
 @media (max-width: 600px) {
@@ -103,6 +103,8 @@
   color: var(--dashboard-secondary-text-color);
   background: transparent;
   font-weight: 500;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;  transition: all 0.3s ease;
+
 }
 
 .reportBtn:hover {
@@ -115,7 +117,7 @@
   color: black;
   font-weight: 700;
   border: none;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;  transition: all 0.3s ease;
 }
 
 .solutionsBtn:hover {

@@ -2,7 +2,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* Strict 8px gap */
+  gap: 16px; /* Strict 8px gap */
   animation: fadeIn 0.5s ease-out;
 }
 

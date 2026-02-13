@@ -18,6 +18,7 @@ import { QuestionStats } from "@/components/solution-interface/question/Question
 
 // Navigation
 import { BottomBar } from "@/components/solution-interface/navigation/BottomBar";
+import { QuestionMeta } from "@/components/solution-interface/question/QuestionMeta/QuestionMeta";
 
 // --- TYPES & INTERFACES ---
 type Subject = "Physics" | "Chemistry" | "Mathematics";
@@ -415,8 +416,6 @@ export default function SolutionPage() {
       {/* Scrollable Main Content */}
       <QuestionMain 
          status={currentQuestion.status}
-         topic={currentQuestion.topic}
-         chapter={currentQuestion.chapter}
       >
         <QuestionHeader 
           qNumber={currentQuestion.number}
@@ -438,6 +437,12 @@ export default function SolutionPage() {
             userAnswer={currentQuestion.userAnswer}
           />
         )}
+
+        {/* --- PLACED HERE: Just above Solution --- */}
+        <QuestionMeta
+          chapter={currentQuestion.chapter}
+          topic={currentQuestion.topic}
+        />
 
         <SolutionContent 
           solutionText={currentQuestion.solution}

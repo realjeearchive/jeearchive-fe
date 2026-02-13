@@ -24,7 +24,7 @@
 .dashboard {
   flex: 1;
   box-sizing: border-box;
-  padding: 0 10px;
+  padding: 0 16px;
   overflow-y: auto;              
   transition: margin-left 0.3s ease;
   scrollbar-width: none;         
