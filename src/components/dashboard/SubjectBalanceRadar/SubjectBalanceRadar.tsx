@@ -5,19 +5,15 @@ import { ResponsiveRadar } from '@nivo/radar';
 import { dashboardNivoTheme } from '@/theme/nivoTheme';
 import styles from './SubjectBalanceRadar.module.css';
 
-const data = [
-  { subject: 'Physics', Accuracy: 72 },
-  { subject: 'Chemistry', Accuracy: 81 },
-  { subject: 'Maths', Accuracy: 65 },
-];
+interface SubjectBalanceRadarProps {
+  data: Array<{ subject: string; Accuracy: number }>;
+}
 
-const SubjectBalanceRadar: React.FC = () => {
+const SubjectBalanceRadar: React.FC<SubjectBalanceRadarProps> = ({ data }) => {
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>Subject Balance</h3>
-      <p className={styles.subtitle}>
-        Accuracy distribution across subjects.
-      </p>
+      <p className={styles.subtitle}>Accuracy across subjects.</p>
 
       <div className={styles.chartWrapper}>
         <ResponsiveRadar
@@ -41,7 +37,6 @@ const SubjectBalanceRadar: React.FC = () => {
           colors={['#F59E0B']}
           fillOpacity={0.2}
           blendMode="normal"
-          isInteractive={true}
         />
       </div>
     </div>

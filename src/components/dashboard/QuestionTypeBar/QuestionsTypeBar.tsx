@@ -5,20 +5,15 @@ import { ResponsiveBar } from '@nivo/bar';
 import { dashboardNivoTheme } from '@/theme/nivoTheme';
 import styles from './QuestionsTypeBar.module.css';
 
-const data = [
-  { type: 'MCQ', accuracy: 82 },
-  { type: 'Multi', accuracy: 68 },
-  { type: 'Integer', accuracy: 74 },
-  { type: 'Num.', accuracy: 59 },
-];
+interface QuestionTypeBarProps {
+  data: Array<{ type: string; accuracy: number }>;
+}
 
-const QuestionTypeBar: React.FC = () => {
+const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>Question Type Accuracy</h3>
-      <p className={styles.subtitle}>
-        Performance by question format.
-      </p>
+      <p className={styles.subtitle}>Performance by format.</p>
 
       <div className={styles.chartWrapper}>
         <ResponsiveBar
@@ -31,24 +26,15 @@ const QuestionTypeBar: React.FC = () => {
           layout="vertical"
           valueScale={{ type: 'linear', min: 0, max: 100 }} 
           indexScale={{ type: 'band', round: true }}
-          colors={['#F59E0B']} // Core Orange
+          colors={['#F59E0B']}
           borderRadius={4}
           enableGridX={false}
           enableGridY={true}
-          axisTop={null}
-          axisRight={null}
-          axisLeft={{
-              tickSize: 0,
-              tickPadding: 8,
-          }}
-          axisBottom={{
-              tickSize: 0,
-              tickPadding: 10,
-          }}
+          axisLeft={{ tickSize: 0, tickPadding: 8 }}
+          axisBottom={{ tickSize: 0, tickPadding: 10 }}
           labelSkipWidth={12}
           labelSkipHeight={12}
-          labelTextColor="#1E1D1B" // Dark text on orange bar
-          isFocusable={false}
+          labelTextColor="#1E1D1B"
         />
       </div>
     </div>

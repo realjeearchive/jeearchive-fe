@@ -1,0 +1,118 @@
+.headerContainer {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-bottom: 0;
+  z-index: 1;
+}
+
+/* Minimal Static Title */
+.staticTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* --- DROPDOWN AREA --- */
+.dropdownWrapper {
+  position: relative;
+  z-index: 50;
+  min-width: 200px;
+}
+
+/* Clean Trigger Button */
+.triggerButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  
+  /* Minimal Border Style */
+  background: transparent;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  color: var(--dashboard-primary-text-color);
+  
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.triggerButton:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--dashboard-dividerline-color);
+}
+
+.triggerButton.active {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--dashboard-dividerline-color);
+}
+
+.triggerText {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.chevron {
+  font-size: 14px;
+  color: var(--dashboard-secondary-text-color);
+  transition: transform 0.2s ease;
+}
+.rotate { transform: rotate(180deg); }
+
+/* Minimal Dropdown Menu */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 100%;
+  
+  background: #18181b; /* Solid dark background */
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 8px;
+  padding: 4px;
+  
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.menuItem {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--dashboard-primary-text-color);
+}
+
+.menuItem.selected {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color); /* Orange text for active state */
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    flex-direction: row; /* Keep row on mobile for space efficiency */
+    align-items: center;
+  }
+  .staticTitle {
+    font-size: 18px;
+  }
+  .dropdownWrapper {
+    min-width: 160px;
+  }
+}
