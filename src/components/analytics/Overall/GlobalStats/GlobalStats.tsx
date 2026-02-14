@@ -8,21 +8,19 @@ interface StatItemProps {
   label: string;
   value: string | number;
   icon: React.ElementType;
-  color: string;
 }
 
-const StatItem = ({ label, value, icon: Icon, color }: StatItemProps) => (
+const StatItem = ({ label, value, icon: Icon }: StatItemProps) => (
   <div className={styles.statItem}>
     <div className={styles.statHeader}>
       <div className={styles.statContent}>
          <p className={styles.statLabel}>{label}</p>
          <p className={styles.statValue}>{value}</p>
       </div>
-      <div 
-        className={styles.iconBox}
-        style={{ backgroundColor: `${color}15`, color: color }}
-      >
-        <Icon size={20} />
+      
+      {/* Icon Box: Neutral style via CSS class only */}
+      <div className={styles.iconBox}>
+        <Icon size={16} />
       </div>
     </div>
   </div>
@@ -44,25 +42,21 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
         label="Tests Taken" 
         value={data.testsTaken} 
         icon={FiActivity} 
-        color="#85DBFB" 
       />
       <StatItem 
         label="Avg Score" 
         value={data.avgScore} 
         icon={FiTarget} 
-        color="#FB7185" 
       />
       <StatItem 
         label="Avg Accuracy" 
         value={`${data.accuracy}%`} 
         icon={FiCheckCircle} 
-        color="#22C55E" 
       />
       <StatItem 
         label="Consistency" 
         value={data.consistency} 
         icon={FiCpu} 
-        color="#F59E0B" 
       />
     </div>
   );

@@ -21,83 +21,80 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
     <AnalyticsCard 
       title="Speed vs. Accuracy" 
       subtitle="Efficiency Breakdown"
-      headerAction={<div className={styles.headerBadge}><FiActivity /> Efficiency Score: 72/100</div>}
+      headerAction={
+        <div className={styles.headerBadge}>
+          <FiActivity size={12} /> 
+          <span>Score: 72/100</span>
+        </div>
+      }
     >
       <div className={styles.matrixGrid}>
         
         {/* Quadrant 1: Fast & Correct */}
-        <div className={`${styles.matrixCard} ${styles.cardGreen}`}>
+        <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
-            <div className={`${styles.iconBox} ${styles.bgGreen}`}>
-              <FiCheckCircle size={16} />
-            </div>
-            <span className={`${styles.statusBadge} ${styles.textGreen}`}>Fast & Correct</span>
+            <span className={styles.statusLabel}>Fast & Correct</span>
+            <FiCheckCircle size={14} className={styles.iconGreen} />
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
               {data.fastCorrect}<span className={styles.percent}>%</span>
             </div>
-            <div className={styles.progressBar}>
-              <div className={styles.fillGreen} style={{ width: `${data.fastCorrect}%` }} />
+            <div className={styles.progressBarTrack}>
+              <div className={styles.progressBarFill} style={{ width: `${data.fastCorrect}%`, backgroundColor: '#22C55E' }} />
             </div>
-            <p className={styles.contextText}>Perfect execution zone</p>
+            <p className={styles.contextText}>Ideal zone</p>
           </div>
         </div>
 
         {/* Quadrant 2: Slow & Correct */}
-        <div className={`${styles.matrixCard} ${styles.cardBlue}`}>
+        <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
-            <div className={`${styles.iconBox} ${styles.bgBlue}`}>
-              <FiClock size={16} />
-            </div>
-            <span className={`${styles.statusBadge} ${styles.textBlue}`}>Slow & Correct</span>
+            <span className={styles.statusLabel}>Slow & Correct</span>
+            <FiClock size={14} className={styles.iconBlue} />
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
               {data.slowCorrect}<span className={styles.percent}>%</span>
             </div>
-            <div className={styles.progressBar}>
-              <div className={styles.fillBlue} style={{ width: `${data.slowCorrect}%` }} />
+            <div className={styles.progressBarTrack}>
+              <div className={styles.progressBarFill} style={{ width: `${data.slowCorrect}%`, backgroundColor: '#3B82F6' }} />
             </div>
-            <p className={styles.contextText}>Needs speed improvement</p>
+            <p className={styles.contextText}>Needs speed</p>
           </div>
         </div>
 
         {/* Quadrant 3: Fast & Wrong */}
-        <div className={`${styles.matrixCard} ${styles.cardOrange}`}>
+        <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
-            <div className={`${styles.iconBox} ${styles.bgOrange}`}>
-              <FiAlertTriangle size={16} />
-            </div>
-            <span className={`${styles.statusBadge} ${styles.textOrange}`}>Fast & Wrong</span>
+            <span className={styles.statusLabel}>Fast & Wrong</span>
+            <FiAlertTriangle size={14} className={styles.iconOrange} />
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
               {data.fastWrong}<span className={styles.percent}>%</span>
             </div>
-            <div className={styles.progressBar}>
-              <div className={styles.fillOrange} style={{ width: `${data.fastWrong}%` }} />
+            <div className={styles.progressBarTrack}>
+              <div className={styles.progressBarFill} style={{ width: `${data.fastWrong}%`, backgroundColor: '#F59E0B' }} />
             </div>
-            <p className={styles.contextText}>Likely guessing or silly errors</p>
+            <p className={styles.contextText}>Rushing?</p>
           </div>
         </div>
 
         {/* Quadrant 4: Slow & Wrong */}
-        <div className={`${styles.matrixCard} ${styles.cardRed}`}>
+        <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
-            <div className={`${styles.iconBox} ${styles.bgRed}`}>
-              <FiXCircle size={16} />
-            </div>
-            <span className={`${styles.statusBadge} ${styles.textRed}`}>Slow & Wrong</span>
+            <span className={styles.statusLabel}>Slow & Wrong</span>
+            <FiXCircle size={14} className={styles.iconRed} />
           </div>
           <div className={styles.cardBody}>
             <div className={styles.mainStat}>
               {data.slowWrong}<span className={styles.percent}>%</span>
             </div>
-            <div className={styles.progressBar}>
-              <div className={styles.fillRed} style={{ width: `${data.slowWrong}%` }} />
+            <div className={styles.progressBarTrack}>
+              <div className={styles.progressBarFill} style={{ width: `${data.slowWrong}%`, backgroundColor: '#EF4444' }} />
             </div>
-            <p className={styles.contextText}>Critical conceptual gaps</p>
+            <p className={styles.contextText}>Concept gap</p>
           </div>
         </div>
 
