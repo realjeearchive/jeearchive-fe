@@ -1,0 +1,133 @@
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--dashboard-background-color);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* TITLE */
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+
+/* ===== TOP GRID ===== */
+.topSection {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+}
+
+/* ===== SHARED CARD STYLE ===== */
+.avatarCard,
+.infoCard,
+.actionCard {
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+/* ===== AVATAR CARD ===== */
+.avatarCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* AVATAR */
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: var(--dashboard-header-avatar-background-color);
+  border: 3px solid var(--dashboard-header-avatar-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatarInitial {
+  font-size: 48px;
+  font-weight: 600;
+  color: white;
+}
+
+.cameraBadge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--dashboard-light-bg-color);
+  border: 2px solid var(--dashboard-sidebar-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dashboard-icons-color);
+  cursor: pointer;
+}
+
+/* ===== INFO WRAPPER ===== */
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* HEADER ROW */
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.editIcon {
+  color: var(--dashboard-icons-color);
+  cursor: pointer;
+}
+
+/* VALUE */
+.value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.helperText {
+  font-size: 11px;
+  color: var(--dashboard-icons-color);
+  line-height: 1.5;
+}
+
+/* LOGOUT */
+.logoutBtn {
+  background: transparent;
+  border: none;
+  color: var(--dashboard-physics-color);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ACTION CARD */
+.actionCard {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .topSection {
+    grid-template-columns: 1fr;
+  }
+}

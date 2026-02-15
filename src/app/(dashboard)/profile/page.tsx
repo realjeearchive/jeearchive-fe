@@ -1,11 +1,6 @@
-import React from 'react'
+import React from "react";
+import ProfileContent from "@/components/profile/ProfileContent";
 
-const Profile = () => {
-  return (
-    <div>
-        Profile page...
-    </div>
-  )
+export default function ProfilePage() {
+  return <ProfileContent />;
 }
-
-export default Profile
