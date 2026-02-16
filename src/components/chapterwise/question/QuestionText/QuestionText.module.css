@@ -1,0 +1,39 @@
+.container {
+  padding: 20px 24px;
+  color: var(--dashboard-primary-text-color);
+}
+
+.htmlContent {
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Add spacing between paragraphs if HTML doesn't handle it */
+.htmlContent p {
+  margin-bottom: 12px;
+}
+
+.imageWrapper {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  display: inline-block;
+  background: #000;
+}
+
+.questionImage {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 16px 20px;
+  }
+  .htmlContent {
+    font-size: 15px;
+  }
+}

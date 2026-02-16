@@ -1,0 +1,147 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  padding: 20px; 
+}
+
+.optionCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.03); 
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 72px;
+}
+
+.optionCard:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* --- STATES --- */
+
+/* 1. Selected (Before Check) - Neutral Highlight */
+.selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--dashboard-primary-text-color);
+  box-shadow: 0 0 0 1px var(--dashboard-primary-text-color);
+}
+.selected .labelCircle {
+  background-color: var(--dashboard-primary-text-color);
+  color: #000;
+}
+
+/* 2. Correct (After Check) - Green */
+.correct {
+  border-color: #22C55E;
+  background-color: rgba(34, 197, 94, 0.08); 
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
+  cursor: default;
+}
+.correct .labelCircle {
+  background-color: #22C55E;
+  color: black;
+  border-color: #22C55E;
+}
+
+/* 3. Wrong (After Check) - Red */
+.wrong {
+  border-color: #EF4444;
+  background-color: rgba(239, 68, 68, 0.08); 
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.1);
+  cursor: default;
+}
+.wrong .labelCircle {
+  background-color: #EF4444;
+  color: white;
+  border-color: #EF4444;
+}
+
+/* 4. Disabled (Unselected options after check) */
+.disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Common Styles */
+.labelCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-secondary-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s;
+}
+
+.contentWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+}
+
+.userMarkedLabel {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.correctBadge {
+  position: absolute;
+  top: -12px;
+  right: 16px;
+  background: #1E1D1B;
+  color: #22C55E;
+  border: 1px solid #22C55E;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 4px 3px 10px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 5;
+}
+
+.tickCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background-color: #22C55E;
+  border-radius: 50%;
+  color: white;
+}
+
+.textGreen { color: #22C55E; }
+.textRed { color: #EF4444; }
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,79 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  border-top: 1px solid var(--dashboard-dividerline-color);
+  background-color: rgba(255, 255, 255, 0.005);
+}
+
+.divider {
+  width: 1px;
+  height: 60%;
+  background-color: var(--dashboard-sidebar-border-color);
+}
+
+.statBlock {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--dashboard-secondary-text-color);
+}
+
+.mainValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.barTrack {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  margin-top: 2px;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+}
+
+.smallText {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.textGreen { color: #22C55E; }
+.bgGreen { background-color: #22C55E; }
+.textRed { color: #EF4444; }
+.bgRed { background-color: #EF4444; }
+.textOrange { color: #F59E0B; }
+.bgOrange { background-color: #F59E0B; }
+.iconTime { color: #3B82F6; }
+.iconAcc { color: #8B5CF6; }
