@@ -1,6 +1,6 @@
 .container {
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
   background: var(--dashboard-background-color);
   color: var(--dashboard-primary-text-color);
 }
