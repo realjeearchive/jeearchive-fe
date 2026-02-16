@@ -5,6 +5,7 @@ interface DivisionPageProps {
   params: Promise<{ subject: string; division: string }>;
 }
 
+// Keep your config exactly as is, with the ':subject' placeholder
 const chapterConfig: Record<string, TestListItem[]> = {
 
   // ---------- PHYSICS ----------
@@ -114,16 +115,21 @@ const chapterConfig: Record<string, TestListItem[]> = {
   ],
 };
 
-
-
 export default async function DivisionPage(props: DivisionPageProps) {
-  const { subject, division } = await props.params;   // ⭐ same pattern
+  const { subject, division } = await props.params;
 
-  const items = chapterConfig[division];
+  const rawItems = chapterConfig[division];
 
-  if (!items) {
+  if (!rawItems) {
     return <div>No chapters found for {subject} → {division}</div>;
   }
+
+  // --- 🔥 THE FIX IS HERE 🔥 ---
+  // We map over the items and replace ":subject" with the actual subject from params (e.g. "physics")
+  const items = rawItems.map(item => ({
+    ...item,
+    href: item.href.replace(":subject", subject)
+  }));
 
   const heading = `${division.toUpperCase()} — Chapters`;
 

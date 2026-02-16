@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiEye } from "react-icons/fi";
 
 // Components
 import { SolutionLayout } from "./layout/SolutionLayout";
 import { SolutionHeader } from "./layout/SolutionHeader";
-// Import QuestionStatus as SidebarItemStatus to avoid naming conflict
 import { SolutionSidebar, QuestionStatus as SidebarItemStatus } from "./sidebar/SolutionSidebar"; 
 import { BottomBar } from "./navigation/BottomBar";
 import { QuestionMain } from "./question/QuestionMain/QuestionMain";
@@ -21,8 +20,6 @@ import { QuestionStats } from "./question/QuestionStats/QuestionStats";
 // --- TYPE DEFINITIONS ---
 export type Subject = "Physics" | "Chemistry" | "Mathematics";
 export type SectionType = "Single Correct" | "Numerical" | "Multiple Correct";
-
-// Renamed local status type to avoid conflict with Sidebar interface
 export type StatusString = "correct" | "incorrect" | "unattempted";
 
 export interface Option {
@@ -54,7 +51,7 @@ export interface QuestionData {
   options: Option[];
   correctAnswer: string;
   userAnswer: string | null;
-  status: StatusString; // Uses local string type
+  status: StatusString;
   solution: string;
   stats: QuestionStatsData;
   meta: QuestionMetaData;
@@ -67,6 +64,14 @@ interface ChapterWiseInterfaceProps {
   chapterName: string;
   subject: string;
 }
+
+// Helper to format seconds into "00s" or "1m 30s"
+const formatTime = (seconds: number) => {
+  if (seconds < 60) return `${seconds}s`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}m ${s}s`;
+};
 
 export const ChapterWiseInterface = ({ 
   questions, 
@@ -82,6 +87,9 @@ export const ChapterWiseInterface = ({
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
   const [submissions, setSubmissions] = useState<Record<string, boolean>>({});
   const [revealedSolutions, setRevealedSolutions] = useState<Record<string, boolean>>({});
+  
+  // NEW: Time Tracking State { "q1": 12, "q2": 0 } (in seconds)
+  const [questionTimes, setQuestionTimes] = useState<Record<string, number>>({});
 
   // --- DERIVED DATA ---
   const safeSubject = (["Physics", "Chemistry", "Mathematics"].includes(subject) 
@@ -91,20 +99,36 @@ export const ChapterWiseInterface = ({
   const currentQuestion = questions.find((q) => q.id === activeQuestionId);
   const currentIndex = questions.findIndex((q) => q.id === activeQuestionId);
 
-  // Status for Sidebar
+  // --- TIMER LOGIC ---
+  useEffect(() => {
+    // If question is already submitted, do not run timer
+    if (submissions[activeQuestionId]) return;
+
+    // Start interval
+    const timerId = setInterval(() => {
+      setQuestionTimes((prev) => ({
+        ...prev,
+        [activeQuestionId]: (prev[activeQuestionId] || 0) + 1,
+      }));
+    }, 1000);
+
+    // Cleanup on unmount or question change or submission
+    return () => clearInterval(timerId);
+  }, [activeQuestionId, submissions]);
+
+
+  // --- SIDEBAR DATA ---
   const sidebarQuestions = useMemo(() => {
     return questions.map((q) => {
       const isSubmitted = submissions[q.id];
       const userAnswer = userAnswers[q.id];
       const isCorrect = userAnswer === q.correctAnswer;
       
-      // Calculate status string
       let status: StatusString = "unattempted";
       if (isSubmitted) {
         status = isCorrect ? "correct" : "incorrect";
       }
       
-      // Cast to the Interface expected by Sidebar
       return {
         id: q.id,
         number: q.number,
@@ -124,6 +148,7 @@ export const ChapterWiseInterface = ({
   const handleCheckAnswer = () => {
     if (!userAnswers[activeQuestionId]) return;
     setSubmissions(prev => ({ ...prev, [activeQuestionId]: true }));
+    // Timer automatically stops due to useEffect dependency on 'submissions'
   };
 
   const handleViewSolution = () => {
@@ -140,13 +165,12 @@ export const ChapterWiseInterface = ({
     if (currentIndex > 0) setActiveQuestionId(questions[currentIndex - 1].id);
   };
 
-  // Responsive Sidebar
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024) setIsSidebarOpen(false);
       else setIsSidebarOpen(true);
     };
-    handleResize();
+    handleResize(); 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -156,6 +180,9 @@ export const ChapterWiseInterface = ({
   const isSubmitted = !!submissions[activeQuestionId];
   const isSolutionVisible = !!revealedSolutions[activeQuestionId];
   const hasSelectedOption = !!userAnswers[activeQuestionId];
+  
+  // Get current time for this question
+  const currentTimeSpent = questionTimes[activeQuestionId] || 0;
   
   let mainStatus: "correct" | "incorrect" | "unattempted" = "unattempted";
   if (isSubmitted) {
@@ -204,6 +231,7 @@ export const ChapterWiseInterface = ({
           type={currentQuestion.section}
           marksPos={currentQuestion.meta.marksPos}
           marksNeg={currentQuestion.meta.marksNeg}
+          timer={formatTime(currentTimeSpent)} // <--- Passing dynamic timer
         />
 
         <QuestionText
@@ -216,7 +244,6 @@ export const ChapterWiseInterface = ({
           <OptionsList
             options={currentQuestion.options}
             correctAnswer={currentQuestion.correctAnswer}
-            // Removed 'userAnswer' prop causing error
             selectedOptionId={userAnswers[activeQuestionId]}
             onOptionSelect={handleOptionSelect}
             isSubmitted={isSubmitted}
@@ -255,9 +282,9 @@ export const ChapterWiseInterface = ({
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
                 width: "100%", padding: "12px",
                 borderRadius: "8px",
-                border: "1px solid var(--dashboard-highlight-color)",
+                border: "1px solid var(--dashboard-sidebar-border-color)",
                 background: "transparent",
-                color: "var(--dashboard-highlight-color)",
+                color: "var(--dashboard-secondary-text-color)",
                 fontWeight: 600,
                 cursor: "pointer"
               }}
@@ -275,7 +302,7 @@ export const ChapterWiseInterface = ({
         />
 
         <QuestionStats 
-          userTime={currentQuestion.stats.userTime}
+          userTime={formatTime(currentTimeSpent)} // <--- Passing actual time spent
           avgTime={currentQuestion.stats.avgTime}
           accuracy={currentQuestion.stats.accuracy}
           isVisible={isSubmitted}
