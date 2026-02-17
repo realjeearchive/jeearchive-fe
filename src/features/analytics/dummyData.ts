@@ -94,6 +94,8 @@ export const SINGLE_TEST_DATA = {
     testName: "JEE Main 2025 (27 Jan Shift 1)",
     date: "Attempted on 29 Jan 2025",
     totalMarks: 300,
+    maxMarks: 300, // Added for compatibility
+    score: 159,    // <--- ADDED THIS FIELD
     myScore: 159,
     accuracy: 82.35,
     timeTaken: 167, // minutes
@@ -115,7 +117,6 @@ export const SINGLE_TEST_DATA = {
     negativeScore: -9,
   }
 };
-
 
 export const OVERVIEW_COMPARISON = {
   score: { you: 159, average: 110, topper: 285 },

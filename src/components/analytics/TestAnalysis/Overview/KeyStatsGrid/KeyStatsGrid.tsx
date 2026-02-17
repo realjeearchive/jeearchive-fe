@@ -2,43 +2,34 @@
 
 import React from "react";
 import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
-import { FiAward, FiClock, FiTarget, FiXCircle, FiCheckCircle, FiPlusCircle } from "react-icons/fi";
+import { FiAward, FiClock, FiTarget, FiXCircle, FiCheckCircle, FiPlusCircle, FiCheckSquare } from "react-icons/fi";
 import styles from "./KeyStatsGrid.module.css";
 
 interface StatBoxProps {
   label: string;
   value: string | number;
-  subValue?: string; // Used for "Top 35%" or similar
+  subValue?: string;
   icon: React.ElementType;
   color: string;
-  isNegative?: boolean; // Triggers red delta style
-  isPositive?: boolean; // Triggers green delta style
 }
 
-const StatBox = ({ label, value, subValue, icon: Icon, color, isNegative, isPositive }: StatBoxProps) => {
-  let subValueClass = styles.statBoxSubValueNeutral;
-  if (isNegative) subValueClass = styles.statBoxSubValueNegative;
-  if (isPositive) subValueClass = styles.statBoxSubValuePositive;
-
+const StatBox = ({ label, value, subValue, icon: Icon, color }: StatBoxProps) => {
   return (
     <div className={styles.statBox}>
-      
-      {/* Header: Label + Icon */}
       <div className={styles.statBoxHeader}>
+        
+        {/* Content Section */}
         <div className={styles.statBoxContent}>
-          <p className={styles.statBoxLabel}>
-            {label}
-          </p>
-          <p className={styles.statBoxValue}>
-            {value}
-          </p>
+          <p className={styles.statBoxLabel}>{label}</p>
           
-          {/* Delta/SubValue Pill */}
-          {subValue && (
-            <div className={`${styles.statBoxSubValue} ${subValueClass}`}>
-              {subValue}
-            </div>
-          )}
+          <div className={styles.valueWrapper}>
+            <p className={styles.statBoxValue}>{value}</p>
+            {subValue && (
+              <span className={styles.statBoxSubText}>
+                {subValue}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Icon Box */}
@@ -58,13 +49,17 @@ export const KeyStatsGrid = () => {
 
   return (
     <div className={styles.container}>
+      
+      {/* 1. CORRECT ANSWERS */}
       <StatBox 
-        label="Global Rank" 
-        value={meta.rank} 
-        subValue={`Top ${(meta.rank/meta.totalStudents * 100).toFixed(1)}%`}
-        icon={FiAward} 
-        color="#F59E0B" // Core Orange
+        label="Correct Answers" 
+        value={stats.correct} 
+        subValue={`/ ${stats.attempted}`} // Simplified text
+        icon={FiCheckSquare} 
+        color="#10B981" 
       />
+
+      {/* 2. QUESTIONS ATTEMPTED */}
       <StatBox 
         label="Questions" 
         value={`${stats.attempted}/${stats.totalQs}`} 
@@ -72,27 +67,33 @@ export const KeyStatsGrid = () => {
         icon={FiTarget} 
         color="#85DBFB" 
       />
+
+      {/* 3. ACCURACY */}
       <StatBox 
         label="Accuracy" 
         value={`${meta.accuracy}%`} 
         icon={FiCheckCircle} 
         color={meta.accuracy > 80 ? "#22C55E" : "#F59E0B"} 
       />
-       <StatBox 
+
+      {/* 4. POSITIVE SCORE */}
+      <StatBox 
         label="Positive" 
         value={`+${stats.positiveScore}`} 
         icon={FiPlusCircle} 
         color="#22C55E"
-        isPositive={true}
       />
-       <StatBox 
+
+      {/* 5. NEGATIVE SCORE */}
+      <StatBox 
         label="Negative" 
         value={`${stats.negativeScore}`} 
         icon={FiXCircle} 
         color="#EF4444" 
-        isNegative={true}
       />
-       <StatBox 
+
+      {/* 6. TIME TAKEN */}
+      <StatBox 
         label="Time Taken" 
         value={`${Math.floor(meta.timeTaken / 60)}h ${meta.timeTaken % 60}m`} 
         icon={FiClock} 

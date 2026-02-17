@@ -1,0 +1,81 @@
+/* Card Override to ensure consistent height */
+.cardOverride {
+  height: 100%;
+  min-height: 320px;
+  background-color: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nivo Container - MUST have explicit height */
+.chartContainer {
+  flex: 1; /* Take remaining space */
+  width: 100%;
+  min-height: 220px;
+  position: relative;
+}
+
+/* Custom Tooltip Styling */
+.tooltip {
+  background: var(--dashboard-card-bg-color, #1E1D1B);
+  padding: 8px 12px;
+  border: 1px solid var(--dashboard-dividerline-color);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.tooltipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.tooltipLabel {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.tooltipValue {
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+}
+
+.tooltipSub {
+  opacity: 0.6;
+  font-size: 11px;
+}
+
+/* Legend Footer */
+.legendFooter {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid var(--dashboard-dividerline-color);
+  margin-top: auto;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px; /* Slightly rounded square */
+}
+
+.legendLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

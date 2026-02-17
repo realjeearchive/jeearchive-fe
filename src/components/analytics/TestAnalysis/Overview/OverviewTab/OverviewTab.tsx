@@ -5,7 +5,7 @@ import { ScoreCard } from "../ScoreCard/ScoreCard";
 import { PercentileCard } from "../PercentileCard/PercentileCard";
 import { KeyStatsGrid } from "../KeyStatsGrid/KeyStatsGrid";
 import { SubjectSummaryTable } from "../SubjectSummaryTable/SubjectSummaryTable";
-import { ComparativeOverview } from "../ComparativeOverview/ComparativeOverview";
+import { ScoreDistribution } from "../ScoreDistribution/ScoreDistribution"; 
 import styles from "./OverviewTab.module.css";
 
 export const OverviewTab = () => {
@@ -23,16 +23,16 @@ export const OverviewTab = () => {
       </div>
       
       {/* 2. STATS GRID */}
-      {/* Note: KeyStatsGrid manages its own internal grid, but sits in the flow here */}
       <KeyStatsGrid />
 
-      {/* 3. DETAILS ROW: Subjects (2/3) & Benchmarking (1/3) */}
+      {/* 3. DETAILS ROW: Subjects (2/3) & Analytics (1/3) */}
       <div className={styles.detailsRow}>
         <div className={styles.detailsRowSubjectCol}>
           <SubjectSummaryTable />
         </div>
         <div className={styles.detailsRowBenchmarkCol}>
-          <ComparativeOverview />
+          {/* <ComparativeOverview /> -- Data unavailable for MVP */}
+          <ScoreDistribution />
         </div>
       </div>
 

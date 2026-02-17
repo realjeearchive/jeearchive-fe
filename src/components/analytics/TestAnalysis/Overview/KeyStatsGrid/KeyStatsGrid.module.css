@@ -2,10 +2,10 @@
 .container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem; /* Strict 8px gap */
+  gap: 0.5rem; /* Kept your strict 8px gap */
   width: 100%;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;  transition: all 0.3s ease;
-
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {
@@ -25,14 +25,14 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 16px 18px; 
+  padding: 16px 18px; /* Kept your original padding */
   border-radius: 10px;
   background-color: var(--dashboard-sidebar-background-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   height: 100%;
   gap: 12px;
   min-width: 0; 
-  transition: all 0.3s ease; /* Enable transitions */
+  transition: all 0.3s ease;
   cursor: default;
 }
 
@@ -69,6 +69,14 @@
   color: var(--dashboard-primary-text-color);
 }
 
+/* --- NEW WRAPPER: Aligns Value and Subtext nicely --- */
+.valueWrapper {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .statBoxValue {
   font-size: 24px;
   font-weight: 700;
@@ -77,34 +85,13 @@
   margin-top: 2px;
 }
 
-.statBoxSubValue {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  margin-top: 4px;
-  border-radius: 4px;
-  font-size: 10px;
+/* --- NEW SUBTEXT STYLE (Replaces the old Pill/Badge styles) --- */
+.statBoxSubText {
+  font-size: 11px; /* Slightly adjusted to match your scale */
   font-weight: 600;
-  width: fit-content;
-  line-height: 1;
-}
-
-.statBoxSubValueNegative {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.statBoxSubValuePositive {
-  background-color: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.statBoxSubValueNeutral {
-  background-color: rgba(255, 255, 255, 0.03);
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.8; 
+  line-height: 1;
 }
 
 .iconBox {
@@ -115,7 +102,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.3s ease; /* Transition for hover */
+  transition: all 0.3s ease;
 }
 
 /* HOVER EFFECT: Icon Box Color Override */
