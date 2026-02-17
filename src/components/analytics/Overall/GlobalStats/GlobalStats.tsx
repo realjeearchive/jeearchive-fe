@@ -18,7 +18,6 @@ const StatItem = ({ label, value, icon: Icon }: StatItemProps) => (
          <p className={styles.statValue}>{value}</p>
       </div>
       
-      {/* Icon Box: Neutral style via CSS class only */}
       <div className={styles.iconBox}>
         <Icon size={16} />
       </div>
@@ -36,6 +35,8 @@ interface GlobalStatsProps {
 }
 
 export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
+  const isZero = data.testsTaken === 0;
+
   return (
     <div className={styles.container}>
       <StatItem 
@@ -45,17 +46,17 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
       />
       <StatItem 
         label="Avg Score" 
-        value={data.avgScore} 
+        value={isZero ? "--" : data.avgScore} 
         icon={FiTarget} 
       />
       <StatItem 
         label="Avg Accuracy" 
-        value={`${data.accuracy}%`} 
+        value={isZero ? "--" : `${data.accuracy}%`} 
         icon={FiCheckCircle} 
       />
       <StatItem 
         label="Consistency" 
-        value={data.consistency} 
+        value={isZero ? "--" : data.consistency} 
         icon={FiCpu} 
       />
     </div>

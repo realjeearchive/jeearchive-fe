@@ -3,6 +3,7 @@
 import React from "react";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import styles from "./WeaknessHunter.module.css";
+import { FiCheckCircle } from "react-icons/fi";
 
 export interface WeaknessItem {
   chapter: string;
@@ -16,10 +17,12 @@ interface WeaknessHunterProps {
 }
 
 export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
+  const hasData = data && data.length > 0;
+
   return (
     <AnalyticsCard title="Weakness Hunter" subtitle="Priority chapters to revise">
       <div className={styles.container}>
-        {data.length > 0 ? (
+        {hasData ? (
           data.map((chapter, index) => (
             <div 
               key={`${chapter.chapter}-${index}`} 
@@ -58,8 +61,12 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
             </div>
           ))
         ) : (
-          <div style={{ padding: 20, textAlign: 'center', color: 'var(--dashboard-secondary-text-color)', fontSize: 13 }}>
-            No critical weaknesses found in this range.
+          /* --- EMPTY STATE --- */
+          <div className={styles.emptyState}>
+            <FiCheckCircle size={18} className={styles.emptyIcon} />
+            <span className={styles.emptyText}>
+               No weakness data available yet.
+            </span>
           </div>
         )}
       </div>

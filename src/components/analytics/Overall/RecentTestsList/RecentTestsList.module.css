@@ -7,3 +7,44 @@
   margin-left: -0.5rem;
   margin-right: -0.5rem;
 }
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.emptyState {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 1;
+}
+
+.emptyIcon {
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.startTestBtn {
+  margin-top: 4px;
+  padding: 8px 16px; /* Slightly larger padding for primary action */
+  background-color: var(--dashboard-core-color); /* #F59E0B */
+  color: #1E1D1B; /* Dark text for contrast against orange */
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.startTestBtn:hover {
+  opacity: 0.9;
+
+}

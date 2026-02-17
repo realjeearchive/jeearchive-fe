@@ -1,15 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import TestListSection2, { TestListItem, TestStatusData } from "@/components/testPlayer/TestListSection2/TestListSection2";
 import { RECENT_TESTS } from "@/features/analytics/dummyData";
 import { useRouter } from "next/navigation";
 import styles from "./RecentTestsList.module.css";
+import { FiInbox } from "react-icons/fi";
 
-export const RecentTestsList = () => {
+// Accept isEmpty prop to allow parent to force empty state
+interface RecentTestsListProps {
+  isEmpty?: boolean;
+}
+
+export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = false }) => {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Show data only if not forced empty AND data exists
+  const hasData = !isEmpty && RECENT_TESTS && RECENT_TESTS.length > 0;
 
   const items: TestListItem[] = RECENT_TESTS.map((t) => ({
     id: t.id,
@@ -34,22 +44,34 @@ export const RecentTestsList = () => {
   return (
     <div className={styles.container}>
       <AnalyticsCard title="Recent Test Activity">
-        {/* The list component handles its own internal layout, we just frame it */}
-        <div className={styles.listWrapper}> 
-          <TestListSection2
-            heading=""
-            items={items}
-            expandedId={expandedId}
-            loadingId={null} 
-            currentTestStatus={expandedId ? getStatus(expandedId) : null}
-            onToggleExpand={handleToggle}
-            onStart={(id) => console.log("Start", id)}
-            onResume={(id) => console.log("Resume", id)}
-            onRestart={(id) => console.log("Restart", id)}
-            onViewAnalytics={(id) => router.push(`/analytics/tests/${id}`)}
-            onViewSolutions={(id) => router.push(`/solutions/${id}`)}
-          />
-        </div>
+        {hasData ? (
+          <div className={styles.listWrapper}> 
+            <TestListSection2
+              heading=""
+              items={items}
+              expandedId={expandedId}
+              loadingId={null} 
+              currentTestStatus={expandedId ? getStatus(expandedId) : null}
+              onToggleExpand={handleToggle}
+              onStart={(id) => console.log("Start", id)}
+              onResume={(id) => console.log("Resume", id)}
+              onRestart={(id) => console.log("Restart", id)}
+              onViewAnalytics={(id) => router.push(`/analytics/tests/${id}`)}
+              onViewSolutions={(id) => router.push(`/solutions/${id}`)}
+            />
+          </div>
+        ) : (
+          /* --- EMPTY STATE --- */
+          <div className={styles.emptyState}>
+            <FiInbox size={20} className={styles.emptyIcon} />
+            <span className={styles.emptyText}>No recent tests taken</span>
+            
+            {/* CTA Button */}
+            <Link href="/previous-year-questions" className={styles.startTestBtn}>
+              Start New Test
+            </Link>
+          </div>
+        )}
       </AnalyticsCard>
     </div>
   );

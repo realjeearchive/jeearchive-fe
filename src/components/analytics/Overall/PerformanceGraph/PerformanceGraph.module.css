@@ -3,3 +3,47 @@
   height: 260px;
   width: 100%;
 }
+
+/* ... Your existing CSS ... */
+
+/* PerformanceGraph Chart Container */
+.chartContainer {
+  height: 260px;
+  width: 100%;
+  position: relative; /* Added relative context */
+}
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.emptyState {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 8px;
+  gap: 8px;
+}
+
+.emptyIcon {
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.fakeGraph {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  opacity: 0.3;
+  pointer-events: none;
+}

@@ -13,6 +13,18 @@ import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatri
 import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
 
 // --- DUMMY DATA FOR FILTERING ---
+
+// 1. EMPTY DATA (New User State)
+const DATA_EMPTY = {
+  global: { testsTaken: 0, avgScore: 0, accuracy: 0, consistency: 0 },
+  graph: [],
+  radar: [],
+  deepDive: [],
+  efficiency: { fastCorrect: 0, slowCorrect: 0, fastWrong: 0, slowWrong: 0 },
+  weakness: []
+};
+
+// 2. POPULATED DATA
 const DATA_LAST_3 = {
   global: { testsTaken: 3, avgScore: 152, accuracy: 78.2, consistency: 9.0 },
   graph: [
@@ -77,10 +89,18 @@ const DATA_ALL = {
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("Last 5 Tests");
 
+  // --- TOGGLE THIS TO SEE EMPTY STATE ---
+  const isNewUser = true; // Set to true to see empty state
+
   // Filter Logic
-  const currentData = 
+  let currentData = 
     timeRange === "Last 3 Tests" ? DATA_LAST_3 : 
     timeRange === "All Tests" ? DATA_ALL : DATA_LAST_5;
+  
+  // Override if new user
+  if (isNewUser) {
+    currentData = DATA_EMPTY;
+  }
 
   return (
     <div className="max-w-[1600px] mx-auto min-h-screen">
@@ -114,7 +134,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* 6. Recent Activity */}
-      <RecentTestsList />
+      <RecentTestsList isEmpty={isNewUser} />
     </div>
   );
 }

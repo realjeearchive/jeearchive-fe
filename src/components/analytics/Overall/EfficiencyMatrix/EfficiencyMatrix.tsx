@@ -17,18 +17,23 @@ interface EfficiencyMatrixProps {
 }
 
 export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
+  // Check if data is empty (all zeros)
+  const isZero = Object.values(data).every(val => val === 0);
+
   return (
     <AnalyticsCard 
       title="Speed vs. Accuracy" 
       subtitle="Efficiency Breakdown"
       headerAction={
-        <div className={styles.headerBadge}>
-          <FiActivity size={12} /> 
-          <span>Score: 72/100</span>
-        </div>
+        !isZero && (
+          <div className={styles.headerBadge}>
+            <FiActivity size={12} /> 
+            <span>Score: 72/100</span>
+          </div>
+        )
       }
     >
-      <div className={styles.matrixGrid}>
+      <div className={`${styles.matrixGrid} ${isZero ? styles.gridZero : ''}`}>
         
         {/* Quadrant 1: Fast & Correct */}
         <div className={styles.matrixCard}>
@@ -97,6 +102,13 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
             <p className={styles.contextText}>Concept gap</p>
           </div>
         </div>
+
+        {/* EMPTY STATE OVERLAY */}
+        {isZero && (
+          <div className={styles.emptyOverlay}>
+            <span>Not enough data to calculate efficiency</span>
+          </div>
+        )}
 
       </div>
     </AnalyticsCard>

@@ -105,3 +105,35 @@
     grid-template-columns: 1fr; 
   }
 }
+
+/* ... Your existing CSS ... */
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.gridZero {
+  position: relative;
+}
+
+.gridZero .matrixCard {
+  opacity: 0.3; /* Dim the cards */
+  filter: grayscale(0.5);
+}
+
+.emptyOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.emptyOverlay span {
+  background: var(--dashboard-sidebar-background-color);
+  padding: 8px 16px;
+  border-radius: 99px;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
