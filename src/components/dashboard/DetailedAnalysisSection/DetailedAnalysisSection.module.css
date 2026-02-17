@@ -5,17 +5,19 @@
 .card {
   width: 100%;
   border-radius: 10px;
-  background: #211f1c;
+  background: var(--dashboard-sidebar-background-color); /* Updated to match theme var */
   border: 1px solid var(--dashboard-sidebar-border-color);
   display: flex;
   overflow: hidden;
   margin-top: 24px;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  cursor: pointer;
 }
 
 .card:hover {
   border-color: rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
 }
 
 .accent {
@@ -118,5 +120,23 @@
 
 .cta:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
+}
+
+/* --- DISABLED STATE --- */
+.disabledSection .card {
+  opacity: 0.6;
+  border-style: dashed;
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.disabledSection .card:hover {
+  border-color: var(--dashboard-sidebar-border-color); /* No hover glow */
+  transform: none;
+}
+
+.iconDisabled {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--dashboard-secondary-text-color);
 }

@@ -28,3 +28,53 @@
   width: 100%;
   height: 280px;
 }
+
+/* --- EMPTY STATE --- */
+.emptyState {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radarGuideOuter {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px dashed var(--dashboard-sidebar-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+}
+
+.radarGuideInner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px dashed var(--dashboard-sidebar-border-color);
+}
+
+.emptyContent {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--dashboard-sidebar-background-color); /* Mask the lines behind text */
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.emptyIcon {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.emptyText {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dashboard-secondary-text-color);
+}

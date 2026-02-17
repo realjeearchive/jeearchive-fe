@@ -123,3 +123,9 @@
   .value { font-size: 24px; }
   .iconBox { width: 28px; height: 28px; }
 }
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.subLabelEmpty {
+  font-size: 11px;
+  /* Keeps the spacing but shows nothing */
+}

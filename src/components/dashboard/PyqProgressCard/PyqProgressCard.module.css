@@ -130,3 +130,24 @@
 
 .maths .progress { stroke: var(--dashboard-core-color); }
 .maths .value { color: var(--dashboard-core-color); }
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.zeroState {
+  opacity: 0.8;
+}
+
+.valueZero {
+  opacity: 0.5;
+}
+
+.startLabel {
+  font-size: 10px;
+  color: var(--dashboard-highlight-color);
+  margin-top: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}

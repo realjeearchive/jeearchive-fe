@@ -127,3 +127,26 @@
     gap: 8px;
   }
 }
+
+/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
+.emptyState {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--dashboard-icons-color);
+}
+
+.emptyIcon {
+  font-size: 24px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.5;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.7;
+}

@@ -8,20 +8,23 @@
 .kpiRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px; /* Reverted back to 8px */
 }
 
 .progressRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px; /* Reverted back to 8px */
 }
 
+.growthSection {
+  width: 100%;
+}
 
 .bottomRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px; /* Reverted back to 8px */
 }
 
 .bottomItem {
@@ -29,18 +32,17 @@
   min-width: 320px;
 }
 
-
 .listSectionWrapper {
   margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 24px; /* Reverted back to 24px */
 }
 
-.playFriendsWrapper {
-  margin-top: 24px;
+.detailedAnalysisWrapper {
+  margin-top: 12px;
+  margin-bottom: 40px;
 }
-
 
 @media (max-width: 600px) {
   .kpiRow {

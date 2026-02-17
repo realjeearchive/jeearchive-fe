@@ -32,4 +32,74 @@
 .chartWrapper {
   width: 100%;
   height: 280px;
+  position: relative; /* For absolute positioning of fake graph if needed */
+}
+
+/* --- EMPTY STATE STYLES --- */
+.emptyState {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.emptyIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dashboard-secondary-text-color);
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  margin-bottom: 4px;
+}
+
+.emptySubText {
+  font-size: 12px;
+  color: var(--dashboard-icons-color);
+  text-align: center;
+  max-width: 200px;
+}
+
+/* NEW BUTTON STYLE */
+.startTestBtn {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: var(--dashboard-core-color); /* Uses your Orange theme */
+  color: #1E1D1B; /* Dark text for contrast */
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 10; /* Ensures it sits above the fake graph */
+}
+
+.startTestBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.fakeGraph {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  opacity: 0.3;
+  pointer-events: none; /* Allows clicks to pass through if needed */
 }
