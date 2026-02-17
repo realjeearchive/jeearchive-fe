@@ -110,7 +110,6 @@
 
 /* --- REMAINDER OF BASE STYLES --- */
 .container {
-  padding: 10px;
   background: var(--dashboard-background-color);
 }
 .pageTitle {
@@ -233,4 +232,17 @@
   .topSectionFull {
     grid-template-columns: 1fr;
   }
+}
+
+
+@media (max-width: 600px) {
+    .infoCard{
+        padding: 12px 10px;
+    }
+    .faqItem{
+        padding: 12px 10px;
+    }
+    .clickableCard{
+        padding: 12px 10px;
+    }
 }
