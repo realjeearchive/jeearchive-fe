@@ -15,6 +15,7 @@ import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSect
 
 // Icons
 import { FiAward, FiClock, FiTarget, FiCheckSquare } from 'react-icons/fi';
+import WelcomeBanner from '../WelcomeBanner/WelcomeBanner';
 
 // --- TYPE DEFINITIONS ---
 
@@ -134,6 +135,13 @@ export default function DashboardPage() {
       
       {/* 1. Header */}
       <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
+
+      {/* NEW: Welcome Banner only for new users */}
+      {isNewUser && (
+        <div style={{ marginBottom: '8px' }}>
+          <WelcomeBanner />
+        </div>
+      )}
 
       {/* 2. Progress Cards */}
       <div className={styles.progressRow}>
