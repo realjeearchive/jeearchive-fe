@@ -1,10 +1,9 @@
 import React from 'react'
+import HelpSupportContent from '@/components/helpSupport/HelpSupportContent'
 
 const HelpAndSupport = () => {
   return (
-    <div>
-      help and support page...
-    </div>
+    <HelpSupportContent />
   )
 }
 

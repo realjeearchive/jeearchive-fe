@@ -1,0 +1,236 @@
+/* --- UPDATED FAQ SMOOTH TRANSITION & VISUALS --- */
+
+.faqWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faqItem {
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  overflow: hidden;
+}
+
+
+.faqHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.faqTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Question Indicator */
+.qBadge {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color);
+  font-size: 10px;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.faqQuestion {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.faqChevron {
+  color: var(--dashboard-secondary-text-color);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.faqActive .faqChevron {
+  transform: rotate(180deg);
+  color: var(--dashboard-core-color);
+}
+
+/* SMOOTH HEIGHT TRANSITION LOGIC */
+.faqBodyCollapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faqActive .faqBodyCollapse {
+  grid-template-rows: 1fr;
+}
+
+.faqBodyContent {
+  overflow: hidden;
+}
+
+.faqAnswerRow {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  margin-top: 14px;
+  border-top: 1px solid var(--dashboard-sidebar-border-color);
+}
+
+/* Answer Indicator */
+.aBadge {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-secondary-text-color);
+  font-size: 10px;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.faqAnswerText {
+  color: var(--dashboard-secondary-text-color);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* --- REMAINDER OF BASE STYLES --- */
+.container {
+  padding: 10px;
+  background: var(--dashboard-background-color);
+}
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 28px;
+}
+.infoCard {
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  margin-top: 4px;
+}
+.helperText {
+  font-size: 11px;
+  color: var(--dashboard-icons-color);
+  line-height: 1.5;
+  opacity: 0.7;
+}
+.sectionHeading {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 12px 4px;
+}
+.rowHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clickableCard {
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.clickableCard:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--dashboard-core-color);
+}
+.topSectionFull {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.bugTextArea {
+  width: 100%;
+  min-height: 120px;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-primary-text-color);
+  padding: 10px 0;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+}
+.bugTextArea::placeholder {
+  color: var(--dashboard-icons-color);
+  opacity: 0.5;
+}
+.saveActionRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.saveBtn {
+  background-color: var(--dashboard-primary-text-color);
+  color: #000;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+.saveBtn:hover {
+  opacity: 0.9;
+}
+
+.actionCard {
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+}
+.versionLabel {
+  font-size: 12px;
+  color: var(--dashboard-secondary-text-color);
+}
+.versionNumber {
+  color: var(--dashboard-core-color);
+}
+.detailsSection {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .topSectionFull {
+    grid-template-columns: 1fr;
+  }
+}

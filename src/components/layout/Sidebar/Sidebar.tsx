@@ -79,7 +79,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
 
   const secondaryLinks: NavItem[] = [
     { id: "profile", label: "Profile", href: "/profile", icon: <FiUser size={16} /> },
-    { id: "settings", label: "Settings", href: "/settings", icon: <FiSettings size={16} /> },
+    // { id: "settings", label: "Settings", href: "/settings", icon: <FiSettings size={16} /> },
     { id: "help", label: "Help & Support", href: "/help-&-support", icon: <FiHelpCircle size={16} /> },
   ];
 

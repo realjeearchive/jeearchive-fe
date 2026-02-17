@@ -25,7 +25,7 @@
   justify-content: space-between;
   padding: 18px 20px;
   border-radius: 10px;
-  background-color: var(--dashboard-sidebar-background-color);
+  background-color: #211f1c;
   border: 1px solid var(--dashboard-sidebar-border-color);
   height: 100%;
   gap: 12px;
