@@ -2,7 +2,7 @@ import Leaderboard from "@/components/leaderboard/leaderboard";
 
 const Leaderboards = () => {
   return (
-    <div>
+    <div className="overflow-hidden h-[94vh]">
       <Leaderboard/>
     </div>
   );

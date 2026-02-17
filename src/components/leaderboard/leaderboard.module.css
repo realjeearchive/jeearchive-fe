@@ -3,16 +3,14 @@
   --dashboard-accent-bronze: #cd7f32;
   --dashboard-accent-brown: #3E3025;
   --card-glow: 0 0 20px rgba(0,0,0,0.5);
-  
   color: var(--dashboard-primary-text-color);
   min-height: 100vh;
   padding: 2rem;
   box-sizing: border-box;
-  /* Added overflow-x hidden to prevent full page scroll issues on mobile */
   overflow-x: hidden; 
 }
 
-/* --- Hero Section (Untouched as requested) --- */
+/* --- Hero Section --- */
 .heroSection {
   display: flex;
   justify-content: center;
@@ -31,10 +29,7 @@
   transition: transform 0.3s ease;
 }
 
-.heroCard:hover {
-  transform: translateY(-5px);
-}
-
+.heroCard:hover { transform: translateY(-5px); }
 .heroCard.rank1 { order: 2; z-index: 2; }
 .heroCard.rank2 { order: 1; }
 .heroCard.rank3 { order: 3; }
@@ -96,9 +91,7 @@
   border-top: 1px solid var(--dashboard-accent-gold);
 }
 
-.rank2 .podium, .rank3 .podium {
-  height: 140px;
-}
+.rank2 .podium, .rank3 .podium { height: 140px; }
 
 .badge {
   display: flex;
@@ -109,19 +102,10 @@
   margin-bottom: 0.5rem;
 }
 
-.prizeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .prizeValue {
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--dashboard-primary-text-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .prizeLabel {
@@ -131,41 +115,24 @@
   letter-spacing: 1px;
 }
 
-/* --- Stats Pill --- */
+/* --- User Stats Pill --- */
 .userStatsPill {
   background: rgba(40, 40, 40, 0.6);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 50px;
   padding: 0.75rem 1.5rem; 
   margin: 0 auto 3rem auto;
-  
-  /* Layout */
   width: fit-content;    
-  max-width: 90%; /* Prevents touching screen edges */
   display: flex;         
-  flex-direction: row;    
   align-items: center;     
   justify-content: center; 
-  
-  /* Text handling */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   gap: 8px;                
-  
   font-size: 0.9rem;
   color: var(--dashboard-secondary-text-color);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
-.pillHighlight {
-  color: var(--dashboard-primary-text-color);
-  font-weight: 600;
-  display: inline-flex; 
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
+.pillHighlight { color: var(--dashboard-primary-text-color); font-weight: 600; }
 
 /* --- Table Section --- */
 .tableContainer {
@@ -174,6 +141,7 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  border: 1px solid var(--dashboard-sidebar-border-color);
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
@@ -184,11 +152,7 @@
   margin-bottom: 2rem;
 }
 
-.tableTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
-}
+.tableTitle { font-size: 1.25rem; font-weight: 600; color: var(--dashboard-primary-text-color); }
 
 .showAllBtn {
   background: transparent;
@@ -197,221 +161,184 @@
   padding: 0.5rem 1.25rem;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-}
-
-.showAllBtn:hover {
-  background: var(--dashboard-sidebar-border-color);
 }
 
 /* Grid Table */
-.gridTable {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+.gridTable { display: flex; flex-direction: column; gap: 0.25rem; }
 
 .gridHeader {
   display: grid;
-  /* Desktop Layout: Rank | Name | Percentile | Score */
   grid-template-columns: 80px 1fr 1fr 150px;
   padding: 0 1rem 1rem 1rem;
   color: var(--dashboard-icons-color);
   font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--dashboard-sidebar-border-color);
 }
 
 .gridRow {
   display: grid;
-  /* Desktop Layout: Rank | Name | Percentile | Score */
   grid-template-columns: 80px 1fr 1fr 150px;
   align-items: center;
   padding: 1rem;
-  background-color: transparent;
-  border-radius: 12px;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  cursor: default;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
-.gridRow:hover {
-  background-color: var(--dashboard-sidebar-background-color);
-  transform: scale(1.005);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 1;
-}
+.gridRow:hover { background-color: rgba(255, 255, 255, 0.03); }
 
-.rankCell, .userCell {
+.rankCell { display: flex; align-items: center; gap: 10px; }
+.rankCircle { width: 16px; height: 16px; border: 1px solid var(--dashboard-icons-color); border-radius: 50%; }
+.rankNumber { color: var(--dashboard-secondary-text-color); font-family: monospace; }
+.userCell { color: var(--dashboard-primary-text-color); font-weight: 500; }
+.pointsCell { text-align: right; font-family: monospace; }
+.volumeCell { color: var(--dashboard-secondary-text-color); }
+
+/* --- Pagination Styles --- */
+.paginationContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  padding: 1.5rem 0 0.5rem 0;
+  border-top: 1px solid var(--dashboard-sidebar-border-color);
+  margin-top: 1.5rem;
+  width: 100%;
 }
 
-.rankCircle {
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--dashboard-icons-color);
-  border-radius: 50%;
-}
-
-.rankNumber {
-  color: var(--dashboard-secondary-text-color);
-  font-family: monospace;
-}
-
-/* NEW: Added this because it was used in your React code but missing in CSS */
-.tableAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #333;
+.pageBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--dashboard-sidebar-border-color);
-}
-
-.userCell {
+  border-radius: 8px;
   color: var(--dashboard-primary-text-color);
+  font-size: 13px;
   font-weight: 500;
-  overflow: hidden;
+  min-width: 110px;
 }
 
-.userCell span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.flag { font-size: 1.2rem; }
-
-.externalLink {
-  color: var(--dashboard-icons-color);
-  margin-left: 8px;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.pointsCell {
-  text-align: right;
-  color: var(--dashboard-primary-text-color);
-  font-family: monospace;
-}
-
-.volumeCell {
+.pageInfo {
+  font-size: 13px;
   color: var(--dashboard-secondary-text-color);
 }
 
-/* --- RESPONSIVE / MOBILE CSS --- */
+.pageInfo span { color: var(--dashboard-primary-text-color); font-weight: 600; }
 
-/* Tablet & Mobile (Width < 768px) */
+/* ========================================= */
+/* COMING SOON LAYOUT STYLES - TOP ALIGNED  */
+/* ========================================= */
+
+.pageWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Applying the blur to the background content */
+.blurredContent {
+  filter: blur(12px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.45;
+  transition: filter 0.3s ease;
+}
+
+/* Coming Soon Overlay Container - Aligned to Top */
+.comingSoonOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start; /* Positions card at top */
+  justify-content: center;
+  padding: 80px 20px; /* Top padding to keep it visible without scroll */
+}
+
+/* The Banner Card - Minimalistic */
+.comingSoonCard {
+  background: #1e1d1b;
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 110px;
+}
+
+.lockIcon {
+  color: var(--dashboard-accent-gold);
+  margin-bottom: 1.2rem;
+  display: inline-flex;
+  padding: 16px;
+  background: rgba(212, 175, 55, 0.06);
+  border-radius: 50%;
+}
+
+.comingSoonTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
+.comingSoonText {
+  font-size: 14px;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+  opacity: 0.8;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--dashboard-accent-gold);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Animation for the banner */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
-  .themeWrapper { 
-    padding: 1rem 0; /* Reduced padding for more space */
-  }
-  
-  .tableContainer { 
-    padding: 1rem; 
-  }
-  
-  /* Update grid to 3 columns for Tablet/Mobile */
-  /* Hide the 4th column (Score) */
-  .gridHeader, .gridRow {
-    grid-template-columns: 60px 1fr 100px; /* Rank | Name | Percentile */
-    padding: 1rem 0.5rem; /* Tighter padding */
-    gap: 8px
-  }
-  
   .hiddenMobile { display: none; }
+  .gridHeader, .gridRow { grid-template-columns: 60px 1fr 100px; }
+  .paginationContainer { flex-direction: row; gap: 10px; }
 }
 
-/* Small Mobile (Width < 560px) */
 @media (max-width: 560px) {
-  /* Hero Section adjustments */
-  .heroSection {
-    gap: 0.5rem;
-    align-items: flex-end;
+  .comingSoonCard {
+    padding: 2.5rem 1.5rem;
   }
-  .heroCard { width: 30%; } 
-  .heroCard.rank1 { width: 36%; }
-  
-  .avatar {
-    width: 60px; height: 60px;
-    border-width: 2px;
+  .comingSoonTitle {
+    font-size: 22px;
   }
-  .rank1 .avatar {
-    width: 80px; height: 80px;
-    border-width: 3px;
-  }
-
-  .heroName { font-size: 0.85rem; margin: 0.5rem 0; }
-  .rank1 .heroName { font-size: 1rem; }
-
-  .podium { height: 110px !important; padding: 0.8rem 0.2rem; }
-  .rank1 .podium { height: 140px !important; }
-
-  .badge { font-size: 0.65rem; gap: 3px; }
-  .badge svg { width: 10px; height: 10px; }
-  
-  .prizeValue { font-size: 1rem; }
-  .prizeLabel { font-size: 0.6rem; }
-  
-
-  .userStatsPill {
-    font-size: 10px; 
-    padding: 0.6rem 1rem;
-    width: auto;
-    max-width: 100%; 
-    margin-bottom: 2rem;
-  }
-  
-
-  .tableContainer {
-    padding: 1rem 0.5rem; 
-  }
-  
-  .tableHeader {
-    margin-bottom: 1rem;
-  }
-  
-  .tableTitle {
-    font-size: 1rem;
-  }
-  
-  .showAllBtn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-  }
-  
-
-  .gridHeader, .gridRow {
-    grid-template-columns: 40px 1fr 90px;
-    gap: 8px;
-    padding: 0.8rem 0.25rem;
-  }
-  
-
-  .rankCircle { display: none; }
-  
-
-  .rankNumber, .userCell, .volumeCell {
-    font-size: 0.85rem;
-  }
-}
-
-@media(max-width: 400px) {
-  .showAllBtn{
-    font-size: 10px;
-  }
-  .tableTitle{
-    font-size: 15px;
-  }
-  .gridRow{
-    padding: 0.5rem;
+  .comingSoonOverlay {
+    padding-top: 40px;
   }
 }
