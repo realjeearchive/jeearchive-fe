@@ -94,6 +94,9 @@ const TableRow = ({ user }: { user: User }) => (
 
 // --- Main Component ---
 const Leaderboard: React.FC = () => {
+  // Toggle this variable to lock/unlock the page
+  const isLocked = true; 
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
@@ -105,28 +108,31 @@ const Leaderboard: React.FC = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentTableData = allTableUsers.slice(startIndex, startIndex + itemsPerPage);
 
-  const handlePrev = () => { if (currentPage > 1) setCurrentPage(prev => prev - 1); };
-  const handleNext = () => { if (currentPage < totalPages) setCurrentPage(prev => prev + 1); };
+  const handlePrev = () => { if (currentPage > 1 && !isLocked) setCurrentPage(prev => prev - 1); };
+  const handleNext = () => { if (currentPage < totalPages && !isLocked) setCurrentPage(prev => prev + 1); };
 
   return (
-    <div className={styles.pageWrapper}>
-      {/* Coming Soon Overlay Layer */}
-      <div className={styles.comingSoonOverlay}>
-        <div className={styles.comingSoonCard}>
-          <div className={styles.lockIcon}>
-            <FiLock size={24} />
+    <div className={`${styles.pageWrapper} ${isLocked ? styles.locked : ""}`}>
+      
+      {/* 1. Conditional Overlay Layer */}
+      {isLocked && (
+        <div className={styles.comingSoonOverlay}>
+          <div className={styles.comingSoonCard}>
+            <div className={styles.lockIcon}>
+              <FiLock size={24} />
+            </div>
+            <h2 className={styles.comingSoonTitle}>Leaderboard Coming Soon</h2>
+            <p className={styles.comingSoonText}>
+              We are currently gathering data from the first batch of tests. 
+              Rankings will go live shortly.
+            </p>
+            <div className={styles.statusBadge}>MVP Phase 1</div>
           </div>
-          <h2 className={styles.comingSoonTitle}>Leaderboard Coming Soon</h2>
-          <p className={styles.comingSoonText}>
-            We are currently gathering data from the first batch of tests. 
-            Rankings will go live shortly.
-          </p>
-          <div className={styles.statusBadge}>MVP Phase 1</div>
         </div>
-      </div>
+      )}
 
-      {/* Blurred Background Content */}
-      <div className={styles.blurredContent}>
+      {/* 2. Main Content Layer */}
+      <div className={isLocked ? styles.blurredContent : ""}>
         <div className={styles.themeWrapper}>
           <div className={styles.heroSection}>
             {topThree.map((user) => (
@@ -159,7 +165,7 @@ const Leaderboard: React.FC = () => {
               <button 
                 className={styles.pageBtn} 
                 onClick={handlePrev} 
-                disabled={true}
+                disabled={isLocked || currentPage === 1}
               >
                 <FiChevronLeft size={16} />
                 <span>Previous</span>
@@ -170,7 +176,7 @@ const Leaderboard: React.FC = () => {
               <button 
                 className={styles.pageBtn} 
                 onClick={handleNext} 
-                disabled={true}
+                disabled={isLocked || currentPage === totalPages}
               >
                 <span>Next</span>
                 <FiChevronRight size={16} />
