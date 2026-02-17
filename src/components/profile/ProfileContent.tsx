@@ -230,13 +230,13 @@ export default function ProfileContent() {
                   />
                 </div>
 
-                {/* Number Input */}
+                {/* Number Input (Updated to type='tel' to remove spinners) */}
                 <input 
-                  type="number" 
+                  type="tel" 
                   className={styles.styledInput} 
                   placeholder="Enter phone number"
                   value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
+                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))} // Only allow digits
                 />
               </div>
             </div>

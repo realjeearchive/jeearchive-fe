@@ -257,6 +257,16 @@
   font-family: inherit;
 }
 
+/* FIX: Hide Spin Buttons for Number Input (if type=number used) */
+.styledInput::-webkit-outer-spin-button,
+.styledInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.styledInput[type=number] {
+  -moz-appearance: textfield;
+}
+
 .styledInput::placeholder {
   color: var(--dashboard-icons-color);
   opacity: 0.5;
