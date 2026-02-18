@@ -151,6 +151,8 @@ export default function DashboardPage() {
         <ScoreGrowthChart data={data.scoreData} />
       </div>
 
+      {!isNewUser && 
+      
       <div className={styles.bottomRow}>
         <div className={styles.bottomItem}>
           <SubjectBalanceRadar data={data.radarData} />
@@ -159,6 +161,7 @@ export default function DashboardPage() {
           <QuestionTypeBar data={data.typeData} />
         </div>
       </div>
+      }
 
       <div className={styles.listSectionWrapper}>
         <TestListSection heading="Previous Year Question Papers" items={pyqItems} />
