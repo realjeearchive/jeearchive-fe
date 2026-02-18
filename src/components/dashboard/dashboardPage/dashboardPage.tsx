@@ -112,7 +112,7 @@ const chapterItems: TestListItem[] = [
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
 
-  const isNewUser = false; 
+  const isNewUser = true; 
 
   const data = isNewUser ? EMPTY_DATA : ACTIVE_DATA;
 
