@@ -6,7 +6,6 @@
   z-index: 1;
 }
 
-/* Minimal Static Title */
 .staticTitle {
   font-size: 20px;
   font-weight: 600;
@@ -15,14 +14,12 @@
   letter-spacing: -0.01em;
 }
 
-/* --- DROPDOWN AREA --- */
 .dropdownWrapper {
   position: relative;
   z-index: 50;
   min-width: 200px;
 }
 
-/* Clean Trigger Button */
 .triggerButton {
   width: 100%;
   display: flex;
@@ -30,7 +27,6 @@
   justify-content: space-between;
   gap: 12px;
   
-  /* Minimal Border Style */
   background: transparent;
   border: 1px solid var(--dashboard-sidebar-border-color);
   color: var(--dashboard-primary-text-color);
@@ -63,14 +59,13 @@
 }
 .rotate { transform: rotate(180deg); }
 
-/* Minimal Dropdown Menu */
 .dropdownMenu {
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
   width: 100%;
   
-  background: #18181b; /* Solid dark background */
+  background: #18181b;
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 8px;
   padding: 4px;
@@ -95,7 +90,7 @@
 
 .menuItem.selected {
   background: rgba(245, 158, 11, 0.1);
-  color: var(--dashboard-core-color); /* Orange text for active state */
+  color: var(--dashboard-core-color);
   font-weight: 500;
 }
 
@@ -106,7 +101,7 @@
 
 @media (max-width: 600px) {
   .headerContainer {
-    flex-direction: row; /* Keep row on mobile for space efficiency */
+    flex-direction: row;
     align-items: center;
   }
   .staticTitle {

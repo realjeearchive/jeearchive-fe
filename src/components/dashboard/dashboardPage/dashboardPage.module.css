@@ -8,13 +8,13 @@
 .kpiRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Reverted back to 8px */
+  gap: 8px;
 }
 
 .progressRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Reverted back to 8px */
+  gap: 8px;
 }
 
 .growthSection {
@@ -24,7 +24,7 @@
 .bottomRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px; /* Reverted back to 8px */
+  gap: 8px;
 }
 
 .bottomItem {
@@ -36,7 +36,7 @@
   margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px; /* Reverted back to 24px */
+  gap: 24px;
 }
 
 .detailedAnalysisWrapper {

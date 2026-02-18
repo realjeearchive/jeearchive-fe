@@ -9,7 +9,6 @@
   box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
 }
 
-/* Subtle background glow for a premium feel */
 .glowEffect {
   position: absolute;
   top: -50px;
@@ -95,7 +94,6 @@
   border-color: var(--dashboard-secondary-text-color);
 }
 
-/* Premium Visual Graphic */
 .imageSide {
   flex-shrink: 0;
 }

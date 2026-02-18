@@ -11,18 +11,16 @@
   gap: 16px;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden; /* Essential for the gradient to stay inside */
+  overflow: hidden;
   z-index: 0;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
-/* Hover Effect: Orange Border Glow */
 .card:hover {
   border-color: rgba(245, 158, 11, 0.4);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* NEW: Orange Gradient Overlay (Matches PercentileCard style) */
 .card::before {
   content: "";
   position: absolute;
@@ -32,13 +30,12 @@
   z-index: 1;
 }
 
-/* Header */
 .header {
   display: flex;
   flex-direction: column;
   gap: 2px;
   position: relative;
-  z-index: 2; /* Ensures text is above gradient */
+  z-index: 2;
 }
 
 .label {
@@ -55,7 +52,6 @@
   opacity: 0.6;
 }
 
-/* Main Content */
 .main {
   display: flex;
   justify-content: center;
@@ -121,7 +117,6 @@
   opacity: 0.8;
 }
 
-/* Subject Specific Colors */
 .physics .progress { stroke: #60A5FA; }
 .physics .value { color: #60A5FA; }
 
@@ -131,7 +126,6 @@
 .maths .progress { stroke: var(--dashboard-core-color); }
 .maths .value { color: var(--dashboard-core-color); }
 
-/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
 .zeroState {
   opacity: 0.8;
 }

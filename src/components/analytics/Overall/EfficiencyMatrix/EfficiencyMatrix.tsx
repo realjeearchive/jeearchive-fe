@@ -17,7 +17,6 @@ interface EfficiencyMatrixProps {
 }
 
 export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
-  // Check if data is empty (all zeros)
   const isZero = Object.values(data).every(val => val === 0);
 
   return (
@@ -35,7 +34,6 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
     >
       <div className={`${styles.matrixGrid} ${isZero ? styles.gridZero : ''}`}>
         
-        {/* Quadrant 1: Fast & Correct */}
         <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
             <span className={styles.statusLabel}>Fast & Correct</span>
@@ -52,7 +50,6 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
           </div>
         </div>
 
-        {/* Quadrant 2: Slow & Correct */}
         <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
             <span className={styles.statusLabel}>Slow & Correct</span>
@@ -69,7 +66,6 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
           </div>
         </div>
 
-        {/* Quadrant 3: Fast & Wrong */}
         <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
             <span className={styles.statusLabel}>Fast & Wrong</span>
@@ -86,7 +82,6 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
           </div>
         </div>
 
-        {/* Quadrant 4: Slow & Wrong */}
         <div className={styles.matrixCard}>
           <div className={styles.cardHeader}>
             <span className={styles.statusLabel}>Slow & Wrong</span>
@@ -103,7 +98,6 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
           </div>
         </div>
 
-        {/* EMPTY STATE OVERLAY */}
         {isZero && (
           <div className={styles.emptyOverlay}>
             <span>Not enough data to calculate efficiency</span>

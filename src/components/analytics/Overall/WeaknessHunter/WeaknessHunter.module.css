@@ -1,5 +1,3 @@
-/* ... (Your existing CSS remains strictly untouched) ... */
-/* WeaknessHunter Container */
 .container {
   display: flex;
   flex-direction: column;
@@ -90,7 +88,6 @@
   background-color: var(--dashboard-negative-delta-color);
 }
 
-/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
 .emptyState {
   padding: 32px 20px;
   text-align: center;

@@ -16,7 +16,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #211f1c; /* Dashboard Card BG */
+  background-color: #211f1c;
   border: 1px dashed var(--dashboard-sidebar-border-color);
   border-radius: 10px;
   padding: 2rem;

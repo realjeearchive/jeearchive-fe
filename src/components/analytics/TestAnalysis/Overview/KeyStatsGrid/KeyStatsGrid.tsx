@@ -18,7 +18,6 @@ const StatBox = ({ label, value, subValue, icon: Icon, color }: StatBoxProps) =>
     <div className={styles.statBox}>
       <div className={styles.statBoxHeader}>
         
-        {/* Content Section */}
         <div className={styles.statBoxContent}>
           <p className={styles.statBoxLabel}>{label}</p>
           
@@ -32,7 +31,6 @@ const StatBox = ({ label, value, subValue, icon: Icon, color }: StatBoxProps) =>
           </div>
         </div>
 
-        {/* Icon Box */}
         <div 
           className={styles.iconBox}
           style={{ backgroundColor: `${color}15`, color: color }}
@@ -50,16 +48,14 @@ export const KeyStatsGrid = () => {
   return (
     <div className={styles.container}>
       
-      {/* 1. CORRECT ANSWERS */}
       <StatBox 
         label="Correct Answers" 
         value={stats.correct} 
-        subValue={`/ ${stats.attempted}`} // Simplified text
+        subValue={`/ ${stats.attempted}`} 
         icon={FiCheckSquare} 
         color="#10B981" 
       />
 
-      {/* 2. QUESTIONS ATTEMPTED */}
       <StatBox 
         label="Questions" 
         value={`${stats.attempted}/${stats.totalQs}`} 
@@ -68,7 +64,6 @@ export const KeyStatsGrid = () => {
         color="#85DBFB" 
       />
 
-      {/* 3. ACCURACY */}
       <StatBox 
         label="Accuracy" 
         value={`${meta.accuracy}%`} 
@@ -76,7 +71,6 @@ export const KeyStatsGrid = () => {
         color={meta.accuracy > 80 ? "#22C55E" : "#F59E0B"} 
       />
 
-      {/* 4. POSITIVE SCORE */}
       <StatBox 
         label="Positive" 
         value={`+${stats.positiveScore}`} 
@@ -84,7 +78,6 @@ export const KeyStatsGrid = () => {
         color="#22C55E"
       />
 
-      {/* 5. NEGATIVE SCORE */}
       <StatBox 
         label="Negative" 
         value={`${stats.negativeScore}`} 
@@ -92,7 +85,6 @@ export const KeyStatsGrid = () => {
         color="#EF4444" 
       />
 
-      {/* 6. TIME TAKEN */}
       <StatBox 
         label="Time Taken" 
         value={`${Math.floor(meta.timeTaken / 60)}h ${meta.timeTaken % 60}m`} 

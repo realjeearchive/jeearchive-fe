@@ -5,13 +5,12 @@ import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { FiClock, FiAlertTriangle, FiBookOpen } from "react-icons/fi";
 import styles from "./SubjectDeepDive.module.css";
 
-// Define the shape of a single subject's data
 export interface SubjectStats {
   subject: string;
   avgScore: number;
   accuracy: number;
   negatives: number;
-  avgTime: number; // in minutes
+  avgTime: number;
 }
 
 interface SubjectDeepDiveProps {
@@ -24,7 +23,6 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
   return (
     <div className={styles.container}>
       {isEmpty ? (
-        // --- EMPTY STATE: Show 3 Ghost Cards ---
         ["Physics", "Chemistry", "Mathematics"].map((subject) => (
           <AnalyticsCard key={subject} title={subject} className={styles.cardMinHeight}>
              <div className={styles.emptyState}>
@@ -36,7 +34,6 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
           </AnalyticsCard>
         ))
       ) : (
-        // --- POPULATED STATE ---
         data.map((sub) => {
           const color = 
             sub.subject === "Physics" ? "#60A5FA" : 

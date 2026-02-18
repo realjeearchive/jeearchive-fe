@@ -1,8 +1,7 @@
-/* OverviewTab Layout */
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Strict 8px gap */
+  gap: 16px;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -11,11 +10,10 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Hero Row (Score + Percentile) */
 .heroRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem; /* Strict 8px gap */
+  gap: 0.5rem;
   min-height: 220px;
 }
 
@@ -39,11 +37,10 @@
   grid-column: span 1;
 }
 
-/* Details Row (Subject Table + Benchmarking) */
 .detailsRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem; /* Strict 8px gap */
+  gap: 0.5rem;
 }
 
 @media (min-width: 1024px) {

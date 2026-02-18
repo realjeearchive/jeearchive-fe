@@ -1,4 +1,3 @@
-/* PercentileCard Container */
 .container {
   position: relative;
   overflow: hidden;
@@ -8,24 +7,21 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;  transition: all 0.3s ease;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  transition: all 0.3s ease;
 }
 
-/* HOVER: Orange Border Glow */
 .container:hover {
   border-color: rgba(245, 158, 11, 0.4); 
 }
 
-/* Orange Gradient */
 .bgGradient {
   position: absolute;
   inset: 0;
-  /* Converted #F59E0B to rgba(245, 158, 11, ...) */
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 60%);
   opacity: 0.8;
 }
 
-/* Animated Glow - Core Color */
 .bgGlowAnimated {
   position: absolute;
   top: -50%;
@@ -60,7 +56,6 @@
   gap: 8px;
 }
 
-/* Icon Box - Core Orange Style */
 .iconBox {
   padding: 6px;
   border-radius: 6px;

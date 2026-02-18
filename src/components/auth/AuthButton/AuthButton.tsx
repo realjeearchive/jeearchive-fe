@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Styles from './AuthButton.module.css';
-import { Loader } from '@/components/ui/loader'; // Adjust path as needed
+import { Loader } from '@/components/ui/loader'; 
 
 interface AuthButtonProps {
   type?: 'submit' | 'button';

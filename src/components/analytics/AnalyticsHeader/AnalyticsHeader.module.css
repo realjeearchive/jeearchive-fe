@@ -12,7 +12,6 @@
   margin: 0;
 }
 
-/* Dropdown */
 .dropdownWrapper {
   position: relative;
   z-index: 50;
@@ -52,7 +51,6 @@
 
 .rotate { transform: rotate(180deg); }
 
-/* Menu */
 .menu {
   position: absolute;
   top: calc(100% + 6px);

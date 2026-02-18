@@ -7,13 +7,13 @@ import styles from "./StartTestPopup.module.css";
 interface Props {
   isOpen: boolean;
   testTitle: string;
-  isResume: boolean; // True = Show Resume/Restart options; False = Show Start option
+  isResume: boolean; 
   onClose: () => void;
   
-  // Handlers
-  onStart: () => void;   // For fresh start
-  onResume: () => void;  // For resuming existing session
-  onRestart: () => void; // For overwriting and starting new
+
+  onStart: () => void;   
+  onResume: () => void;  
+  onRestart: () => void; 
 }
 
 export default function StartTestPopup({
@@ -26,7 +26,7 @@ export default function StartTestPopup({
   onRestart,
 }: Props) {
   
-  // Handle body scroll lock
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -44,7 +44,7 @@ export default function StartTestPopup({
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         
-        {/* Close Icon (The only way to cancel now) */}
+
         <button 
           className={styles.closeIconBtn} 
           onClick={onClose}
@@ -53,7 +53,7 @@ export default function StartTestPopup({
           <FiX />
         </button>
 
-        {/* Dynamic Icon */}
+
         <div className={`${styles.iconWrapper} ${isResume ? styles.resumeIcon : styles.startIcon}`}>
           {isResume ? <FiRefreshCw /> : <FiAlertCircle />}
         </div>
@@ -71,10 +71,10 @@ export default function StartTestPopup({
           </p>
         </div>
 
-        {/* Dynamic Actions */}
+
         <div className={styles.actions}>
           {isResume ? (
-            // SCENARIO 2: RESUME or RESTART
+
             <>
               <button 
                 onClick={onRestart} 
@@ -91,7 +91,7 @@ export default function StartTestPopup({
               </button>
             </>
           ) : (
-            // SCENARIO 1: FRESH START
+
             <button 
               onClick={onStart} 
               className={styles.startBtn}

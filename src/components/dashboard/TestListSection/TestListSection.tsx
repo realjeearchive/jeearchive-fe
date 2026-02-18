@@ -50,7 +50,6 @@ const TestListSection: React.FC<TestListSectionProps> = ({ heading, items }) => 
             ))}
           </div>
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <FiInbox className={styles.emptyIcon} />
             <span className={styles.emptyText}>No items available yet</span>

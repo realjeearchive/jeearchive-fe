@@ -3,7 +3,6 @@
 import React from "react";
 import styles from "./DifficultyAnalysis.module.css";
 
-// Dummy data component-specific (normally passed via props)
 const DATA = [
   { level: "Easy", correct: 25, total: 30, color: "#22c55e", badgeClass: styles.badgeEasy },
   { level: "Medium", correct: 15, total: 25, color: "#f59e0b", badgeClass: styles.badgeMed },

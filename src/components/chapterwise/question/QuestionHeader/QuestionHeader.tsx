@@ -7,7 +7,7 @@ interface QuestionHeaderProps {
   type: string;
   marksPos: number;
   marksNeg: number;
-  timer: string; // <--- New Prop
+  timer: string;
 }
 
 export const QuestionHeader = ({ 
@@ -25,7 +25,6 @@ export const QuestionHeader = ({
       </div>
 
       <div className={styles.rightSection}>
-        {/* TIMER BLOCK */}
         <div className={styles.timerBlock}>
           <span>{timer}</span>
           <FiClock size={14} />

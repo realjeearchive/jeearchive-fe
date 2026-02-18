@@ -33,6 +33,5 @@
   color: var(--dashboard-primary-text-color);
 }
 
-/* Style HTML content inside solution */
 .body p { margin-bottom: 12px; }
 .body strong { color: #fff; }

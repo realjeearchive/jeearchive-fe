@@ -100,25 +100,24 @@ export function OnboardingCarousel() {
 // --- The "App Window" Container ---
 function InnerAppCard({ slideId }: { slideId: number }) {
   
-  // SLIDE 1: STACKED CARD ANIMATION
-  // The back card waits for the front card, then slides out.
+
   if (slideId === 1) {
     return (
       <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center">
         
-        {/* The Back Card (Hidden initially, then slides out) */}
+
         <motion.div
            initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
            whileInView={{ 
              rotate: -6, 
              x: -35, 
-             y: -10, // Slight push up
+             y: -10, 
              opacity: 1 
             }}
            transition={{ delay: 0.5, type: "spring", stiffness: 60, damping: 15 }}
            className="absolute w-full h-full bg-[#FFF0EB] rounded-3xl shadow-xl border border-orange-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-right"
         >
-           {/* Decorative content for back card */}
+
            <div className="p-5 border-b border-orange-100/50 flex items-center gap-3 bg-orange-50/50">
               <BookOpen size={18} className="text-orange-400" />
               <span className="font-bold text-slate-600 text-sm">Chapter Wise</span>
@@ -130,7 +129,7 @@ function InnerAppCard({ slideId }: { slideId: number }) {
            </div>
         </motion.div>
 
-        {/* The Front Card (Main PYQ List) */}
+
         <motion.div
            initial={{ y: 100, opacity: 0 }}
            whileInView={{ y: 0, opacity: 1 }}
@@ -142,17 +141,17 @@ function InnerAppCard({ slideId }: { slideId: number }) {
       </div>
     )
   }
-// Inside InnerAppCard function:
+
 
 if (slideId === 2) {
   return (
     <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center">
       
-      {/* Back Card: Topic Heatmap (Context) */}
+
       <motion.div
          initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
          whileInView={{ 
-           rotate: 6, // Tilt right for variety (Card 1 tilts left)
+           rotate: 6, 
            x: 35, 
            y: -10,
            opacity: 1 
@@ -163,7 +162,7 @@ if (slideId === 2) {
           <CardTwoBackHeatmap />
       </motion.div>
 
-      {/* Front Card: Deep Metrics (Main) */}
+
       <motion.div
          initial={{ y: 100, opacity: 0 }}
          whileInView={{ y: 0, opacity: 1 }}
@@ -183,7 +182,7 @@ if (slideId === 2) {
     )
 }
 
-// --- CARD 1: SMART ARCHIVE DASHBOARD (CLEAN & SMOOTH) ---
+
 function CardOnePYQ() {
   const topics = [
     {
@@ -224,7 +223,7 @@ function CardOnePYQ() {
   return (
     <div className="flex flex-col h-full font-sans bg-white relative overflow-hidden">
       
-      {/* --- Header: Clean Search Simulation --- */}
+
       <div className="p-6 pb-2 z-10 bg-white">
         <div className="flex items-center justify-between mb-4">
              <div className="flex items-center gap-2">
@@ -242,7 +241,7 @@ function CardOnePYQ() {
              </div>
         </div>
 
-        {/* Search Bar Visual */}
+
         <div className="relative group">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Search size={16} className="text-slate-400 group-hover:text-orange-500 transition-colors" />
@@ -264,9 +263,9 @@ function CardOnePYQ() {
         </div>
       </div>
 
-      {/* --- Body: Smooth List --- */}
+
       <div className="flex-1 px-6 pt-2 pb-6 space-y-3 relative overflow-hidden">
-        {/* Subtle Fade for scroll (aesthetic only) */}
+
         <div className="absolute top-0 left-0 right-0 h-4 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
 
         {topics.map((item, i) => (
@@ -274,17 +273,17 @@ function CardOnePYQ() {
             key={item.id}
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
-            // Smoother Spring Animation
+
             transition={{ delay: 0.4 + (i * 0.15), type: "spring", stiffness: 100, damping: 20 }}
             className={`group relative bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 cursor-default ${item.border}`}
           >
             <div className="flex items-start gap-4">
-                {/* Icon Box */}
+
                 <div className={`h-11 w-11 shrink-0 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center shadow-sm`}>
                     <item.icon size={22} strokeWidth={2} />
                 </div>
 
-                {/* Content */}
+
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                         <h4 className="font-bold text-slate-800 text-[15px] truncate pr-2">{item.topic}</h4>
@@ -309,7 +308,7 @@ function CardOnePYQ() {
           </motion.div>
         ))}
 
-        {/* --- Footer Visual: "More Loading" --- */}
+
         <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -326,11 +325,9 @@ function CardOnePYQ() {
   )
 }
 
-// --- CARD 2 BACK: WEAKNESS HEATMAP ---
-// Visualizes "Which chapters are red/weak?"
+
 function CardTwoBackHeatmap() {
-    // Generate a grid of "chapters"
-    // 0 = Green (Good), 1 = Yellow (Avg), 2 = Red (Weak)
+
     const grid = [
         0, 0, 1, 0, 2, 0,
         0, 1, 2, 2, 0, 1,
@@ -350,9 +347,9 @@ function CardTwoBackHeatmap() {
                 <p className="text-xs text-slate-400 font-bold mb-4 uppercase tracking-wider">Weakness Detection</p>
                 <div className="grid grid-cols-6 gap-2">
                     {grid.map((status, i) => {
-                        let color = "bg-emerald-200/50"; // Good
-                        if (status === 1) color = "bg-amber-200/50"; // Avg
-                        if (status === 2) color = "bg-rose-300"; // Weak (Highlight)
+                        let color = "bg-emerald-200/50"; 
+                        if (status === 1) color = "bg-amber-200/50"; 
+                        if (status === 2) color = "bg-rose-300"; 
 
                         return (
                             <motion.div
@@ -379,10 +376,9 @@ function CardTwoBackHeatmap() {
     )
 }
 
-// --- CARD 2 FRONT: TIME ROI & EFFICIENCY (No Difficulty Tags) ---
+
 function CardTwoFrontDNA() {
-    // Mock Data: Calculated from standard test logs
-    // Insight: Student spent way too much time on Maths for very little marks.
+
     const subjects = [
         { name: "Phy", timePercent: 30, marksPercent: 45, status: "High ROI", color: "text-emerald-500" },
         { name: "Chem", timePercent: 20, marksPercent: 40, status: "Best", color: "text-emerald-500" },
@@ -405,7 +401,7 @@ function CardTwoFrontDNA() {
 
             <div className="flex-1 px-6 space-y-6 pt-2">
                 
-                {/* 1. TIME vs MARKS (The "Deep" Insight) */}
+
                 <div className="space-y-4">
                     <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         <span>Time Invested</span>
@@ -415,7 +411,7 @@ function CardTwoFrontDNA() {
                     {subjects.map((sub, i) => (
                         <div key={sub.name} className="relative grid grid-cols-[1fr_40px_1fr] items-center gap-2">
                             
-                            {/* Left: Time Bar (Gray/Red) */}
+
                             <div className="flex justify-end items-center gap-2">
                                 <span className="text-[9px] font-bold text-slate-400">{sub.timePercent}%</span>
                                 <div className="h-1.5 w-full bg-slate-50 rounded-l-full flex justify-end overflow-hidden">
@@ -428,13 +424,13 @@ function CardTwoFrontDNA() {
                                 </div>
                             </div>
 
-                            {/* Center: Subject Label */}
+
                             <div className="text-center">
                                 <span className="text-xs font-bold text-slate-700 block">{sub.name}</span>
                                 <span className={`text-[8px] font-bold block leading-none ${sub.color}`}>{sub.status}</span>
                             </div>
 
-                            {/* Right: Marks Bar (Green/Blue) */}
+
                             <div className="flex justify-start items-center gap-2">
                                 <div className="h-1.5 w-full bg-slate-50 rounded-r-full flex justify-start overflow-hidden">
                                     <motion.div 
@@ -541,19 +537,19 @@ function CardThreeExamImage() {
 
           <video
             src="/videos/interfaceRec.mov"
-            poster={ExamInterfaceImage.src} // Shows image while video loads
+            poster={ExamInterfaceImage.src} 
             autoPlay
             loop
             muted
-            playsInline // Essential for iOS to prevent fullscreen
+            playsInline 
             className="w-full h-full object-cover"
           />
           
-          {/* Subtle inner shadow to blend video edges */}
+
           <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] rounded-xl" />
         </motion.div>
 
-        {/* Trust Badge */}
+
         <motion.div
           initial={{ scale: 0 }}
           whileInView={{ scale: 1 }}

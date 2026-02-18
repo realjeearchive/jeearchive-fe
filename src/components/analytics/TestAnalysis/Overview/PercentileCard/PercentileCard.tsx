@@ -9,7 +9,6 @@ export const PercentileCard = () => {
   return (
     <div className={styles.container}>
       
-      {/* Premium Amber Gradient Background */}
       <div className={styles.bgGradient} />
       <div className={styles.bgGlowAnimated} />
 

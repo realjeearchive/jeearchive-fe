@@ -12,10 +12,10 @@ export interface Option {
 
 interface OptionsListProps {
   options: Option[];
-  selectedOptionId?: string | null; // Currently selected by user
-  onOptionSelect?: (id: string) => void; // Handler when user clicks
-  isSubmitted?: boolean; // Has the user clicked "Check Answer"?
-  correctAnswer?: string; // Needed for validation visualization
+  selectedOptionId?: string | null;
+  onOptionSelect?: (id: string) => void;
+  isSubmitted?: boolean;
+  correctAnswer?: string;
 }
 
 export const OptionsList = ({ 
@@ -27,7 +27,6 @@ export const OptionsList = ({
 }: OptionsListProps) => {
 
   const handleSelect = (id: string) => {
-    // Only allow selection if not yet submitted
     if (!isSubmitted && onOptionSelect) {
       onOptionSelect(id);
     }
@@ -39,24 +38,21 @@ export const OptionsList = ({
         const isSelected = opt.id === selectedOptionId;
         const isCorrect = opt.id === correctAnswer;
         
-        // --- DYNAMIC CLASS LOGIC ---
         let cardClass = styles.optionCard;
 
         if (isSubmitted) {
-          // POST-SUBMISSION STATES
           if (isCorrect) {
-            cardClass += ` ${styles.correct}`; // Green (Correct Answer)
+            cardClass += ` ${styles.correct}`;
           } else if (isSelected && !isCorrect) {
-            cardClass += ` ${styles.wrong}`; // Red (User's Wrong Choice)
+            cardClass += ` ${styles.wrong}`;
           } else if (isSelected && isCorrect) {
-            cardClass += ` ${styles.correct}`; // User selected Correct
+            cardClass += ` ${styles.correct}`;
           } else {
-            cardClass += ` ${styles.disabled}`; // Other options faded
+            cardClass += ` ${styles.disabled}`;
           }
         } else {
-          // PRE-SUBMISSION STATES (Practice Mode)
           if (isSelected) {
-            cardClass += ` ${styles.selected}`; // Blue/Active Highlight
+            cardClass += ` ${styles.selected}`;
           }
         }
 
@@ -66,8 +62,6 @@ export const OptionsList = ({
             className={cardClass}
             onClick={() => handleSelect(opt.id)}
           >
-            
-            {/* Validation Badge (Only show after submission) */}
             {isSubmitted && isCorrect && (
               <div className={styles.correctBadge}>
                 Correct 
@@ -77,17 +71,14 @@ export const OptionsList = ({
               </div>
             )}
 
-            {/* Letter Circle */}
             <div className={styles.labelCircle}>
               {opt.id}
             </div>
 
-            {/* Content */}
             <div className={styles.contentWrapper}>
               <div className={styles.text}>{opt.text}</div>
             </div>
 
-            {/* Labels */}
             {isSubmitted && isSelected && (
               <span className={`${styles.userMarkedLabel} ${isCorrect ? styles.textGreen : styles.textRed}`}>
                 {isCorrect ? "You got it right!" : "You marked this"}

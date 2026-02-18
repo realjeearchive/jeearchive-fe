@@ -7,7 +7,7 @@
   overflow: hidden;
 }
 
-/* --- HEADER --- */
+
 .header {
   padding: 17.5px 16px;
   display: flex;
@@ -45,7 +45,7 @@
   box-sizing: border-box;
 }
 
-/* Bottom Divider Line */
+
 .filterTabs::after {
   content: "";
   position: absolute;
@@ -55,17 +55,17 @@
   height: 1px;
   background-color: var(--dashboard-dividerline-color);
   z-index: 0;
-  transition: background-color 0.3s ease; /* Smooth color transition */
+  transition: background-color 0.3s ease; 
 }
 
-/* DYNAMIC BOTTOM LINE COLORS */
+
 .filterTabsAll::after { background-color: #8B5CF6; }
 .filterTabsCorrect::after { background-color: #22C55E; }
 .filterTabsIncorrect::after { background-color: #EF4444; }
 .filterTabsUnattempted::after { background-color: #9CA3AF; }
 
 
-/* Base Tab Style */
+
 .tab {
   flex: 1;
   display: flex;
@@ -119,7 +119,7 @@
   background-color: var(--dashboard-sidebar-background-color);
   opacity: 1;
   z-index: 2;
-  border-bottom-color: var(--dashboard-sidebar-background-color); /* Erase line */
+  border-bottom-color: var(--dashboard-sidebar-background-color); 
 }
 
 /* Specific Colors - 1px Borders */

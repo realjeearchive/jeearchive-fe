@@ -53,7 +53,6 @@ export const ComparativeOverview = () => {
           color="#525252" 
         />
         
-        {/* Insight Footer */}
         <div className={styles.insightFooter}>
            <p className={styles.insightText}>
             <span className={styles.insightBold}>Insight:</span> You trail the topper by <span className={styles.insightNegative}>-{score.topper - score.you} marks</span>.

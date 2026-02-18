@@ -37,7 +37,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
   return (
     <div className={styles.headerContainer}>
-      {/* Clean Dropdown */}
       <div className={styles.dropdownWrapper} ref={dropdownRef}>
         <button 
           className={`${styles.triggerButton} ${isOpen ? styles.active : ""}`} 

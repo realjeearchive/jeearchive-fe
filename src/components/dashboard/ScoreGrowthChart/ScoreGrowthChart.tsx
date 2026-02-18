@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link'; // Added Link import
+import Link from 'next/link';
 import { ResponsiveLine } from '@nivo/line';
 import { dashboardNivoTheme } from '@/theme/nivoTheme';
 import styles from './ScoreGrowthChart.module.css';
@@ -15,7 +15,6 @@ interface ScoreGrowthChartProps {
 }
 
 const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
-  // Check if we have valid data points (non-zero or non-empty)
   const hasData = data && data.length > 0 && data[0].data.some(point => point.y > 0);
 
   return (
@@ -66,7 +65,6 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
             fill={[{ match: '*', id: 'gradientC' }]}
           />
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <div className={styles.emptyIconBox}>
               <FiActivity size={24} />
@@ -74,12 +72,10 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
             <p className={styles.emptyText}>No test history found</p>
             <span className={styles.emptySubText}>Take your first mock test to see your growth curve</span>
             
-            {/* NEW BUTTON */}
             <Link href="/previous-year-questions" className={styles.startTestBtn}>
               Start Test
             </Link>
 
-            {/* Subtle Fake Graph Line */}
             <svg className={styles.fakeGraph} viewBox="0 0 100 40" preserveAspectRatio="none">
               <path 
                 d="M0 35 Q 25 35, 50 35 T 100 35" 

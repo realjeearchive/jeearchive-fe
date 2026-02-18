@@ -227,9 +227,7 @@
 
 .pageInfo span { color: var(--dashboard-primary-text-color); font-weight: 600; }
 
-/* ========================================= */
-/* COMING SOON LAYOUT STYLES - TOP ALIGNED  */
-/* ========================================= */
+
 
 .pageWrapper {
   position: relative;
@@ -247,7 +245,7 @@
   transition: filter 0.3s ease;
 }
 
-/* Coming Soon Overlay Container - Aligned to Top */
+
 .comingSoonOverlay {
   position: absolute;
   top: 0;
@@ -256,13 +254,13 @@
   height: 100%;
   z-index: 100;
   display: flex;
-  align-items: flex-start; /* Positions card at top */
+  align-items: flex-start; 
   justify-content: center;
-  padding: 80px 20px; /* Top padding to keep it visible without scroll */
+  padding: 80px 20px; 
   z-index: 2;
 }
 
-/* The Banner Card - Minimalistic */
+
 .comingSoonCard {
   background: #1e1d1b;
   border: 1px solid var(--dashboard-sidebar-border-color);

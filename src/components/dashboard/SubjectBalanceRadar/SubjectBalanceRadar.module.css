@@ -29,7 +29,6 @@
   height: 280px;
 }
 
-/* --- EMPTY STATE --- */
 .emptyState {
   width: 100%;
   height: 100%;
@@ -64,7 +63,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: var(--dashboard-sidebar-background-color); /* Mask the lines behind text */
+  background: var(--dashboard-sidebar-background-color);
   padding: 10px;
   border-radius: 8px;
 }

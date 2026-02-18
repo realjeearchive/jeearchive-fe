@@ -1,14 +1,12 @@
-/* ComparativeOverview Container */
 .mainContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  gap: 0.5rem; /* Strict 8px gap for Card content */
-  background-color: #211f1c; /* Inherit BG */
+  gap: 0.5rem;
+  background-color: #211f1c;
 }
 
-/* ComparisonBar Component */
 .comparisonBar {
   margin-bottom: 12px;
 }
@@ -53,7 +51,6 @@
   transition: width 1s ease-out;
 }
 
-/* Insight Footer */
 .insightFooter {
   margin-top: 16px;
   padding-top: 12px;

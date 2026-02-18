@@ -11,7 +11,6 @@ interface SubjectBalanceRadarProps {
 }
 
 const SubjectBalanceRadar: React.FC<SubjectBalanceRadarProps> = ({ data }) => {
-  // Check for valid data (non-zero accuracy)
   const hasData = data && data.some(item => item.Accuracy > 0);
 
   return (
@@ -44,9 +43,7 @@ const SubjectBalanceRadar: React.FC<SubjectBalanceRadarProps> = ({ data }) => {
             blendMode="normal"
           />
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
-             {/* Abstract circular guides to mimic radar chart */}
              <div className={styles.radarGuideOuter}>
                 <div className={styles.radarGuideInner}></div>
              </div>

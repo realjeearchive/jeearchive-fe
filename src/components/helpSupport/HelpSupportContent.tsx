@@ -78,7 +78,7 @@ export default function HelpSupportContent() {
                 <FiChevronDown className={styles.faqChevron} />
               </div>
               
-              {/* This wrapper handles the smooth height transition */}
+
               <div className={styles.faqBodyCollapse}>
                 <div className={styles.faqBodyContent}>
                   <div className={styles.faqAnswerRow}>

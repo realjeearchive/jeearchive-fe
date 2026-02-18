@@ -6,7 +6,7 @@
   border-bottom: 1px solid var(--dashboard-sidebar-border-color);
 }
 
-/* --- ROW 1: TITLE & SETTINGS --- */
+
 .topRow {
   height: 64px;
   display: flex;
@@ -29,8 +29,8 @@
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
-  padding: 8px; /* Touch target size */
-  margin-left: -8px; /* Align icon visually with padding */
+  padding: 8px; 
+  margin-left: -8px; 
 }
 
 .backBtn:hover {
@@ -81,7 +81,7 @@
   color: var(--dashboard-primary-text-color);
 }
 
-/* --- ROW 2: SUBJECT TABS --- */
+
 .tabsRow {
   height: 48px;
   display: flex;
@@ -90,12 +90,12 @@
   position: relative;
   gap: 8px;
   box-sizing: border-box;
-  overflow-x: auto; /* Allow horizontal scroll on very small screens */
-  scrollbar-width: none; /* Hide scrollbar Firefox */
+  overflow-x: auto; 
+  scrollbar-width: none; 
 }
-.tabsRow::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+.tabsRow::-webkit-scrollbar { display: none; } 
 
-/* Continuous Bottom Line */
+
 .tabsRow::after {
   content: "";
   position: absolute;
@@ -108,13 +108,13 @@
   transition: background-color 0.3s ease;
 }
 
-/* Dynamic Line Colors */
+
 .tabsRowMath::after { background-color: #3B82F6; }
 .tabsRowPhy::after { background-color: #22C55E; }
 .tabsRowChem::after { background-color: #F97316; }
 
 
-/* Tab Style */
+
 .tab {
   display: flex;
   align-items: center; 
@@ -148,7 +148,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* ACTIVE TAB LOGIC */
+
 .tab.active {
   background-color: var(--dashboard-background-color); 
   color: var(--dashboard-primary-text-color);
@@ -157,7 +157,7 @@
   border-bottom-color: var(--dashboard-background-color); 
 }
 
-/* Subject Specific Border Colors */
+
 .tabMath.active { border-top-color: #3B82F6; border-left-color: #3B82F6; border-right-color: #3B82F6; }
 .tabPhy.active { border-top-color: #22C55E; border-left-color: #22C55E; border-right-color: #22C55E; }
 .tabChem.active { border-top-color: #F97316; border-left-color: #F97316; border-right-color: #F97316; }
@@ -169,12 +169,12 @@
 .tabIcon { font-size: 16px; opacity: 0.8; }
 
 
-/* ... (Keep all your existing desktop styles) ... */
 
-/* --- RESPONSIVE STYLES (Max-Width: 700px) --- */
+
+
 @media (max-width: 700px) {
   
-  /* 1. Reduce Layout Padding */
+
   .topRow {
     padding: 0 10px;
     height: 56px; 
@@ -184,7 +184,7 @@
     gap: 4px; 
   }
 
-  /* 2. Compact Left Section */
+
   .leftSection {
     gap: 8px;
   }
@@ -196,35 +196,35 @@
     max-width: 150px; 
   }
 
-  /* 3. ICON-ONLY BUTTONS (Settings & Question Panel) */
+
   .settingsBtn {
-    /* Remove text */
+
     font-size: 0; 
     gap: 0;
     
-    /* Remove borders and background */
+
     border: none;
-    background: transparent !important; /* Force transparency */
+    background: transparent !important; 
     
-    /* Square shape for icon */
+
     padding: 8px; 
     width: 32px;
     height: 32px;
     justify-content: center;
   }
   
-  /* Explicitly hide any text spans inside these buttons */
+
   .settingsBtn span {
     display: none;
   }
   
-  /* Adjust Icon Size if needed */
+
   .settingsBtn svg {
     width: 18px;
     height: 18px;
   }
 
-  /* 4. Compact Tabs */
+
   .tab {
     padding: 0 12px; 
     font-size: 12px; 

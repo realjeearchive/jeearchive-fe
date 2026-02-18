@@ -11,7 +11,6 @@ interface QuestionTypeBarProps {
 }
 
 const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
-  // Check if there is any actual data (accuracy > 0)
   const hasData = data && data.some(item => item.accuracy > 0);
 
   return (
@@ -46,10 +45,8 @@ const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
             role="application"
           />
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <div className={styles.emptyBarContainer}>
-               {/* Faded Ghost Bars for visual hint */}
                <div className={styles.ghostBar} style={{ height: '40%' }}></div>
                <div className={styles.ghostBar} style={{ height: '60%' }}></div>
             </div>

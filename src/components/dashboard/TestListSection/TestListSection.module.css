@@ -97,10 +97,6 @@
   color: inherit;
 }
 
-.rowLink + .rowLink .row {
-  border-top: 1px solid var(--dashboard-icons-color);
-}
-
 @media (max-width: 600px) {
   .heading {
     font-size: var(--dashboard-font-sm);
@@ -128,7 +124,6 @@
   }
 }
 
-/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
 .emptyState {
   padding: 32px;
   display: flex;

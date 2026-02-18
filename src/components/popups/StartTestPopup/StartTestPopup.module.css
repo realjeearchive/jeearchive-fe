@@ -121,23 +121,23 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease;
-  flex: 1; /* Make buttons equal width */
+  flex: 1; 
 }
 
-/* Start (Single Button) */
+
 .startBtn {
-  background: #3b82f6; /* Blue */
+  background: #3b82f6; 
   color: white;
   border: none;
-  width: 100%; /* Full width for single button */
+  width: 100%; 
 }
 .startBtn:hover {
   background: #2563eb;
 }
 
-/* Resume (Primary Action) */
+
 .resumeBtn {
-  background: #10b981; /* Green */
+  background: #10b981; 
   color: white;
   border: none;
 }
@@ -145,21 +145,21 @@
   background: #059669;
 }
 
-/* Restart (Secondary/Neutral Action) */
+
 .restartBtn {
   background: transparent;
-  /* Use your dashboard border variable for a subtle outline */
+
   border: 1px solid var(--dashboard-sidebar-border-color); 
-  /* Use secondary text color for the "off/grey" look */
+
   color: var(--dashboard-secondary-text-color); 
 }
 
 .restartBtn:hover {
-  /* Use your dashboard hover color */
+
   background: var(--dashboard-link-hover-color);
-  /* Brighten text to primary color on hover */
+
   color: var(--dashboard-primary-text-color);
-  /* Make border slightly more visible */
+
   border-color: var(--dashboard-secondary-text-color);
 }
 .btnIcon {

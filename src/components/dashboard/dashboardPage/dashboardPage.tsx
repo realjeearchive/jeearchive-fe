@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import styles from './dashboardPage.module.css';
 
-// Components
 import DashboardHeader from '@/components/dashboard/DashboardHeader/DashboardHeader';
 import KpiCard from '@/components/dashboard/KpiCard/KpiCard';
 import PyqProgressCard from "@/components/dashboard/PyqProgressCard/PyqProgressCard";
@@ -13,11 +12,8 @@ import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTyp
 import TestListSection, { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 
-// Icons
 import { FiAward, FiClock, FiTarget, FiCheckSquare } from 'react-icons/fi';
 import WelcomeBanner from '../WelcomeBanner/WelcomeBanner';
-
-// --- TYPE DEFINITIONS ---
 
 interface KpiItem {
   label: string;
@@ -27,7 +23,6 @@ interface KpiItem {
   delta?: string;
 }
 
-// Type for the Line Chart (Score Growth)
 interface ScorePoint {
   x: string | number;
   y: number;
@@ -38,13 +33,11 @@ interface ScoreSeries {
   data: ScorePoint[];
 }
 
-// Type for the Radar Chart (Subject Balance)
 interface RadarItem {
   subject: string;
   Accuracy: number;
 }
 
-// Type for the Bar Chart (Question Type)
 interface TypeItem {
   type: string;
   accuracy: number;
@@ -57,14 +50,11 @@ interface DashboardData {
     math: { solved: number; total: number };
   };
   kpis: KpiItem[];
-  scoreData: ScoreSeries[]; // Replaced 'any[]'
-  radarData: RadarItem[];   // Replaced 'any[]'
-  typeData: TypeItem[];     // Replaced 'any[]'
+  scoreData: ScoreSeries[];
+  radarData: RadarItem[];
+  typeData: TypeItem[];
 }
 
-// --- DATA SIMULATION ---
-
-// 1. DATA FOR A NEW USER (Empty State)
 const EMPTY_DATA: DashboardData = {
   progress: { 
     phy: { solved: 0, total: 3200 }, 
@@ -82,7 +72,6 @@ const EMPTY_DATA: DashboardData = {
   typeData: [],
 };
 
-// 2. DATA FOR AN ACTIVE USER (Populated State)
 const ACTIVE_DATA: DashboardData = {
   progress: { 
     phy: { solved: 1850, total: 3200 }, 
@@ -110,7 +99,6 @@ const ACTIVE_DATA: DashboardData = {
   ],
 };
 
-// Static Lists
 const pyqItems: TestListItem[] = [
   { id: "pyq-2025", title: "JEE Main 2025 PYQs", meta: "19 Papers", href: "/pyq/2025" },
   { id: "pyq-2024", title: "JEE Main 2024 PYQs", meta: "20 Papers", href: "/pyq/2024" },
@@ -124,8 +112,6 @@ const chapterItems: TestListItem[] = [
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
 
-  // --- TOGGLE THIS TO SEE EMPTY STATE ---
-  // In a real app, this would come from your user store (e.g. !user.hasTakenTest)
   const isNewUser = true; 
 
   const data = isNewUser ? EMPTY_DATA : ACTIVE_DATA;
@@ -133,24 +119,20 @@ export default function DashboardPage() {
   return (
     <div className={styles.page}>
       
-      {/* 1. Header */}
       <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
 
-      {/* NEW: Welcome Banner only for new users */}
       {isNewUser && (
         <div style={{ marginBottom: '8px' }}>
           <WelcomeBanner />
         </div>
       )}
 
-      {/* 2. Progress Cards */}
       <div className={styles.progressRow}>
         <PyqProgressCard label="Physics" solved={data.progress.phy.solved} total={data.progress.phy.total} />
         <PyqProgressCard label="Chemistry" solved={data.progress.chem.solved} total={data.progress.chem.total} />
         <PyqProgressCard label="Mathematics" solved={data.progress.math.solved} total={data.progress.math.total} />
       </div>
 
-      {/* 3. KPIs */}
       <div className={styles.kpiRow}>
         {data.kpis.map((kpi, i) => (
           <KpiCard
@@ -159,12 +141,12 @@ export default function DashboardPage() {
             value={kpi.value}
             subLabel={kpi.sub}
             icon={kpi.icon}
-            deltaLabel={kpi.delta} // No error now, as delta is optional in KpiItem
+            deltaLabel={kpi.delta}
           />
         ))}
       </div>
 
-      {/* 4. Charts */}
+
       <div className={styles.growthSection}>
         <ScoreGrowthChart data={data.scoreData} />
       </div>
@@ -178,13 +160,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 5. Lists */}
       <div className={styles.listSectionWrapper}>
         <TestListSection heading="Previous Year Question Papers" items={pyqItems} />
         <TestListSection heading="Chapter-wise Practice" items={chapterItems} />
       </div>
 
-      {/* 6. Detailed Analysis (Locked for New Users) */}
       <div className={styles.detailedAnalysisWrapper}>
         <DetailedAnalysisSection disabled={isNewUser} />
       </div>

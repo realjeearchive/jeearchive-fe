@@ -42,7 +42,6 @@
   margin-left: 16px; 
 }
 
-/* TIMER STYLES */
 .timerBlock {
   display: flex;
   align-items: center;
@@ -50,7 +49,7 @@
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--dashboard-primary-text-color); /* Blue/Cyan color */
+  color: var(--dashboard-primary-text-color);
   padding: 4px 10px;
   border-radius: 6px;
 }
@@ -98,6 +97,6 @@
 }
 
 @media (max-width: 700px) {
-  .btnText { display: none; } /* Hide text on small screens */
+  .btnText { display: none; }
   .header { padding: 12px; }
 }

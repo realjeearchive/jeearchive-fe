@@ -34,11 +34,11 @@ export const SolutionHeader = ({
     }
   };
 
-  // FIX: Changed 'Icon: any' to 'Icon: React.ElementType'
+
   const renderTab = (subject: "Physics" | "Chemistry" | "Mathematics", Icon: React.ElementType) => {
     const isActive = activeSubject === subject;
     
-    // In practice mode, only show the active subject
+
     if (mode === "practice" && !isActive) return null;
 
     return (
@@ -57,7 +57,7 @@ export const SolutionHeader = ({
   return (
     <div className={styles.container}>
       
-      {/* --- ROW 1: Title & Settings --- */}
+
       <div className={styles.topRow}>
         <div className={styles.leftSection}>
           <button onClick={onBack} className={styles.backBtn}>
@@ -84,7 +84,7 @@ export const SolutionHeader = ({
         </div>
       </div>
 
-      {/* --- ROW 2: Subject Tabs --- */}
+
       <div className={getTabsRowClass()}>
         {renderTab("Mathematics", TbMathFunction)}
         {renderTab("Physics", TbAtom)}

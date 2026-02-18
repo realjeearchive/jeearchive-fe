@@ -9,7 +9,7 @@ export interface WeaknessItem {
   chapter: string;
   subject: string;
   accuracy: number;
-  weightage?: string; // Optional
+  weightage?: string;
 }
 
 interface WeaknessHunterProps {
@@ -37,7 +37,6 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
                     {chapter.subject}
                   </span>
                   
-                  {/* Logic: Show High Wtg badge if passed, or if accuracy is critically low (<40%) implies high priority */}
                   {(chapter.weightage === "High" || chapter.accuracy < 40) && (
                     <span className={styles.highWeightageBadge}>
                       HIGH PRIORITY
@@ -51,7 +50,6 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
                   <span className={styles.accuracyValue}>
                     {chapter.accuracy}%
                   </span>
-                  {/* Dot Indicator Color Logic */}
                   <div 
                     className={styles.dotIndicator}
                     style={{ backgroundColor: chapter.accuracy < 40 ? '#EF4444' : '#F59E0B' }}
@@ -61,7 +59,6 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
             </div>
           ))
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <FiCheckCircle size={18} className={styles.emptyIcon} />
             <span className={styles.emptyText}>

@@ -92,9 +92,9 @@ const TableRow = ({ user }: { user: User }) => (
   </div>
 );
 
-// --- Main Component ---
+
 const Leaderboard: React.FC = () => {
-  // Toggle this variable to lock/unlock the page
+
   const isLocked = true; 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,7 +114,7 @@ const Leaderboard: React.FC = () => {
   return (
     <div className={`${styles.pageWrapper} ${isLocked ? styles.locked : ""}`}>
       
-      {/* 1. Conditional Overlay Layer */}
+
       {isLocked && (
         <div className={styles.comingSoonOverlay}>
           <div className={styles.comingSoonCard}>
@@ -131,7 +131,7 @@ const Leaderboard: React.FC = () => {
         </div>
       )}
 
-      {/* 2. Main Content Layer */}
+
       <div className={isLocked ? styles.blurredContent : ""}>
         <div className={styles.themeWrapper}>
           <div className={styles.heroSection}>

@@ -7,7 +7,6 @@ import {
 import { OverviewTab } from "./Overview/OverviewTab/OverviewTab";
 import { PerformanceTab } from "./Performance/PerformanceTab/PerformanceTab"; 
 import { TimeAnalysisTab } from "./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab"; 
-// 1. IMPORT THE QUESTION WISE TAB
 import { QuestionWiseTab } from "./QuestionWise/QuestionWiseTab"; 
 
 const MENU_ITEMS = [
@@ -18,10 +17,8 @@ const MENU_ITEMS = [
 ];
 
 export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => {
-  // You can set default back to "overview" now if you want
   const [activeTab, setActiveTab] = useState("overview"); 
 
-  // Render Content Helper
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
@@ -44,7 +41,6 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
   return (
     <div className="flex flex-col gap-4">
       
-      {/* 1. STICKY HEADER NAVIGATION */}
       <div className="sticky top-0 z-20 bg-[var(--dashboard-background-color)]/95 backdrop-blur-md border-b border-[var(--dashboard-dividerline-color)] -mx-4 px-4">
         <nav className="flex items-center gap-6 overflow-x-auto no-scrollbar">
           {MENU_ITEMS.map((item) => {
@@ -61,10 +57,16 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
                   }
                 `}
               >
-                <item.icon size={14} className={isActive ? "text-[#F59E0B]" : "text-[var(--dashboard-secondary-text-color)] group-hover:text-[var(--dashboard-primary-text-color)]"} />
+                <item.icon 
+                  size={14} 
+                  className={
+                    isActive
+                      ? "text-[#F59E0B]"
+                      : "text-[var(--dashboard-secondary-text-color)] group-hover:text-[var(--dashboard-primary-text-color)]"
+                  } 
+                />
                 {item.label}
                 
-                {/* Active Indicator Line */}
                 {isActive && (
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#F59E0B] shadow-[0_-1px_6px_rgba(245,158,11,0.4)]" />
                 )}
@@ -74,7 +76,6 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
         </nav>
       </div>
 
-      {/* 2. MAIN CONTENT AREA */}
       <main className="min-w-0 animate-in fade-in slide-in-from-bottom-2 duration-500">
         {renderContent()} 
       </main>

@@ -5,7 +5,7 @@
 .card {
   width: 100%;
   border-radius: 10px;
-  background: var(--dashboard-sidebar-background-color); /* Updated to match theme var */
+  background: var(--dashboard-sidebar-background-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   display: flex;
   overflow: hidden;
@@ -22,7 +22,7 @@
 
 .accent {
   width: 4px;
-  background: var(--dashboard-core-color); /* #F59E0B */
+  background: var(--dashboard-core-color);
 }
 
 .content {
@@ -122,7 +122,6 @@
   opacity: 0.9;
 }
 
-/* --- DISABLED STATE --- */
 .disabledSection .card {
   opacity: 0.6;
   border-style: dashed;
@@ -131,7 +130,7 @@
 }
 
 .disabledSection .card:hover {
-  border-color: var(--dashboard-sidebar-border-color); /* No hover glow */
+  border-color: var(--dashboard-sidebar-border-color);
   transform: none;
 }
 

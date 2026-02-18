@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import styles from "./ProfileContent.module.css";
 import { FiEdit2, FiChevronDown, FiCheck } from "react-icons/fi";
 
-// Store Imports
+
 import { useAuthStore, useUserStore } from "@/store";
 import { toast } from "sonner";
 import { LogoutConfirmModal } from "../layout/LogoutConfirmPopup/LogoutConfirmModal";
 
-// --- CUSTOM DROPDOWN COMPONENT ---
+
 interface DropdownOption {
   label: string;
   value: string;
@@ -31,7 +31,7 @@ const CustomDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -90,28 +90,28 @@ const CustomDropdown = ({
   );
 };
 
-// --- MAIN COMPONENT ---
+
 export default function ProfileContent() {
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // --- STORE DATA ---
+
   const logoutAuth = useAuthStore((s) => s.logout);
   const clearProfile = useUserStore((s) => s.setProfile);
   const profile = useUserStore((s) => s.profile);
 
-  // --- FORM STATE ---
+
   const [selectedClass, setSelectedClass] = useState("12");
   const [countryCode, setCountryCode] = useState("+91");
   const [mobileNumber, setMobileNumber] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  // --- DERIVED DATA ---
+
   const displayName = profile?.name ?? "Guest User";
   const displayEmail = profile?.email ?? "No email provided";
   const initials = profile?.name?.trim()?.charAt(0)?.toUpperCase() || "G";
 
-  // --- HANDLERS ---
+
   const openLogoutModal = () => setShowLogoutModal(true);
   const closeLogoutModal = () => setShowLogoutModal(false);
 
@@ -131,7 +131,7 @@ export default function ProfileContent() {
 
     setIsSaving(true);
     
-    // Simulate API Call
+
     setTimeout(() => {
       console.log("Saving Data:", { class: selectedClass, country: countryCode, mobile: mobileNumber });
       toast.success("Profile details updated successfully!");
@@ -139,7 +139,7 @@ export default function ProfileContent() {
     }, 1000);
   };
 
-  // --- OPTIONS DATA ---
+
   const classOptions = [
     { label: "Class 9", value: "9" },
     { label: "Class 10", value: "10" },
@@ -162,7 +162,7 @@ export default function ProfileContent() {
       <div className={styles.container}>
         <h1 className={styles.pageTitle}>Account Settings</h1>
 
-        {/* --- 1. EXISTING TOP SECTION (Avatar + Name/Email) --- */}
+
         <div className={styles.topSection}>
           <div className={styles.avatarCard}>
             <div className={styles.avatar}>
@@ -193,14 +193,14 @@ export default function ProfileContent() {
         </div>
 
 
-        {/* --- 2. NEW SECTION: ACADEMIC & CONTACT DETAILS --- */}
+
         <div className={styles.detailsSection}>
           
           <h2 className={styles.sectionHeading}>Academic & Contact Details</h2>
 
           <div className={styles.formGrid}>
             
-            {/* CLASS SELECTION WITH CUSTOM DROPDOWN */}
+
             <div className={styles.infoCard}>
               <div className={styles.rowHeader}>
                 <span className={styles.label}>Class / Grade</span>
@@ -214,14 +214,14 @@ export default function ProfileContent() {
               </div>
             </div>
 
-            {/* MOBILE NUMBER WITH CUSTOM DROPDOWN */}
+
             <div className={styles.infoCard}>
               <div className={styles.rowHeader}>
                 <span className={styles.label}>Mobile Number</span>
               </div>
               <div className={styles.mobileInputGroup}>
                 
-                {/* Country Code Custom Dropdown */}
+
                 <div className={styles.countryDropdownWrapper}>
                   <CustomDropdown 
                     options={countryOptions} 
@@ -230,20 +230,20 @@ export default function ProfileContent() {
                   />
                 </div>
 
-                {/* Number Input (Updated to type='tel' to remove spinners) */}
+
                 <input 
                   type="tel" 
                   className={styles.styledInput} 
                   placeholder="Enter phone number"
                   value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))} // Only allow digits
+                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, ''))} 
                 />
               </div>
             </div>
 
           </div>
 
-          {/* SAVE BUTTON */}
+
           <div className={styles.saveActionRow}>
              <button 
                 className={styles.saveBtn} 
@@ -256,7 +256,7 @@ export default function ProfileContent() {
         </div>
 
 
-        {/* --- 3. LOGOUT BUTTON --- */}
+
         <div className={styles.actionCard}>
           <button 
             className={styles.logoutBtn} 

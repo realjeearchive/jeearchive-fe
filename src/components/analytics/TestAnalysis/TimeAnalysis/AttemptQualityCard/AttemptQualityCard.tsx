@@ -4,12 +4,6 @@ import React from "react";
 import styles from "./AttemptQualityCard.module.css";
 import { FiCheckCircle, FiClock, FiAlertOctagon, FiZap } from "react-icons/fi";
 
-// Dummy Data logic:
-// Perfect: Correct answer within ideal time.
-// Overtime: Correct answer but took >1.5x ideal time.
-// Wasted: Wrong answer but took > ideal time.
-// Rushed: Answered very quickly (correct or wrong) - often guesswork.
-
 const QUALITY_DATA = [
   { 
     id: "perfect", 

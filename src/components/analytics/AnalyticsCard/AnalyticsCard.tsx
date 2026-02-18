@@ -5,7 +5,7 @@ interface AnalyticsCardProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
-  headerAction?: React.ReactNode; // Renamed from 'action' to match your usage
+  headerAction?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -14,7 +14,7 @@ export const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
   title,
   subtitle,
   children,
-  headerAction, // Destructure the new name
+  headerAction,
   className,
   style,
 }) => {
@@ -25,7 +25,6 @@ export const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
           <h3 className={styles.title}>{title}</h3>
           {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
         </div>
-        {/* Render the headerAction if it exists */}
         {headerAction && <div className={styles.actionSlot}>{headerAction}</div>}
       </div>
       <div className={styles.content}>{children}</div>

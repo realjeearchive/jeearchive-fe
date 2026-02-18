@@ -8,11 +8,9 @@ export const ScorePotentialCard = () => {
   const { myScore, totalMarks } = SINGLE_TEST_DATA.meta;
   const { negativeScore } = SINGLE_TEST_DATA.stats;
   
-  // Dummy logic for "Potential" (e.g., marks lost in easy questions or silly mistakes)
   const sillyMistakesLoss = 15; 
   const potentialScore = myScore + Math.abs(negativeScore) + sillyMistakesLoss;
   
-  // Calculations for bar widths (normalized to max potential, not total marks, for better visual)
   const maxDisplay = potentialScore * 1.1; 
   
   return (
@@ -24,7 +22,6 @@ export const ScorePotentialCard = () => {
         </div>
       </div>
 
-      {/* Visual Bar */}
       <div className={styles.visualContainer}>
         <div className={styles.barWrapper}>
           <div 
@@ -42,7 +39,6 @@ export const ScorePotentialCard = () => {
         </div>
       </div>
 
-      {/* Stats Breakdown */}
       <div className={styles.statsRow}>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>
@@ -70,7 +66,6 @@ export const ScorePotentialCard = () => {
         </div>
       </div>
 
-      {/* Footer Insight */}
       <div className={styles.insight}>
         You scored <strong>{myScore}</strong>, but your true potential was <strong className="text-white">{potentialScore}</strong>. 
         Avoiding negatives and silly errors in easy questions would have boosted your rank by <span className={styles.insightHighlight}>~1,200</span>.

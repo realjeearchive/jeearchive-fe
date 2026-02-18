@@ -8,7 +8,7 @@ interface SolutionLayoutProps {
   children: React.ReactNode;
   
   isSidebarOpen: boolean; 
-  onCloseSidebar?: () => void; // Used for clicking backdrop
+  onCloseSidebar?: () => void; 
 }
 
 export const SolutionLayout = ({ 
@@ -23,7 +23,7 @@ export const SolutionLayout = ({
   return (
     <div className={styles.container}>
       
-      {/* Left Panel */}
+
       <div className={styles.leftPanel}>
         {header}
         <main className={styles.contentScrollArea}>
@@ -36,13 +36,13 @@ export const SolutionLayout = ({
         )}
       </div>
 
-      {/* BACKDROP (Only visible on mobile when open) */}
+
       <div 
         className={`${styles.backdrop} ${isSidebarOpen ? styles.active : ''}`}
         onClick={onCloseSidebar} 
       />
 
-      {/* Right Panel (Sidebar) */}
+
       <aside 
         className={`
           ${styles.rightPanel} 

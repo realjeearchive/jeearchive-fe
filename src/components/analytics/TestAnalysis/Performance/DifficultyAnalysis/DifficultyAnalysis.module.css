@@ -21,15 +21,15 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px; /* Divider look */
-  background: var(--dashboard-dividerline-color); /* Creates vertical lines */
+  gap: 1px;
+  background: var(--dashboard-dividerline-color);
   border: 1px solid var(--dashboard-dividerline-color);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .column {
-  background: #211f1c; /* Cover the gap background */
+  background: #211f1c;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -38,7 +38,6 @@
   gap: 8px;
 }
 
-/* Badge for Easy/Med/Hard */
 .badge {
   font-size: 10px;
   text-transform: uppercase;
@@ -53,7 +52,6 @@
 .badgeMed { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 .badgeHard { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-/* Metrics */
 .score {
   font-size: 20px;
   font-weight: 700;
@@ -83,7 +81,6 @@
   text-transform: uppercase;
 }
 
-/* Mini Progress Bar inside column */
 .miniBar {
   width: 100%;
   height: 4px;

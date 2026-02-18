@@ -21,18 +21,22 @@ export const SubjectSummaryTable = () => {
           </thead>
           <tbody>
             {OVERVIEW_COMPARISON.subjects.map((sub) => {
-               const color = 
-               sub.name === "Physics" ? "#60A5FA" :
-               sub.name === "Chemistry" ? "#34D399" : "#FB7185";
+              const color =
+                sub.name === "Physics"
+                  ? "#60A5FA"
+                  : sub.name === "Chemistry"
+                  ? "#34D399"
+                  : "#FB7185";
 
               return (
                 <tr key={sub.name} className={styles.tableRow}>
                   <td className={`${styles.tableCell} ${styles.tableCellLeft}`}>
                     <div className={styles.subjectCell}>
-                      <div className={styles.subjectIndicator} style={{ backgroundColor: color }}></div>
-                      <span className={styles.subjectName}>
-                        {sub.name}
-                      </span>
+                      <div
+                        className={styles.subjectIndicator}
+                        style={{ backgroundColor: color }}
+                      ></div>
+                      <span className={styles.subjectName}>{sub.name}</span>
                     </div>
                   </td>
                   <td className={`${styles.tableCell} ${styles.tableCellRight}`}>
@@ -41,16 +45,28 @@ export const SubjectSummaryTable = () => {
                   </td>
                   <td className={`${styles.tableCell} ${styles.tableCellRight}`}>
                     <div className={styles.attemptsCell}>
-                      <span className={styles.attemptsValue}>{sub.attempted}</span>
+                      <span className={styles.attemptsValue}>
+                        {sub.attempted}
+                      </span>
                       <span className={styles.attemptsLabel}>Questions</span>
                     </div>
                   </td>
-                  <td className={`${styles.tableCell} ${styles.tableCellRight} ${styles.tableCellHiddenSm}`}>
-                    <span className={sub.accuracy > 80 ? styles.accuracyHigh : styles.accuracyLow}>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellRight} ${styles.tableCellHiddenSm}`}
+                  >
+                    <span
+                      className={
+                        sub.accuracy > 80
+                          ? styles.accuracyHigh
+                          : styles.accuracyLow
+                      }
+                    >
                       {sub.accuracy}%
                     </span>
                   </td>
-                  <td className={`${styles.tableCell} ${styles.tableCellRight} ${styles.tableCellHiddenSm} ${styles.tableCellRightPadding}`}>
+                  <td
+                    className={`${styles.tableCell} ${styles.tableCellRight} ${styles.tableCellHiddenSm} ${styles.tableCellRightPadding}`}
+                  >
                     <span className={styles.timeValue}>{sub.time}m</span>
                   </td>
                 </tr>

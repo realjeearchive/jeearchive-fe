@@ -1,12 +1,9 @@
-/* ... (Your existing CSS remains strictly untouched) ... */
-/* SubjectRadar Chart Container */
 .chartContainer {
   height: 260px;
   width: 100%;
-  position: relative; /* Added relative for absolute positioning of empty state */
+  position: relative;
 }
 
-/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
 .emptyState {
   width: 100%;
   height: 100%;

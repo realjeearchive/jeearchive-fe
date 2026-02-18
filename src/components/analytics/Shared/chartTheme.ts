@@ -1,23 +1,22 @@
-// Nivo Theme Config matching your CSS Variables
 export const analyticsChartTheme = {
   background: "transparent",
   text: {
     fontSize: 12,
-    fill: "#B5B4B4", // var(--dashboard-secondary-text-color)
+    fill: "#B5B4B4",
     outlineWidth: 0,
     outlineColor: "transparent",
   },
   axis: {
     domain: {
       line: {
-        stroke: "#656160", // var(--dashboard-icons-color)
+        stroke: "#656160",
         strokeWidth: 1,
       },
     },
     legend: {
       text: {
         fontSize: 12,
-        fill: "#F4F4F4", // var(--dashboard-primary-text-color)
+        fill: "#F4F4F4",
         outlineWidth: 0,
         outlineColor: "transparent",
       },
@@ -37,7 +36,7 @@ export const analyticsChartTheme = {
   },
   grid: {
     line: {
-      stroke: "#272625", // var(--dashboard-dividerline-color)
+      stroke: "#272625",
       strokeWidth: 1,
     },
   },
@@ -97,7 +96,7 @@ export const analyticsChartTheme = {
   },
   tooltip: {
     container: {
-      background: "#1E1D1B", // Sidebar bg
+      background: "#1E1D1B",
       color: "#F4F4F4",
       fontSize: 12,
       border: "1px solid #36312F",

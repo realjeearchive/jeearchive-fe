@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiEye } from "react-icons/fi";
 
-// Components
+
 import { SolutionLayout } from "./layout/SolutionLayout";
 import { SolutionHeader } from "./layout/SolutionHeader";
 import { SolutionSidebar, QuestionStatus as SidebarItemStatus } from "./sidebar/SolutionSidebar"; 
@@ -17,7 +17,7 @@ import { QuestionMeta } from "./question/QuestionMeta/QuestionMeta";
 import { SolutionContent } from "./question/SolutionContent/SolutionContent";
 import { QuestionStats } from "./question/QuestionStats/QuestionStats";
 
-// --- TYPE DEFINITIONS ---
+
 export type Subject = "Physics" | "Chemistry" | "Mathematics";
 export type SectionType = "Single Correct" | "Numerical" | "Multiple Correct";
 export type StatusString = "correct" | "incorrect" | "unattempted";
@@ -80,7 +80,7 @@ export const ChapterWiseInterface = ({
 }: ChapterWiseInterfaceProps) => {
   const router = useRouter();
   
-  // --- STATE ---
+
   const [activeQuestionId, setActiveQuestionId] = useState<string>(questions[0]?.id || "");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
@@ -88,10 +88,10 @@ export const ChapterWiseInterface = ({
   const [submissions, setSubmissions] = useState<Record<string, boolean>>({});
   const [revealedSolutions, setRevealedSolutions] = useState<Record<string, boolean>>({});
   
-  // NEW: Time Tracking State { "q1": 12, "q2": 0 } (in seconds)
+
   const [questionTimes, setQuestionTimes] = useState<Record<string, number>>({});
 
-  // --- DERIVED DATA ---
+
   const safeSubject = (["Physics", "Chemistry", "Mathematics"].includes(subject) 
     ? subject 
     : "Physics") as Subject;
@@ -99,12 +99,12 @@ export const ChapterWiseInterface = ({
   const currentQuestion = questions.find((q) => q.id === activeQuestionId);
   const currentIndex = questions.findIndex((q) => q.id === activeQuestionId);
 
-  // --- TIMER LOGIC ---
+
   useEffect(() => {
-    // If question is already submitted, do not run timer
+
     if (submissions[activeQuestionId]) return;
 
-    // Start interval
+
     const timerId = setInterval(() => {
       setQuestionTimes((prev) => ({
         ...prev,
@@ -112,7 +112,7 @@ export const ChapterWiseInterface = ({
       }));
     }, 1000);
 
-    // Cleanup on unmount or question change or submission
+
     return () => clearInterval(timerId);
   }, [activeQuestionId, submissions]);
 
@@ -139,7 +139,7 @@ export const ChapterWiseInterface = ({
   }, [questions, submissions, userAnswers]);
 
 
-  // --- HANDLERS ---
+
   const handleOptionSelect = (optId: string) => {
     if (submissions[activeQuestionId]) return;
     setUserAnswers(prev => ({ ...prev, [activeQuestionId]: optId }));
@@ -148,7 +148,7 @@ export const ChapterWiseInterface = ({
   const handleCheckAnswer = () => {
     if (!userAnswers[activeQuestionId]) return;
     setSubmissions(prev => ({ ...prev, [activeQuestionId]: true }));
-    // Timer automatically stops due to useEffect dependency on 'submissions'
+
   };
 
   const handleViewSolution = () => {
@@ -181,7 +181,7 @@ export const ChapterWiseInterface = ({
   const isSolutionVisible = !!revealedSolutions[activeQuestionId];
   const hasSelectedOption = !!userAnswers[activeQuestionId];
   
-  // Get current time for this question
+
   const currentTimeSpent = questionTimes[activeQuestionId] || 0;
   
   let mainStatus: "correct" | "incorrect" | "unattempted" = "unattempted";
@@ -231,7 +231,7 @@ export const ChapterWiseInterface = ({
           type={currentQuestion.section}
           marksPos={currentQuestion.meta.marksPos}
           marksNeg={currentQuestion.meta.marksNeg}
-          timer={formatTime(currentTimeSpent)} // <--- Passing dynamic timer
+          timer={formatTime(currentTimeSpent)} 
         />
 
         <QuestionText
@@ -250,7 +250,7 @@ export const ChapterWiseInterface = ({
           />
         )}
 
-        {/* CHECK ANSWER BUTTON */}
+
         {!isSubmitted && (
           <div style={{ padding: "0 20px 20px 20px" }}>
             <button
@@ -273,7 +273,7 @@ export const ChapterWiseInterface = ({
           </div>
         )}
 
-        {/* VIEW SOLUTION BUTTON */}
+
         {isSubmitted && !isSolutionVisible && (
           <div style={{ padding: "0 20px 20px 20px" }}>
              <button
@@ -302,7 +302,7 @@ export const ChapterWiseInterface = ({
         />
 
         <QuestionStats 
-          userTime={formatTime(currentTimeSpent)} // <--- Passing actual time spent
+          userTime={formatTime(currentTimeSpent)} 
           avgTime={currentQuestion.stats.avgTime}
           accuracy={currentQuestion.stats.accuracy}
           isVisible={isSubmitted}

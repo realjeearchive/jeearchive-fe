@@ -1,14 +1,12 @@
 "use client";
 
 import React from "react";
-// 1. Ensure you have installed this: npm install @nivo/pie
 import { ResponsivePie, PieCustomLayerProps } from "@nivo/pie"; 
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../../Shared/chartTheme";
 import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
 import styles from "./ScoreDistribution.module.css";
 
-// --- TYPE DEFINITION ---
 interface PieDatum {
   id: string;
   label: string;
@@ -19,32 +17,29 @@ interface PieDatum {
 export const ScoreDistribution = () => {
   const { subjects, meta } = SINGLE_TEST_DATA;
 
-  // 1. Transform Data with explicit types
   const data: PieDatum[] = [
     {
       id: "Physics",
       label: "Physics",
       value: subjects.physics.score,
-      color: "#22C55E", // Green
+      color: "#22C55E",
     },
     {
       id: "Chemistry",
       label: "Chemistry",
       value: subjects.chemistry.score,
-      color: "#F97316", // Orange
+      color: "#F97316",
     },
     {
       id: "Mathematics",
       label: "Maths",
       value: subjects.maths.score,
-      color: "#3B82F6", // Blue
+      color: "#3B82F6",
     },
   ];
 
-  // Calculate Total for Center Text
   const totalScore = meta.myScore;
 
-  // Custom Layer Component to fix "implicit any" on context
   const CenteredMetric = ({ centerX, centerY }: PieCustomLayerProps<PieDatum>) => {
     return (
       <g>
@@ -95,14 +90,9 @@ export const ScoreDistribution = () => {
           padAngle={2}
           cornerRadius={4}
           activeOuterRadiusOffset={6}
-          
-          // Fix: Type the color accessor
           colors={(datum) => datum.data.color}
-          
           enableArcLinkLabels={false}
-          enableArcLabels={false} // Clean look for dashboard
-          
-          // Fix: Type the tooltip props
+          enableArcLabels={false}
           tooltip={({ datum }) => (
             <div className={styles.tooltip}>
               <span 
@@ -120,8 +110,6 @@ export const ScoreDistribution = () => {
               </span>
             </div>
           )}
-
-          // Fix: Pass the custom layer component directly
           layers={[
             'arcs', 
             CenteredMetric 
@@ -129,7 +117,6 @@ export const ScoreDistribution = () => {
         />
       </div>
 
-      {/* Custom Legend Footer */}
       <div className={styles.legendFooter}>
         {data.map((item) => (
           <div key={item.id} className={styles.legendItem}>

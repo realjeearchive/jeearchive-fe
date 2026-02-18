@@ -3,7 +3,7 @@ import styles from "./QuestionStats.module.css";
 import { FiClock, FiTarget } from "react-icons/fi";
 
 interface QuestionStatsProps {
-  userTime: string; // <--- Added this fixed the error
+  userTime: string;
   avgTime: string;
   accuracy: number;
   isVisible: boolean;
@@ -19,8 +19,6 @@ export const QuestionStats = ({ userTime, avgTime, accuracy, isVisible }: Questi
 
   return (
     <div className={styles.container}>
-      
-      {/* Time */}
       <div className={styles.statBlock}>
         <div className={`${styles.iconWrapper} ${styles.iconTime}`}>
           <FiClock size={18} />
@@ -38,7 +36,6 @@ export const QuestionStats = ({ userTime, avgTime, accuracy, isVisible }: Questi
 
       <div className={styles.divider} />
 
-      {/* Accuracy */}
       <div className={styles.statBlock}>
         <div className={`${styles.iconWrapper} ${styles.iconAcc}`}>
           <FiTarget size={18} />

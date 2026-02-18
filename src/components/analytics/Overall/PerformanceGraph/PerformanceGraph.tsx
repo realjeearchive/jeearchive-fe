@@ -19,7 +19,6 @@ interface PerformanceGraphProps {
 export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
   const hasData = data && data.length > 0;
   
-  // Nivo requires an array of series objects
   const chartData = [
     {
       id: "Score",
@@ -39,7 +38,7 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
             yScale={{
               type: "linear",
               min: 0,
-              max: 300, 
+              max: 300,
               stacked: false,
               reverse: false,
             }}
@@ -64,7 +63,7 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
             }}
             enableGridX={false}
             gridYValues={5}
-            colors={["#F59E0B"]} 
+            colors={["#F59E0B"]}
             lineWidth={2}
             pointSize={8}
             pointColor="#1E1D1B"
@@ -101,11 +100,9 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
             )}
           />
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <FiBarChart2 size={24} className={styles.emptyIcon} />
             <p className={styles.emptyText}>No performance history found</p>
-            {/* Subtle Fake Graph Line */}
             <svg className={styles.fakeGraph} viewBox="0 0 100 40" preserveAspectRatio="none">
               <path 
                 d="M0 35 Q 25 35, 50 35 T 100 35" 

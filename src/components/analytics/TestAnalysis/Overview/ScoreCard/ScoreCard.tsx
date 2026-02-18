@@ -30,12 +30,10 @@ export const ScoreCard = () => {
 
   return (
     <AnalyticsCard title="Overall Score" className={styles.cardContainer}>
-      {/* Background Glow */}
       <div className={styles.bgGlow} />
        
       <div className={styles.content}>
         
-        {/* Left: Big Score Display */}
         <div className={styles.leftSection}>
           <div className={styles.scoreContainer}>
              <div className={styles.scoreValue}>
@@ -47,10 +45,8 @@ export const ScoreCard = () => {
           </div>
         </div>
 
-        {/* Divider (Hidden on mobile) */}
         <div className={styles.divider}></div>
 
-        {/* Right: Subject Split */}
         <div className={styles.rightSection}>
           <SubjectRow 
             label="Mathematics" 

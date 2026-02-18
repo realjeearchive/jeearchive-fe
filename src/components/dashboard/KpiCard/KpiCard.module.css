@@ -13,51 +13,42 @@
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
-/* --- YOUR ORIGINAL HOVER EFFECT (PRESERVED) --- */
 .card:hover {
   border-color: rgba(245, 158, 11, 0.4); 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Remove old specific tint classes */
 .card_mint, .card_peach, .card_purple, .card_blue, .card_teal, .card_amber, .card_slate, .card_olive {
   background: var(--dashboard-sidebar-background-color); 
 }
 
-/* top row */
 .headerRow {
   display: flex;
-  align-items: center; /* Changed to center to align with smaller icon */
+  align-items: center;
   justify-content: space-between;
 }
 
-/* --- UPDATED ICON BOX (Subtle, Neutral, Smaller) --- */
 .iconBox {
-  width: 32px; /* Reduced from 40px */
-  height: 32px; /* Reduced from 40px */
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   
-  /* Neutral / Glassy Background (instead of Orange Tint) */
   background: rgba(255, 255, 255, 0.03); 
   
-  /* Neutral Icon Color */
   color: var(--dashboard-secondary-text-color);
   
   display: flex;
   align-items: center;
   justify-content: center;
   
-  /* Removed the border for a cleaner look */
   border: none;
   
   transition: all 0.3s ease;
 }
 
-/* Subtle change on hover for the icon itself */
 .card:hover .iconBox {
   background: rgba(255, 255, 255, 0.08);
   color: var(--dashboard-primary-text-color);
-  /* Removed scale/transform to keep it simple */
 }
 
 .iconPlaceholder {
@@ -67,16 +58,7 @@
   background: var(--dashboard-background-color);
 }
 
-/* delta pill */
-.deltaPill {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
 
-/* content */
 .content {
   display: flex;
   flex-direction: column;
@@ -104,7 +86,6 @@
   opacity: 0.8;
 }
 
-/* Delta colors */
 .deltaPositive {
   background: rgba(34, 197, 94, 0.1);
   color: #22c55e;
@@ -117,15 +98,12 @@
   border-color: rgba(239, 68, 68, 0.2);
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .card { padding: 14px 16px; }
   .value { font-size: 24px; }
   .iconBox { width: 28px; height: 28px; }
 }
 
-/* --- NEW STYLES FOR EMPTY STATE ONLY --- */
 .subLabelEmpty {
   font-size: 11px;
-  /* Keeps the spacing but shows nothing */
 }

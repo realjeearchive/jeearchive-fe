@@ -17,7 +17,7 @@ interface SolutionSidebarProps {
   onQuestionClick: (id: string) => void;
   subjectName: string;
   onClose: () => void;
-  mode?: "solution" | "practice"; // NEW PROP
+  mode?: "solution" | "practice"; 
 }
 
 type FilterType = "all" | "correct" | "incorrect" | "unattempted";
@@ -54,8 +54,7 @@ export const SolutionSidebar = ({
     return (
       <div key={sectionName} className={styles.sectionContainer}>
         <div className={styles.sectionHeader}>
-          {/* In Practice mode, maybe just show "Section Name" without Subject? 
-              Or keep it "Physics Single Correct" as is. Let's keep it for consistency. */}
+
           <span>{subjectName} {sectionName}</span>
           <div className={styles.dottedLine} />
         </div>
@@ -64,8 +63,7 @@ export const SolutionSidebar = ({
             const isActive = activeQuestionId === q.id;
             let statusClass = styles.statusUnattempted;
             
-            // In Practice Mode, we might want to highlight differently?
-            // For now, let's stick to the same logic:
+
             if (q.status === "correct") statusClass = styles.statusCorrect;
             if (q.status === "incorrect") statusClass = styles.statusIncorrect;
 
@@ -97,9 +95,9 @@ export const SolutionSidebar = ({
   return (
     <aside className={styles.sidebar}>
       
-      {/* HEADER */}
+
       <div className={styles.header}>
-        {/* Adjusted Title */}
+
         <span className={styles.subjectTitle}>
            {mode === "practice" ? "Question Palette" : `All ${subjectName} Questions`}
         </span>
@@ -108,7 +106,7 @@ export const SolutionSidebar = ({
         </button>
       </div>
 
-      {/* FILTERS - Keep these, useful for reviewing practice history */}
+
       <div className={getFilterTabsClass()}>
         <button 
           className={`${styles.tab} ${styles.tabAll} ${activeFilter === 'all' ? styles.active : ''}`}

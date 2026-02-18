@@ -12,7 +12,6 @@ interface SubjectRadarProps {
 }
 
 export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
-  // Check if we have valid data (accuracy > 0)
   const hasData = data && data.length > 0 && data.some(item => item.Accuracy > 0);
 
   return (
@@ -44,9 +43,7 @@ export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
             animate={true}
           />
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
-             {/* Abstract circular guides */}
              <div className={styles.radarGuideOuter}>
                 <div className={styles.radarGuideInner}></div>
              </div>

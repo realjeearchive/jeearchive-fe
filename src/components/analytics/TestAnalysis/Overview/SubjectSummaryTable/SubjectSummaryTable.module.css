@@ -1,4 +1,3 @@
-/* SubjectSummaryTable Container */
 .cardContainer {
   height: 100%;
   background-color: #211f1c;
@@ -9,7 +8,6 @@
 .tableWrapper {
   overflow-x: auto;
   width: 100%;
-  /* No negative margins to respect inner card padding */
 }
 
 .table {
@@ -18,7 +16,6 @@
   border-collapse: collapse;
 }
 
-/* Table Header */
 .tableHead {
   font-size: 10px;
   text-transform: uppercase;
@@ -54,7 +51,6 @@
   padding-right: 4px;
 }
 
-/* Table Body */
 .tableRow {
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
   transition: background-color 0.15s;
@@ -95,7 +91,6 @@
   padding-right: 4px;
 }
 
-/* Cell Contents */
 .subjectCell {
   display: flex;
   align-items: center;

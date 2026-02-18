@@ -6,7 +6,7 @@ import { FiBarChart2, FiArrowRight, FiLock } from "react-icons/fi";
 
 interface DetailedAnalysisSectionProps {
   onViewAnalysis?: () => void;
-  disabled?: boolean; // New Prop for Empty State
+  disabled?: boolean;
 }
 
 const DetailedAnalysisSection: React.FC<DetailedAnalysisSectionProps> = ({
@@ -20,7 +20,6 @@ const DetailedAnalysisSection: React.FC<DetailedAnalysisSectionProps> = ({
   return (
     <section className={`${styles.section} ${disabled ? styles.disabledSection : ''}`}>
       <div className={styles.card} onClick={handleClick}>
-        {/* Accent Line (Hidden if disabled) */}
         {!disabled && <div className={styles.accent} />}
 
         <div className={styles.content}>

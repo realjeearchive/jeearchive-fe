@@ -11,7 +11,7 @@ interface BottomBarProps {
 
 export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBarProps) => {
 
-  // NEW: Scroll Handler
+
   const handleViewSolution = () => {
     const solutionSection = document.getElementById("detailed-solution-section");
     if (solutionSection) {
@@ -23,7 +23,7 @@ export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBa
     <div className={styles.container}>
       
       <div className={styles.navGroup}>
-        {/* PREVIOUS BUTTON */}
+
         <button 
           className={styles.navButton} 
           onClick={onPrev}
@@ -34,16 +34,16 @@ export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBa
           <span className={styles.btnText}>Previous</span>
         </button>
 
-        {/* MAIN ACTION: VIEW SOLUTION */}
+
         <button 
           className={`${styles.navButton} ${styles.mainAction}`}
-          onClick={handleViewSolution} // <--- Attached Handler
+          onClick={handleViewSolution} 
         >
           <FiEye size={16} /> 
           <span>View Solution</span>
         </button>
 
-        {/* NEXT BUTTON */}
+
         <button 
           className={styles.navButton} 
           onClick={onNext}

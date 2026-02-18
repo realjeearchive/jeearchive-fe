@@ -9,7 +9,6 @@
   font-weight: 400;
 }
 
-/* Add spacing between paragraphs if HTML doesn't handle it */
 .htmlContent p {
   margin-bottom: 12px;
 }

@@ -9,7 +9,7 @@
   box-sizing: border-box;
 }
 
-/* Navigation Group */
+
 .navGroup {
   display: flex;
   align-items: center;
@@ -48,38 +48,37 @@
   background: transparent;
 }
 
-/* --- MAIN ACTION: "View Solution" --- */
+
 .mainAction {
   background-color: var(--dashboard-primary-text-color);
-  color: #000 !important; /* Black text */
+  color: #000 !important; 
   font-weight: 700;
   border: none;
   padding: 12px 32px;
   border-radius: 99px; 
   
-  /* Initial Subtle Shadow */
+
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
 
-/* --- REFINED SUBTLE HOVER --- */
+
 .mainAction:hover {
-  /* No vertical movement (transform: none) */
-  /* Just slightly soften the shadow */
+
+
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
   
-  /* Simple opacity drop to indicate interactivity without changing color */
+
   opacity: 0.9; 
 }
 
-/* Active/Click state for better feedback */
 .mainAction:active {
   transform: scale(0.98);
   opacity: 0.8;
 }
 
 
-/* --- RESPONSIVE STYLES --- */
+
 
 @media (max-width: 700px) {
   .container {

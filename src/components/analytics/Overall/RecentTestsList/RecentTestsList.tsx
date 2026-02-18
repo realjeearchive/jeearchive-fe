@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import styles from "./RecentTestsList.module.css";
 import { FiInbox } from "react-icons/fi";
 
-// Accept isEmpty prop to allow parent to force empty state
 interface RecentTestsListProps {
   isEmpty?: boolean;
 }
@@ -18,7 +17,6 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = fals
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Show data only if not forced empty AND data exists
   const hasData = !isEmpty && RECENT_TESTS && RECENT_TESTS.length > 0;
 
   const items: TestListItem[] = RECENT_TESTS.map((t) => ({
@@ -61,12 +59,9 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = fals
             />
           </div>
         ) : (
-          /* --- EMPTY STATE --- */
           <div className={styles.emptyState}>
             <FiInbox size={20} className={styles.emptyIcon} />
             <span className={styles.emptyText}>No recent tests taken</span>
-            
-            {/* CTA Button */}
             <Link href="/previous-year-questions" className={styles.startTestBtn}>
               Start New Test
             </Link>

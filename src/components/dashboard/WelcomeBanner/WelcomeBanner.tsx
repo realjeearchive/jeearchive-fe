@@ -8,7 +8,6 @@ import Link from 'next/link';
 const WelcomeBanner = () => {
   return (
     <div className={styles.bannerCard}>
-      {/* Background Decoration Blur */}
       <div className={styles.glowEffect}></div>
 
       <div className={styles.content}>
@@ -37,7 +36,6 @@ const WelcomeBanner = () => {
               <div className={styles.abstractCircleInner}>
                  <FiTrendingUp size={36} className={styles.mainIcon} />
               </div>
-              {/* Floating mini-icons for depth */}
               <div className={styles.floatingIcon}>
                 <FiTarget size={18} />
               </div>

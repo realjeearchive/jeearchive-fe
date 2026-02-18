@@ -29,7 +29,6 @@
   margin-top: 2px;
 }
 
-/* Main Visual: The Gap Bar */
 .visualContainer {
   display: flex;
   flex-direction: column;
@@ -54,18 +53,17 @@
 }
 
 .segmentActual {
-  background-color: var(--dashboard-core-color); /* You scored this */
+  background-color: var(--dashboard-core-color);
 }
 
 .segmentNegative {
-  background-color: #EF4444; /* Lost this */
+  background-color: #EF4444;
 }
 
 .segmentMissed {
-  background-color: #3f3f46; /* Could have scored this */
+  background-color: #3f3f46;
 }
 
-/* Legend / Stats Row */
 .statsRow {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -108,7 +106,6 @@
   color: var(--dashboard-secondary-text-color);
 }
 
-/* Insight Box */
 .insight {
   font-size: 11px;
   color: var(--dashboard-secondary-text-color);
