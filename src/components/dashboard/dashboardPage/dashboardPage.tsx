@@ -112,14 +112,16 @@ const chapterItems: TestListItem[] = [
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
 
-  const isNewUser = true; 
+  const isNewUser = false; 
 
   const data = isNewUser ? EMPTY_DATA : ACTIVE_DATA;
 
   return (
     <div className={styles.page}>
       
-      <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
+      {!isNewUser && 
+        <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
+      }
 
       {isNewUser && (
         <div style={{ marginBottom: '8px' }}>

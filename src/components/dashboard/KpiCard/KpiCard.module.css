@@ -92,6 +92,12 @@
   border-color: rgba(34, 197, 94, 0.2);
 }
 
+.deltaPill{
+  border-radius: 50px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
 .deltaNegative {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
