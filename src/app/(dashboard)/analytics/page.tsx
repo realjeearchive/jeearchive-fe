@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AnalyticsHeader, { TimeRange } from "@/components/analytics/AnalyticsHeader/AnalyticsHeader";
 
 // Components
@@ -12,10 +12,13 @@ import { SubjectDeepDive } from "@/components/analytics/Overall/SubjectDeepDive/
 import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatrix/EfficiencyMatrix";
 import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
 
-// --- DUMMY DATA FOR FILTERING ---
+// Store & Logic
+import { useAnalyticsStore } from "@/store/useAnalyticsStore";
+import { fetchAnalyticsData } from "@/features/analytics/api";
+import { transformAnalyticsData, TransformedAnalyticsUI } from "@/features/analytics/analyticsTransformer";
 
-// 1. EMPTY DATA (New User State)
-const DATA_EMPTY = {
+// --- FALLBACK DATA FOR NEW USERS ---
+const DATA_EMPTY: TransformedAnalyticsUI = {
   global: { testsTaken: 0, avgScore: 0, accuracy: 0, consistency: 0 },
   graph: [],
   radar: [],
@@ -24,88 +27,79 @@ const DATA_EMPTY = {
   weakness: []
 };
 
-// 2. POPULATED DATA
-const DATA_LAST_3 = {
-  global: { testsTaken: 3, avgScore: 152, accuracy: 78.2, consistency: 9.0 },
-  graph: [
-    { x: 'Test 7', y: 142 }, { x: 'Test 8', y: 155 }, { x: 'Test 9', y: 158 }
-  ],
-  radar: [
-    { subject: 'Physics', Accuracy: 75 }, { subject: 'Chemistry', Accuracy: 85 }, { subject: 'Maths', Accuracy: 70 }
-  ],
-  deepDive: [
-    { subject: "Physics", avgScore: 68, accuracy: 75, negatives: 12, avgTime: 52 },
-    { subject: "Chemistry", avgScore: 82, accuracy: 85, negatives: 8, avgTime: 40 },
-    { subject: "Mathematics", avgScore: 50, accuracy: 70, negatives: 5, avgTime: 70 }
-  ],
-  efficiency: { fastCorrect: 48, slowCorrect: 22, fastWrong: 12, slowWrong: 18 },
-  weakness: [
-    { chapter: "Rotational Motion", subject: "Physics", accuracy: 32 },
-    { chapter: "Thermodynamics", subject: "Chemistry", accuracy: 45 }
-  ]
-};
-
-const DATA_LAST_5 = {
-  global: { testsTaken: 5, avgScore: 145, accuracy: 76.5, consistency: 8.2 },
-  graph: [
-    { x: 'Test 5', y: 130 }, { x: 'Test 6', y: 138 }, { x: 'Test 7', y: 142 }, { x: 'Test 8', y: 155 }, { x: 'Test 9', y: 158 }
-  ],
-  radar: [
-    { subject: 'Physics', Accuracy: 72 }, { subject: 'Chemistry', Accuracy: 81 }, { subject: 'Maths', Accuracy: 65 }
-  ],
-  deepDive: [
-    { subject: "Physics", avgScore: 65, accuracy: 72, negatives: 15, avgTime: 55 },
-    { subject: "Chemistry", avgScore: 78, accuracy: 81, negatives: 10, avgTime: 45 },
-    { subject: "Mathematics", avgScore: 45, accuracy: 65, negatives: 8, avgTime: 75 }
-  ],
-  efficiency: { fastCorrect: 45, slowCorrect: 20, fastWrong: 15, slowWrong: 20 },
-  weakness: [
-    { chapter: "Electrostatics", subject: "Physics", accuracy: 40 },
-    { chapter: "Integration", subject: "Maths", accuracy: 35 }
-  ]
-};
-
-const DATA_ALL = {
-  global: { testsTaken: 12, avgScore: 138, accuracy: 74.0, consistency: 7.5 },
-  graph: [
-    { x: 'T1', y: 110 }, { x: 'T2', y: 115 }, { x: 'T3', y: 105 }, { x: 'T4', y: 125 }, 
-    { x: 'T5', y: 130 }, { x: 'T6', y: 138 }, { x: 'T7', y: 142 }, { x: 'T8', y: 155 }, { x: 'T9', y: 158 }
-  ],
-  radar: [
-    { subject: 'Physics', Accuracy: 68 }, { subject: 'Chemistry', Accuracy: 75 }, { subject: 'Maths', Accuracy: 60 }
-  ],
-  deepDive: [
-    { subject: "Physics", avgScore: 60, accuracy: 68, negatives: 18, avgTime: 58 },
-    { subject: "Chemistry", avgScore: 72, accuracy: 75, negatives: 15, avgTime: 42 },
-    { subject: "Mathematics", avgScore: 40, accuracy: 60, negatives: 12, avgTime: 78 }
-  ],
-  efficiency: { fastCorrect: 42, slowCorrect: 18, fastWrong: 20, slowWrong: 20 },
-  weakness: [
-    { chapter: "Fluid Mechanics", subject: "Physics", accuracy: 28 },
-    { chapter: "Organic Chemistry", subject: "Chemistry", accuracy: 50 }
-  ]
-};
-
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("Last 5 Tests");
 
-  // --- TOGGLE THIS TO SEE EMPTY STATE ---
-  const isNewUser = true; // Set to true to see empty state
+  // Zustand Store
+  const { 
+    rawAnalytics, 
+    isLoading, 
+    error, 
+    setAnalyticsData, 
+    setLoading, 
+    setError, 
+    isNewUser 
+  } = useAnalyticsStore();
 
-  // Filter Logic
-  let currentData = 
-    timeRange === "Last 3 Tests" ? DATA_LAST_3 : 
-    timeRange === "All Tests" ? DATA_ALL : DATA_LAST_5;
-  
-  // Override if new user
-  if (isNewUser) {
-    currentData = DATA_EMPTY;
+  // Fetch Data on Mount
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchAnalyticsData();
+        if (response.success && response.data) {
+          setAnalyticsData(response.data);
+        } else {
+          setError("Failed to load analytics data.");
+        }
+      } catch (err: unknown) {
+        console.error("Analytics Fetch Error:", err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
+      }
+    };
+
+    if (!rawAnalytics) {
+      loadAnalytics();
+    } else {
+      setLoading(false);
+    }
+  }, [rawAnalytics, setAnalyticsData, setLoading, setError]);
+
+  // Loading State (Tailwind styling matching your dark theme)
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-[#a1a1aa] text-sm">
+        <div className="w-10 h-10 border-4 border-[#f59e0b33] border-t-[#f59e0b] rounded-full animate-spin mb-4"></div>
+        <p>Crunching your performance data...</p>
+      </div>
+    );
   }
+
+  // Error State
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] text-red-500 text-sm">
+        Error: {error}
+      </div>
+    );
+  }
+
+  const newUser = isNewUser();
+  
+  // Transform data based on the selected time range from the header
+  const transformedData = transformAnalyticsData(rawAnalytics, timeRange);
+  
+  // If the user is new or the data failed to transform, fallback to the empty state gracefully
+  const currentData = (newUser || !transformedData) ? DATA_EMPTY : transformedData;
 
   return (
     <div className="max-w-[1600px] mx-auto min-h-screen">
       
-      {/* 1. Header with Filter */}
+      {/* 1. Header with Filter Dropdown */}
       <AnalyticsHeader 
         selectedRange={timeRange} 
         onRangeChange={setTimeRange} 
@@ -134,7 +128,8 @@ export default function AnalyticsPage() {
       </div>
 
       {/* 6. Recent Activity */}
-      <RecentTestsList isEmpty={isNewUser} />
+      {/* Passing the 'isEmpty' prop to handle empty state visuals inside the list component */}
+      <RecentTestsList isEmpty={newUser} />
     </div>
   );
 }

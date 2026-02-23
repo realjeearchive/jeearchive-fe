@@ -52,3 +52,23 @@
     padding: 20px 0;
   }
 }
+
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--dashboard-secondary-text-color);
+  font-size: 14px;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(245, 158, 11, 0.2);
+  border-top-color: var(--dashboard-core-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
