@@ -14,7 +14,7 @@ import TestListSection, { TestListItem } from "@/components/dashboard/TestListSe
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner/WelcomeBanner';
 
-// Feature Logic & Store
+// Logic & Store
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { fetchDashboardData } from '@/features/dashboard/api';
 import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
@@ -29,6 +29,7 @@ const chapterItems: TestListItem[] = [
 ];
 
 export default function DashboardPage() {
+  // THIS is the toggle state
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
 
   const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
@@ -44,21 +45,13 @@ export default function DashboardPage() {
           setError("Failed to load data.");
         }
       } catch (err: unknown) {
-        console.error("Dashboard Fetch Error:", err);
-        // Safely extract the error message without using 'any'
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
+        if (err instanceof Error) setError(err.message);
+        else setError("An unexpected error occurred");
       }
     };
 
-    if (!rawReport) {
-      loadDashboard();
-    } else {
-      setLoading(false);
-    }
+    if (!rawReport) loadDashboard();
+    else setLoading(false);
   }, [rawReport, setDashboardData, setLoading, setError]);
 
   if (isLoading) {
@@ -70,16 +63,15 @@ export default function DashboardPage() {
     );
   }
 
-  if (error) {
-    return <div className={styles.errorContainer}>Error: {error}</div>;
-  }
+  if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
 
   const newUser = isNewUser();
-  
-  // No "as any" required. rawReport perfectly matches DashboardDataPayload | null
   const uiData = transformDashboardData(rawReport); 
 
   if (!uiData) return null; 
+
+  // DYNAMICALLY SELECT KPIs BASED ON TOGGLE
+  const activeKpis = viewMode === "test" ? uiData.testKpis : uiData.chapterKpis;
 
   return (
     <div className={styles.page}>
@@ -94,14 +86,16 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* 1. Progress Cards (Global) */}
       <div className={styles.progressRow}>
         <PyqProgressCard label="Physics" solved={uiData.progress.phy.solved} total={uiData.progress.phy.total} />
         <PyqProgressCard label="Chemistry" solved={uiData.progress.chem.solved} total={uiData.progress.chem.total} />
         <PyqProgressCard label="Mathematics" solved={uiData.progress.math.solved} total={uiData.progress.math.total} />
       </div>
 
+      {/* 2. Dynamic KPI Row */}
       <div className={styles.kpiRow}>
-        {uiData.kpis.map((kpi, i) => (
+        {activeKpis.map((kpi, i) => (
           <KpiCard
             key={i}
             label={kpi.label}
@@ -112,21 +106,29 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className={styles.growthSection}>
-        <ScoreGrowthChart data={uiData.scoreData} />
-      </div>
-
+      {/* 3. Dynamic Charts Section */}
       {!newUser && (
-        <div className={styles.bottomRow}>
-          <div className={styles.bottomItem}>
-            <SubjectBalanceRadar data={uiData.radarData} />
-          </div>
-          <div className={styles.bottomItem}>
-            <QuestionTypeBar data={uiData.typeData} />
-          </div>
-        </div>
+        <>
+          {viewMode === "test" ? (
+            // Show Score Growth for Mock Tests
+            <div className={styles.growthSection}>
+              <ScoreGrowthChart data={uiData.scoreData} />
+            </div>
+          ) : (
+            // Show Radar & Type Bar for Chapter Practice
+            <div className={styles.bottomRow}>
+              <div className={styles.bottomItem}>
+                <SubjectBalanceRadar data={uiData.radarData} />
+              </div>
+              <div className={styles.bottomItem}>
+                <QuestionTypeBar data={uiData.typeData} />
+              </div>
+            </div>
+          )}
+        </>
       )}
 
+      {/* Static Lists & Analysis CTA */}
       <div className={styles.listSectionWrapper}>
         <TestListSection heading="Previous Year Question Papers" items={pyqItems} />
         <TestListSection heading="Chapter-wise Practice" items={chapterItems} />
