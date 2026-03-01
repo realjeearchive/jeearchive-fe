@@ -50,16 +50,14 @@ export interface ExamReport {
     physics: SubjectAgg | null;
     chemistry: SubjectAgg | null;
   };
-  // Newly added fields matching your updated JSON
-  questionTypes: {
-    MCQ?: QuestionTypeAgg;
-    NUMERICAL?: QuestionTypeAgg;
-    MSQ?: QuestionTypeAgg;
-  };
+  // Using Record to handle dynamic question types (MCQ, Integer, SingleCorrect, etc.)
+  questionTypes: Record<string, QuestionTypeAgg>;
   improvement: {
     overall: ImprovementStats;
     subjects: Record<string, unknown> | null;
   };
+  // 🚨 MOVED HERE: testMarksList is now inside JEE_MAIN according to new JSON
+  testMarksList: TestMarksListItem[]; 
 }
 
 export interface LastNGroup {
@@ -67,7 +65,6 @@ export interface LastNGroup {
   examReports: {
     JEE_MAIN?: ExamReport;
   };
-  testMarksList: TestMarksListItem[];
 }
 
 export interface ChapterWiseAgg {
@@ -133,7 +130,6 @@ export const useAnalyticsStore = create<AnalyticsStore>((set, get) => ({
   setLoading: (val) => set({ isLoading: val }),
   setError: (msg) => set({ error: msg, isLoading: false }),
 
-  // Determines if we show the empty state
   isNewUser: () => {
     const data = get().rawAnalytics;
     if (!data) return true;

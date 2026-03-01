@@ -2,7 +2,6 @@ import { AnalyticsDataPayload, LastNGroup, AllTestDetail } from "@/store/useAnal
 
 export type TimeRange = "Last 3 Tests" | "Last 5 Tests" | "All Tests";
 
-// Strict interface for the Recent Tests UI Component
 export interface RecentTestUI {
   id: string;
   title: string;
@@ -13,7 +12,6 @@ export interface RecentTestUI {
   date: string;
 }
 
-// The exact structure expected by your UI components
 export interface TransformedAnalyticsUI {
   global: { testsTaken: number; avgScore: number; accuracy: number; consistency: number };
   graph: Array<{ x: string; y: number }>;
@@ -30,14 +28,13 @@ export const transformAnalyticsData = (
 ): TransformedAnalyticsUI | null => {
   if (!data) return null;
 
-  // 1. Select the right data block based on Time Range
   let groupData: LastNGroup | undefined;
   if (timeRange === "Last 3 Tests") {
     groupData = data.lastNTests?.last3;
   } else if (timeRange === "Last 5 Tests") {
     groupData = data.lastNTests?.last5;
   } else {
-    groupData = data.report; // Usually contains 'All' or max N
+    groupData = data.report; 
   }
 
   if (!groupData) return null;
@@ -45,23 +42,20 @@ export const transformAnalyticsData = (
   const examReport = groupData.examReports?.JEE_MAIN;
   if (!examReport) return null;
 
-  // 2. Global Stats
   const global = {
     testsTaken: examReport.totalTests || 0,
     avgScore: Math.round(examReport.overall.avgScore || 0),
     accuracy: Number((examReport.overall.avgAccuracy || 0).toFixed(1)),
-    consistency: 8.5 // Backend doesn't currently provide a consistency metric, so we use a placeholder
+    consistency: 8.5 
   };
 
-  // 3. Performance Graph
-  // Reverse the array so oldest test is on the left (T1, T2, etc.)
-  const reversedTests = [...(groupData.testMarksList || [])].reverse();
+  // 🚨 FIX: Extracting from examReport instead of groupData
+  const reversedTests = [...(examReport.testMarksList || [])].reverse();
   const graph = reversedTests.map((t, i) => ({
     x: `T${i + 1}`,
     y: t.marks
   }));
 
-  // 4. Subject Radar & Deep Dive Mapping
   const radar: Array<{ subject: string; Accuracy: number }> = [];
   const deepDive: Array<{ subject: string; avgScore: number; accuracy: number; negatives: number; avgTime: number }> = [];
 
@@ -88,11 +82,8 @@ export const transformAnalyticsData = (
     }
   });
 
-  // 5. Efficiency Matrix 
-  // (Placeholder: Backend JSON does not currently include speed/accuracy quadrants, waiting on backend update)
   const efficiency = { fastCorrect: 0, slowCorrect: 0, fastWrong: 0, slowWrong: 0 };
 
-  // 6. Weakness Hunter (Calculate bottom performing chapters across all tests)
   const chapterStats: Record<string, { subject: string; attempt: number; correct: number }> = {};
 
   (data.allTests || []).forEach((test: AllTestDetail) => {
@@ -106,18 +97,17 @@ export const transformAnalyticsData = (
   });
 
   const weakness = Object.entries(chapterStats)
-    .filter(([_, stats]) => stats.attempt > 0) // Only count chapters they have attempted
+    .filter(([_, stats]) => stats.attempt > 0) 
     .map(([chapter, stats]) => ({
       chapter,
       subject: stats.subject,
       accuracy: Math.round((stats.correct / stats.attempt) * 100)
     }))
-    .sort((a, b) => a.accuracy - b.accuracy) // Sort lowest accuracy first
-    .slice(0, 4); // Take bottom 4 weaknesses
+    .sort((a, b) => a.accuracy - b.accuracy) 
+    .slice(0, 4); 
 
-  // 7. Recent Tests List Mapping
-  // ALWAYS fetch from last3 so the bottom list shows the 3 most recent tests consistently
-  const recentTestsSource = data.lastNTests?.last3?.testMarksList || [];
+  // 🚨 FIX: Deep fetching the recent tests list from inside examReports.JEE_MAIN
+  const recentTestsSource = data.lastNTests?.last3?.examReports?.JEE_MAIN?.testMarksList || [];
 
   const recentTests: RecentTestUI[] = recentTestsSource.map((t) => {
     const dateObj = new Date(t.createdAt);
@@ -125,15 +115,14 @@ export const transformAnalyticsData = (
     
     return {
       id: t.testId,
-      title: (t.examName || "JEE_MAIN").replace("_", " ") + " Mock Test", // Formats "JEE_MAIN" to "JEE MAIN Mock Test"
+      title: (t.examName || "JEE_MAIN").replace("_", " ") + " Mock Test", 
       meta: `Score: ${t.marks}/${t.maxMarks} • ${formattedDate}`,
-      status: "COMPLETED", // Assuming these are completed if they are in analytics
+      status: "COMPLETED", 
       score: t.marks,
       totalMarks: t.maxMarks,
       date: formattedDate
     };
   });
 
-  // Finally, return all of it:
   return { global, graph, radar, deepDive, efficiency, weakness, recentTests };
 };

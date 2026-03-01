@@ -5,16 +5,17 @@ import { FiPlay, FiBarChart2, FiBookOpen, FiRefreshCw } from "react-icons/fi";
 import styles from "./TestListSection2.module.css";
 
 export interface TestCardItem {
-  id: string;      // paperId
+  id: string;
   title: string;
   meta: string;
   status: "COMPLETED" | "IN_PROGRESS" | "PAUSED" | "NOT_ATTEMPTED";
-  sessionId?: string; // latestAttempt.testId
+  sessionId?: string; 
 }
 
 interface TestListSectionProps {
   heading: string;
   items: TestCardItem[];
+  hideRestart?: boolean; // <--- NEW PROP TO HIDE RESTART BUTTON
 
   // Actions
   onStart: (paperId: string) => void;
@@ -27,6 +28,7 @@ interface TestListSectionProps {
 const TestListSection2: React.FC<TestListSectionProps> = ({ 
   heading, 
   items, 
+  hideRestart = false, // Defaults to false so it doesn't affect JEE Mains page
   onStart,
   onResume,
   onRestart,
@@ -45,9 +47,13 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
           <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onViewSolutions(item.id)}>
             <FiBookOpen /> Solutions
           </button>
-          <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
-            <FiRefreshCw /> Restart
-          </button>
+          
+          {/* Conditionally render Restart button */}
+          {!hideRestart && (
+            <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
+              <FiRefreshCw /> Restart
+            </button>
+          )}
         </div>
       );
     }
@@ -59,9 +65,12 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
           <button className={`${styles.actionBtn} ${styles.btnPrimary}`} onClick={() => onResume(item.id, item.sessionId!)}>
             <FiPlay /> Resume Test
           </button>
-          <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
-            <FiRefreshCw /> Restart
-          </button>
+          
+          {!hideRestart && (
+            <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
+              <FiRefreshCw /> Restart
+            </button>
+          )}
         </div>
       );
     }
@@ -78,9 +87,12 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
 
   return (
     <section className={styles.section}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.heading}>{heading}</h2>
-      </div>
+      {/* Only render header if heading exists */}
+      {heading && (
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.heading}>{heading}</h2>
+        </div>
+      )}
 
       <div className={styles.cardGrid}>
         {items.map((item) => (
