@@ -4,10 +4,9 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 import Styles from "../jeeMains.module.css";
-import { usePaperStore } from "@/store/paperStore";
-import TestListSection2, { TestListItem, TestStatusData } from '@/components/testPlayer/TestListSection2/TestListSection2';
+import TestListSection2, { TestCardItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import { Loader } from "@/components/ui/loader";
-import { fetchLastTestStatus, createTestSession } from "@/features/tests/api";
+import { fetchPaperAttemptsDetails, createTestSession, PaperAttemptDetail } from "@/features/tests/api";
 
 interface YearPageProps {
   params: Promise<{ year: string }>;
@@ -17,61 +16,53 @@ export default function JeeMainsYearPage(props: YearPageProps) {
   const { year } = use(props.params);
   const router = useRouter(); 
   
-  const { papers, isLoading, getPapers } = usePaperStore();
+  const [papersWithStatus, setPapersWithStatus] = useState<PaperAttemptDetail[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // --- ACCORDION STATE ---
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [loadingId, setLoadingId] = useState<string | null>(null); 
-  const [currentTestStatus, setCurrentTestStatus] = useState<TestStatusData | null>(null);
-
-  // 1. Fetch Papers on Mount
+  // 1. Bulk Fetch Papers and Status on Mount
   useEffect(() => {
-    if (year) {
-      getPapers(year, 'JEE_MAIN');
-    }
-  }, [year, getPapers]);
-
-  // 2. Transform Data
-  const formattedItems: TestListItem[] = papers.map((paper) => ({
-    id: paper.id,
-    title: `JEE Main ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`,
-    meta: `Full Test • ${paper.totalMarks} Marks`,
-    href: `/previous-year-questions/jee-mains/${year}/tests/${paper.id}` 
-  }));
-
-  // 3. HANDLE EXPANSION (Check Status)
-  const handleToggleExpand = async (paperId: string) => {
-    if (expandedId === paperId) {
-      setExpandedId(null);
-      setCurrentTestStatus(null);
-      return;
-    }
-
-    setExpandedId(paperId);
-    setLoadingId(paperId);
-    setCurrentTestStatus(null); 
-
-    try {
-      const res = await fetchLastTestStatus(paperId);
-      if (res.success && res.data) {
-        setCurrentTestStatus({
-          // FIX: Use '|| null' to handle undefined safely without 'any'
-          status: res.data.status || null, 
-          testId: res.data.testId
-        });
-      } else {
-        setCurrentTestStatus({ status: null });
+    async function loadData() {
+      if (!year) return;
+      setIsLoading(true);
+      try {
+        const res = await fetchPaperAttemptsDetails("JEE_MAIN", year);
+        if (res.success && res.data) {
+          setPapersWithStatus(res.data);
+        } else {
+          toast.error("Failed to load papers.");
+        }
+      } catch (e) {
+        console.error("Fetch failed", e);
+        toast.error("Error connecting to server.");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error("Status check failed", e);
-      setCurrentTestStatus({ status: null });
-    } finally {
-      setLoadingId(null);
     }
-  };
+    loadData();
+  }, [year]);
+
+  // 2. Transform Data directly for the Card UI
+  const formattedItems: TestCardItem[] = papersWithStatus.map((paper) => {
+    // Map backend status to our strict UI status
+    let status: TestCardItem["status"] = "NOT_ATTEMPTED";
+    
+    if (paper.latestAttempt) {
+       // The latest attempt overrides general status
+       status = paper.latestAttempt.status;
+    } else if (paper.attemptStatus === "completed") {
+       status = "COMPLETED";
+    }
+
+    return {
+      id: paper.paperId,
+      title: `JEE Main ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`,
+      meta: `Full Test • ${paper.totalMarks} Marks`,
+      status: status,
+      sessionId: paper.latestAttempt?.testId 
+    };
+  });
 
   // --- ACTIONS ---
-
   const handleStart = async (paperId: string) => {
     try {
       const res = await createTestSession(paperId);
@@ -131,12 +122,6 @@ export default function JeeMainsYearPage(props: YearPageProps) {
       <TestListSection2 
         heading={`JEE Main ${year} Papers`} 
         items={formattedItems} 
-        
-        expandedId={expandedId}
-        loadingId={loadingId}
-        currentTestStatus={currentTestStatus}
-
-        onToggleExpand={handleToggleExpand}
         onStart={handleStart}
         onResume={handleResume}
         onRestart={handleRestart}

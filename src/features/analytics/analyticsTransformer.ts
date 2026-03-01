@@ -1,7 +1,17 @@
 import { AnalyticsDataPayload, LastNGroup, AllTestDetail } from "@/store/useAnalyticsStore";
 
-// Type matching your AnalyticsHeader's TimeRange
 export type TimeRange = "Last 3 Tests" | "Last 5 Tests" | "All Tests";
+
+// Strict interface for the Recent Tests UI Component
+export interface RecentTestUI {
+  id: string;
+  title: string;
+  meta: string;
+  status: "COMPLETED" | "IN_PROGRESS";
+  score: number;
+  totalMarks: number;
+  date: string;
+}
 
 // The exact structure expected by your UI components
 export interface TransformedAnalyticsUI {
@@ -11,6 +21,7 @@ export interface TransformedAnalyticsUI {
   deepDive: Array<{ subject: string; avgScore: number; accuracy: number; negatives: number; avgTime: number }>;
   efficiency: { fastCorrect: number; slowCorrect: number; fastWrong: number; slowWrong: number };
   weakness: Array<{ chapter: string; subject: string; accuracy: number }>;
+  recentTests: RecentTestUI[];
 }
 
 export const transformAnalyticsData = (
@@ -104,5 +115,25 @@ export const transformAnalyticsData = (
     .sort((a, b) => a.accuracy - b.accuracy) // Sort lowest accuracy first
     .slice(0, 4); // Take bottom 4 weaknesses
 
-  return { global, graph, radar, deepDive, efficiency, weakness };
+  // 7. Recent Tests List Mapping
+  // ALWAYS fetch from last3 so the bottom list shows the 3 most recent tests consistently
+  const recentTestsSource = data.lastNTests?.last3?.testMarksList || [];
+
+  const recentTests: RecentTestUI[] = recentTestsSource.map((t) => {
+    const dateObj = new Date(t.createdAt);
+    const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    
+    return {
+      id: t.testId,
+      title: (t.examName || "JEE_MAIN").replace("_", " ") + " Mock Test", // Formats "JEE_MAIN" to "JEE MAIN Mock Test"
+      meta: `Score: ${t.marks}/${t.maxMarks} • ${formattedDate}`,
+      status: "COMPLETED", // Assuming these are completed if they are in analytics
+      score: t.marks,
+      totalMarks: t.maxMarks,
+      date: formattedDate
+    };
+  });
+
+  // Finally, return all of it:
+  return { global, graph, radar, deepDive, efficiency, weakness, recentTests };
 };

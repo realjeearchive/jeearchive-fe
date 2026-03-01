@@ -4,26 +4,27 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import TestListSection2, { TestListItem, TestStatusData } from "@/components/testPlayer/TestListSection2/TestListSection2";
-import { RECENT_TESTS } from "@/features/analytics/dummyData";
 import { useRouter } from "next/navigation";
 import styles from "./RecentTestsList.module.css";
 import { FiInbox } from "react-icons/fi";
+import { RecentTestUI } from "@/features/analytics/analyticsTransformer";
 
 interface RecentTestsListProps {
   isEmpty?: boolean;
+  data?: RecentTestUI[];
 }
 
-export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = false }) => {
+export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = false, data = [] }) => {
   const router = useRouter();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const hasData = !isEmpty && RECENT_TESTS && RECENT_TESTS.length > 0;
+  const hasData = !isEmpty && data && data.length > 0;
 
-  const items: TestListItem[] = RECENT_TESTS.map((t) => ({
+  const items: TestListItem[] = data.map((t) => ({
     id: t.id,
     title: t.title,
-    meta: `${t.status === "COMPLETED" ? `Score: ${t.score}/${t.totalMarks}` : "In Progress"} • ${t.date}`,
-    href: "#",
+    meta: t.meta,
+    href: "#", // Add your routing href if needed
   }));
 
   const handleToggle = (id: string) => {
@@ -31,11 +32,11 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ isEmpty = fals
   };
 
   const getStatus = (id: string): TestStatusData => {
-    const test = RECENT_TESTS.find((t) => t.id === id);
+    const test = data.find((t) => t.id === id);
     type StatusType = TestStatusData["status"];
     return { 
       status: (test?.status as StatusType) || null, 
-      testId: "dummy-session-id" 
+      testId: id 
     };
   };
 

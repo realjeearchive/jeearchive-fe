@@ -24,7 +24,8 @@ const DATA_EMPTY: TransformedAnalyticsUI = {
   radar: [],
   deepDive: [],
   efficiency: { fastCorrect: 0, slowCorrect: 0, fastWrong: 0, slowWrong: 0 },
-  weakness: []
+  weakness: [],
+  recentTests: [] // <--- ADD THIS LINE
 };
 
 export default function AnalyticsPage() {
@@ -129,7 +130,7 @@ export default function AnalyticsPage() {
 
       {/* 6. Recent Activity */}
       {/* Passing the 'isEmpty' prop to handle empty state visuals inside the list component */}
-      <RecentTestsList isEmpty={newUser} />
+      <RecentTestsList isEmpty={newUser} data={currentData.recentTests} />
     </div>
   );
 }

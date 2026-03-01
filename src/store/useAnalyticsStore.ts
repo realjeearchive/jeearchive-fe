@@ -29,6 +29,19 @@ export interface ExamReportOverall {
   avgTimePerQuestion: number;
 }
 
+export interface QuestionTypeAgg {
+  avgScore: number;
+  avgAccuracy: number;
+  avgCorrect: number;
+  avgWrong: number;
+}
+
+export interface ImprovementStats {
+  accuracyChange: number;
+  scoreChange: number;
+  avgTimePerQuestionChange: number;
+}
+
 export interface ExamReport {
   totalTests: number;
   overall: ExamReportOverall;
@@ -36,6 +49,16 @@ export interface ExamReport {
     math: SubjectAgg | null;
     physics: SubjectAgg | null;
     chemistry: SubjectAgg | null;
+  };
+  // Newly added fields matching your updated JSON
+  questionTypes: {
+    MCQ?: QuestionTypeAgg;
+    NUMERICAL?: QuestionTypeAgg;
+    MSQ?: QuestionTypeAgg;
+  };
+  improvement: {
+    overall: ImprovementStats;
+    subjects: Record<string, unknown> | null;
   };
 }
 
@@ -57,17 +80,21 @@ export interface ChapterWiseAgg {
   wrong: number;
   accuracy: number;
   marks: number;
+  timeTaken: number;
 }
 
 export interface AllTestDetail {
   id: string;
   exam: string;
   created_at: string;
+  source: string;
   overAllAnalytics: {
     totalScore: number;
     maxScore: number;
+    percentage: number;
     overallAccuracy: number;
     totalTimeTaken: number;
+    averageTimePerQuestion: number;
   };
   chapterWise: ChapterWiseAgg[];
 }
@@ -76,7 +103,7 @@ export interface AllTestDetail {
 export interface AnalyticsDataPayload {
   studentId: string;
   generatedAt: string;
-  report: LastNGroup; // Typically represents all or a default N
+  report: LastNGroup;
   lastNTests: {
     last3: LastNGroup;
     last5: LastNGroup;

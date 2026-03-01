@@ -61,7 +61,6 @@ interface TestEngineState {
   clearResponse: () => void;
   tickTimer: () => void;
   
-  // [UPDATED] now async
   submitTest: () => Promise<void>;
   
   startTimer: () => void;
@@ -100,18 +99,23 @@ const mapBackendStatusToFrontend = (
   return "notVisited" as QuestionStatus;
 };
 
-// [NEW] Helper to build consistent payload
+// [UPDATED] Helper to build consistent payload (Delta for sync, Full for submit)
 const buildPayload = (state: TestEngineState, status: "IN_PROGRESS" | "COMPLETED"): UpdateTestStatusPayload | null => {
   if (!state.testId || !state.paperId) return null;
 
-  const idsToSync = new Set(state.changedQuestionIds);
-  // For completion, we might want to ensure everything is synced, 
-  // but usually syncing changed IDs + active is sufficient unless 'COMPLETED' requires a full dump.
-  // Assuming 'changed' is enough for now, plus active.
-  if (state.activeQuestionId) idsToSync.add(state.activeQuestionId);
+  const idsToSync = new Set<string>();
 
-  // If simply syncing (IN_PROGRESS) and nothing changed, skip
-  if (status === "IN_PROGRESS" && idsToSync.size === 0) return null;
+  if (status === "COMPLETED") {
+    // 🚨 CRITICAL FIX: On submit, we MUST send every single question
+    Object.keys(state.questionsById).forEach(id => idsToSync.add(id));
+  } else {
+    // On 2-minute auto-save, only send what has changed + the active question
+    state.changedQuestionIds.forEach(id => idsToSync.add(id));
+    if (state.activeQuestionId) idsToSync.add(state.activeQuestionId);
+    
+    // If nothing changed, skip the API call
+    if (idsToSync.size === 0) return null;
+  }
 
   const activeSecObj = state.sections.find(s => s.id === state.activeSectionId);
   const activeSubject = activeSecObj ? activeSecObj.subject : "General";
@@ -461,7 +465,6 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById, changedQuestionIds } = get();
       if (timeLeftSeconds <= 0) { 
         submitTest(); 
-        // Note: submitTest calls stopTimer inside, but calling it here is safe too
         return; 
       }
       
@@ -482,7 +485,6 @@ export const useTestEngineStore = create<TestEngineState>()(
       set({ timeLeftSeconds: newTimeLeft, sectionTimeSpent: newSectionTimes, questionsById: newQuestionsById, changedQuestionIds: newChanges });
     },
 
-    // [UPDATE] submitTest Logic
     submitTest: async () => {
       const state = get();
       const payload = buildPayload(state, "COMPLETED");
@@ -494,10 +496,11 @@ export const useTestEngineStore = create<TestEngineState>()(
             await submitTestSession(payload);
             console.log("Test Submitted Successfully!");
             
-            // Clean up
+            // Clean up local storage
             if (state.testId) {
                 localStorage.removeItem(`test_progress_${state.testId}`);
             }
+            
             // Reset changed IDs so we don't try to sync again if something persists
             set({ changedQuestionIds: new Set() });
         } catch (err) {
