@@ -4,7 +4,7 @@ import React from "react";
 import { ResponsivePie, PieCustomLayerProps } from "@nivo/pie"; 
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../../Shared/chartTheme";
-import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
+import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransformer";
 import styles from "./ScoreDistribution.module.css";
 
 interface PieDatum {
@@ -14,30 +14,20 @@ interface PieDatum {
   color: string;
 }
 
-export const ScoreDistribution = () => {
-  const { subjects, meta } = SINGLE_TEST_DATA;
+interface Props {
+  meta: TransformedSingleTestUI['meta'];
+  subjects: TransformedSingleTestUI['subjects'];
+}
 
-  const data: PieDatum[] = [
-    {
-      id: "Physics",
-      label: "Physics",
-      value: subjects.physics.score,
-      color: "#22C55E",
-    },
-    {
-      id: "Chemistry",
-      label: "Chemistry",
-      value: subjects.chemistry.score,
-      color: "#F97316",
-    },
-    {
-      id: "Mathematics",
-      label: "Maths",
-      value: subjects.maths.score,
-      color: "#3B82F6",
-    },
+export const ScoreDistribution = ({ meta, subjects }: Props) => {
+  // Only plot subjects with positive scores (Nivo Pie crashes/looks weird with negatives)
+  const rawData: PieDatum[] = [
+    { id: "Physics", label: "Physics", value: Math.max(0, subjects.physics.score), color: "#22C55E" },
+    { id: "Chemistry", label: "Chemistry", value: Math.max(0, subjects.chemistry.score), color: "#F97316" },
+    { id: "Mathematics", label: "Maths", value: Math.max(0, subjects.maths.score), color: "#3B82F6" },
   ];
 
+  const data = rawData.filter(d => d.value > 0);
   const totalScore = meta.myScore;
 
   const CenteredMetric = ({ centerX, centerY }: PieCustomLayerProps<PieDatum>) => {
@@ -82,43 +72,46 @@ export const ScoreDistribution = () => {
       className={styles.cardOverride}
     >
       <div className={styles.chartContainer}>
-        <ResponsivePie<PieDatum>
-          data={data}
-          theme={analyticsChartTheme}
-          margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-          innerRadius={0.6}
-          padAngle={2}
-          cornerRadius={4}
-          activeOuterRadiusOffset={6}
-          colors={(datum) => datum.data.color}
-          enableArcLinkLabels={false}
-          enableArcLabels={false}
-          tooltip={({ datum }) => (
-            <div className={styles.tooltip}>
-              <span 
-                className={styles.tooltipDot} 
-                style={{ backgroundColor: datum.color }} 
-              />
-              <span className={styles.tooltipLabel}>
-                {datum.label}:
-              </span>
-              <span className={styles.tooltipValue}>
-                {datum.value}
-              </span>
-              <span className={styles.tooltipSub}>
-                 ({Math.round((datum.value / (totalScore || 1)) * 100)}%)
-              </span>
-            </div>
-          )}
-          layers={[
-            'arcs', 
-            CenteredMetric 
-          ]}
-        />
+        {data.length > 0 ? (
+          <ResponsivePie<PieDatum>
+            data={data}
+            theme={analyticsChartTheme}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+            innerRadius={0.6}
+            padAngle={2}
+            cornerRadius={4}
+            activeOuterRadiusOffset={6}
+            colors={(datum) => datum.data.color}
+            enableArcLinkLabels={false}
+            enableArcLabels={false}
+            tooltip={({ datum }) => (
+              <div className={styles.tooltip}>
+                <span 
+                  className={styles.tooltipDot} 
+                  style={{ backgroundColor: datum.color }} 
+                />
+                <span className={styles.tooltipLabel}>
+                  {datum.label}:
+                </span>
+                <span className={styles.tooltipValue}>
+                  {datum.value}
+                </span>
+              </div>
+            )}
+            layers={[
+              'arcs', 
+              CenteredMetric 
+            ]}
+          />
+        ) : (
+          <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: '14px' }}>
+            No positive scores to map
+          </div>
+        )}
       </div>
 
       <div className={styles.legendFooter}>
-        {data.map((item) => (
+        {rawData.map((item) => (
           <div key={item.id} className={styles.legendItem}>
             <span 
               className={styles.legendDot} 

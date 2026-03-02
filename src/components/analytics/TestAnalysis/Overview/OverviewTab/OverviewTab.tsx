@@ -8,27 +8,36 @@ import { SubjectSummaryTable } from "../SubjectSummaryTable/SubjectSummaryTable"
 import { ScoreDistribution } from "../ScoreDistribution/ScoreDistribution"; 
 import styles from "./OverviewTab.module.css";
 
+// 1. Import Store & Transformer
+import { useSingleTestStore } from "@/store/useSingleTestStore";
+import { transformSingleTestData } from "@/features/analytics/singleTestTransformer";
+
 export const OverviewTab = () => {
+  const { data } = useSingleTestStore();
+  const uiData = transformSingleTestData(data);
+
+  if (!uiData) return null; // Safe fallback while loading
+
   return (
     <div className={styles.container}>
       
       <div className={styles.heroRow}>
         <div className={styles.heroRowScoreCol}>
-          <ScoreCard />
+          <ScoreCard meta={uiData.meta} subjects={uiData.subjects} />
         </div>
         <div className={styles.heroRowPercentileCol}>
-          <PercentileCard />
+          <PercentileCard predictedPercentile={uiData.meta.predictedPercentile} />
         </div>
       </div>
       
-      <KeyStatsGrid />
+      <KeyStatsGrid meta={uiData.meta} stats={uiData.stats} />
 
       <div className={styles.detailsRow}>
         <div className={styles.detailsRowSubjectCol}>
-          <SubjectSummaryTable />
+          <SubjectSummaryTable subjects={uiData.subjects} />
         </div>
         <div className={styles.detailsRowBenchmarkCol}>
-          <ScoreDistribution />
+          <ScoreDistribution meta={uiData.meta} subjects={uiData.subjects} />
         </div>
       </div>
 

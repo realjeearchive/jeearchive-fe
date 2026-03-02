@@ -1,11 +1,14 @@
 "use client";
 
 import React from "react";
-import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
 import { FiTrendingUp } from "react-icons/fi";
 import styles from "./PercentileCard.module.css";
 
-export const PercentileCard = () => {
+interface Props {
+  predictedPercentile: string;
+}
+
+export const PercentileCard = ({ predictedPercentile }: Props) => {
   return (
     <div className={styles.container}>
       
@@ -24,7 +27,7 @@ export const PercentileCard = () => {
 
         <div className={styles.mainContent}>
           <div className={styles.percentileValue}>
-            {SINGLE_TEST_DATA.meta.predictedPercentile}
+            {predictedPercentile}
           </div>
           <div className={styles.disclaimer}>
             <div className={styles.disclaimerDot} />

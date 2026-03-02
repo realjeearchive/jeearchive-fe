@@ -2,10 +2,21 @@
 
 import React from "react";
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
-import { OVERVIEW_COMPARISON } from "@/features/analytics/dummyData";
+import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransformer";
 import styles from "./SubjectSummaryTable.module.css";
 
-export const SubjectSummaryTable = () => {
+interface Props {
+  subjects: TransformedSingleTestUI['subjects'];
+}
+
+export const SubjectSummaryTable = ({ subjects }: Props) => {
+  // Convert subjects object into an array for easy mapping
+  const subjectsArray = [
+    subjects.maths,
+    subjects.physics,
+    subjects.chemistry
+  ];
+
   return (
     <AnalyticsCard title="Subject Performance" className={styles.cardContainer}>
       <div className={styles.tableWrapper}>
@@ -20,7 +31,7 @@ export const SubjectSummaryTable = () => {
             </tr>
           </thead>
           <tbody>
-            {OVERVIEW_COMPARISON.subjects.map((sub) => {
+            {subjectsArray.map((sub) => {
               const color =
                 sub.name === "Physics"
                   ? "#60A5FA"
@@ -56,7 +67,7 @@ export const SubjectSummaryTable = () => {
                   >
                     <span
                       className={
-                        sub.accuracy > 80
+                        sub.accuracy >= 80
                           ? styles.accuracyHigh
                           : styles.accuracyLow
                       }

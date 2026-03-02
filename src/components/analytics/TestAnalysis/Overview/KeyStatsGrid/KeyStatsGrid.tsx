@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
+import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransformer";
 import { FiAward, FiClock, FiTarget, FiXCircle, FiCheckCircle, FiPlusCircle, FiCheckSquare } from "react-icons/fi";
 import styles from "./KeyStatsGrid.module.css";
 
@@ -42,9 +42,12 @@ const StatBox = ({ label, value, subValue, icon: Icon, color }: StatBoxProps) =>
   );
 };
 
-export const KeyStatsGrid = () => {
-  const { meta, stats } = SINGLE_TEST_DATA;
+interface Props {
+  meta: TransformedSingleTestUI['meta'];
+  stats: TransformedSingleTestUI['stats'];
+}
 
+export const KeyStatsGrid = ({ meta, stats }: Props) => {
   return (
     <div className={styles.container}>
       
@@ -68,7 +71,7 @@ export const KeyStatsGrid = () => {
         label="Accuracy" 
         value={`${meta.accuracy}%`} 
         icon={FiCheckCircle} 
-        color={meta.accuracy > 80 ? "#22C55E" : "#F59E0B"} 
+        color={meta.accuracy >= 80 ? "#22C55E" : meta.accuracy >= 50 ? "#F59E0B" : "#EF4444"} 
       />
 
       <StatBox 

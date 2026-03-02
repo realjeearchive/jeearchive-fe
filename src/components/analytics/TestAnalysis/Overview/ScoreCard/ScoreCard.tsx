@@ -2,7 +2,7 @@
 
 import React from "react";
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
-import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
+import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransformer";
 import styles from "./ScoreCard.module.css";
 
 const SubjectRow = ({ label, score, total, color }: { label: string, score: number, total: number, color: string }) => (
@@ -19,15 +19,21 @@ const SubjectRow = ({ label, score, total, color }: { label: string, score: numb
     <div className={styles.subjectProgressBar}>
       <div 
         className={styles.subjectProgressBarFill} 
-        style={{ width: `${(score / total) * 100}%`, backgroundColor: color }}
+        style={{ 
+          width: `${Math.max(0, (score / total) * 100)}%`, // Math.max prevents negative width if score is negative
+          backgroundColor: color 
+        }}
       />
     </div>
   </div>
 );
 
-export const ScoreCard = () => {
-  const { meta, subjects } = SINGLE_TEST_DATA;
+interface Props {
+  meta: TransformedSingleTestUI['meta'];
+  subjects: TransformedSingleTestUI['subjects'];
+}
 
+export const ScoreCard = ({ meta, subjects }: Props) => {
   return (
     <AnalyticsCard title="Overall Score" className={styles.cardContainer}>
       <div className={styles.bgGlow} />
