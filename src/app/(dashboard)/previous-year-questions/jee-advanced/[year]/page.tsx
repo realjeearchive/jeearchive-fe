@@ -134,6 +134,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
         onViewAnalytics={handleAnalytics}
         onViewSolutions={handleSolutions}
       />
-    </div>
+    </div> 
   );
 }
