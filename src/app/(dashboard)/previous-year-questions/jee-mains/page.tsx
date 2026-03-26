@@ -12,6 +12,7 @@ const JeeMains = () => {
 
 
   const jeeMainsYearItems: JeeMainYear[] = [
+  { id: "2026", title: "2026", meta: "20 Tests", href: "/previous-year-questions/jee-mains/2026" },
   { id: "2025", title: "2025", meta: "20 Tests", href: "/previous-year-questions/jee-mains/2025" },
   { id: "2024", title: "2024", meta: "20 Tests", href: "/previous-year-questions/jee-mains/2024" },
   { id: "2023", title: "2023", meta: "20 Tests", href: "/previous-year-questions/jee-mains/2023" },

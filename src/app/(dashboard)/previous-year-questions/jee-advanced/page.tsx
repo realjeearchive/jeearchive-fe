@@ -10,6 +10,7 @@ const JeeAdvanced = () => {
   };
 
   const jeeAdvancedYearItems: JeeAdvancedYear[] = [
+    { id: "2026", title: "2026", meta: "2 Papers", href: "/previous-year-questions/jee-advanced/2026" },
     { id: "2025", title: "2025", meta: "2 Papers", href: "/previous-year-questions/jee-advanced/2025" },
     { id: "2024", title: "2024", meta: "2 Papers", href: "/previous-year-questions/jee-advanced/2024" },
     { id: "2023", title: "2023", meta: "2 Papers", href: "/previous-year-questions/jee-advanced/2023" },
