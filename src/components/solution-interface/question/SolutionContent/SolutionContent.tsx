@@ -1,20 +1,44 @@
+"use client";
+
 import React, { useState } from "react";
 import styles from "./SolutionContent.module.css";
-import { FiBookOpen } from "react-icons/fi";
+import parse, { DOMNode, Element, HTMLReactParserOptions } from 'html-react-parser';
+import Latex from "@/components/testPlayer/Latex/Latex";
 
 interface SolutionContentProps {
   solutionText: string;
-  videoUrl?: string; // YouTube/Vimeo ID or URL
+  videoUrl?: string | null; 
 }
 
 export const SolutionContent = ({ solutionText, videoUrl }: SolutionContentProps) => {
   const [showVideo, setShowVideo] = useState(false);
 
+  const parserOptions: HTMLReactParserOptions = {
+    replace: (domNode: DOMNode) => {
+      if (domNode.type === 'text') {
+         if (domNode.data && domNode.data.trim() !== '') {
+             return <Latex>{domNode.data}</Latex>;
+         }
+      }
+      
+      if (domNode.type === 'tag') {
+        const element = domNode as Element;
+        if (element.name === 'img') {
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              {...element.attribs}
+              className={styles.parsedImage} 
+              alt={element.attribs.alt || "Solution Figure"}
+            />
+          );
+        }
+      }
+    }
+  };
+
   return (
-    <div 
-      className={styles.container} 
-      id="detailed-solution-section" /* <--- NEW ID FOR SCROLL TARGET */
-    >
+    <div className={styles.container} id="detailed-solution-section">
       
       {/* Header */}
       <div className={styles.header}>
@@ -32,8 +56,10 @@ export const SolutionContent = ({ solutionText, videoUrl }: SolutionContentProps
         )}
       </div>
 
-      {/* Text Body */}
-      <div className={styles.body} dangerouslySetInnerHTML={{ __html: solutionText }} />
+      {/* Text Body - Using Parser */}
+      <div className={styles.body}>
+        {solutionText ? parse(solutionText, parserOptions) : null}
+      </div>
 
       {/* Video Embed */}
       {showVideo && videoUrl && (

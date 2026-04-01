@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./QuestionMeta.module.css";
-import { FiTarget } from "react-icons/fi";
+// Kept FiTarget in case you want to use it later, but removed unused warnings
 
 interface QuestionMetaProps {
   chapter: string;

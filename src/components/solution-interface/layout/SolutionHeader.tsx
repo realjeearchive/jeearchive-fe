@@ -1,14 +1,14 @@
 import React from "react";
 import styles from "./SolutionHeader.module.css";
-import { FiArrowLeft, FiSettings, FiGrid, FiMenu } from "react-icons/fi"; // Added FiGrid
+import { FiArrowLeft, FiSettings, FiMenu } from "react-icons/fi"; 
 import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb"; 
+import { Subject } from "@/features/solutions/solutionsTransformer";
 
 interface SolutionHeaderProps {
   testName: string;
-  activeSubject: "Physics" | "Chemistry" | "Mathematics";
-  onSubjectChange: (subject: "Physics" | "Chemistry" | "Mathematics") => void;
+  activeSubject: Subject; // 🚨 STRICT TYPING APPLIED
+  onSubjectChange: (subject: Subject) => void;
   onBack: () => void;
-  // NEW: Props to control sidebar toggle
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
 }
@@ -49,13 +49,13 @@ export const SolutionHeader = ({
         <div style={{ display: "flex", alignItems: "center" }}>
           
           <button className={styles.settingsBtn}>
-            <FiSettings size={14} /> Settings
+            <FiSettings size={14} /> <span>Settings</span>
           </button>
 
           {/* TOGGLE BUTTON: Only visible when sidebar is CLOSED */}
           {!isSidebarOpen && (
-            <button className={styles.settingsBtn} onClick={onToggleSidebar}>
-              <FiMenu size={14} /> Question Panel
+            <button className={styles.settingsBtn} onClick={onToggleSidebar} style={{ marginLeft: '8px' }}>
+              <FiMenu size={14} /> <span>Question Panel</span>
             </button>
           )}
 

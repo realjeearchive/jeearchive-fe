@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import styles from "./SolutionSidebar.module.css";
 import { FiMenu } from "react-icons/fi"; 
 
-// ... (Keep your QuestionStatus and other interfaces same) ...
-export interface QuestionStatus {
+export interface SidebarQuestion {
   id: string; 
-  number: number; 
+  number: number; // Original global number from backend (e.g., 51)
   status: "correct" | "incorrect" | "unattempted";
-  section: "Single Correct" | "Numerical" | "Multiple Correct";
+  section: string;
 }
 
 interface SolutionSidebarProps {
-  questions: QuestionStatus[];
-  activeQuestionId: string;
+  questions: SidebarQuestion[];
+  activeQuestionId: string | null;
   onQuestionClick: (id: string) => void;
   subjectName: string;
-  onClose: () => void; // <--- NEW PROP
+  onClose: () => void; 
 }
 
 type FilterType = "all" | "correct" | "incorrect" | "unattempted";
@@ -25,12 +24,21 @@ export const SolutionSidebar = ({
   activeQuestionId, 
   onQuestionClick, 
   subjectName,
-  onClose // <--- Destructure here
+  onClose 
 }: SolutionSidebarProps) => {
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
 
-  // ... (Keep existing counts/filter logic/renderSection exactly the same) ...
+  // 🚨 FIX: Calculate local numbers (1 to 25) for the active subject!
+  const localNumberMap = useMemo(() => {
+    const map = new Map<string, number>();
+    questions.forEach((q, index) => {
+      map.set(q.id, index + 1); // Assigns 1, 2, 3... based on the subject's array
+    });
+    return map;
+  }, [questions]);
+
+  // Status Counts
   const counts = {
     all: questions.length,
     correct: questions.filter(q => q.status === "correct").length,
@@ -68,7 +76,8 @@ export const SolutionSidebar = ({
                 className={`${styles.qBox} ${statusClass} ${isActive ? styles.isActive : ""}`}
                 onClick={() => onQuestionClick(q.id)}
               >
-                {q.number}
+                {/* 🚨 FIX: Render the local 1-25 number instead of the global one */}
+                {localNumberMap.get(q.id)}
               </button>
             );
           })}
@@ -93,13 +102,12 @@ export const SolutionSidebar = ({
       {/* HEADER */}
       <div className={styles.header}>
         <span className={styles.subjectTitle}>All {subjectName} Questions</span>
-        {/* NEW: OnClick calls onClose */}
         <button className={styles.hideBtn} onClick={onClose}>
           HIDE <FiMenu />
         </button>
       </div>
 
-      {/* ... (Keep Filter Tabs and Content exactly the same) ... */}
+      {/* FILTER TABS */}
       <div className={getFilterTabsClass()}>
         <button 
           className={`${styles.tab} ${styles.tabAll} ${activeFilter === 'all' ? styles.active : ''}`}

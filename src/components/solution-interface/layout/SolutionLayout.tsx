@@ -6,9 +6,8 @@ interface SolutionLayoutProps {
   sidebar: React.ReactNode; 
   footer?: React.ReactNode;
   children: React.ReactNode;
-  
   isSidebarOpen: boolean; 
-  onCloseSidebar?: () => void; // Used for clicking backdrop
+  onCloseSidebar?: () => void; 
 }
 
 export const SolutionLayout = ({ 

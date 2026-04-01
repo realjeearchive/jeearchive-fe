@@ -2,8 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  
-  /* NEW LAYOUT */
   border-top: 1px solid var(--dashboard-dividerline-color);
   padding: 20px;
 }
@@ -48,9 +46,32 @@
   background: transparent;
   border: none;
   padding: 0;
+  width: 100%;
+  overflow-x: auto; 
 }
 
-/* Video Wrapper */
+.body p {
+  margin-bottom: 12px;
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- IMAGE FIXES FOR DARK THEME --- */
+.parsedImage {
+  max-width: 100%;
+  max-height: 250px; /* Prevent massive images */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 12px 0;
+  
+  /* Invert black to white */
+  filter: invert(1) hue-rotate(180deg);
+}
+
 .videoWrapper {
   margin-top: 12px;
   position: relative;
@@ -71,24 +92,55 @@
   border: 0;
 }
 
-
-/* --- RESPONSIVE UPDATES --- */
 @media (max-width: 700px) {
   .container {
-    padding: 16px 10px; /* Reduced padding */
+    padding: 16px 10px; 
     gap: 12px;
   }
-  
   .title {
     font-size: 13px;
   }
-  
   .videoBadge {
     padding: 3px 10px;
     font-size: 10px;
   }
-  
   .body {
     font-size: 14px;
   }
+}
+
+/* --- TABLE STYLES (For Solutions) --- */
+.body table {
+  width: 100%;
+  max-width: 800px;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+  background-color: var(--dashboard-card-background, rgba(255, 255, 255, 0.02));
+}
+
+.body th,
+.body td {
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.body th {
+  background-color: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+
+.body td {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.body tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.01);
 }

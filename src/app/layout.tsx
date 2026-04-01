@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
 import RouteGuard from "@/components/auth/RouteGuard";
+import Script from "next/script";
 
 
 export const metadata: Metadata = {

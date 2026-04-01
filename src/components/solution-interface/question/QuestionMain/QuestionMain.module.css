@@ -1,20 +1,30 @@
-/* --- YOUR EXISTING CONTAINER CODE (UNCHANGED) --- */
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  
   padding: 0;
   gap: 0;
-  
   background-color: var(--dashboard-sidebar-background-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-  
   overflow: hidden;
-  
-  /* CRITICAL FIX */
   flex-shrink: 0; 
+}
+
+.banner {
+  display: inline-flex; 
+  align-items: center;
+  gap: 8px;
+  margin: 20px; 
+  padding: 8px 12px; 
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--dashboard-secondary-text-color);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  align-self: flex-start;
 }
 
 @media (max-width: 768px) {
@@ -26,111 +36,10 @@
   }
 }
 
-/* --- NEW STYLES REPLACING TAILWIND --- */
-
-.banner {
-  display: inline-flex; /* Not full width */
-  align-items: center;
-  gap: 8px;
-  
-  /* Positioning */
-  margin: 20px; 
-  padding: 8px 12px; /* Slightly smaller padding */
-  
-  /* border-radius: 99px; Pill shape looks better for badges */
-  
-  /* Subtle "Not Visited" / Neutral Style */
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--dashboard-secondary-text-color);
-  
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  
-  /* Optional: align self to start if parent is flex column */
-  align-self: flex-start;
-}
-
-/* 2. Footer Section */
-.footer {
-  margin-top: 0; /* Removing auto margin to let it flow naturally */
-  padding: 20px; /* Standard padding */
-  border-top: 1px solid var(--dashboard-dividerline-color);
-}
-
-.footerLabel {
-  font-size: 10px;
-  text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-
-.footerContent {
-  font-size: 14px;
-  color: var(--dashboard-primary-text-color);
-  font-weight: 500;
-}
-
-.separator {
-  margin: 0 8px;
-  color: var(--dashboard-secondary-text-color);
-  opacity: 0.6;
-}
-
-.footerBtnWrapper {
-  margin-top: 16px;
-}
-
-.attemptBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 99px;
-  border: 1px solid var(--dashboard-highlight-color);
-  
-  color: var(--dashboard-highlight-color);
-  background: transparent;
-  
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.attemptBtn:hover {
-  background-color: rgba(133, 219, 251, 0.05);
-}
-
-
-/* ... (Keep existing desktop styles) ... */
-
-/* --- RESPONSIVE UPDATES --- */
 @media (max-width: 700px) {
   .banner {
     margin: 10px 10px 0 10px;
     padding: 6px 10px;
     font-size: 10px;
-  }
-  
-  .footer {
-    padding: 10px;
-  }
-  
-  .footerLabel {
-    font-size: 9px;
-  }
-  
-  .footerContent {
-    font-size: 13px;
-  }
-  
-  .attemptBtn {
-    padding: 6px 12px;
-    font-size: 11px;
   }
 }

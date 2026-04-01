@@ -3,14 +3,14 @@ import styles from "./QuestionStats.module.css";
 import { FiClock, FiTarget } from "react-icons/fi";
 
 interface QuestionStatsProps {
-  userTime: string; // "45s"
-  avgTime: string;  // "1m 10s"
-  accuracy: number; // 65
+  userTime: string; 
+  avgTime: string;  
+  accuracy: number; 
 }
 
 export const QuestionStats = ({ userTime, avgTime, accuracy }: QuestionStatsProps) => {
   
-  // Logic for accuracy color
+  // Logic for accuracy color bar
   let colorClass = styles.bgOrange;
   let textClass = styles.textOrange;
   

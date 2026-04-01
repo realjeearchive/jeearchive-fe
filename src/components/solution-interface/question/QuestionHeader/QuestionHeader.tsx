@@ -3,8 +3,8 @@ import styles from "./QuestionHeader.module.css";
 import { FiBookmark, FiAlertTriangle } from "react-icons/fi";
 
 interface QuestionHeaderProps {
-  qNumber: number;
-  type: string; // e.g. "Single Correct"
+  qNumber: number | string; // Adjusted to allow string in case we format it like "01"
+  type: string; 
   marksPos: number;
   marksNeg: number;
 }
@@ -19,6 +19,7 @@ export const QuestionHeader = ({
   return (
     <div className={styles.header}>
       <div className={styles.leftSection}>
+        {/* We will pass the normalized 1-25 number into this prop later */}
         <div className={styles.qBadge}>Q{qNumber}</div>
         <div className={styles.metaPill}>{type}</div>
       </div>

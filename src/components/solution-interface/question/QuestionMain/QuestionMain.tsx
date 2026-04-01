@@ -1,11 +1,11 @@
 import React from "react";
 import styles from "./QuestionMain.module.css";
 import { FiAlertCircle } from "react-icons/fi";
+import { QuestionStatus } from "@/features/solutions/solutionsTransformer";
 
 interface QuestionMainProps {
   children: React.ReactNode;
-  status?: "correct" | "incorrect" | "unattempted";
-  // Removed chapter/topic props from here as they are now used in QuestionMeta
+  status?: QuestionStatus;
 }
 
 export const QuestionMain = ({ children, status }: QuestionMainProps) => {
@@ -20,7 +20,7 @@ export const QuestionMain = ({ children, status }: QuestionMainProps) => {
         </div>
       )}
 
-      {/* 2. Main Children (Header, Text, Options, Meta, Solution, Stats) */}
+      {/* 2. Main Content */}
       {children}
 
     </div>

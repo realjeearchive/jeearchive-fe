@@ -106,6 +106,16 @@
   border-color: #EF4444;
 }
 
+/* Fix backend images inside options */
+.parsedImage {
+  max-width: 100%;
+  max-height: 120px; /* Keep option images very small */
+  object-fit: contain;
+  filter: invert(1) hue-rotate(180deg);
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
 .correctBadge {
   position: absolute;
   top: -12px;
