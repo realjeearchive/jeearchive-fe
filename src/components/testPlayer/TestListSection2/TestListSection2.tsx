@@ -95,8 +95,9 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
       )}
 
       <div className={styles.cardGrid}>
-        {items.map((item) => (
-          <div key={item.id} className={styles.card}>
+        {/* 🚨 FIX: Added index to map and appended it to the key */}
+        {items.map((item, index) => (
+          <div key={`${item.id}-${index}`} className={styles.card}>
             <div className={styles.cardHeader}>
               <span className={`${styles.dot} ${item.status === 'COMPLETED' ? styles.dotCompleted : item.status === 'IN_PROGRESS' || item.status === 'PAUSED' ? styles.dotActive : ''}`} />
               <div className={styles.textBlock}>
