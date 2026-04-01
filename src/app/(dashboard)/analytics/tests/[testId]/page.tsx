@@ -94,11 +94,41 @@ export default function SingleTestAnalysisPage(props: PageProps) {
   // Safeguard
   if (!data) return null;
 
-  // --- EXTRACT HEADER METADATA ---
+  // --- EXTRACT & FORMAT HEADER METADATA ---
   const testContext = rawAnalytics?.allTests?.find((t) => t.id === testId);
   const dateObj = testContext ? new Date(testContext.created_at) : new Date();
   const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  const testName = testContext?.exam ? `${testContext.exam.replace("_", " ")} Mock Test` : "Mock Test";
+
+  // Strictly type the context extraction to avoid 'any' errors
+  const safeTestContext = testContext as unknown as {
+    exam?: string;
+    paperMeta?: {
+      year?: string | number;
+      month?: string;
+      date?: string;
+      shift?: string;
+    };
+  };
+
+  const pd = safeTestContext?.paperMeta;
+  const examRawName = safeTestContext?.exam || "JEE_MAIN";
+  
+  let formattedExamName = examRawName.replace("_", " ");
+  if (examRawName === "JEE_MAIN") formattedExamName = "JEE Main";
+  if (examRawName === "JEE_ADVANCED") formattedExamName = "JEE Advanced";
+
+  const year = pd?.year || "";
+  const date = pd?.date || "";
+  const month = pd?.month || "";
+  const shift = pd?.shift ? `(${pd.shift})` : "";
+
+  // Intelligently combine to build the title
+  let testName = [formattedExamName, year, date, month, shift].filter(Boolean).join(" ").trim();
+  
+  // Fallback if paper details are entirely missing
+  if (!year && !date && !month) {
+      testName = `${formattedExamName} Mock Test`;
+  }
 
   return (
     <div className={styles.pageContainer}>
