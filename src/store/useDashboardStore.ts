@@ -3,18 +3,81 @@
 import { create } from "zustand";
 
 // --- STRICT TYPESCRIPT INTERFACES ---
-export interface TestAttempt {
-  testId: string;
-  examName: string;
-  source: string;
-  createdAt: string;
+
+// 1. Types for Individual Test Attempts
+export interface DashboardSubjectStat {
+  subjectName: string;
   marks: number;
-  maxMarks: number;
-  accuracy: number;
+  correct: number;
+  wrong: number;
   timeTaken: number;
-  subjects: Record<string, number | null>; // Assuming subjects map to scores/times
+  totalQuestions: number;
+  accuracy: number;
 }
 
+export interface DashboardQuestionWiseStat {
+  questionType: string;
+  marks: number;
+  correct: number;
+  wrong: number;
+  accuracy: number;
+}
+
+export interface DashboardTestAttempt {
+  testId: string;
+  createdAt: string;
+  source: string;
+  paperDetails?: {
+    exam?: { name: string };
+    year?: number;
+    month?: string;
+    shift?: string;
+    totalMarks?: number;
+  };
+  overall: {
+    marks: number;
+    maxMarks: number;
+    accuracy: number;
+    timeTaken: number;
+  };
+  subjects?: {
+    math?: DashboardSubjectStat;
+    physics?: DashboardSubjectStat;
+    chemistry?: DashboardSubjectStat;
+    // Allow fallback for unexpected subject keys
+    [key: string]: DashboardSubjectStat | undefined; 
+  };
+  questionWise?: DashboardQuestionWiseStat[];
+}
+
+// 2. Types for the Aggregate Data
+export interface AggregateSubjectStat {
+  subjectName: string;
+  totalMarks: number;
+  totalCorrect: number;
+  totalWrong: number;
+  accuracy: number;
+}
+
+export interface AggregateQuestionWiseStat {
+  questionType: string;
+  totalMarks: number;
+  totalCorrect: number;
+  totalWrong: number;
+  accuracy: number;
+}
+
+export interface Last5Aggregate {
+  testsIncluded: number;
+  totalMarks: number;
+  totalMaxMarks: number;
+  overallAccuracy: number;
+  avgTimeTaken: number;
+  subjects: AggregateSubjectStat[];
+  questionWise: AggregateQuestionWiseStat[];
+}
+
+// 3. Types for Practice & Unique Questions
 export interface PracticeOverall {
   totalAttempts: number;
   totalTimeSpent: number;
@@ -26,6 +89,7 @@ export interface PracticeOverall {
 
 export interface SubjectPractice {
   subjectId: string;
+  subjectName?: string;
   attempts: number;
   timeSpent: number;
   marksEarned: number;
@@ -35,8 +99,13 @@ export interface SubjectPractice {
 }
 
 export interface QuestionTypeStat {
-  type: string;
+  questionType: string; 
+  attempts: number;
+  timeSpent: number;
+  marksEarned: number;
+  maxPossible: number;
   accuracy: number;
+  avgTimePerQuestion: number;
 }
 
 export interface ExamStat {
@@ -54,25 +123,31 @@ export interface SubjectQuestions {
   totalQuestions: number;
 }
 
-// THE MAIN PAYLOAD FROM API
+// 4. THE MAIN PAYLOAD FROM API
 export interface DashboardDataPayload {
   studentId: string;
   generatedAt: string;
-  last5Tests: TestAttempt[];
-  practice: {
-    studentId: string;
-    generatedAt: string;
-    overall: PracticeOverall;
-    subjects: SubjectPractice[];
-    questionTypes: QuestionTypeStat[];
-    exams: ExamStat[];
+  
+  tests?: {
+    last5: DashboardTestAttempt[];
+    last5Aggregate?: Last5Aggregate; // Strictly typed now!
   };
-  uniqueQuestionsAttempted: {
+  
+  practice?: {
+    studentId?: string;
+    generatedAt?: string;
+    overall?: PracticeOverall;
+    subjects?: SubjectPractice[];
+    questionTypes?: QuestionTypeStat[];
+    exams?: ExamStat[];
+  };
+  
+  uniqueQuestionsAttempted?: {
     total: number;
     subjectWise: {
-      Mathematics: SubjectQuestions;
-      Physics: SubjectQuestions;
-      Chemistry: SubjectQuestions;
+      Mathematics?: SubjectQuestions;
+      Physics?: SubjectQuestions;
+      Chemistry?: SubjectQuestions;
     };
   };
 }
@@ -100,10 +175,10 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
 
   isNewUser: () => {
     const report = get().rawReport;
-    if (!report) return true; // If no data at all, definitely a new user
+    if (!report) return true;
     
-    // 1. Check for Mock Tests
-    const testCount = report.last5Tests?.length || 0;
+    // 1. Check for Mock Tests in the new nested structure
+    const testCount = report.tests?.last5?.length || 0;
     
     // 2. Check for overall practice attempts
     const practiceAttempts = report.practice?.overall?.totalAttempts || 0;
@@ -113,11 +188,10 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     const uniquePhy = report.uniqueQuestionsAttempted?.subjectWise?.Physics?.uniqueAttempted || 0;
     const uniqueChem = report.uniqueQuestionsAttempted?.subjectWise?.Chemistry?.uniqueAttempted || 0;
     
-    // Add them up (or use the total from the backend if available)
+    // Add them up
     const totalUnique = report.uniqueQuestionsAttempted?.total || (uniqueMath + uniquePhy + uniqueChem);
 
     // If they have 0 tests AND 0 practice attempts AND 0 unique questions solved, they are new.
-    // Otherwise, they are an active user!
     return testCount === 0 && practiceAttempts === 0 && totalUnique === 0;
   }
 }));

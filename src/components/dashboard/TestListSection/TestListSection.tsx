@@ -29,9 +29,9 @@ const TestListSection: React.FC<TestListSectionProps> = ({ heading, items }) => 
       <div className={styles.listContainer}>
         {hasItems ? (
           <div className={styles.list}>
-            {items.map((item) => (
+            {items.map((item, index) => (
               <Link
-                key={item.id}
+                key={`${item.id}-${index}`} // 🚨 FIX: Appended index to guarantee uniqueness even if backend sends duplicate IDs
                 href={item.href}
                 className={styles.rowLink}
               >

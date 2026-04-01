@@ -19,6 +19,7 @@ import { useDashboardStore } from '@/store/useDashboardStore';
 import { fetchDashboardData } from '@/features/dashboard/api';
 import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
 
+// Fallbacks just in case
 const pyqItems: TestListItem[] = [
   { id: "pyq-2025", title: "JEE Main 2025 PYQs", meta: "19 Papers", href: "/pyq/2025" },
   { id: "pyq-2024", title: "JEE Main 2024 PYQs", meta: "20 Papers", href: "/pyq/2024" },
@@ -29,7 +30,6 @@ const chapterItems: TestListItem[] = [
 ];
 
 export default function DashboardPage() {
-  // THIS is the toggle state
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
 
   const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
@@ -70,7 +70,6 @@ export default function DashboardPage() {
 
   if (!uiData) return null; 
 
-  // DYNAMICALLY SELECT KPIs BASED ON TOGGLE
   const activeKpis = viewMode === "test" ? uiData.testKpis : uiData.chapterKpis;
 
   return (
@@ -110,12 +109,10 @@ export default function DashboardPage() {
       {!newUser && (
         <>
           {viewMode === "test" ? (
-            // Show Score Growth for Mock Tests
             <div className={styles.growthSection}>
               <ScoreGrowthChart data={uiData.scoreData} />
             </div>
           ) : (
-            // Show Radar & Type Bar for Chapter Practice
             <div className={styles.bottomRow}>
               <div className={styles.bottomItem}>
                 <SubjectBalanceRadar data={uiData.radarData} />
@@ -128,9 +125,12 @@ export default function DashboardPage() {
         </>
       )}
 
-      {/* Static Lists & Analysis CTA */}
+      {/* 🚨 FIX: Pass dynamically generated tests to the list! */}
       <div className={styles.listSectionWrapper}>
-        <TestListSection heading="Previous Year Question Papers" items={pyqItems} />
+        <TestListSection 
+          heading="Recent Mock Tests" 
+          items={uiData.recentTestItems.length > 0 ? uiData.recentTestItems : pyqItems} 
+        />
         <TestListSection heading="Chapter-wise Practice" items={chapterItems} />
       </div>
 
