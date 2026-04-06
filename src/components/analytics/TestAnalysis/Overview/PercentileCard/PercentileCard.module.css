@@ -77,6 +77,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* --- VALUE & LOADING STYLES --- */
+.valueWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 50px; /* Prevents height jumping when loading finishes */
 }
 
 .percentileValue {
@@ -85,14 +95,59 @@
   color: white;
   letter-spacing: -0.04em;
   line-height: 1;
+  display: flex;
+  align-items: baseline;
 }
 
+.percentileSymbol {
+  font-size: 16px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
+  margin-left: 6px;
+  letter-spacing: normal;
+}
+
+/* Auto-fetching Loading State */
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--dashboard-secondary-text-color);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.loadingText {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.errorText {
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+  padding-bottom: 6px;
+}
+
+/* --- BOTTOM DISCLAIMER --- */
 .disclaimer {
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  margin-top: 8px;
 }
 
 .disclaimerDot {
@@ -109,4 +164,16 @@
   color: var(--dashboard-secondary-text-color);
   line-height: 1.5;
   opacity: 0.8;
+}
+
+/* Animations */
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }

@@ -6,7 +6,6 @@ export interface TransformedSingleTestUI {
     totalMarks: number;
     accuracy: number;
     timeTaken: number; 
-    predictedPercentile: string;
   };
   stats: {
     correct: number;
@@ -24,7 +23,7 @@ export interface TransformedSingleTestUI {
 
 // A strict interface to handle the varying backend key names without using 'any'
 export interface RawAnalyticsInput {
-  overall?: Record<string, number>;
+  overall?: Record<string, number | string>;
   overAllAnalytics?: Record<string, number>;
   math?: Record<string, number> | null;
   physics?: Record<string, number> | null;
@@ -36,30 +35,26 @@ export const transformSingleTestData = (rawData: unknown): TransformedSingleTest
   if (!rawData) return null;
 
   const data = rawData as RawAnalyticsInput;
-
-  // 1. Handle backend naming inconsistencies (overall vs overAllAnalytics)
   const overallData = data.overall || data.overAllAnalytics || {};
 
-  // 2. Safe Fallbacks for Subjects
   const math = data.math || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
   const phy = data.physics || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
   const chem = data.chemistry || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
 
-  // 3. Extract exact values (Accounting for keys with spaces in backend JSON)
-  const myScore = overallData.totalScore ?? (math.marks + phy.marks + chem.marks);
-  const totalMarks = overallData.maxScore ?? 300;
+  const myScore = (overallData.totalScore as number) ?? (math.marks + phy.marks + chem.marks);
+  const totalMarks = (overallData.maxScore as number) ?? 300;
   
   const positiveScore = (math.positiveMarks || 0) + (phy.positiveMarks || 0) + (chem.positiveMarks || 0);
   const negativeScore = (math.negativeMarks || 0) + (phy.negativeMarks || 0) + (chem.negativeMarks || 0);
   
-  // Safely extract values looking for both formats the backend sends
-  const totalQs = overallData.totalQuestions || overallData["total Questions"] || 75;
-  const attempted = overallData.totalAttempted || overallData.attempt || 0;
-  const correct = overallData.totalCorrect || overallData.correct || 0;
-  const timeTakenSecs = overallData.totalTimeTaken || overallData["total Time Taken"] || 0;
-  const accuracy = overallData.overallAccuracy || overallData.accuracy || 0;
+  const totalQs = (overallData.totalQuestions as number) || (overallData["total Questions"] as number) || 75;
+  const attempted = (overallData.totalAttempted as number) || (overallData.attempt as number) || 0;
+  const correct = (overallData.totalCorrect as number) || (overallData.correct as number) || 0;
+  const timeTakenSecs = (overallData.totalTimeTaken as number) || (overallData["total Time Taken"] as number) || 0;
+  const accuracy = (overallData.overallAccuracy as number) || (overallData.accuracy as number) || 0;
 
-  const percentile = myScore > 0 ? Math.min(99.99, (myScore / totalMarks) * 100 + 40).toFixed(2) : "0.00";
+  // 🚨 FIX: Extract test name dynamically for the description
+
 
   return {
     meta: {
@@ -67,7 +62,6 @@ export const transformSingleTestData = (rawData: unknown): TransformedSingleTest
       totalMarks: totalMarks, 
       accuracy: Number(accuracy.toFixed(1)),
       timeTaken: Math.round(timeTakenSecs / 60), 
-      predictedPercentile: percentile
     },
     stats: {
       correct: correct,
