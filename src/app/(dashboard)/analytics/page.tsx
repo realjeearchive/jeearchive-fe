@@ -23,7 +23,7 @@ const DATA_EMPTY: TransformedAnalyticsUI = {
   graph: [],
   radar: [],
   deepDive: [],
-  efficiency: { fastCorrect: 0, slowCorrect: 0, fastWrong: 0, slowWrong: 0 },
+  efficiency: { mcqAcc: 0, numAcc: 0, leakage: 0, momentum: 0 },
   weakness: [],
   recentTests: [] // <--- ADD THIS LINE
 };
@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
       <SubjectDeepDive data={currentData.deepDive} />
 
       {/* 5. Strategic Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-[16px]">
         <EfficiencyMatrix data={currentData.efficiency} />
         <WeaknessHunter data={currentData.weakness} />
       </div>

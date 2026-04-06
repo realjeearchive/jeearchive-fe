@@ -34,7 +34,6 @@
 
 .statItem:hover {
   border-color: rgba(245, 158, 11, 0.4); 
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -80,6 +79,6 @@
 }
 
 .statItem:hover .iconBox {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-primary-text-color);
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color);
 }

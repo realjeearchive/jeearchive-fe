@@ -1,123 +1,88 @@
-.matrixGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
   position: relative;
 }
 
-.gridZero {
-  opacity: 0.3;
+.faded {
+  opacity: 0.4;
   pointer-events: none;
 }
 
-.matrixCard {
-  background-color: var(--dashboard-card-background, rgba(255, 255, 255, 0.02));
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 8px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: border-color 0.2s ease;
-}
-
-.matrixCard:hover {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.cardHeader {
+.row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
-.statusLabel {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--dashboard-primary-text-color);
-}
-
-.iconBlue { color: #3B82F6; }
-.iconPurple { color: #8B5CF6; }
-.iconRed { color: #EF4444; }
-.iconGreen { color: #22C55E; }
-.iconOrange { color: #F59E0B; }
-
-.cardBody {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mainStat {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--dashboard-primary-text-color);
-  line-height: 1;
-}
-
-.percent {
-  font-size: 14px;
+.label {
+  font-size: 13px;
+  font-weight: 500;
   color: var(--dashboard-secondary-text-color);
-  margin-left: 2px;
+  width: 120px; /* Fixed width for perfect alignment */
+  flex-shrink: 0;
 }
 
-/* Colors for specific stats */
-.textRed { color: #EF4444; }
-.textGreen { color: #22C55E; }
-.textOrange { color: #F59E0B; }
-
-.progressBarTrack {
+.track {
+  flex: 1;
   height: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   overflow: hidden;
-  width: 100%;
 }
 
-.progressBarFill {
+.fill {
   height: 100%;
+  background-color: var(--dashboard-core-color);
   border-radius: 4px;
-  transition: width 0.5s ease-out;
+  transition: width 0.5s ease;
 }
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  font-family: monospace;
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.spacer {
+  flex: 1;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.valueBadge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--dashboard-primary-text-color);
+}
+
+/* Subtle tints for momentum/leakage if desired, otherwise kept neutral */
+.negative { color: var(--dashboard-core-color); }
+.positive { color: #10b981; }
 
 .divider {
-  height: 4px;
-  width: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.contextText {
-  font-size: 11px;
-  color: var(--dashboard-secondary-text-color);
-  margin: 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin: 4px 0;
 }
 
 .emptyOverlay {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  z-index: 10;
-}
-
-.emptyOverlay span {
-  background-color: #1e1d1b;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1e1d1b;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 99px;
+  padding: 6px 14px;
+  border-radius: 20px;
   font-size: 12px;
-  color: var(--dashboard-primary-text-color);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 600px) {
-  .matrixGrid {
-    grid-template-columns: 1fr;
-  }
+  color: var(--dashboard-secondary-text-color);
 }

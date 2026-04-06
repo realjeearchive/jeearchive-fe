@@ -15,9 +15,8 @@ export interface TestCardItem {
 interface TestListSectionProps {
   heading: string;
   items: TestCardItem[];
-  hideRestart?: boolean; // <--- NEW PROP TO HIDE RESTART BUTTON
+  hideRestart?: boolean; 
 
-  // Actions
   onStart: (paperId: string) => void;
   onResume: (paperId: string, sessionId: string) => void;
   onRestart: (paperId: string) => void;
@@ -28,7 +27,7 @@ interface TestListSectionProps {
 const TestListSection2: React.FC<TestListSectionProps> = ({ 
   heading, 
   items, 
-  hideRestart = false, // Defaults to false so it doesn't affect JEE Mains page
+  hideRestart = false, 
   onStart,
   onResume,
   onRestart,
@@ -40,18 +39,17 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
     // --- CASE 1: Test Completed ---
     if (item.status === "COMPLETED") {
       return (
-        <div className={styles.actionsGroup}>
-          <button className={`${styles.actionBtn} ${styles.btnPrimary}`} onClick={() => onViewAnalytics(item.id)}>
-            <FiBarChart2 /> Analytics
+        <div className={styles.actionsRow}>
+          <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => onViewAnalytics(item.id)}>
+            <FiBarChart2 size={14} /> Analytics
           </button>
-          <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onViewSolutions(item.id)}>
-            <FiBookOpen /> Solutions
+          <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => onViewSolutions(item.id)}>
+            <FiBookOpen size={14} /> Solutions
           </button>
           
-          {/* Conditionally render Restart button */}
           {!hideRestart && (
-            <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
-              <FiRefreshCw /> Restart
+            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => onRestart(item.id)}>
+              <FiRefreshCw size={14} /> Restart
             </button>
           )}
         </div>
@@ -61,14 +59,14 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
     // --- CASE 2: In Progress / Paused ---
     if ((item.status === "IN_PROGRESS" || item.status === "PAUSED") && item.sessionId) {
       return (
-        <div className={styles.actionsGroup}>
-          <button className={`${styles.actionBtn} ${styles.btnPrimary}`} onClick={() => onResume(item.id, item.sessionId!)}>
-            <FiPlay /> Resume Test
+        <div className={styles.actionsRow}>
+          <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => onResume(item.id, item.sessionId!)}>
+            <FiPlay size={14} /> Resume Test
           </button>
           
           {!hideRestart && (
-            <button className={`${styles.actionBtn} ${styles.btnSecondary}`} onClick={() => onRestart(item.id)}>
-              <FiRefreshCw /> Restart
+            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => onRestart(item.id)}>
+              <FiRefreshCw size={14} /> Restart
             </button>
           )}
         </div>
@@ -77,9 +75,9 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
 
     // --- CASE 3: Never Attempted (Default) ---
     return (
-      <div className={styles.actionsGroup}>
-        <button className={`${styles.actionBtn} ${styles.btnPrimary}`} onClick={() => onStart(item.id)}>
-          <FiPlay /> Take Test
+      <div className={styles.actionsRow}>
+        <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => onStart(item.id)}>
+          <FiPlay size={14} /> Take Test
         </button>
       </div>
     );
@@ -87,7 +85,6 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
 
   return (
     <section className={styles.section}>
-      {/* Only render header if heading exists */}
       {heading && (
         <div className={styles.sectionHeader}>
           <h2 className={styles.heading}>{heading}</h2>
@@ -95,19 +92,27 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
       )}
 
       <div className={styles.cardGrid}>
-        {/* 🚨 FIX: Added index to map and appended it to the key */}
         {items.map((item, index) => (
           <div key={`${item.id}-${index}`} className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={`${styles.dot} ${item.status === 'COMPLETED' ? styles.dotCompleted : item.status === 'IN_PROGRESS' || item.status === 'PAUSED' ? styles.dotActive : ''}`} />
-              <div className={styles.textBlock}>
-                <span className={styles.title}>{item.title}</span>
-                <span className={styles.meta}>{item.meta}</span>
+            
+            <div className={styles.cardContent}>
+              <div className={styles.headerRow}>
+                <h3 className={styles.title}>{item.title}</h3>
+                <div 
+                  className={`${styles.statusDot} ${
+                    item.status === 'COMPLETED' ? styles.dotCompleted : 
+                    item.status === 'IN_PROGRESS' || item.status === 'PAUSED' ? styles.dotActive : 
+                    styles.dotNone
+                  }`} 
+                />
               </div>
+              <p className={styles.meta}>{item.meta}</p>
             </div>
+
             <div className={styles.cardFooter}>
               {renderButtons(item)}
             </div>
+
           </div>
         ))}
       </div>

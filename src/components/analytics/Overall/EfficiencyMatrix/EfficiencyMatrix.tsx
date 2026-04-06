@@ -2,7 +2,6 @@
 
 import React from "react";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { FiTarget, FiHash, FiTrendingUp, FiTrendingDown, FiAlertCircle } from "react-icons/fi";
 import styles from "./EfficiencyMatrix.module.css";
 
 interface EfficiencyData {
@@ -20,83 +19,49 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   const isZero = data.mcqAcc === 0 && data.numAcc === 0 && data.leakage === 0 && data.momentum === 0;
 
   return (
-    <AnalyticsCard 
-      title="Format Strategy" 
-      subtitle="Accuracy by question type & score trend"
-    >
-      <div className={`${styles.matrixGrid} ${isZero ? styles.gridZero : ''}`}>
+    <AnalyticsCard title="Format Strategy" subtitle="Accuracy by question type & score trend">
+      <div className={`${styles.listContainer} ${isZero ? styles.faded : ''}`}>
         
-        {/* MCQ Accuracy */}
-        <div className={styles.matrixCard}>
-          <div className={styles.cardHeader}>
-            <span className={styles.statusLabel}>MCQ Accuracy</span>
-            <FiTarget size={14} className={styles.iconBlue} />
+        {/* Row 1: MCQ */}
+        <div className={styles.row}>
+          <div className={styles.label}>MCQ Accuracy</div>
+          <div className={styles.track}>
+            <div className={styles.fill} style={{ width: `${data.mcqAcc}%` }} />
           </div>
-          <div className={styles.cardBody}>
-            <div className={styles.mainStat}>
-              {data.mcqAcc}<span className={styles.percent}>%</span>
-            </div>
-            <div className={styles.progressBarTrack}>
-              <div className={styles.progressBarFill} style={{ width: `${data.mcqAcc}%`, backgroundColor: '#3B82F6' }} />
-            </div>
-            <p className={styles.contextText}>Single Correct Questions</p>
-          </div>
+          <div className={styles.value}>{data.mcqAcc}%</div>
         </div>
 
-        {/* Numerical Accuracy */}
-        <div className={styles.matrixCard}>
-          <div className={styles.cardHeader}>
-            <span className={styles.statusLabel}>Numerical Accuracy</span>
-            <FiHash size={14} className={styles.iconPurple} />
+        {/* Row 2: Numerical */}
+        <div className={styles.row}>
+          <div className={styles.label}>Numerical Acc.</div>
+          <div className={styles.track}>
+            <div className={styles.fill} style={{ width: `${data.numAcc}%` }} />
           </div>
-          <div className={styles.cardBody}>
-            <div className={styles.mainStat}>
-              {data.numAcc}<span className={styles.percent}>%</span>
-            </div>
-            <div className={styles.progressBarTrack}>
-              <div className={styles.progressBarFill} style={{ width: `${data.numAcc}%`, backgroundColor: '#8B5CF6' }} />
-            </div>
-            <p className={styles.contextText}>Integer Type Questions</p>
-          </div>
+          <div className={styles.value}>{data.numAcc}%</div>
         </div>
 
-        {/* Score Leakage */}
-        <div className={styles.matrixCard}>
-          <div className={styles.cardHeader}>
-            <span className={styles.statusLabel}>Score Leakage</span>
-            <FiAlertCircle size={14} className={styles.iconRed} />
-          </div>
-          <div className={styles.cardBody}>
-            <div className={`${styles.mainStat} ${styles.textRed}`}>
-              -{data.leakage}
-            </div>
-            <div className={styles.divider}></div>
-            <p className={styles.contextText}>Avg. marks lost to negatives</p>
-          </div>
+        {/* Separator */}
+        <div className={styles.divider} />
+
+        {/* Row 3: Leakage */}
+        <div className={styles.row}>
+          <div className={styles.label}>Score Leakage</div>
+          <div className={styles.spacer} />
+          <div className={styles.valueBadge}>-{data.leakage}</div>
         </div>
 
-        {/* Score Momentum */}
-        <div className={styles.matrixCard}>
-          <div className={styles.cardHeader}>
-            <span className={styles.statusLabel}>Score Momentum</span>
-            {data.momentum >= 0 ? (
-              <FiTrendingUp size={14} className={styles.iconGreen} />
-            ) : (
-              <FiTrendingDown size={14} className={styles.iconOrange} />
-            )}
-          </div>
-          <div className={styles.cardBody}>
-            <div className={`${styles.mainStat} ${data.momentum >= 0 ? styles.textGreen : styles.textOrange}`}>
-              {data.momentum > 0 ? '+' : ''}{data.momentum}
-            </div>
-            <div className={styles.divider}></div>
-            <p className={styles.contextText}>Trend vs. previous tests</p>
+        {/* Row 4: Momentum */}
+        <div className={styles.row}>
+          <div className={styles.label}>Score Momentum</div>
+          <div className={styles.spacer} />
+          <div className={`${styles.valueBadge} ${data.momentum > 0 ? styles.positive : styles.negative}`}>
+            {data.momentum > 0 ? '+' : ''}{data.momentum}
           </div>
         </div>
 
         {isZero && (
           <div className={styles.emptyOverlay}>
-            <span>Take more tests to unlock format analytics</span>
+            Not enough data
           </div>
         )}
 

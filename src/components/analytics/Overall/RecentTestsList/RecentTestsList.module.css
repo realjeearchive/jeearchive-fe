@@ -1,47 +1,192 @@
-.container {
-  margin-top: 16px;
+.ledgerContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
+/* --- Table Header --- */
+.ledgerHeader {
+  display: grid;
+  grid-template-columns: minmax(200px, 2fr) 1fr 180px;
+  gap: 16px;
+  padding: 0 16px 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 8px;
+}
+
+.ledgerHeader > div {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+/* --- List Rows --- */
 .listWrapper {
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
+.row {
+  display: grid;
+  grid-template-columns: minmax(200px, 2fr) 1fr 180px;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* --- Columns --- */
+.colInfo {
+  display: flex;
+  align-items: flex-start; /* Aligns dot with the top of the text */
+  gap: 12px;
+}
+
+.colScore {
+  display: flex;
+  align-items: center;
+}
+
+.colActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* --- Typography & Elements --- */
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.dotCompleted { background-color: #10b981; }
+.dotActive { background-color: var(--dashboard-core-color); box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+
+.textStack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  line-height: 1.2;
+}
+
+.date {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.8;
+}
+
+.scoreBlock {
+  display: flex;
+  align-items: baseline;
+}
+
+.score {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  font-family: monospace;
+  letter-spacing: -0.02em;
+}
+
+.maxScore {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btnPrimary {
+  background-color: transparent;
+  color: var(--dashboard-core-color);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.btnPrimary:hover {
+  background-color: rgba(245, 158, 11, 0.1); 
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.btnSecondary {
+  background-color: transparent;
+  color: var(--dashboard-secondary-text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btnSecondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* --- Empty State --- */
 .emptyState {
-  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  opacity: 1;
-}
-
-.emptyIcon {
-  color: var(--dashboard-secondary-text-color);
+  padding: 40px 0;
+  gap: 8px;
   opacity: 0.5;
 }
 
-.emptyText {
-  font-size: 13px;
-  color: var(--dashboard-secondary-text-color);
-  font-weight: 500;
-  opacity: 0.8;
-}
+.emptyIcon { color: var(--dashboard-secondary-text-color); }
+.emptyText { font-size: 13px; color: var(--dashboard-secondary-text-color); }
 
-.startTestBtn {
-  margin-top: 4px;
-  padding: 8px 16px;
-  background-color: var(--dashboard-core-color);
-  color: #1E1D1B;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 6px;
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-
-.startTestBtn:hover {
-  opacity: 0.9;
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  .ledgerHeader {
+    display: none; /* Hide header on mobile to save space */
+  }
+  
+  .row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px 12px;
+  }
+  
+  .colScore {
+    padding-left: 18px; /* Align with text above the dot */
+  }
+  
+  .colActions {
+    justify-content: flex-start;
+    padding-left: 18px;
+  }
 }

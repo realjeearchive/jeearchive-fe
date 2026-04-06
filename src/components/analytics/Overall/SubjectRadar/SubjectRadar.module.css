@@ -7,48 +7,21 @@
 .emptyState {
   width: 100%;
   height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.radarGuideOuter {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 1px dashed var(--dashboard-sidebar-border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.5;
-}
-
-.radarGuideInner {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 1px dashed var(--dashboard-sidebar-border-color);
-}
-
-.emptyContent {
-  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  background: var(--dashboard-sidebar-background-color); 
-  padding: 10px;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0.5; /* Keeps it subtle so it doesn't distract */
 }
 
 .emptyIcon {
+  font-size: 32px;
   color: var(--dashboard-secondary-text-color);
 }
 
 .emptyText {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--dashboard-secondary-text-color);
 }

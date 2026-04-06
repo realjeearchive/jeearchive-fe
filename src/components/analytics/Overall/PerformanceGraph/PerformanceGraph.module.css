@@ -1,11 +1,6 @@
 .chartContainer {
   height: 260px;
   width: 100%;
-}
-
-.chartContainer {
-  height: 260px;
-  width: 100%;
   position: relative;
 }
 
@@ -16,21 +11,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.01);
-  border-radius: 8px;
+  /* 🚨 Removed the weird gray background box, made it transparent */
+  background: transparent;
   gap: 8px;
 }
 
 .emptyIcon {
   color: var(--dashboard-secondary-text-color);
-  opacity: 0.5;
+  opacity: 0.4; /* Made slightly more subtle */
 }
 
 .emptyText {
   font-size: 13px;
   color: var(--dashboard-secondary-text-color);
   font-weight: 500;
-  opacity: 0.8;
+  opacity: 0.6; /* Made slightly more subtle */
 }
 
 .fakeGraph {
@@ -39,6 +34,6 @@
   left: 0;
   width: 100%;
   height: 40px;
-  opacity: 0.3;
+  opacity: 0.15; /* 🚨 Reduced opacity so it doesn't distract */
   pointer-events: none;
 }

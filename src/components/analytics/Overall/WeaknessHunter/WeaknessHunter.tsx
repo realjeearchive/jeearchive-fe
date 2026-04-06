@@ -3,7 +3,6 @@
 import React from "react";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import styles from "./WeaknessHunter.module.css";
-import { FiCheckCircle } from "react-icons/fi";
 
 export interface WeaknessItem {
   chapter: string;
@@ -21,50 +20,28 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
 
   return (
     <AnalyticsCard title="Weakness Hunter" subtitle="Priority chapters to revise">
-      <div className={styles.container}>
+      <div className={styles.list}>
         {hasData ? (
           data.map((chapter, index) => (
-            <div 
-              key={`${chapter.chapter}-${index}`} 
-              className={styles.chapterItem}
-            >
-              <div className={styles.chapterLeftSection}>
-                <div className={styles.chapterName}>
-                  {chapter.chapter}
-                </div>
-                <div className={styles.chapterMeta}>
-                  <span className={styles.subjectLabel}>
-                    {chapter.subject}
-                  </span>
-                  
-                  {(chapter.weightage === "High" || chapter.accuracy < 40) && (
-                    <span className={styles.highWeightageBadge}>
-                      HIGH PRIORITY
-                    </span>
-                  )}
-                </div>
-              </div>
+            <div key={`${chapter.chapter}-${index}`} className={styles.row}>
               
-              <div className={styles.chapterRightSection}>
-                <div className={styles.accuracyRow}>
-                  <span className={styles.accuracyValue}>
-                    {chapter.accuracy}%
-                  </span>
-                  <div 
-                    className={styles.dotIndicator}
-                    style={{ backgroundColor: chapter.accuracy < 40 ? '#EF4444' : '#F59E0B' }}
-                  ></div>
+              <div className={styles.left}>
+                {/* Subtle dot indicator for high priority */}
+                <div className={`${styles.dot} ${chapter.weightage === 'High' ? styles.dotAlert : ''}`} />
+                <div className={styles.textStack}>
+                  <span className={styles.chapter}>{chapter.chapter}</span>
+                  <span className={styles.subject}>{chapter.subject}</span>
                 </div>
               </div>
+
+              <div className={styles.right}>
+                <span className={styles.accuracy}>{chapter.accuracy}%</span>
+              </div>
+
             </div>
           ))
         ) : (
-          <div className={styles.emptyState}>
-            <FiCheckCircle size={18} className={styles.emptyIcon} />
-            <span className={styles.emptyText}>
-               No weakness data available yet.
-            </span>
-          </div>
+          <div className={styles.empty}>No weakness data yet</div>
         )}
       </div>
     </AnalyticsCard>

@@ -44,14 +44,8 @@ export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-             <div className={styles.radarGuideOuter}>
-                <div className={styles.radarGuideInner}></div>
-             </div>
-             
-             <div className={styles.emptyContent}>
-                <FiCrosshair size={20} className={styles.emptyIcon} />
-                <span className={styles.emptyText}>Not enough data</span>
-             </div>
+            <FiCrosshair className={styles.emptyIcon} />
+            <span className={styles.emptyText}>Take a test to view balance</span>
           </div>
         )}
       </div>
