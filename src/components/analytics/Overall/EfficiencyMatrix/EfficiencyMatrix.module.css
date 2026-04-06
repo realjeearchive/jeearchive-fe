@@ -2,31 +2,27 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  height: 100%;
+  position: relative;
 }
 
-.headerBadge {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--dashboard-secondary-text-color);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px 10px;
-  border-radius: 99px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid var(--dashboard-sidebar-border-color);
+.gridZero {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .matrixCard {
-  background: var(--dashboard-sidebar-background-color);
+  background-color: var(--dashboard-card-background, rgba(255, 255, 255, 0.02));
   border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 14px 16px;
+  border-radius: 8px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.matrixCard:hover {
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .cardHeader {
@@ -37,73 +33,67 @@
 
 .statusLabel {
   font-size: 11px;
-  font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.8;
+  color: var(--dashboard-primary-text-color);
 }
 
-.iconGreen { color: #22C55E; opacity: 0.9; }
-.iconBlue { color: #3B82F6; opacity: 0.9; }
-.iconOrange { color: #F59E0B; opacity: 0.9; }
-.iconRed { color: #EF4444; opacity: 0.9; }
+.iconBlue { color: #3B82F6; }
+.iconPurple { color: #8B5CF6; }
+.iconRed { color: #EF4444; }
+.iconGreen { color: #22C55E; }
+.iconOrange { color: #F59E0B; }
 
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .mainStat {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--dashboard-primary-text-color);
   line-height: 1;
 }
 
 .percent {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--dashboard-secondary-text-color);
-  font-weight: 500;
-  margin-left: 1px;
+  margin-left: 2px;
 }
 
-.contextText {
-  font-size: 10px;
-  color: var(--dashboard-secondary-text-color);
-  opacity: 0.5;
-  font-weight: 400;
-}
+/* Colors for specific stats */
+.textRed { color: #EF4444; }
+.textGreen { color: #22C55E; }
+.textOrange { color: #F59E0B; }
 
 .progressBarTrack {
-  width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 99px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
   overflow: hidden;
-  margin-top: 4px;
+  width: 100%;
 }
 
 .progressBarFill {
   height: 100%;
-  border-radius: 99px;
-  opacity: 0.8;
+  border-radius: 4px;
+  transition: width 0.5s ease-out;
 }
 
-@media (max-width: 480px) {
-  .matrixGrid {
-    grid-template-columns: 1fr; 
-  }
+.divider {
+  height: 4px;
+  width: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
-.gridZero {
-  position: relative;
-}
-
-.gridZero .matrixCard {
-  opacity: 0.3;
-  filter: grayscale(0.5);
+.contextText {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  margin: 0;
 }
 
 .emptyOverlay {
@@ -112,16 +102,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
   z-index: 10;
 }
 
 .emptyOverlay span {
-  background: var(--dashboard-sidebar-background-color);
+  background-color: #1e1d1b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 16px;
   border-radius: 99px;
-  border: 1px solid var(--dashboard-sidebar-border-color);
   font-size: 12px;
-  font-weight: 500;
   color: var(--dashboard-primary-text-color);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 600px) {
+  .matrixGrid {
+    grid-template-columns: 1fr;
+  }
 }
