@@ -34,7 +34,7 @@
   grid-template-columns: minmax(200px, 2fr) 1fr 180px;
   gap: 16px;
   align-items: center;
-  padding: 14px 16px;
+  padding: 14px 0px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   transition: background-color 0.2s ease;
   border-radius: 6px;
@@ -51,7 +51,7 @@
 /* --- Columns --- */
 .colInfo {
   display: flex;
-  align-items: flex-start; /* Aligns dot with the top of the text */
+  align-items: flex-start; 
   gap: 12px;
 }
 
@@ -169,24 +169,39 @@
 .emptyIcon { color: var(--dashboard-secondary-text-color); }
 .emptyText { font-size: 13px; color: var(--dashboard-secondary-text-color); }
 
-/* --- Mobile Responsiveness --- */
+/* --- Mobile Responsiveness (FIXED) --- */
 @media (max-width: 768px) {
   .ledgerHeader {
-    display: none; /* Hide header on mobile to save space */
+    display: none; /* Hide header on mobile */
   }
   
   .row {
-    grid-template-columns: 1fr;
+    /* 🚨 NEW: 2-column grid for mobile */
+    grid-template-columns: 1fr auto; 
     gap: 12px;
-    padding: 16px 12px;
+    padding: 16px 0px;
+  }
+  
+  .colInfo {
+    grid-column: 1 / 2; /* Title stays on left */
   }
   
   .colScore {
-    padding-left: 18px; /* Align with text above the dot */
+    grid-column: 2 / 3; /* Score moves to top right */
+    justify-content: flex-end;
   }
   
   .colActions {
-    justify-content: flex-start;
-    padding-left: 18px;
+    grid-column: 1 / -1; /* Buttons span the entire width below */
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 4px;
+    gap: 12px;
+  }
+
+  .btn {
+    flex: 1; /* Makes both buttons take exactly 50% width */
+    justify-content: center;
+    padding: 8px 0; /* Slightly taller for easier finger tapping */
   }
 }
