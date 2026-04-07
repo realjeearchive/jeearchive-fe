@@ -13,45 +13,38 @@ const DetailedAnalysisSection: React.FC<DetailedAnalysisSectionProps> = ({
   onViewAnalysis,
   disabled = false,
 }) => {
-  const handleClick = () => {
-    if (!disabled && onViewAnalysis) onViewAnalysis();
-  };
-
   return (
-    <section className={`${styles.section} ${disabled ? styles.disabledSection : ''}`}>
-      <div className={styles.card} onClick={handleClick}>
-        {!disabled && <div className={styles.accent} />}
-
-        <div className={styles.content}>
-          <div className={styles.main}>
-            <div className={styles.titleRow}>
-              <div className={`${styles.iconCircle} ${disabled ? styles.iconDisabled : ''}`}>
-                {disabled ? <FiLock size={14} /> : <FiBarChart2 className={styles.icon} />}
-              </div>
-              <div className={styles.textBlock}>
-                <span className={styles.title}>
-                  {disabled ? "Detailed Analysis (Locked)" : "Detailed test analysis"}
-                </span>
-                <span className={styles.subtitle}>
-                  {disabled 
-                    ? "Complete at least one mock test to unlock insights." 
-                    : "See trends across accuracy, speed, and topics before you start the next test."}
-                </span>
-              </div>
-            </div>
+    <section className={styles.section}>
+      <div 
+        className={`${styles.card} ${disabled ? styles.locked : ""}`}
+        onClick={() => !disabled && onViewAnalysis?.()}
+        role={disabled ? "presentation" : "button"}
+      >
+        <div className={styles.leftGroup}>
+          <div className={styles.iconBox}>
+            {disabled ? <FiLock size={18} /> : <FiBarChart2 size={18} />}
           </div>
+          <div className={styles.textGroup}>
+            <h3 className={styles.title}>
+              {disabled ? "Analysis Locked" : "Detailed Test Analysis"}
+            </h3>
+            <p className={styles.subtitle}>
+              {disabled 
+                ? "Complete a mock test to unlock performance insights." 
+                : "Review your accuracy, speed, and topic-wise breakdown."}
+            </p>
+          </div>
+        </div>
 
-          {!disabled && (
-            <div className={styles.metaRow}>
-              <div className={styles.badges}>
-                <span className={styles.badge}>Last 5 tests</span>
-                <span className={styles.badge}>Topic-wise breakdown</span>
-              </div>
-
-              <button type="button" className={styles.cta}>
-                <span>Open detailed analysis</span>
-                <FiArrowRight size={14} />
-              </button>
+        <div className={styles.rightGroup}>
+          {!disabled ? (
+            <div className={styles.cta}>
+              <span>View Insights</span>
+              <FiArrowRight className={styles.arrow} size={16} />
+            </div>
+          ) : (
+            <div className={styles.lockedBadge}>
+              Needs Test Data
             </div>
           )}
         </div>

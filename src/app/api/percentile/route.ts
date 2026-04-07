@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // 1. Add spoofed browser headers to bypass bot-protection
-    const res = await fetch("https://predictor-backend-vp3r.onrender.com/api/predict/percentile", {
+    const res = await fetch("https://my.newtonschool.co/rank-predictor/api/predict-jee-main-marks-percentile/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

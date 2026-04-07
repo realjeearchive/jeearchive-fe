@@ -1,141 +1,158 @@
 .section {
   width: 100%;
-}
-
-.card {
-  width: 100%;
-  border-radius: 10px;
-  background: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  display: flex;
-  overflow: hidden;
   margin-top: 24px;
-  transition: all 0.3s ease;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-  cursor: pointer;
 }
 
-.card:hover {
-  border-color: rgba(245, 158, 11, 0.4);
-  transform: translateY(-1px);
-}
-
-.accent {
-  width: 4px;
-  background: var(--dashboard-core-color);
-}
-
-.content {
-  flex: 1;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.main {
+/* --- Clean, Horizontal Card --- */
+.card {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* Swapped to a very subtle transparent background instead of the solid sidebar color */
+  background: rgba(255, 255, 255, 0.02); 
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 12px;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.titleRow {
+/* Thinner, more subtle edge strip */
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px; /* Reduced from 4px */
+  background: var(--dashboard-core-color);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover:not(.locked) {
+  /* Toned down border and shadow on hover */
+  border-color: rgba(255, 255, 255, 0.15); 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover:not(.locked)::before {
+  opacity: 1;
+}
+
+/* --- Content Layout --- */
+.leftGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  z-index: 1;
 }
 
-.iconCircle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+/* Start with a neutral icon box */
+.iconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03); 
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--dashboard-secondary-text-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.icon {
-  font-size: 16px;
-  color: var(--dashboard-core-color);
+/* Catchy but subtle: Gently tint the icon box instead of filling it solid */
+.card:hover:not(.locked) .iconBox {
+  background: rgba(245, 158, 11, 0.08); /* Faint amber tint */
+  border-color: rgba(245, 158, 11, 0.2);
+  color: var(--dashboard-core-color); 
 }
 
-.textBlock {
+.textGroup {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
+  margin: 0;
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--dashboard-secondary-text-color);
+  margin: 0;
 }
 
-.metaRow {
+/* --- Actions & Badges --- */
+.rightGroup {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.badge {
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid var(--dashboard-dividerline-color);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--dashboard-secondary-text-color);
-  text-transform: uppercase;
-  font-weight: 600;
+  z-index: 1;
 }
 
 .cta {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
+  gap: 8px;
+  font-size: 14px;
   font-weight: 600;
-  background: var(--dashboard-core-color);
-  color: #111111;
-  transition: all 0.2s ease;
+  color: var(--dashboard-secondary-text-color); /* Start subtle */
+  transition: color 0.3s ease;
 }
 
-.cta:hover {
-  opacity: 0.9;
+.arrow {
+  transition: transform 0.3s ease;
 }
 
-.disabledSection .card {
-  opacity: 0.6;
+.card:hover:not(.locked) .cta {
+  color: var(--dashboard-core-color); /* Brighten on hover */
+}
+
+.card:hover:not(.locked) .arrow {
+  transform: translateX(4px);
+}
+
+/* --- Locked State --- */
+.locked {
+  cursor: not-allowed;
   border-style: dashed;
   background: transparent;
-  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.disabledSection .card:hover {
-  border-color: var(--dashboard-sidebar-border-color);
-  transform: none;
-}
-
-.iconDisabled {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+.locked .iconBox {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
   color: var(--dashboard-secondary-text-color);
+}
+
+.lockedBadge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--dashboard-secondary-text-color);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .rightGroup {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

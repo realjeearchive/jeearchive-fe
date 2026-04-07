@@ -9,10 +9,11 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { motion } from "framer-motion"
-import { TrendingUp, BookOpen } from "lucide-react"
 import Image from "next/image"
 import ExamInterfaceImage from '@/assets/image/test-player.png';
 import { 
+  TrendingUp, 
+  BookOpen,
   Search, 
   Atom, 
   Calculator, 
@@ -61,21 +62,20 @@ export function OnboardingCarousel() {
       <CarouselContent className="h-full ">
         {onboardingSlides.map((slide) => (
           <CarouselItem key={slide.id} className="basis-full h-full">
-            <div className="p-4 h-screen">
+            <div className="py-2 px-0 md:px-4 h-[100dvh] lg:h-screen">
               <Card 
                 className="border-0 h-full relative overflow-hidden"
                 style={{ background: slide.colorVar }}
               >
-                {/* --- YOUR EXACT REQUESTED LAYOUT BLOCK --- */}
-                <CardContent className="h-full flex flex-col items-center justify-start p-8 lg:p-8 text-white gap-16">
+                <CardContent className="h-full flex flex-col items-center justify-start p-4 lg:p-8 text-white gap-16 lg:gap-16">
                   
                   {/* Top Text */}
-                  <div className="flex justify-center items-center max-w-lg z-10 pt-12">
+                  <div className="flex justify-center items-center max-w-lg z-10 pt-8 lg:pt-12 px-4 lg:px-0">
                     <motion.h2 
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="text-3xl lg:text-4xl font-bold leading-none tracking-tight text-center drop-shadow-sm"
+                      className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-center drop-shadow-sm"
                     >
                       {slide.heading}
                     </motion.h2>
@@ -87,7 +87,6 @@ export function OnboardingCarousel() {
                   </div>
 
                 </CardContent>
-                {/* ----------------------------------------- */}
               </Card>
             </div>
           </CarouselItem>
@@ -100,12 +99,10 @@ export function OnboardingCarousel() {
 // --- The "App Window" Container ---
 function InnerAppCard({ slideId }: { slideId: number }) {
   
-
   if (slideId === 1) {
     return (
-      <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center">
+      <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top lg:origin-center">
         
-
         <motion.div
            initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
            whileInView={{ 
@@ -117,7 +114,6 @@ function InnerAppCard({ slideId }: { slideId: number }) {
            transition={{ delay: 0.5, type: "spring", stiffness: 60, damping: 15 }}
            className="absolute w-full h-full bg-[#FFF0EB] rounded-3xl shadow-xl border border-orange-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-right"
         >
-
            <div className="p-5 border-b border-orange-100/50 flex items-center gap-3 bg-orange-50/50">
               <BookOpen size={18} className="text-orange-400" />
               <span className="font-bold text-slate-600 text-sm">Chapter Wise</span>
@@ -128,7 +124,6 @@ function InnerAppCard({ slideId }: { slideId: number }) {
               <div className="h-8 bg-white rounded-md w-full shadow-sm" />
            </div>
         </motion.div>
-
 
         <motion.div
            initial={{ y: 100, opacity: 0 }}
@@ -142,12 +137,10 @@ function InnerAppCard({ slideId }: { slideId: number }) {
     )
   }
 
-
 if (slideId === 2) {
   return (
-    <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center">
+    <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top lg:origin-center">
       
-
       <motion.div
          initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
          whileInView={{ 
@@ -161,7 +154,6 @@ if (slideId === 2) {
       >
           <CardTwoBackHeatmap />
       </motion.div>
-
 
       <motion.div
          initial={{ y: 100, opacity: 0 }}
@@ -181,7 +173,6 @@ if (slideId === 2) {
       </div>
     )
 }
-
 
 function CardOnePYQ() {
   const topics = [
@@ -223,7 +214,6 @@ function CardOnePYQ() {
   return (
     <div className="flex flex-col h-full font-sans bg-white relative overflow-hidden">
       
-
       <div className="p-6 pb-2 z-10 bg-white">
         <div className="flex items-center justify-between mb-4">
              <div className="flex items-center gap-2">
@@ -240,7 +230,6 @@ function CardOnePYQ() {
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Live</span>
              </div>
         </div>
-
 
         <div className="relative group">
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -263,7 +252,6 @@ function CardOnePYQ() {
         </div>
       </div>
 
-
       <div className="flex-1 px-6 pt-2 pb-6 space-y-3 relative overflow-hidden">
 
         <div className="absolute top-0 left-0 right-0 h-4 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
@@ -273,7 +261,6 @@ function CardOnePYQ() {
             key={item.id}
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
-
             transition={{ delay: 0.4 + (i * 0.15), type: "spring", stiffness: 100, damping: 20 }}
             className={`group relative bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 cursor-default ${item.border}`}
           >
@@ -282,7 +269,6 @@ function CardOnePYQ() {
                 <div className={`h-11 w-11 shrink-0 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center shadow-sm`}>
                     <item.icon size={22} strokeWidth={2} />
                 </div>
-
 
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
@@ -308,7 +294,6 @@ function CardOnePYQ() {
           </motion.div>
         ))}
 
-
         <motion.div 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -325,9 +310,7 @@ function CardOnePYQ() {
   )
 }
 
-
 function CardTwoBackHeatmap() {
-
     const grid = [
         0, 0, 1, 0, 2, 0,
         0, 1, 2, 2, 0, 1,
@@ -363,7 +346,6 @@ function CardTwoBackHeatmap() {
                     })}
                 </div>
                 
-                {/* Simulated Analysis Text */}
                 <div className="mt-6 flex items-start gap-2 opacity-60">
                     <div className="h-1.5 w-1.5 rounded-full bg-rose-400 mt-1.5 shrink-0" />
                     <div className="space-y-1 w-full">
@@ -376,9 +358,7 @@ function CardTwoBackHeatmap() {
     )
 }
 
-
 function CardTwoFrontDNA() {
-
     const subjects = [
         { name: "Phy", timePercent: 30, marksPercent: 45, status: "High ROI", color: "text-emerald-500" },
         { name: "Chem", timePercent: 20, marksPercent: 40, status: "Best", color: "text-emerald-500" },
@@ -387,8 +367,6 @@ function CardTwoFrontDNA() {
 
     return (
         <div className="flex flex-col h-full font-sans bg-white relative">
-            
-            {/* Header */}
             <div className="p-6 pb-2">
                 <div className="flex justify-between items-center mb-1">
                      <h3 className="font-bold text-slate-800 text-lg">Time Strategy</h3>
@@ -400,8 +378,6 @@ function CardTwoFrontDNA() {
             </div>
 
             <div className="flex-1 px-6 space-y-6 pt-2">
-                
-
                 <div className="space-y-4">
                     <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         <span>Time Invested</span>
@@ -410,8 +386,6 @@ function CardTwoFrontDNA() {
 
                     {subjects.map((sub, i) => (
                         <div key={sub.name} className="relative grid grid-cols-[1fr_40px_1fr] items-center gap-2">
-                            
-
                             <div className="flex justify-end items-center gap-2">
                                 <span className="text-[9px] font-bold text-slate-400">{sub.timePercent}%</span>
                                 <div className="h-1.5 w-full bg-slate-50 rounded-l-full flex justify-end overflow-hidden">
@@ -424,12 +398,10 @@ function CardTwoFrontDNA() {
                                 </div>
                             </div>
 
-
                             <div className="text-center">
                                 <span className="text-xs font-bold text-slate-700 block">{sub.name}</span>
                                 <span className={`text-[8px] font-bold block leading-none ${sub.color}`}>{sub.status}</span>
                             </div>
-
 
                             <div className="flex justify-start items-center gap-2">
                                 <div className="h-1.5 w-full bg-slate-50 rounded-r-full flex justify-start overflow-hidden">
@@ -445,7 +417,6 @@ function CardTwoFrontDNA() {
                         </div>
                     ))}
                 </div>
-
 
                 <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-between group">
                     <div className="flex items-center gap-3">
@@ -463,7 +434,6 @@ function CardTwoFrontDNA() {
                        <span className="relative inline-flex h-2 w-2 bg-rose-500 rounded-full"></span>
                     </div>
                 </div>
-
 
                 <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
                     <div className="flex items-center gap-3">
@@ -488,13 +458,10 @@ function CardTwoFrontDNA() {
     )
 }
 
-
 function CardThreeExamImage() {
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-
-      <div className="relative w-[90%] max-w-[760px] aspect-16/10">
-
+      <div className="relative w-[90%] sm:w-[80%] max-w-[760px] aspect-[16/10]">
 
         <motion.div
           initial={{ y: 70, rotate: 0, opacity: 0 }}
@@ -502,7 +469,7 @@ function CardThreeExamImage() {
           transition={{ duration: 0.9, ease: "easeOut" }}
           className="
             absolute inset-0 z-0 overflow-hidden shadow-lg
-            scale-[0.72] translate-x-[-120px] translate-y-20
+            scale-[0.85] -translate-x-4 translate-y-6
             lg:scale-[0.68] lg:translate-x-[-170px] lg:translate-y-[-100px]
           "
         >
@@ -513,12 +480,15 @@ function CardThreeExamImage() {
           />
         </motion.div>
 
-
         <motion.div
           initial={{ y: 60, rotate: 0, opacity: 0 }}
           whileInView={{ y: 10, rotate: 8, opacity: 0.45 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.05 }}
-          className="absolute inset-0 z-10 overflow-hidden shadow-xl scale-[0.84] lg:translate-x-[120px] translate-x-20"
+          className="
+             absolute inset-0 z-10 overflow-hidden shadow-xl 
+             scale-[0.92] translate-x-4 translate-y-2
+             lg:scale-[0.84] lg:translate-x-[120px] lg:translate-y-0
+          "
         >
           <Image
             src={ExamInterfaceImage}
@@ -527,14 +497,12 @@ function CardThreeExamImage() {
           />
         </motion.div>
 
-
         <motion.div
           initial={{ y: 50, scale: 0.92, opacity: 0 }}
           whileInView={{ y: 0, scale: 1, opacity: 1 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
           className="relative z-20 w-full h-full overflow-hidden shadow-2xl border border-white/40 bg-slate-900"
         >
-
           <video
             src="/videos/interfaceRec.mov"
             poster={ExamInterfaceImage.src} 
@@ -545,10 +513,8 @@ function CardThreeExamImage() {
             className="w-full h-full object-cover"
           />
           
-
           <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] rounded-xl" />
         </motion.div>
-
 
         <motion.div
           initial={{ scale: 0 }}

@@ -22,7 +22,11 @@ export const PercentileCard = ({ myScore }: Props) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ marks: myScore }),
+          body: JSON.stringify({
+            "jee_main_score": myScore,
+            "year": 2025, 
+            "category" : "General"
+          }),
         });
 
         if (!res.ok) throw new Error("Failed to fetch percentile");
