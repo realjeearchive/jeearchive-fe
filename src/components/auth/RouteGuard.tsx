@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 
@@ -15,7 +15,8 @@ const PUBLIC_ROUTES = [
 const isPublicRoute = (path: string) =>
   PUBLIC_ROUTES.some((p) => path === p || path.startsWith(p + "/"));
 
-const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// 1. Rename your original component to "RouteGuardInner"
+const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +35,6 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
 
     if (authed && onPublic) {
-      // FIX: Respect the redirectTo parameter if it exists, otherwise default to dashboard
       const redirectTo = searchParams.get("redirectTo") || "/dashboard";
       router.replace(redirectTo);
     }
@@ -42,6 +42,15 @@ const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // always render children (no blocking splash)
   return <>{children}</>;
+};
+
+// 2. Export a wrapper that puts the inner logic inside a Suspense boundary
+const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <Suspense fallback={<>{children}</>}>
+      <RouteGuardInner>{children}</RouteGuardInner>
+    </Suspense>
+  );
 };
 
 export default RouteGuard;
