@@ -11,7 +11,6 @@
   overflow: hidden;
 }
 
-/* Subtle amber glow behind the card */
 .bgGlow {
   position: absolute;
   width: 600px;
@@ -37,7 +36,6 @@
   display: flex;
   flex-direction: column;
   height: 560px; 
-  /* This parent overflow handles the animation clipping safely */
   overflow: hidden; 
 }
 
@@ -115,7 +113,6 @@
   flex: 1;
   position: relative;
   z-index: 20; 
-  /* CRITICAL FIX: Strictly visible. Removing overflow-x: hidden stops the browser from secretly converting this to a scrollable box! */
   overflow: visible; 
   display: flex;
   flex-direction: column;
@@ -133,7 +130,7 @@
 .stepContent {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem; 
+  gap: 1.5rem; 
 }
 
 /* --- Typography & Icons --- */
@@ -173,15 +170,42 @@
   line-height: 1.5;
 }
 
-/* --- Grid Options (Step 1) --- */
+/* --- Form Groups & Layouts --- */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.fieldSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.fieldLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  margin-left: 0.25rem;
+}
+
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.85rem;
 }
 
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+/* --- Selection Cards (Radios) --- */
 .selectionCard {
-  /* Tightened padding to give the text maximum horizontal room */
   padding: 1rem 0.85rem; 
   border-radius: 14px;
   border: 1px solid var(--dashboard-sidebar-border-color);
@@ -192,7 +216,6 @@
   display: flex;
   flex-direction: row; 
   align-items: center;
-  /* Tightened gap */
   gap: 10px; 
 }
 
@@ -248,11 +271,9 @@
 
 .selectionLabel {
   font-weight: 600;
-  /* Slightly smaller font to ensure perfect fit */
   font-size: 0.875rem; 
   color: var(--dashboard-primary-text-color);
   line-height: 1; 
-  /* CRITICAL FIX: Forces text to stay on a single line regardless of how tight it gets */
   white-space: nowrap; 
 }
 
@@ -305,8 +326,7 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 14px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-  /* Perfect height to hover elegantly over the footer */
-  max-height: 170px; 
+  max-height: 160px; 
   overflow-y: auto;
 }
 
@@ -455,10 +475,20 @@
 /* --- Mobile Responsiveness --- */
 @media (max-width: 640px) {
   .pageWrapper { padding: 1rem; }
-  .wizardCard { height: 580px; }
+  
+  .wizardCard { 
+    /* Expanding height slightly for mobile so all 3 fields fit cleanly */
+    height: 640px; 
+  }
+  
   .header { padding: 1.5rem 1.5rem 0.5rem 1.5rem; }
   .slideContainer { padding: 1.5rem; }
   .stepContent { gap: 1.25rem; }
-  .grid2 { grid-template-columns: 1fr; gap: 0.75rem; }
+  
+  .grid2, .grid3 { 
+    grid-template-columns: 1fr; /* Stacks vertically on mobile */
+    gap: 0.75rem; 
+  }
+  
   .footer { padding: 1rem 1.5rem 1.5rem 1.5rem; }
 }
