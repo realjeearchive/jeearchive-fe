@@ -12,11 +12,12 @@ import { verifyOtpRequest, passwordEmailVerificationRequest, type VerifyOtpRespo
 import { useAuthStore } from '@/store';
 import { toast } from 'sonner';
 
-
 export function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') ?? '';
+  
+  // This will now successfully grab "/onboarding" from the URL thanks to our SignupForm update!
   const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
 
   const [loading, setLoading] = useState(false);
@@ -26,9 +27,6 @@ export function VerifyEmail() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
 
-
-
-  // If there is no email in query, redirect back to signup
   useEffect(() => {
     if (!emailFromQuery) {
       router.replace('/signup');
@@ -87,64 +85,67 @@ export function VerifyEmail() {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setError('');
+    e.preventDefault();
+    setError('');
 
-  const otpValue = otp.join('');
+    const otpValue = otp.join('');
 
-  if (otpValue.length !== 6) {
-    setError('Please enter all 6 digits');
-    return;
-  }
+    if (otpValue.length !== 6) {
+      setError('Please enter all 6 digits');
+      return;
+    }
 
-  if (!emailFromQuery) {
-    setError('Missing email. Please sign up again.');
-    return;
-  }
+    if (!emailFromQuery) {
+      setError('Missing email. Please sign up again.');
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-  const data: VerifyOtpResponse = await verifyOtpRequest({
-    email: emailFromQuery,
-    otp: otpValue,
-  });
+    try {
+      const data: VerifyOtpResponse = await verifyOtpRequest({
+        email: emailFromQuery,
+        otp: otpValue,
+      });
 
-  setAccessToken(data.accessToken); 
-  toast.success('Email verified successfully.');
-  router.push(redirectTo);
-} catch (err) {
-  const message = err instanceof Error ? err.message : 'Something went wrong';
-  setError(message);
-  toast.error(message);
-} finally {
-  setLoading(false);
-}
-};
+      setAccessToken(data.accessToken); 
+      toast.success('Email verified successfully.');
+      
+      // FIX: Cleanly route to the param (which is now /onboarding)
+      router.push(redirectTo);
+      
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleResendOTP = async () => {
-  setError('');
-  if (!emailFromQuery) {
-    const msg = 'Missing email. Please sign up again.';
-    setError(msg);
-    toast.error(msg);
-    return;
-  }
+    setError('');
+    if (!emailFromQuery) {
+      const msg = 'Missing email. Please sign up again.';
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
 
-  setResendLoading(true);
+    setResendLoading(true);
 
-  try {
-    await passwordEmailVerificationRequest({ email: emailFromQuery });
-    toast.success('OTP sent successfully.');
-  } catch (err) {
-    const message = 'Failed to resend OTP';
-    console.log(err);
-    setError(message);
-    toast.error(message);
-  } finally {
-    setResendLoading(false);
-  }
-};
+    try {
+      await passwordEmailVerificationRequest({ email: emailFromQuery });
+      toast.success('OTP sent successfully.');
+    } catch (err) {
+      const message = 'Failed to resend OTP';
+      console.log(err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <div className={Styles.verificationFormContainer}>

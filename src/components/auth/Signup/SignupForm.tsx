@@ -62,8 +62,9 @@ export function SignupForm() {
       const data: SignupResponse = await signupRequest(parsed);
       toast.success(data.message || 'OTP sent to your email.');
 
-
-      router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}`);
+      // FIX: Add the redirectTo parameter here!
+      router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}&redirectTo=/onboarding`);
+      
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
       setError(message);
