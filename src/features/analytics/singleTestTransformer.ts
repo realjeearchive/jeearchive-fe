@@ -6,6 +6,7 @@ export interface TransformedSingleTestUI {
     totalMarks: number;
     accuracy: number;
     timeTaken: number; 
+    examType: "MAIN" | "ADVANCED"; // 🚨 NEW: Added exam type tracking
   };
   stats: {
     correct: number;
@@ -21,8 +22,9 @@ export interface TransformedSingleTestUI {
   };
 }
 
-// A strict interface to handle the varying backend key names without using 'any'
 export interface RawAnalyticsInput {
+  testName?: string; // For dynamic extraction
+  name?: string;
   overall?: Record<string, number | string>;
   overAllAnalytics?: Record<string, number>;
   math?: Record<string, number> | null;
@@ -30,7 +32,6 @@ export interface RawAnalyticsInput {
   chemistry?: Record<string, number> | null;
 }
 
-// Accept 'unknown' to satisfy strict TS rules, then cast to our safe interface
 export const transformSingleTestData = (rawData: unknown): TransformedSingleTestUI | null => {
   if (!rawData) return null;
 
@@ -53,8 +54,10 @@ export const transformSingleTestData = (rawData: unknown): TransformedSingleTest
   const timeTakenSecs = (overallData.totalTimeTaken as number) || (overallData["total Time Taken"] as number) || 0;
   const accuracy = (overallData.overallAccuracy as number) || (overallData.accuracy as number) || 0;
 
-  // 🚨 FIX: Extract test name dynamically for the description
-
+  // 🚨 FIX: Extract exam type dynamically based on Test Name or Total Marks
+  const testNameStr = (data.testName || data.name || "").toLowerCase();
+  const isAdvanced = testNameStr.includes("advanced") || totalMarks !== 300;
+  const examType = isAdvanced ? "ADVANCED" : "MAIN";
 
   return {
     meta: {
@@ -62,6 +65,7 @@ export const transformSingleTestData = (rawData: unknown): TransformedSingleTest
       totalMarks: totalMarks, 
       accuracy: Number(accuracy.toFixed(1)),
       timeTaken: Math.round(timeTakenSecs / 60), 
+      examType: examType, // Passes to the UI
     },
     stats: {
       correct: correct,

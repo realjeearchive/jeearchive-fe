@@ -1,55 +1,61 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FiTrendingUp } from "react-icons/fi";
+import { FiTrendingUp, FiAward } from "react-icons/fi";
 import styles from "./PercentileCard.module.css";
 
 interface Props {
   myScore: number;
+  examType?: "MAIN" | "ADVANCED"; // Passed from the transformer meta
+  userCategory?: string; // Optional: Pass this from your global Auth Store if available
 }
 
-export const PercentileCard = ({ myScore }: Props) => {
+export const PercentileCard = ({ myScore, examType = "MAIN", userCategory = "General" }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [predictedPercentile, setPredictedPercentile] = useState<string>("0.00");
+  const [predictionValue, setPredictionValue] = useState<string>("0");
   const [error, setError] = useState("");
 
-  // 🚨 NEW: Auto-fetch the percentile as soon as the component loads
+  const isAdvanced = examType === "ADVANCED";
+
   useEffect(() => {
-    const fetchPercentile = async () => {
+    const fetchPrediction = async () => {
       try {
         const res = await fetch("/api/percentile", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          // Send the unified payload to your newly updated proxy route
           body: JSON.stringify({
-            "jee_main_score": myScore,
-            "year": 2025, 
-            "category" : "General"
+            score: myScore,
+            year: 2025, 
+            category: userCategory,
+            examType: examType
           }),
         });
 
-        if (!res.ok) throw new Error("Failed to fetch percentile");
+        if (!res.ok) throw new Error("Failed to fetch prediction");
 
         const data = await res.json();
         
-        let finalPercentile = 0;
-        
-        if (data.percentile_best && data.percentile_worst) {
-           finalPercentile = (data.percentile_best + data.percentile_worst) / 2;
+        if (isAdvanced) {
+          // Parse specific response for JEE Advanced Rank
+          const rank = data.estimated_rank ?? data.estimated_category_rank;
+          if (rank) {
+            // Formats numbers like 19501 to "19,501"
+            setPredictionValue(rank.toLocaleString("en-IN"));
+          } else {
+            setPredictionValue("N/A");
+          }
         } else {
-           const val = data.percentile_best || data.percentile || data.predictedPercentile || data.data || data;
-           if (typeof val === 'number') finalPercentile = val;
-           else if (typeof val === 'string') finalPercentile = parseFloat(val);
-           else if (val && typeof val === 'object') {
-              const nestedVal = val.percentile || val.value || "0";
-              finalPercentile = parseFloat(nestedVal);
-           }
+          // Parse specific response for JEE Main Percentile
+          const pct = data.estimated_percentile;
+          if (pct && !isNaN(pct)) {
+            setPredictionValue(parseFloat(pct).toFixed(2));
+          } else {
+            setPredictionValue("N/A");
+          }
         }
-
-        const parsedVal = isNaN(finalPercentile) ? "N/A" : finalPercentile.toFixed(2);
-
-        setPredictedPercentile(parsedVal);
       } catch (err) {
         setError("Prediction unavailable right now.");
       } finally {
@@ -57,8 +63,8 @@ export const PercentileCard = ({ myScore }: Props) => {
       }
     };
 
-    fetchPercentile();
-  }, [myScore]);
+    fetchPrediction();
+  }, [myScore, examType, userCategory, isAdvanced]);
 
   return (
     <div className={styles.container}>
@@ -69,10 +75,12 @@ export const PercentileCard = ({ myScore }: Props) => {
       <div className={styles.content}>
         <div className={styles.header}>
           <div className={styles.iconBox}>
-            <FiTrendingUp size={16} />
+            {/* Dynamic Icon based on exam */}
+            {isAdvanced ? <FiAward size={16} /> : <FiTrendingUp size={16} />}
           </div>
           <span className={styles.headerTitle}>
-            Predicted Percentile
+            {/* Dynamic Title */}
+            {isAdvanced ? "Predicted Rank" : "Predicted Percentile"}
           </span>
         </div>
 
@@ -88,7 +96,9 @@ export const PercentileCard = ({ myScore }: Props) => {
               <div className={styles.errorText}>{error}</div>
             ) : (
               <div className={styles.percentileValue}>
-                {predictedPercentile} <span className={styles.percentileSymbol}>%ile</span>
+                {isAdvanced && <span className={styles.percentileSymbol}># </span>}
+                {predictionValue}
+                {!isAdvanced && <span className={styles.percentileSymbol}> %ile</span>}
               </div>
             )}
           </div>
@@ -96,7 +106,9 @@ export const PercentileCard = ({ myScore }: Props) => {
           <div className={styles.disclaimer}>
             <div className={styles.disclaimerDot} />
             <p className={styles.disclaimerText}>
-              Estimated based on paper difficulty and historical cutoff data.
+              {isAdvanced 
+                ? "Estimated category rank based on historical cutoffs." 
+                : "Estimated based on paper difficulty and historical cutoff data."}
             </p>
           </div>
         </div>

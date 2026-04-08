@@ -3,19 +3,38 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const { examType, score, category, year } = body;
 
-    // 1. Add spoofed browser headers to bypass bot-protection
-    const res = await fetch("https://my.newtonschool.co/rank-predictor/api/predict-jee-main-marks-percentile/", {
+    let url = "";
+    let payload = {};
+
+    // Dynamically switch endpoints and payloads based on the exam type
+    if (examType === "ADVANCED") {
+      url = "https://my.newtonschool.co/rank-predictor/api/predict-jee-advanced-rank/";
+      payload = { 
+        category: category || "General", 
+        jee_advanced_score: score 
+      };
+    } else {
+      url = "https://my.newtonschool.co/rank-predictor/api/predict-jee-main-marks-percentile/";
+      payload = { 
+        jee_main_score: score, 
+        year: year || 2025, 
+        category: category || "General" 
+      };
+    }
+
+    // Add spoofed browser headers to bypass bot-protection
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
     });
 
-    // 2. If it fails, read the raw text so we can see the exact error in the terminal
     if (!res.ok) {
       const errorText = await res.text();
       console.error(`🚨 External API Error (${res.status}):`, errorText);
@@ -26,7 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json(data);
     
   } catch (error) {
-    console.error("🚨 Percentile Proxy Caught Error:", error);
+    console.error("🚨 Prediction Proxy Caught Error:", error);
     return NextResponse.json(
       { error: "Prediction unavailable right now." },
       { status: 500 }
