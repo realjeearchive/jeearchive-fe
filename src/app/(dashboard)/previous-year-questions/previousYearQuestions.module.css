@@ -1,4 +1,92 @@
+.previousYearQuestions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-.previousYearQuestions{
-    padding: 20px 10px;
+/* --- ZERO BOXES: Clean text-based tab container --- */
+.tabsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  /* Slightly reduced gap because the divider now takes up space in the middle */
+  gap: 24px; 
+
+}
+
+/* --- The Elegant Vertical Line --- */
+.divider {
+  width: 1px;
+  height: 14px; 
+  background-color: var(--dashboard-sidebar-border-color, #36312F);
+  /* Offsets the 12px bottom padding of the buttons so the line centers perfectly with the text */
+  margin-bottom: 4px; 
+}
+
+/* --- The Buttons --- */
+.tabButton {
+  /* Only padding at the bottom to create space between text and the line */
+  padding: 0 0 4px 0; 
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  position: relative; /* Required for the underline */
+  transition: color 0.2s ease;
+}
+
+.activeTab {
+  /* Bright white for the active text */
+  color: var(--dashboard-primary-text-color, #F4F4F4);
+}
+
+/* The Sleek Underline for the Active Tab */
+.activeTab::after {
+  content: '';
+  position: absolute;
+  /* Pulls it down to perfectly overlap the container's bottom line */
+  bottom: -1px; 
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--dashboard-core-color, #F59E0B); /* Your brand amber */
+  border-radius: 2px 2px 0 0;
+  /* Very subtle glow to make it pop in dark mode */
+  box-shadow: 0 -2px 8px rgba(245, 158, 11, 0.4); 
+}
+
+.inactiveTab {
+  /* Faded gray for inactive text */
+  color: var(--dashboard-secondary-text-color, #8A8886); 
+}
+
+.inactiveTab:hover {
+  /* Lightens up when hovered */
+  color: var(--dashboard-primary-text-color, #E8E8E8);
+}
+
+/* --- Smooth Content Transition --- */
+.fadeContainer {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
