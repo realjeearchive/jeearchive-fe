@@ -1,0 +1,95 @@
+/* --- Page Wrapper --- */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dashboard-background-color);
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* --- Giant Background 404 --- */
+.bgText {
+  position: absolute;
+  /* Scales perfectly on mobile vs desktop */
+  font-size: clamp(10rem, 25vw, 20rem);
+  font-weight: 800;
+  color: var(--dashboard-core-color);
+  opacity: 0.03; /* Keeps it very subtle so it doesn't distract */
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Content Container --- */
+.content {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  max-width: 420px;
+}
+
+/* --- Logo Styling --- */
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  /* Adds a very subtle amber glow behind your logo */
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.2));
+  animation: float 4s ease-in-out infinite;
+}
+
+.logoImage {
+  object-fit: contain;
+}
+
+/* Optional: Gives the logo a slow, premium floating effect */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* --- Typography --- */
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --- The Return Button --- */
+.button {
+  margin-top: 0.5rem;
+  padding: 0.75rem 2rem;
+  background-color: var(--dashboard-core-color);
+  /* Using the dark sidebar background color for the text creates perfect contrast on the amber button */
+  color: var(--dashboard-sidebar-background-color); 
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);
+}
+
+.button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1); /* Makes the core color slightly brighter on hover */
+}
