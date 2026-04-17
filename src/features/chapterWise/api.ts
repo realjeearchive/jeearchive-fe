@@ -30,13 +30,25 @@ export interface QuestionSolution {
   image?: string[];
 }
 
+// 🔥 NEW: Paper interface to extract Year, Month, Session, and Shift for the filter
+export interface PaperInfo {
+  id?: string;
+  year?: number;
+  month?: string;
+  date?: string;
+  shift?: string;
+  mode?: string;
+  session?: string;
+  exam?: { name: string };
+}
+
 export interface QuestionListItem {
   id: string;
   subjectId?: string;
   chapterId?: string;
   paperId?: string;
   class?: number;
-  content: string; // The actual question text
+  content: string; 
   image?: string[];
   type: string;
   questionNumber: number;
@@ -47,19 +59,34 @@ export interface QuestionListItem {
   isOutOfSyllabus?: boolean;
   isBonus?: boolean;
   correctAnswer: string[] | string;
-  options?: QuestionOption; // Adding the options object
-  solution?: QuestionSolution; // Adding the solution object
+  options?: QuestionOption; 
+  solution?: QuestionSolution; 
+  papers?: PaperInfo; // 🔥 Attached paper info to the question for filtering
   attemptStatus: "Successfully attempted" | "Not successfully done" | "Unattempted" | string;
 }
 
+// 🔥 NEW: Chapter Data interface to read the Syllabus boolean flags
+export interface ChapterData {
+  id: string;
+  name: string;
+  subjectId: string;
+  group: string;
+  class: number;
+  chapterNumber: number;
+  isJeeMain: boolean;
+  isJeeAdvanced: boolean;
+}
+
 export interface ChapterInfoResponse {
+  chapterId?: string;
+  chapterName?: string;
   stats: ChapterStats;
+  chapterData?: ChapterData; // 🔥 Attached chapter data for syllabus tags
   jeeMain: QuestionListItem[];
   jeeAdvanced: QuestionListItem[];
 }
 
 export async function fetchChapterInfo(chapterName: string): Promise<ChapterInfoResponse> {
-  // Pass only the relative path because your authenticatedFetch prepends the BASE_URL
   const res = await authenticatedFetch(`/chapterWise/${encodeURIComponent(chapterName)}/info`, {
     method: 'GET'
   });
@@ -69,7 +96,6 @@ export async function fetchChapterInfo(chapterName: string): Promise<ChapterInfo
   }
 
   const json = await res.json();
-  // Ensure we return the 'data' part of your standard response
   return json.data; 
 }
 
@@ -77,11 +103,12 @@ export interface ChapterWiseAttemptPayload {
   questionId: string;
   selectedOption: string;
   isCorrect: boolean;
-  timeSpent: number; // Optional: if your backend tracks time
+  timeSpent: number; 
 }
 
+// (Optional: You can remove this if you strictly use the fetch call directly inside Zustand now)
 export async function submitChapterWiseAttempt(payload: ChapterWiseAttemptPayload) {
-  const res = await authenticatedFetch(`/chapterWise/attempt`, { // ⚠️ Update this endpoint if needed
+  const res = await authenticatedFetch(`/chapterWise/attempt`, { 
     method: 'POST',
     body: JSON.stringify(payload),
   });

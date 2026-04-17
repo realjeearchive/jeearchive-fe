@@ -93,13 +93,13 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       const timeSpent = questionTimes[questionId] || 0;
       
       const payload = {
-        status: "visited", 
+        status: "answered", 
         timeSpent: timeSpent,
-        userAnswer: [selectedOption] 
+        userAnswerRaw: [selectedOption] 
       };
 
-      const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/update`, {
-        method: "PUT",
+      const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/submit`, {
+        method: "POST",
         body: JSON.stringify(payload),
       });
 
