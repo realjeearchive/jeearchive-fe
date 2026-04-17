@@ -85,6 +85,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .text {
@@ -92,6 +93,20 @@
   line-height: 1.5;
   color: var(--dashboard-primary-text-color);
   font-weight: 500;
+}
+
+/* 🔥 IMAGE FIXES FOR OPTIONS */
+.parsedImage {
+  max-width: 100%;
+  max-height: 120px; /* Keep option images small and contained */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 4px 0;
+  
+  /* Invert black to white for dark theme */
+  filter: invert(1) hue-rotate(180deg); 
 }
 
 .userMarkedLabel {

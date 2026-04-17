@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   // This usually results in 5 parts when split by '/' (e.g., "", "chapter-wise...", "phy", "mech", "kinematics")
   const isChapterTestPage = 
     pathname?.includes("/chapter-wise-questions/") && 
-    pathname.split("/").length >= 5;
+    pathname.split("/").length >= 6;
 
   // 3. Early Returns (Loading / Auth / Full Screen)
 

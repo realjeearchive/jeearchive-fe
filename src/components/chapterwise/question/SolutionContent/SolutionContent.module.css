@@ -35,3 +35,17 @@
 
 .body p { margin-bottom: 12px; }
 .body strong { color: #fff; }
+
+/* 🔥 IMAGE FIXES FOR SOLUTIONS */
+.parsedImage {
+  max-width: 100%;
+  max-height: 250px; /* Slightly larger for solution diagrams */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 12px 0;
+  
+  /* Invert black to white for dark theme */
+  filter: invert(1) hue-rotate(180deg); 
+}

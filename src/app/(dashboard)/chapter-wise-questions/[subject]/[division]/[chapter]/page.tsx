@@ -1,81 +1,91 @@
-import React from "react";
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { fetchChapterInfo } from "@/features/chapterWise/api";
 import { ChapterWiseInterface, QuestionData, Subject } from "@/components/chapterwise/ChapterWiseInterface";
+import { chapterConfig } from '@/features/chapterWise/config';
 
-interface PageProps {
-  params: Promise<{
-    subject: string;
-    division: string;
-    chapter: string;
-  }>;
-}
-
-// --- HELPER: CONVERT URL SLUG TO PROPER SUBJECT NAME ---
 const getSubjectFromSlug = (slug: string): Subject => {
   const s = slug.toLowerCase();
   if (s === "maths" || s === "mathematics") return "Mathematics";
   if (s === "chemistry") return "Chemistry";
-  if (s === "physics") return "Physics";
-  return "Physics"; // Default fallback
+  return "Physics";
 };
 
-// --- DUMMY DATA GENERATOR ---
-const generateChapterQuestions = (chapterName: string, subjectSlug: string): QuestionData[] => {
-  // 1. Get the proper Subject Type
-  const validSubject = getSubjectFromSlug(subjectSlug);
+export default function PracticePage() {
+  const params = useParams();
+  const subject = params.subject as string;
+  const division = params.division as string;
+  const chapter = params.chapter as string;
 
-  return Array.from({ length: 15 }).map((_, i) => ({
-    id: `q-${i + 1}`,
-    number: i + 1,
-    subject: validSubject, // Use the corrected subject here
-    section: i < 10 ? "Single Correct" : "Numerical", 
-    text: `<p>Sample question ${i + 1} for <strong>${chapterName}</strong>...</p>`,
-    hasImage: i % 5 === 0,
-    imageUrl: i % 5 === 0 ? "https://via.placeholder.com/600x200" : undefined,
-    options: i < 10 ? [
-      { id: "A", text: "Option A", percentage: 45 },
-      { id: "B", text: "Option B", percentage: 25 },
-      { id: "C", text: "Option C", percentage: 15 },
-      { id: "D", text: "Option D", percentage: 15 },
-    ] : [],
-    correctAnswer: "A",
-    userAnswer: null,
-    status: "unattempted",
-    solution: `<p>Detailed solution for ${chapterName}...</p>`,
-    stats: {
-      userTime: "0s",
-      avgTime: "1m 20s",
-      accuracy: 60,
-    },
-    meta: {
-      difficulty: "Medium",
-      marksPos: 4,
-      marksNeg: 1,
-    },
-    chapter: chapterName,
-    topic: "General Topic",
-  }));
-};
+  const [questions, setQuestions] = useState<QuestionData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function ChapterPage(props: PageProps) {
-  const { chapter, subject } = await props.params;
+  const divisionChapters = chapterConfig[division] || [];
+  const exactChapterName = divisionChapters.find(c => c.id === chapter)?.title || chapter;
 
-  // 1. Format Chapter Name (e.g., "sets-relations" -> "Sets Relations")
-  const formattedChapter = chapter
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const data = await fetchChapterInfo(exactChapterName);
+        const validSubject = getSubjectFromSlug(subject);
 
-  // 2. Generate Data using the raw subject slug
-  const mockQuestions = generateChapterQuestions(formattedChapter, subject);
+        const mapped: QuestionData[] = data.jeeMain.map((q, index) => {
+          const options = [];
+          if (q.type === "SingleCorrect" && q.options) {
+            if (q.options.optionAtext) options.push({ id: "A", text: q.options.optionAtext });
+            if (q.options.optionBtext) options.push({ id: "B", text: q.options.optionBtext });
+            if (q.options.optionCtext) options.push({ id: "C", text: q.options.optionCtext });
+            if (q.options.optionDtext) options.push({ id: "D", text: q.options.optionDtext });
+          }
 
-  // 3. Pass the CORRECTED subject string to the Interface
-  const finalSubjectName = getSubjectFromSlug(subject);
+          // Check if user already solved it in the past
+          const isPreviouslySolved = q.attemptStatus === "Successfully attempted" || q.attemptStatus === "Not successfully done";
+
+          return {
+            id: q.id,
+            // 🔥 THE FIX: Force strict sequential numbering (1, 2, 3...)
+            // We ignore q.questionNumber because it creates duplicates from old papers!
+            number: index + 1, 
+            
+            subject: validSubject,
+            section: (q.type === "SingleCorrect" ? "Single Correct" : "Numerical") as "Single Correct" | "Numerical",
+            text: q.content,
+            hasImage: !!(q.image && q.image.length > 0),
+            imageUrl: q.image?.[0] || undefined,
+            options,
+            
+            correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer,
+            
+            // Pass in the user's previous answer if they have one
+            userAnswer: isPreviouslySolved ? (Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer) : null,
+            status: (isPreviouslySolved ? "answered" : "unattempted") as "answered" | "unattempted",
+            
+            solution: q.solution?.text || "<p>No solution provided.</p>",
+            stats: { userTime: "0s", avgTime: "1m 30s", accuracy: 50 },
+            meta: { difficulty: "Medium", marksPos: q.positiveMarks || 4, marksNeg: q.negativeMarks || 1 },
+            chapter: exactChapterName,
+            topic: "Practice",
+          };
+        });
+        setQuestions(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
+  }, [exactChapterName, subject]);
+
+  if (loading) return <div className="h-screen flex items-center justify-center bg-[var(--dashboard-background-color,#141312)] text-white">Loading Questions...</div>;
 
   return (
     <ChapterWiseInterface
-      questions={mockQuestions}
-      chapterName={formattedChapter}
-      subject={finalSubjectName} // <--- Passing "Mathematics", not "maths"
+      questions={questions}
+      chapterName={exactChapterName}
+      subject={getSubjectFromSlug(subject)}
     />
   );
 }

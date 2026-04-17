@@ -2,7 +2,9 @@
 
 import React from "react";
 import styles from "./OptionsList.module.css";
-import { FiCheck, FiX } from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
+import parse, { DOMNode, Element, HTMLReactParserOptions } from 'html-react-parser';
+import Latex from "@/components/testPlayer/Latex/Latex"; 
 
 export interface Option {
   id: string;
@@ -29,6 +31,30 @@ export const OptionsList = ({
   const handleSelect = (id: string) => {
     if (!isSubmitted && onOptionSelect) {
       onOptionSelect(id);
+    }
+  };
+
+  const parserOptions: HTMLReactParserOptions = {
+    replace: (domNode: DOMNode) => {
+      if (domNode.type === 'text') {
+         if (domNode.data && domNode.data.trim() !== '') {
+             return <Latex>{domNode.data}</Latex>;
+         }
+      }
+      
+      if (domNode.type === 'tag') {
+        const element = domNode as Element;
+        if (element.name === 'img') {
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              {...element.attribs}
+              className={styles.parsedImage} 
+              alt={element.attribs.alt || "Option Figure"}
+            />
+          );
+        }
+      }
     }
   };
 
@@ -76,7 +102,9 @@ export const OptionsList = ({
             </div>
 
             <div className={styles.contentWrapper}>
-              <div className={styles.text}>{opt.text}</div>
+              <div className={styles.text}>
+                {opt.text ? parse(opt.text, parserOptions) : null}
+              </div>
             </div>
 
             {isSubmitted && isSelected && (

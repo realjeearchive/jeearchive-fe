@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FiEye } from "react-icons/fi";
-
+import { useChapterPracticeStore } from "@/store/useChapterPracticeStore"; 
 
 import { SolutionLayout } from "./layout/SolutionLayout";
 import { SolutionHeader } from "./layout/SolutionHeader";
@@ -17,10 +17,9 @@ import { QuestionMeta } from "./question/QuestionMeta/QuestionMeta";
 import { SolutionContent } from "./question/SolutionContent/SolutionContent";
 import { QuestionStats } from "./question/QuestionStats/QuestionStats";
 
-
 export type Subject = "Physics" | "Chemistry" | "Mathematics";
 export type SectionType = "Single Correct" | "Numerical" | "Multiple Correct";
-export type StatusString = "correct" | "incorrect" | "unattempted";
+export type StatusString = "correct" | "incorrect" | "unattempted" | "answered";
 
 export interface Option {
   id: string;
@@ -43,7 +42,7 @@ export interface QuestionMetaData {
 export interface QuestionData {
   id: string;
   number: number;
-  subject: Subject;
+  subject: Subject | string;
   section: SectionType;
   text: string;
   hasImage?: boolean;
@@ -65,7 +64,6 @@ interface ChapterWiseInterfaceProps {
   subject: string;
 }
 
-// Helper to format seconds into "00s" or "1m 30s"
 const formatTime = (seconds: number) => {
   if (seconds < 60) return `${seconds}s`;
   const m = Math.floor(seconds / 60);
@@ -74,50 +72,76 @@ const formatTime = (seconds: number) => {
 };
 
 export const ChapterWiseInterface = ({ 
-  questions, 
+  questions: rawQuestions, // 🔥 Rename the raw prop
   chapterName, 
   subject 
 }: ChapterWiseInterfaceProps) => {
   const router = useRouter();
   
+  // 🔥 THE ULTIMATE FIX: Intercept the raw questions and force a strict 1, 2, 3... N sequence.
+  // This completely destroys the original JEE exam numbers that cause duplicates and gaps!
+  const questions = useMemo(() => {
+    return rawQuestions.map((q, index) => ({
+      ...q,
+      number: index + 1
+    }));
+  }, [rawQuestions]);
 
-  const [activeQuestionId, setActiveQuestionId] = useState<string>(questions[0]?.id || "");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
-  const [submissions, setSubmissions] = useState<Record<string, boolean>>({});
-  const [revealedSolutions, setRevealedSolutions] = useState<Record<string, boolean>>({});
-  
+  const {
+    activeQuestionId,
+    userAnswers,
+    submissions,
+    revealedSolutions,
+    questionTimes,
+    initStore,
+    setActiveQuestionId,
+    selectOption,
+    submitAnswer,
+    revealSolution,
+    incrementTime
+  } = useChapterPracticeStore();
 
-  const [questionTimes, setQuestionTimes] = useState<Record<string, number>>({});
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
 
+  useEffect(() => {
+    if (questions && questions.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const queryQuestionId = params.get('q');
+      
+      // Initialize the store with our perfectly numbered questions
+      initStore(questions, queryQuestionId || undefined);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions, initStore]);
 
-  const safeSubject = (["Physics", "Chemistry", "Mathematics"].includes(subject) 
-    ? subject 
+  useEffect(() => {
+    if (!activeQuestionId || submissions[activeQuestionId]) return;
+
+    const timerId = setInterval(() => {
+      incrementTime(activeQuestionId);
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [activeQuestionId, submissions, incrementTime]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
+    };
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const formattedSubject = subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
+  const safeSubject = (["Physics", "Chemistry", "Mathematics"].includes(formattedSubject) 
+    ? formattedSubject 
     : "Physics") as Subject;
   
   const currentQuestion = questions.find((q) => q.id === activeQuestionId);
   const currentIndex = questions.findIndex((q) => q.id === activeQuestionId);
 
-
-  useEffect(() => {
-
-    if (submissions[activeQuestionId]) return;
-
-
-    const timerId = setInterval(() => {
-      setQuestionTimes((prev) => ({
-        ...prev,
-        [activeQuestionId]: (prev[activeQuestionId] || 0) + 1,
-      }));
-    }, 1000);
-
-
-    return () => clearInterval(timerId);
-  }, [activeQuestionId, submissions]);
-
-
-  // --- SIDEBAR DATA ---
   const sidebarQuestions = useMemo(() => {
     return questions.map((q) => {
       const isSubmitted = submissions[q.id];
@@ -131,57 +155,18 @@ export const ChapterWiseInterface = ({
       
       return {
         id: q.id,
-        number: q.number,
+        number: q.number, // This is now strictly sequential!
         status: status, 
         section: q.section
       } as SidebarItemStatus; 
     });
   }, [questions, submissions, userAnswers]);
 
-
-
-  const handleOptionSelect = (optId: string) => {
-    if (submissions[activeQuestionId]) return;
-    setUserAnswers(prev => ({ ...prev, [activeQuestionId]: optId }));
-  };
-
-  const handleCheckAnswer = () => {
-    if (!userAnswers[activeQuestionId]) return;
-    setSubmissions(prev => ({ ...prev, [activeQuestionId]: true }));
-
-  };
-
-  const handleViewSolution = () => {
-    setRevealedSolutions(prev => ({ ...prev, [activeQuestionId]: true }));
-    setTimeout(() => {
-      document.getElementById("detailed-solution-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
-
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) setActiveQuestionId(questions[currentIndex + 1].id);
-  };
-  const handlePrev = () => {
-    if (currentIndex > 0) setActiveQuestionId(questions[currentIndex - 1].id);
-  };
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 1024) setIsSidebarOpen(false);
-      else setIsSidebarOpen(true);
-    };
-    handleResize(); 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  if (!currentQuestion) return <div className="p-10 text-white">Loading...</div>;
+  if (!currentQuestion) return <div className="p-10 text-white">Loading interface...</div>;
 
   const isSubmitted = !!submissions[activeQuestionId];
   const isSolutionVisible = !!revealedSolutions[activeQuestionId];
   const hasSelectedOption = !!userAnswers[activeQuestionId];
-  
-
   const currentTimeSpent = questionTimes[activeQuestionId] || 0;
   
   let mainStatus: "correct" | "incorrect" | "unattempted" = "unattempted";
@@ -190,6 +175,20 @@ export const ChapterWiseInterface = ({
       ? "correct" 
       : "incorrect";
   }
+
+  const handleNext = () => {
+    if (currentIndex < questions.length - 1) setActiveQuestionId(questions[currentIndex + 1].id);
+  };
+  const handlePrev = () => {
+    if (currentIndex > 0) setActiveQuestionId(questions[currentIndex - 1].id);
+  };
+
+  const handleViewSolutionClick = () => {
+    revealSolution(activeQuestionId);
+    setTimeout(() => {
+      document.getElementById("detailed-solution-section")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
 
   return (
     <SolutionLayout
@@ -245,16 +244,15 @@ export const ChapterWiseInterface = ({
             options={currentQuestion.options}
             correctAnswer={currentQuestion.correctAnswer}
             selectedOptionId={userAnswers[activeQuestionId]}
-            onOptionSelect={handleOptionSelect}
+            onOptionSelect={(optId) => selectOption(activeQuestionId, optId)}
             isSubmitted={isSubmitted}
           />
         )}
 
-
         {!isSubmitted && (
           <div style={{ padding: "0 20px 20px 20px" }}>
             <button
-              onClick={handleCheckAnswer}
+              onClick={() => submitAnswer(activeQuestionId)}
               disabled={!hasSelectedOption}
               style={{
                 width: "100%",
@@ -273,11 +271,10 @@ export const ChapterWiseInterface = ({
           </div>
         )}
 
-
         {isSubmitted && !isSolutionVisible && (
           <div style={{ padding: "0 20px 20px 20px" }}>
              <button
-              onClick={handleViewSolution}
+              onClick={handleViewSolutionClick}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
                 width: "100%", padding: "12px",

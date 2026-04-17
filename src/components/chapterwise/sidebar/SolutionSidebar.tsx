@@ -48,7 +48,11 @@ export const SolutionSidebar = ({
   const sections = ["Single Correct", "Numerical", "Multiple Correct"];
   
   const renderSection = (sectionName: string) => {
-    const sectionQs = filteredQuestions.filter(q => q.section === sectionName);
+    // 🔥 Ensure the buttons are always sorted exactly 1, 2, 3...
+    const sectionQs = [...filteredQuestions]
+      .filter(q => q.section === sectionName)
+      .sort((a, b) => a.number - b.number); 
+
     if (sectionQs.length === 0) return null;
 
     return (
