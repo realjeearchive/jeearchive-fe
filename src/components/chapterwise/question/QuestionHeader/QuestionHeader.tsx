@@ -1,22 +1,14 @@
 import React from "react";
 import styles from "./QuestionHeader.module.css";
-import { FiBookmark, FiAlertTriangle, FiClock } from "react-icons/fi";
+import { FiCheckCircle } from "react-icons/fi"; // 🔥 Import the checkmark
 
 interface QuestionHeaderProps {
   qNumber: number;
   type: string;
-  marksPos: number;
-  marksNeg: number;
-  timer: string;
+  isSolved?: boolean; // 🔥 New prop to trigger the badge
 }
 
-export const QuestionHeader = ({ 
-  qNumber, 
-  type, 
-  marksPos, 
-  marksNeg,
-  timer 
-}: QuestionHeaderProps) => {
+export const QuestionHeader = ({ qNumber, type, isSolved }: QuestionHeaderProps) => {
   return (
     <div className={styles.header}>
       <div className={styles.leftSection}>
@@ -24,27 +16,13 @@ export const QuestionHeader = ({
         <div className={styles.metaPill}>{type}</div>
       </div>
 
-      <div className={styles.rightSection}>
-        <div className={styles.timerBlock}>
-          <span>{timer}</span>
-          <FiClock size={14} />
+      {/* 🔥 The exact LeetCode-style Solved Badge */}
+      {isSolved && (
+        <div className={styles.solvedBadge}>
+          <span>Solved</span>
+          <FiCheckCircle className={styles.solvedIcon} />
         </div>
-
-        <div className={styles.divider} />
-
-        <div className={styles.marksBlock}>
-          <span className={styles.posMark}>+{marksPos}</span>
-          <span> / </span>
-          <span className={styles.negMark}>-{marksNeg}</span>
-        </div>
-        
-        <button className={styles.actionBtn}>
-          <FiBookmark size={13} /> <span className={styles.btnText}>Bookmark</span>
-        </button>
-        <button className={`${styles.actionBtn} ${styles.reportBtn}`}>
-          <FiAlertTriangle size={13} /> <span className={styles.btnText}>Report</span>
-        </button>
-      </div>
+      )}
     </div>
   );
 };

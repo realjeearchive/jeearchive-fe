@@ -119,3 +119,37 @@ export async function submitChapterWiseAttempt(payload: ChapterWiseAttemptPayloa
 
   return await res.json();
 }
+
+
+// --- NEW: Types for Question Attempts History ---
+export interface ChapterAttempt {
+  id: string;
+  questionId: string;
+  studentId: string;
+  questionStatus: string;
+  isCorrect: boolean;
+  marksObtained: number;
+  timeSpent: number;
+  userAnswer: string[];
+  created_at: string;
+  isAnalyzed: boolean;
+  isPending: boolean;
+}
+
+export interface QuestionAttemptsResponse {
+  chapterAttempts: ChapterAttempt[];
+  testAttempts: any[]; // You can type this later if needed
+}
+
+export async function fetchQuestionAttempts(questionId: string): Promise<QuestionAttemptsResponse> {
+  const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/attempts`, {
+    method: 'GET'
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch attempts: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return json.data;
+}

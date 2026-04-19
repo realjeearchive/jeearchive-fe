@@ -1,27 +1,33 @@
+"use client";
+
 import React from "react";
 import styles from "./BottomBar.module.css";
-import { FiChevronLeft, FiChevronRight, FiEye } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiCheckCircle, FiArrowLeft, FiAlertCircle } from "react-icons/fi";
 
 interface BottomBarProps {
   onNext: () => void;
   onPrev: () => void;
   disablePrev?: boolean;
   disableNext?: boolean;
+  mainActionText: string;
+  onMainAction: () => void;
+  mainActionDisabled?: boolean;
+  warningMessage?: string; // 🔥 NEW: Warning message prop
 }
 
-export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBarProps) => {
-
-
-  const handleViewSolution = () => {
-    const solutionSection = document.getElementById("detailed-solution-section");
-    if (solutionSection) {
-      solutionSection.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
+export const BottomBar = ({ 
+  onNext, 
+  onPrev, 
+  disablePrev, 
+  disableNext,
+  mainActionText,
+  onMainAction,
+  mainActionDisabled,
+  warningMessage
+}: BottomBarProps) => {
 
   return (
     <div className={styles.container}>
-      
       <div className={styles.navGroup}>
 
         <button 
@@ -34,15 +40,26 @@ export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBa
           <span className={styles.btnText}>Previous</span>
         </button>
 
+        {/* 🔥 DYNAMIC MAIN ACTION BUTTON WITH TOOLTIP WRAPPER */}
+        <div className={styles.mainActionWrapper}>
+          
+          {/* The Tooltip */}
+          {warningMessage && (
+            <div className={styles.warningTooltip}>
+              <FiAlertCircle size={14} />
+              {warningMessage}
+            </div>
+          )}
 
-        <button 
-          className={`${styles.navButton} ${styles.mainAction}`}
-          onClick={handleViewSolution} 
-        >
-          <FiEye size={16} /> 
-          <span>View Solution</span>
-        </button>
-
+          <button 
+            /* Notice we removed the native 'disabled' attribute so onClick still fires! */
+            className={`${styles.navButton} ${styles.mainAction} ${mainActionDisabled ? styles.mainActionDisabled : ''}`}
+            onClick={onMainAction}
+          >
+            {mainActionText.includes("Back") ? <FiArrowLeft size={16} /> : <FiCheckCircle size={16} />}
+            <span>{mainActionText}</span>
+          </button>
+        </div>
 
         <button 
           className={styles.navButton} 
@@ -54,7 +71,6 @@ export const BottomBar = ({ onNext, onPrev, disablePrev, disableNext }: BottomBa
           <FiChevronRight size={18} />
         </button>
       </div>
-
     </div>
   );
 };

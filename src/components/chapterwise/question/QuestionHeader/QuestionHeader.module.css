@@ -1,21 +1,17 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* 🔥 Changed from flex-start to space-between to push the badge to the right */
+  justify-content: space-between; 
   padding: 16px 20px;
   border-bottom: 1px solid var(--dashboard-dividerline-color);
   background-color: rgba(255, 255, 255, 0.01); 
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
 }
-.header::-webkit-scrollbar { display: none; }
 
 .leftSection {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0; 
 }
 
 .qBadge {
@@ -34,69 +30,17 @@
   color: var(--dashboard-secondary-text-color);
 }
 
-.rightSection {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0; 
-  margin-left: 16px; 
-}
-
-.timerBlock {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.divider {
-  width: 1px;
-  height: 16px;
-  background: var(--dashboard-sidebar-border-color);
-  margin: 0 4px;
-}
-
-.marksBlock {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
-  margin-right: 4px;
-}
-.posMark { color: #22C55E; }
-.negMark { color: #EF4444; }
-
-.actionBtn {
+/* 🔥 New LeetCode-style Badge Classes */
+.solvedBadge {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
-  background: transparent;
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  padding: 6px 12px;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-size: 13px;
   font-weight: 500;
+  color: var(--dashboard-secondary-text-color); /* Muted grey text just like LC */
 }
 
-.actionBtn:hover {
-  border-color: var(--dashboard-dividerline-color);
-  color: var(--dashboard-primary-text-color);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.reportBtn:hover {
-  color: #EF4444;
-  border-color: rgba(239, 68, 68, 0.3);
-}
-
-@media (max-width: 700px) {
-  .btnText { display: none; }
-  .header { padding: 12px; }
+.solvedIcon {
+  color: #22C55E; /* Vibrant crisp green */
+  font-size: 16px;
 }

@@ -42,30 +42,26 @@ export default function PracticePage() {
             if (q.options.optionDtext) options.push({ id: "D", text: q.options.optionDtext });
           }
 
-          let fullSol = q.solution?.text || "<p>No solution provided.</p>";
-          q.solution?.image?.forEach(img => {
-            fullSol += `<img src="${IMAGE_BASE_URL}${img}" class="mt-4 max-w-full" />`;
-          });
+          // 🔥 THE FIX: Translate backend attempt status into frontend UI status!
+          const isCorrect = q.attemptStatus === "Successfully attempted";
+          const isIncorrect = q.attemptStatus === "Not successfully done";
 
           return {
             id: q.id,
-            number: q.questionNumber || index + 1,
+            number: index + 1, 
             subject: validSubject,
-            
-            // 🔥 THE FIX: Explicitly cast to the literal types expected by SectionType
             section: (q.type === "SingleCorrect" ? "Single Correct" : "Numerical") as "Single Correct" | "Numerical",
-            
             text: q.content,
             hasImage: !!(q.image && q.image.length > 0),
-            imageUrl: q.image?.[0] ? `${IMAGE_BASE_URL}${q.image[0]}` : undefined,
+            imageUrl: q.image?.[0] || undefined,
             options,
             correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer,
-            userAnswer: null,
             
-            // 🔥 Formally declare this as a strict literal string
-            status: "unattempted" as const, 
+            // Set the status based on history, but leave userAnswer NULL so the interface knows to fetch it!
+            status: isCorrect ? "correct" : isIncorrect ? "incorrect" : "unattempted",
+            userAnswer: null, 
             
-            solution: fullSol,
+            solution: q.solution?.text || "<p>No solution provided.</p>",
             stats: { userTime: "0s", avgTime: "1m 30s", accuracy: 50 },
             meta: { difficulty: "Medium", marksPos: q.positiveMarks || 4, marksNeg: q.negativeMarks || 1 },
             chapter: exactChapterName,

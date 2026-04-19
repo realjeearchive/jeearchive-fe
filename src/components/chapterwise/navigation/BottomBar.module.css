@@ -115,3 +115,54 @@
     padding: 10px 16px; 
   }
 }
+
+
+/* Wrapper to anchor the absolute tooltip */
+.mainActionWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔥 Custom CSS Disabled Class (Replaces the native :disabled behavior) */
+.mainActionDisabled {
+  background-color: var(--dashboard-primary-text-color) !important;
+  color: #000 !important;
+  opacity: 0.3 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+}
+
+/* 🔥 The Warning Tooltip (Now a friendly Amber instead of aggressive Red) */
+.warningTooltip {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #F59E0B; /* Matches your active button color */
+  color: #000; /* Dark text for crisp contrast */
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+}
+
+/* The little triangle arrow pointing down */
+.warningTooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #F59E0B; /* Matches the new background */
+}

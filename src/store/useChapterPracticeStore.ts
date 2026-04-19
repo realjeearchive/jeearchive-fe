@@ -9,6 +9,10 @@ interface ChapterPracticeState {
   submissions: Record<string, boolean>;
   revealedSolutions: Record<string, boolean>;
   questionTimes: Record<string, number>;
+  
+  // 🔥 New UI States
+  isTimerRunning: boolean;
+  bookmarkedQuestions: Record<string, boolean>;
 
   // Actions
   initStore: (questions: QuestionData[], initialQuestionId?: string) => void;
@@ -17,22 +21,28 @@ interface ChapterPracticeState {
   submitAnswer: (questionId: string) => Promise<void>;
   revealSolution: (questionId: string) => void;
   incrementTime: (questionId: string) => void;
+  
+  // 🔥 New Actions
+  toggleTimer: () => void;
+  toggleBookmark: (questionId: string) => Promise<void>;
 }
 
 export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) => ({
+  // --- Initial State ---
   questions: [],
   activeQuestionId: "",
   userAnswers: {},
   submissions: {},
   revealedSolutions: {},
   questionTimes: {},
+  isTimerRunning: false,
+  bookmarkedQuestions: {}, 
 
+  // --- Actions ---
   initStore: (fetchedQuestions, initialQuestionId) => {
     const initialUserAnswers: Record<string, string> = {};
     const initialSubmissions: Record<string, boolean> = {};
 
-    // 🔥 THE ULTIMATE FIX: Force strict 1 to N sequential numbering!
-    // This permanently overwrites the chaotic random exam numbers from the backend.
     const perfectlyNumberedQuestions = fetchedQuestions.map((q, index) => ({
       ...q,
       number: index + 1
@@ -54,14 +64,16 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       submissions: initialSubmissions,
       revealedSolutions: {},
       questionTimes: {},
+      isTimerRunning: false, 
     });
   },
 
-  setActiveQuestionId: (id) => set({ activeQuestionId: id }),
+  setActiveQuestionId: (id) => set({ 
+    activeQuestionId: id,
+    isTimerRunning: false // Auto-pause timer when switching questions
+  }),
 
   selectOption: (questionId, optionId) => {
-    const { submissions } = get();
-    if (submissions[questionId]) return; 
     set((state) => ({
       userAnswers: { ...state.userAnswers, [questionId]: optionId }
     }));
@@ -79,6 +91,36 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
     }));
   },
 
+  toggleTimer: () => set((state) => ({ isTimerRunning: !state.isTimerRunning })),
+
+  // 🔥 Optimistic UI Bookmark Action
+  toggleBookmark: async (questionId) => {
+    const isCurrentlyBookmarked = get().bookmarkedQuestions[questionId];
+
+    // Instantly toggle the UI state so it feels lightning fast
+    set((state) => ({
+      bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: !isCurrentlyBookmarked }
+    }));
+
+    try {
+      // Hit the API in the background
+      const res = await authenticatedFetch(`/bookMarked/add`, {
+        method: "POST",
+        body: JSON.stringify({ questionId }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to sync bookmark");
+      }
+    } catch (err) {
+      console.error("Error bookmarking:", err);
+      // 🔙 Rollback the UI if the API call actually fails
+      set((state) => ({
+        bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
+      }));
+    }
+  },
+
   submitAnswer: async (questionId) => {
     const { userAnswers, questionTimes } = get();
     const selectedOption = userAnswers[questionId];
@@ -86,7 +128,8 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
     if (!selectedOption) return;
 
     set((state) => ({
-      submissions: { ...state.submissions, [questionId]: true }
+      submissions: { ...state.submissions, [questionId]: true },
+      isTimerRunning: false // Auto-pause timer when submitted
     }));
 
     try {
