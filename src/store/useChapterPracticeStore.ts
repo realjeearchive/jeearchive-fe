@@ -147,12 +147,20 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       });
 
       if (!res.ok) {
-        console.error("Failed to sync answer to backend");
+        // 🔥 FIX: Extract the actual backend error to see what went wrong
+        const errorData = await res.json().catch(() => ({}));
+        
+        // 🔥 FIX: Use console.warn instead of console.error to prevent the Next.js Red Screen
+        console.warn("Backend rejected the answer submission. Details:", {
+          status: res.status,
+          error: errorData
+        });
       } else {
         console.log("Answer synced to backend successfully!");
       }
     } catch (err) {
-      console.error("Error updating question:", err);
+      // 🔥 FIX: Use console.warn here as well
+      console.warn("Network or code error while updating question:", err);
     }
   }
 }));

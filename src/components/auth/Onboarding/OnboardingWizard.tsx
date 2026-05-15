@@ -12,7 +12,7 @@ import {
   submitStage1Request, 
   submitStage2Request, 
   submitStage3Request 
-} from "@/features/user/api";
+} from "@/features/users/api";
 
 // --- UI OPTIONS ---
 const CATEGORIES = [

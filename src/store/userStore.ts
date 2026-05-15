@@ -5,7 +5,7 @@ import {
   getStudentProfileRequest, 
   getStageNumberRequest, 
   type StudentProfile 
-} from "@/features/user/api";
+} from "@/features/users/api";
 
 interface UserState {
   profile: Partial<StudentProfile> | null;

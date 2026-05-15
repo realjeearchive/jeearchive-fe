@@ -4,8 +4,9 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ChapterInfoResponse } from "@/features/chapterWise/api";
 import Styles from './ChapterDashboard.module.css';
-import { Play, Check, Search, Filter, ChevronDown, RotateCcw } from 'lucide-react';
+
 import Latex from "@/components/testPlayer/Latex/Latex";
+import { Play, Check, Search, Filter, ChevronDown, RotateCcw, Calendar, Clock, Tag, Sun, Minus, Plus } from 'lucide-react';
 
 interface ChapterDashboardProps {
   data: ChapterInfoResponse;
@@ -34,8 +35,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   
   // --- Filter Popover State ---
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<'year' | 'date' | null>(null);
-  
+  const [openDropdown, setOpenDropdown] = useState<'year' | 'session' | 'date' | 'shift' | null>(null);  
   // Selected filter arrays
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
@@ -53,14 +53,17 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   }, [baseQuestions]);
 
   const availableSessions = useMemo(() => {
-    const filtered = baseQuestions.filter(q => selectedYears.length === 0 || selectedYears.includes(q.papers?.year!));
+    const filtered = baseQuestions.filter(q => {
+      // Safely check if year exists before checking includes
+      return selectedYears.length === 0 || (q.papers?.year !== undefined && selectedYears.includes(q.papers.year));
+    });
     return Array.from(new Set(filtered.map(q => q.papers?.session).filter(Boolean))) as string[];
   }, [baseQuestions, selectedYears]);
 
   const availableDates = useMemo(() => {
     const filtered = baseQuestions.filter(q => {
-      const yMatch = selectedYears.length === 0 || selectedYears.includes(q.papers?.year!);
-      const sMatch = selectedSessions.length === 0 || selectedSessions.includes(q.papers?.session!);
+      const yMatch = selectedYears.length === 0 || (q.papers?.year !== undefined && selectedYears.includes(q.papers.year));
+      const sMatch = selectedSessions.length === 0 || (q.papers?.session !== undefined && selectedSessions.includes(q.papers.session));
       return yMatch && sMatch;
     });
     const dates = filtered.map(q => q.papers?.date && q.papers?.month ? `${q.papers.date} ${q.papers.month}` : null).filter(Boolean) as string[];
@@ -69,10 +72,12 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
   const availableShifts = useMemo(() => {
     const filtered = baseQuestions.filter(q => {
-      const yMatch = selectedYears.length === 0 || selectedYears.includes(q.papers?.year!);
-      const sMatch = selectedSessions.length === 0 || selectedSessions.includes(q.papers?.session!);
+      const yMatch = selectedYears.length === 0 || (q.papers?.year !== undefined && selectedYears.includes(q.papers.year));
+      const sMatch = selectedSessions.length === 0 || (q.papers?.session !== undefined && selectedSessions.includes(q.papers.session));
+      
       const dateStr = q.papers?.date && q.papers?.month ? `${q.papers.date} ${q.papers.month}` : null;
-      const dMatch = selectedDates.length === 0 || (dateStr && selectedDates.includes(dateStr));
+      const dMatch = selectedDates.length === 0 || (dateStr !== null && selectedDates.includes(dateStr));
+      
       return yMatch && sMatch && dMatch;
     });
     return Array.from(new Set(filtered.map(q => q.papers?.shift).filter(Boolean))) as string[];
@@ -94,6 +99,17 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       }
     };
     
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Re-added: Close popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -161,19 +177,29 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
           {chapterData && (
             <div className={Styles.syllabusWrapper}>
-              <span className={Styles.syllabusLabel}>Included in:</span>
-              <div className={Styles.syllabusBadges}>
-                 {chapterData.isJeeMain && (
-                   <span className={Styles.badgeMain}>
-                     <Check size={12} strokeWidth={3} /> JEE Main
-                   </span>
-                 )}
-                 {chapterData.isJeeAdvanced && (
-                   <span className={Styles.badgeAdv}>
-                     <Check size={12} strokeWidth={3} /> JEE Advanced
-                   </span>
-                 )}
-              </div>
+              {!chapterData.isJeeMain && !chapterData.isJeeAdvanced ? (
+                /* Shows ONLY this if the chapter is excluded */
+                <span className={Styles.badgeExcluded} style={{ width: 'fit-content' }}>
+                  <Minus size={12} strokeWidth={3} /> Excluded Chapter
+                </span>
+              ) : (
+                /* Shows 'Included in:' and the green/yellow badges if included */
+                <>
+                  <span className={Styles.syllabusLabel}>Included in:</span>
+                  <div className={Styles.syllabusBadges}>
+                    {chapterData.isJeeMain && (
+                      <span className={Styles.badgeMain}>
+                        <Check size={12} strokeWidth={3} /> JEE Main
+                      </span>
+                    )}
+                    {chapterData.isJeeAdvanced && (
+                      <span className={Styles.badgeAdv}>
+                        <Check size={12} strokeWidth={3} /> JEE Advanced
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -219,132 +245,157 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       <main className={Styles.content}>
         <div className={Styles.listHeader}>
           <div className={Styles.headerControls}>
+            
+            {/* 1. SEARCH */}
             <div className={Styles.searchContainer}>
               <Search size={16} className={Styles.searchIcon} />
-              <input type="text" placeholder="Search questions..." className={Styles.searchInput} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <input 
+                type="text" 
+                placeholder="Search questions" 
+                className={Styles.searchInput} 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+              />
             </div>
 
-            <div className={Styles.filterContainer} ref={filterRef}>
+            {/* 2. FILTER BUTTON (Moved next to search) */}
+            <div className={Styles.lcFilterContainer} ref={filterRef}>
               <button 
-                className={`${Styles.filterToggleBtn} ${activeFilterCount > 0 ? Styles.filterActive : ''}`}
+                className={`${Styles.lcFilterToggle} ${activeFilterCount > 0 ? Styles.lcFilterActive : ''}`}
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
-                <Filter size={14} />
-                <span>Filter</span>
-                {activeFilterCount > 0 && <span className={Styles.filterBadge}>{activeFilterCount}</span>}
+                <Filter size={16} strokeWidth={2} />
+                {activeFilterCount > 0 && <span className={Styles.lcFilterDot} />}
               </button>
 
+              {/* NATIVE POPOVER */}
               {isFilterOpen && (
-                <div className={Styles.filterPopover}>
-                  <div className={Styles.popoverHeader}>
-                    <h4>Filters</h4>
-                    {activeFilterCount > 0 && (
-                      <button onClick={clearFilters} className={Styles.clearBtn} title="Reset filters" aria-label="Reset filters">
-                        <RotateCcw size={14} strokeWidth={2.5} />
-                      </button>
+                <div className={Styles.lcPopover}>
+                  
+                  <div className={Styles.lcRowsContainer}>
+                    
+                    {/* 1. YEAR ROW */}
+                    {availableYears.length > 0 && (
+                      <div className={Styles.lcRow}>
+                        <div className={Styles.lcLabel}><Calendar size={14} className={Styles.lcIcon}/> Year</div>
+                        <div className={Styles.lcValueWrapper} data-dropdown>
+                          <div className={Styles.lcValueBox} onClick={() => setOpenDropdown(openDropdown === 'year' ? null : 'year')}>
+                            <span className={Styles.lcSelectedText}>
+                              {selectedYears.length === 0 ? "Select year..." : selectedYears.length === 1 ? selectedYears[0] : `${selectedYears.length} selected`}
+                            </span>
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)"/>
+                          </div>
+                          {openDropdown === 'year' && (
+                            <div className={Styles.lcDropdownMenu}>
+                              {availableYears.map(yr => (
+                                <label key={yr} className={Styles.lcDropdownItem}>
+                                  <input type="checkbox" className={Styles.lcCheckbox} checked={selectedYears.includes(yr)} onChange={() => setSelectedYears(prev => prev.includes(yr) ? prev.filter(y => y !== yr) : [...prev, yr])} />
+                                  <span>{yr}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <Minus size={16} className={Styles.lcRemoveIcon} onClick={() => setSelectedYears([])} />
+                      </div>
+                    )}
+
+                    {/* 2. SESSION ROW */}
+                    {selectedYears.length > 0 && availableSessions.length > 0 && (
+                      <div className={Styles.lcRow}>
+                        <div className={Styles.lcLabel}><Clock size={14} className={Styles.lcIcon}/> Session</div>
+                        <div className={Styles.lcValueWrapper} data-dropdown>
+                          <div className={Styles.lcValueBox} onClick={() => setOpenDropdown(openDropdown === 'session' ? null : 'session')}>
+                            <span className={Styles.lcSelectedText}>
+                              {selectedSessions.length === 0 ? "Select session..." : selectedSessions.length === 1 ? selectedSessions[0].replace(/_/g, ' ') : `${selectedSessions.length} selected`}
+                            </span>
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)"/>
+                          </div>
+                          {openDropdown === 'session' && (
+                            <div className={Styles.lcDropdownMenu}>
+                              {availableSessions.map(sess => (
+                                <label key={sess} className={Styles.lcDropdownItem}>
+                                  <input type="checkbox" className={Styles.lcCheckbox} checked={selectedSessions.includes(sess)} onChange={() => setSelectedSessions(prev => prev.includes(sess) ? prev.filter(s => s !== sess) : [...prev, sess])} />
+                                  <span>{sess.replace(/_/g, ' ')}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <Minus size={16} className={Styles.lcRemoveIcon} onClick={() => setSelectedSessions([])} />
+                      </div>
+                    )}
+
+                    {/* 3. DATE ROW */}
+                    {selectedSessions.length > 0 && availableDates.length > 0 && (
+                      <div className={Styles.lcRow}>
+                        <div className={Styles.lcLabel}><Tag size={14} className={Styles.lcIcon}/> Date</div>
+                        <div className={Styles.lcValueWrapper} data-dropdown>
+                          <div className={Styles.lcValueBox} onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}>
+                            <span className={Styles.lcSelectedText}>
+                              {selectedDates.length === 0 ? "Select date..." : selectedDates.length === 1 ? selectedDates[0] : `${selectedDates.length} selected`}
+                            </span>
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)"/>
+                          </div>
+                          {openDropdown === 'date' && (
+                            <div className={Styles.lcDropdownMenu}>
+                              {availableDates.map(dateStr => (
+                                <label key={dateStr} className={Styles.lcDropdownItem}>
+                                  <input type="checkbox" className={Styles.lcCheckbox} checked={selectedDates.includes(dateStr)} onChange={() => setSelectedDates(prev => prev.includes(dateStr) ? prev.filter(d => d !== dateStr) : [...prev, dateStr])} />
+                                  <span>{dateStr}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <Minus size={16} className={Styles.lcRemoveIcon} onClick={() => setSelectedDates([])} />
+                      </div>
+                    )}
+
+                    {/* 4. SHIFT ROW */}
+                    {selectedDates.length > 0 && availableShifts.length > 0 && (
+                      <div className={Styles.lcRow}>
+                        <div className={Styles.lcLabel}><Sun size={14} className={Styles.lcIcon}/> Shift</div>
+                        <div className={Styles.lcValueWrapper} data-dropdown>
+                          <div className={Styles.lcValueBox} onClick={() => setOpenDropdown(openDropdown === 'shift' ? null : 'shift')}>
+                            <span className={Styles.lcSelectedText}>
+                              {selectedShifts.length === 0 ? "Select shift..." : selectedShifts.length === 1 ? selectedShifts[0] : `${selectedShifts.length} selected`}
+                            </span>
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)"/>
+                          </div>
+                          {openDropdown === 'shift' && (
+                            <div className={Styles.lcDropdownMenu}>
+                              {availableShifts.map(shift => (
+                                <label key={shift} className={Styles.lcDropdownItem}>
+                                  <input type="checkbox" className={Styles.lcCheckbox} checked={selectedShifts.includes(shift)} onChange={() => setSelectedShifts(prev => prev.includes(shift) ? prev.filter(s => s !== shift) : [...prev, shift])} />
+                                  <span>{shift}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <Minus size={16} className={Styles.lcRemoveIcon} onClick={() => setSelectedShifts([])} />
+                      </div>
                     )}
                   </div>
 
-                  {/* 1. YEAR: DROPDOWN */}
-                  {availableYears.length > 0 && (
-                    <div className={Styles.filterGroup}>
-                      <label>Year</label>
-                      <div className={Styles.dropdownContainer} data-dropdown>
-                        <button className={Styles.dropdownTrigger} onClick={() => setOpenDropdown(openDropdown === 'year' ? null : 'year')}>
-                          <span className={Styles.dropdownValue}>
-                            {selectedYears.length === 0 ? "All Years" : selectedYears.length === 1 ? selectedYears[0] : `${selectedYears.length} selected`}
-                          </span>
-                          <ChevronDown size={14} className={`${Styles.chevron} ${openDropdown === 'year' ? Styles.chevronOpen : ''}`} />
-                        </button>
-                        {openDropdown === 'year' && (
-                          <div className={Styles.dropdownMenu}>
-                            {availableYears.map(yr => (
-                              <label key={yr} className={Styles.dropdownItem}>
-                                <input type="checkbox" className={Styles.checkbox} checked={selectedYears.includes(yr)} onChange={() => setSelectedYears(prev => prev.includes(yr) ? prev.filter(y => y !== yr) : [...prev, yr])} />
-                                <span>{yr}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 2. SESSION: PILLS/CHIPS */}
-                  {selectedYears.length > 0 && availableSessions.length > 0 && (
-                    <div className={Styles.filterGroup}>
-                      <label>Session</label>
-                      <div className={Styles.pillGroup}>
-                        {availableSessions.map(sess => {
-                          const isSelected = selectedSessions.includes(sess);
-                          return (
-                            <button 
-                              key={sess} 
-                              className={`${Styles.pillBtn} ${isSelected ? Styles.pillActive : ''}`}
-                              onClick={() => setSelectedSessions(prev => isSelected ? prev.filter(s => s !== sess) : [...prev, sess])}
-                            >
-                              {sess.replace(/_/g, ' ')}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 3. DATE: DROPDOWN */}
-                  {selectedSessions.length > 0 && availableDates.length > 0 && (
-                    <div className={Styles.filterGroup}>
-                      <label>Date</label>
-                      <div className={Styles.dropdownContainer} data-dropdown>
-                        <button className={Styles.dropdownTrigger} onClick={() => setOpenDropdown(openDropdown === 'date' ? null : 'date')}>
-                          <span className={Styles.dropdownValue}>
-                            {selectedDates.length === 0 ? "All Dates" : selectedDates.length === 1 ? selectedDates[0] : `${selectedDates.length} selected`}
-                          </span>
-                          <ChevronDown size={14} className={`${Styles.chevron} ${openDropdown === 'date' ? Styles.chevronOpen : ''}`} />
-                        </button>
-                        {openDropdown === 'date' && (
-                          <div className={Styles.dropdownMenu}>
-                            {availableDates.map(dateStr => (
-                              <label key={dateStr} className={Styles.dropdownItem}>
-                                <input type="checkbox" className={Styles.checkbox} checked={selectedDates.includes(dateStr)} onChange={() => setSelectedDates(prev => prev.includes(dateStr) ? prev.filter(d => d !== dateStr) : [...prev, dateStr])} />
-                                <span>{dateStr}</span>
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 4. SHIFT: PILLS/CHIPS */}
-                  {selectedDates.length > 0 && availableShifts.length > 0 && (
-                    <div className={Styles.filterGroup}>
-                      <label>Shift</label>
-                      <div className={Styles.pillGroup}>
-                        {availableShifts.map(shift => {
-                          const isSelected = selectedShifts.includes(shift);
-                          return (
-                            <button 
-                              key={shift} 
-                              className={`${Styles.pillBtn} ${isSelected ? Styles.pillActive : ''}`}
-                              onClick={() => setSelectedShifts(prev => isSelected ? prev.filter(s => s !== shift) : [...prev, shift])}
-                            >
-                              {shift}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                  {/* RESET FOOTER */}
+                  <div className={Styles.lcFooter}>
+                    <button onClick={clearFilters} className={Styles.lcResetBtn}>
+                      <RotateCcw size={14} /> Reset Filters
+                    </button>
+                  </div>
 
                 </div>
               )}
             </div>
-          </div>
 
-          <div className={Styles.filterTabs}>
-            <button className={`${Styles.filterBtn} ${activeFilter === 'Main' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Main'); clearFilters(); setSearchQuery(''); }}>JEE Main</button>
-            <button className={`${Styles.filterBtn} ${activeFilter === 'Advanced' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Advanced'); clearFilters(); setSearchQuery(''); }}>JEE Advanced</button>
+            {/* 3. TABS (Moved to the far right via CSS) */}
+            <div className={Styles.filterTabs}>
+              <button className={`${Styles.filterBtn} ${activeFilter === 'Main' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Main'); clearFilters(); setSearchQuery(''); }}>JEE Main</button>
+              <button className={`${Styles.filterBtn} ${activeFilter === 'Advanced' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Advanced'); clearFilters(); setSearchQuery(''); }}>JEE Advanced</button>
+            </div>
+
           </div>
         </div>
 

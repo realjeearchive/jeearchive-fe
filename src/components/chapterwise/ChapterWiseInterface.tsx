@@ -110,7 +110,11 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
     } else if (localUserAnswer) {
       mainStatus = localUserAnswer === currentQuestion?.correctAnswer ? "correct" : "incorrect";
     } else {
-      mainStatus = currentQuestion?.status as any; 
+      // 🔥 FIX: Safely check the status to satisfy QuestionMain's strict types
+      const status = currentQuestion?.status;
+      mainStatus = (status === "correct" || status === "incorrect" || status === "unattempted") 
+        ? status 
+        : undefined; 
     }
   }
 
