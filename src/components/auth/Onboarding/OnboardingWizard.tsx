@@ -1,12 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronRight, ChevronLeft, Check, ChevronDown, Target, UserCircle, Phone } from "lucide-react";
 import { toast } from "sonner";
 import styles from "./OnboardingWizard.module.css";
 
+import { useUserStore } from "@/store/userStore";
+import { 
+  submitStage1Request, 
+  submitStage2Request, 
+  submitStage3Request 
+} from "@/features/user/api";
+
+// --- UI OPTIONS ---
 const CATEGORIES = [
   "General", "General (PwD)", "General EWS", "General EWS (PwD)",
   "OBC-NCL", "OBC-NCL (PwD)", "SC", "SC (PwD)", "ST", "ST (PwD)",
@@ -15,10 +23,40 @@ const CATEGORIES = [
 const CLASSES = ["Class 11", "Class 12", "Dropper", "Class 10 or below"];
 const GENDERS = ["Male", "Female", "Other"];
 
+// 🔥 NEW: API ENUM MAPPINGS
+// This maps the pretty UI strings to the exact Prisma Enum values your backend expects
+const CLASS_MAP: Record<string, string> = {
+  "Class 11": "class_11",
+  "Class 12": "class_12",
+  "Dropper": "Dropper",
+  "Class 10 or below": "class_10_or_below"
+};
+
+const CATEGORY_MAP: Record<string, string> = {
+  "General": "General",
+  "General (PwD)": "General_PwD",
+  "General EWS": "General_EWS",
+  "General EWS (PwD)": "General_EWS_PwD",
+  "OBC-NCL": "OBC_NCL",
+  "OBC-NCL (PwD)": "OBC_NCL_PwD",
+  "SC": "SC",
+  "SC (PwD)": "SC_PwD",
+  "ST": "ST",
+  "ST (PwD)": "ST_PwD"
+};
+
+const GENDER_MAP: Record<string, string> = {
+  "Male": "Male",
+  "Female": "Female",
+  "Other": "Other"
+};
+
 export default function OnboardingWizard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+
+  const { stageNumber, setStageNumber, fetchProfile } = useUserStore();
 
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
@@ -28,29 +66,69 @@ export default function OnboardingWizard() {
   const [formData, setFormData] = useState({
     studentClass: "",
     category: "",
-    gender: "", // New gender state added here
+    gender: "",
     mobile: "",
   });
 
-  const nextStep = () => {
-    if (step === 1 && !formData.studentClass) {
-      toast.error("Please select your class to continue.");
+  useEffect(() => {
+    if (stageNumber && stageNumber > 1 && stageNumber <= 3) {
+      setStep(stageNumber);
+    } else if (stageNumber === 4) { 
+      router.replace(redirectTo);
+    }
+  }, [stageNumber, redirectTo, router]);
+
+  const handleNextStep = async () => {
+    if (step === 1) {
+      if (!formData.studentClass) {
+        toast.error("Please select your class to continue.");
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        // 🔥 Use CLASS_MAP to send the correct enum to the backend
+        const mappedClass = CLASS_MAP[formData.studentClass];
+        
+        await submitStage1Request({ className: mappedClass });
+        setStageNumber(2); 
+        setDirection(1);
+        setStep(2);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Failed to save class. Please try again.";
+        toast.error(message);
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
-    // Updated validation to require both fields on step 2
+
     if (step === 2) {
-      if (!formData.category) {
-        toast.error("Please select your category.");
+      if (!formData.category || !formData.gender) {
+        toast.error("Please select both category and gender.");
         return;
       }
-      if (!formData.gender) {
-        toast.error("Please select your gender.");
-        return;
+      setIsSubmitting(true);
+      try {
+        // 🔥 Use MAPPINGS to send the correct enums to the backend
+        const mappedCategory = CATEGORY_MAP[formData.category];
+        const mappedGender = GENDER_MAP[formData.gender];
+
+        await submitStage2Request({ 
+          category: mappedCategory, 
+          gender: mappedGender 
+        });
+        
+        setStageNumber(3); 
+        setDirection(1);
+        setStep(3);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Failed to save details. Please try again.";
+        toast.error(message);
+      } finally {
+        setIsSubmitting(false);
       }
+      return;
     }
-    
-    setDirection(1);
-    setStep((prev) => prev + 1);
   };
 
   const prevStep = () => {
@@ -66,13 +144,23 @@ export default function OnboardingWizard() {
 
     setIsSubmitting(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await submitStage3Request({ 
+        countryCode: "91", 
+        mobileNumber: Number(formData.mobile) 
+      });
       
-      toast.success("Profile setup complete! Welcome to the dashboard.");
-      router.push(redirectTo);
-    } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      // 🔥 FIX: Instantly tell the global store that onboarding is complete!
+      // This immediately unblocks the RouteGuard so the redirect is seamless.
+      setStageNumber(4);
+      
+      // Fire off the profile fetch in the background
+      fetchProfile();
+      
+      toast.success("Profile setup complete! Welcome aboard.");
+      router.replace(redirectTo);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      toast.error(message);
       setIsSubmitting(false);
     }
   };
@@ -85,20 +173,12 @@ export default function OnboardingWizard() {
     center: {
       x: 0,
       opacity: 1,
-      transition: { 
-        type: "tween", 
-        ease: "circOut",
-        duration: 0.35 
-      }
+      transition: { type: "tween", ease: "circOut", duration: 0.35 }
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 24 : -24,
       opacity: 0,
-      transition: { 
-        type: "tween",
-        ease: "circIn",
-        duration: 0.25 
-      }
+      transition: { type: "tween", ease: "circIn", duration: 0.25 }
     }),
   };
 
@@ -181,7 +261,6 @@ export default function OnboardingWizard() {
               {step === 2 && (
                 <div className={styles.stepContent}>
                   <div className={styles.titleGroup}>
-                    {/* Swapped to UserCircle icon since it fits "Personal Details" better */}
                     <div className={styles.iconWrapper}><UserCircle size={24} /></div>
                     <h2 className={styles.title}>Personal Details</h2>
                     <p className={styles.subtitle}>Required for accurate percentile and cut-off predictions.</p>
@@ -299,7 +378,11 @@ export default function OnboardingWizard() {
         {/* Footer Actions */}
         <div className={styles.footer}>
           {step > 1 ? (
-            <button onClick={prevStep} className={styles.backButton}>
+            <button 
+              onClick={prevStep} 
+              className={styles.backButton}
+              disabled={isSubmitting}
+            >
               <ChevronLeft size={20} />
               <span>Back</span>
             </button>
@@ -308,9 +391,13 @@ export default function OnboardingWizard() {
           )}
 
           {step < 3 ? (
-            <button onClick={nextStep} className={styles.continueButton}>
-              <span>Continue</span>
-              <ChevronRight size={18} />
+            <button 
+              onClick={handleNextStep} 
+              className={styles.continueButton}
+              disabled={isSubmitting}
+            >
+              <span>{isSubmitting ? "Saving..." : "Continue"}</span>
+              {!isSubmitting && <ChevronRight size={18} />}
             </button>
           ) : (
             <button
@@ -318,7 +405,7 @@ export default function OnboardingWizard() {
               disabled={isSubmitting}
               className={styles.submitButton}
             >
-              {isSubmitting ? "Saving..." : "Go to Dashboard"}
+              {isSubmitting ? "Finalizing..." : "Go to Dashboard"}
               {!isSubmitting && <ChevronRight size={18} />}
             </button>
           )}

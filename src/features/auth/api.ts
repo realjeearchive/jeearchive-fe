@@ -91,7 +91,7 @@ async function getRefreshToken(): Promise<string> {
 }
 
 // --- HELPER HANDLER ---
-async function handleJson<T>(res: Response): Promise<T> {
+export async function handleJson<T>(res: Response): Promise<T> {
   const data: unknown = await res.json().catch(() => null);
 
   if (!res.ok) {

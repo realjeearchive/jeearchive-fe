@@ -1,158 +1,88 @@
 .section {
   width: 100%;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
-/* --- Clean, Horizontal Card --- */
 .card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* Swapped to a very subtle transparent background instead of the solid sidebar color */
-  background: rgba(255, 255, 255, 0.02); 
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 12px;
-  padding: 16px 24px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: transparent;
+  /* Use a very faint border or none at all */
+  border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s ease-in-out;
 }
 
-/* Thinner, more subtle edge strip */
-.card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px; /* Reduced from 4px */
-  background: var(--dashboard-core-color);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card:hover:not(.locked) {
-  /* Toned down border and shadow on hover */
-  border-color: rgba(255, 255, 255, 0.15); 
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.card:hover:not(.locked)::before {
-  opacity: 1;
-}
-
-/* --- Content Layout --- */
-.leftGroup {
+.content {
   display: flex;
   align-items: center;
-  gap: 16px;
-  z-index: 1;
+  gap: 14px;
 }
 
-/* Start with a neutral icon box */
-.iconBox {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03); 
-  border: 1px solid rgba(255, 255, 255, 0.06);
+.icon {
+  font-size: 20px;
   color: var(--dashboard-secondary-text-color);
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease;
 }
 
-/* Catchy but subtle: Gently tint the icon box instead of filling it solid */
-.card:hover:not(.locked) .iconBox {
-  background: rgba(245, 158, 11, 0.08); /* Faint amber tint */
-  border-color: rgba(245, 158, 11, 0.2);
-  color: var(--dashboard-core-color); 
-}
-
-.textGroup {
+.text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .title {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--dashboard-primary-text-color);
   margin: 0;
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.7;
   margin: 0;
 }
 
-/* --- Actions & Badges --- */
-.rightGroup {
-  display: flex;
-  align-items: center;
-  z-index: 1;
+.action {
+  font-size: 18px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
 }
 
-.cta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--dashboard-secondary-text-color); /* Start subtle */
-  transition: color 0.3s ease;
+/* --- Hover State --- */
+.card:hover:not(.locked) {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-.arrow {
-  transition: transform 0.3s ease;
+.card:hover:not(.locked) .icon {
+  color: var(--dashboard-core-color);
 }
 
-.card:hover:not(.locked) .cta {
-  color: var(--dashboard-core-color); /* Brighten on hover */
-}
-
-.card:hover:not(.locked) .arrow {
-  transform: translateX(4px);
+.card:hover:not(.locked) .action {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--dashboard-core-color);
 }
 
 /* --- Locked State --- */
 .locked {
-  cursor: not-allowed;
-  border-style: dashed;
-  background: transparent;
-  opacity: 0.5;
+  cursor: default;
+  opacity: 0.4;
+  border: 1px solid transparent; /* Remove border when locked for less noise */
 }
 
-.locked .iconBox {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-secondary-text-color);
-}
-
-.lockedBadge {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-secondary-text-color);
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 600px) {
-  .card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  .rightGroup {
-    width: 100%;
-    justify-content: flex-end;
+/* --- Mobile --- */
+@media (max-width: 480px) {
+  .subtitle {
+    display: none; /* Hide subtitle on tiny screens for maximum minimalism */
   }
 }

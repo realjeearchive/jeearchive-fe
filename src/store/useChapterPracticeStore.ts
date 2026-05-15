@@ -114,7 +114,7 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       }
     } catch (err) {
       console.error("Error bookmarking:", err);
-      // 🔙 Rollback the UI if the API call actually fails
+
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
       }));

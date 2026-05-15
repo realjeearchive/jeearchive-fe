@@ -2,7 +2,7 @@
 
 import React from "react";
 import styles from "./DetailedAnalysisSection.module.css";
-import { FiBarChart2, FiArrowRight, FiLock } from "react-icons/fi";
+import { FiArrowRight, FiLock, FiActivity } from "react-icons/fi";
 
 interface DetailedAnalysisSectionProps {
   onViewAnalysis?: () => void;
@@ -18,36 +18,30 @@ const DetailedAnalysisSection: React.FC<DetailedAnalysisSectionProps> = ({
       <div 
         className={`${styles.card} ${disabled ? styles.locked : ""}`}
         onClick={() => !disabled && onViewAnalysis?.()}
-        role={disabled ? "presentation" : "button"}
+        role="button"
+        tabIndex={disabled ? -1 : 0}
       >
-        <div className={styles.leftGroup}>
-          <div className={styles.iconBox}>
-            {disabled ? <FiLock size={18} /> : <FiBarChart2 size={18} />}
+        <div className={styles.content}>
+          <div className={styles.icon}>
+            {disabled ? <FiLock /> : <FiActivity />}
           </div>
-          <div className={styles.textGroup}>
+          <div className={styles.text}>
             <h3 className={styles.title}>
-              {disabled ? "Analysis Locked" : "Detailed Test Analysis"}
+              {disabled ? "Analysis Unavailable" : "Performance Insights"}
             </h3>
             <p className={styles.subtitle}>
               {disabled 
-                ? "Complete a mock test to unlock performance insights." 
-                : "Review your accuracy, speed, and topic-wise breakdown."}
+                ? "Unlock after your first test" 
+                : "Accuracy, speed, and topic breakdown"}
             </p>
           </div>
         </div>
 
-        <div className={styles.rightGroup}>
-          {!disabled ? (
-            <div className={styles.cta}>
-              <span>View Insights</span>
-              <FiArrowRight className={styles.arrow} size={16} />
-            </div>
-          ) : (
-            <div className={styles.lockedBadge}>
-              Needs Test Data
-            </div>
-          )}
-        </div>
+        {!disabled && (
+          <div className={styles.action}>
+            <FiArrowRight />
+          </div>
+        )}
       </div>
     </section>
   );
