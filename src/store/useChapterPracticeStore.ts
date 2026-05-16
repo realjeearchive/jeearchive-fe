@@ -94,6 +94,7 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
   toggleTimer: () => set((state) => ({ isTimerRunning: !state.isTimerRunning })),
 
   // 🔥 Optimistic UI Bookmark Action
+// 🔥 Optimistic UI Bookmark Action
   toggleBookmark: async (questionId) => {
     const isCurrentlyBookmarked = get().bookmarkedQuestions[questionId];
 
@@ -103,18 +104,38 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
     }));
 
     try {
-      // Hit the API in the background
-      const res = await authenticatedFetch(`/bookMarked/add`, {
+      // 🔥 FIX 1: Dynamically choose the endpoint. 
+      // If it WAS bookmarked, we want to remove it. If it WASN'T, we add it.
+      // (Note: Adjust `/bookMarked/remove` if your backend uses a different URL or a DELETE method)
+      const endpoint = isCurrentlyBookmarked ? `/bookMarked/remove` : `/bookMarked/add`;
+
+      const res = await authenticatedFetch(endpoint, {
         method: "POST",
         body: JSON.stringify({ questionId }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to sync bookmark");
+        const errorData = await res.json().catch(() => ({}));
+
+        // 🔥 FIX 2: Graceful Exception Handling for "Already Added"
+        // If the frontend thought it wasn't bookmarked, but the backend says it already is,
+        // then our optimistic UI (which just turned it ON) is actually correct! Do not revert.
+        const errorString = String(errorData?.errors || "");
+        if (!isCurrentlyBookmarked && errorString.includes("Already Added")) {
+          console.log("Question was already bookmarked on the server. UI is now synced.");
+          return; 
+        }
+
+        // 🔥 FIX 3: Stop using 'throw new Error'. Use console.warn and revert the UI.
+        console.warn(`Backend rejected bookmark sync (${endpoint}). Details:`, errorData);
+        set((state) => ({
+          bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
+        }));
       }
     } catch (err) {
-      console.error("Error bookmarking:", err);
+      console.warn("Network error while bookmarking:", err);
 
+      // Revert the UI if the network request completely failed
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
       }));

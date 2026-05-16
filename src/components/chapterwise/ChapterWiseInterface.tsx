@@ -17,9 +17,10 @@ import { QuestionMeta } from "./question/QuestionMeta/QuestionMeta";
 import { SolutionContent } from "./question/SolutionContent/SolutionContent";
 import { QuestionStats } from "./question/QuestionStats/QuestionStats";
 import { FiEye, FiCheck, FiX } from "react-icons/fi";
+import { NumericalInput } from "./question/NumericalInput/NumericalInput";
 
 export type Subject = "Physics" | "Chemistry" | "Mathematics";
-export type SectionType = "Single Correct" | "Numerical" | "Multiple Correct";
+export type SectionType = "Single Correct" | "Numerical" | "Multiple Correct" | "SingleCorrect" | "Integer" | string;
 export type StatusString = "correct" | "incorrect" | "unattempted" | "answered";
 
 export interface Option { id: string; text: string; percentage?: number; }
@@ -29,7 +30,8 @@ export interface QuestionMetaData { difficulty: "Easy" | "Medium" | "Hard"; mark
 export interface QuestionData {
   id: string; number: number; subject: Subject | string; section: SectionType;
   text: string; hasImage?: boolean; imageUrl?: string; options: Option[];
-  correctAnswer: string; userAnswer: string | null; status: StatusString;
+  correctAnswer: string | string[]; 
+  userAnswer: string | null; status: StatusString;
   solution: string; stats: QuestionStatsData; meta: QuestionMetaData; chapter: string; topic: string;
 }
 
@@ -56,7 +58,7 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   const {
     activeQuestionId, userAnswers, submissions, questionTimes,
     initStore, setActiveQuestionId, selectOption, submitAnswer, incrementTime, isTimerRunning, toggleTimer,
-    bookmarkedQuestions, toggleBookmark // 🔥 WIRED UP: Bookmark state and action
+    bookmarkedQuestions, toggleBookmark 
   } = useChapterPracticeStore();
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -102,7 +104,7 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   const isSubmitted = !!submissions[activeQuestionId];
   const localUserAnswer = userAnswers[activeQuestionId];
 
-  let mainStatus: "correct" | "incorrect" | "unattempted" | undefined = undefined;
+  let mainStatus: StatusString | undefined = undefined;
   
   if (activeTab === 'solution') {
     if (!isSubmitted) {
@@ -110,7 +112,6 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
     } else if (localUserAnswer) {
       mainStatus = localUserAnswer === currentQuestion?.correctAnswer ? "correct" : "incorrect";
     } else {
-      // 🔥 FIX: Safely check the status to satisfy QuestionMain's strict types
       const status = currentQuestion?.status;
       mainStatus = (status === "correct" || status === "incorrect" || status === "unattempted") 
         ? status 
@@ -158,6 +159,12 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   const hasSelectedOption = !!localUserAnswer;
   const currentTimeSpent = questionTimes[activeQuestionId] || 0;
 
+  const actualCorrectAnswer = Array.isArray(currentQuestion?.correctAnswer) 
+    ? currentQuestion.correctAnswer[0] 
+    : currentQuestion?.correctAnswer;
+
+  const isNumericalType = currentQuestion?.section.toLowerCase().includes("numerical") || currentQuestion?.section.toLowerCase().includes("integer");
+
   const handleNext = () => currentIndex < questions.length - 1 && setActiveQuestionId(questions[currentIndex + 1].id);
   const handlePrev = () => currentIndex > 0 && setActiveQuestionId(questions[currentIndex - 1].id);
 
@@ -170,8 +177,11 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
     
     setWarningMsg("");
 
-    if (currentQuestion) {
-      const isCorrect = localUserAnswer === currentQuestion.correctAnswer;
+    if (currentQuestion && actualCorrectAnswer) {
+      const isCorrect = isNumericalType
+        ? parseFloat(localUserAnswer) === parseFloat(actualCorrectAnswer)
+        : localUserAnswer === actualCorrectAnswer;
+        
       setSessionSolved(prev => ({ ...prev, [activeQuestionId]: isCorrect }));
 
       const marksText = isCorrect ? `+${currentQuestion.meta.marksPos}` : `-${currentQuestion.meta.marksNeg}`;
@@ -186,7 +196,14 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   };
 
   const displayUserAnswer = localUserAnswer || attemptData?.userAnswer?.[0];
-  const isDisplayCorrect = localUserAnswer ? (localUserAnswer === currentQuestion.correctAnswer) : (attemptData?.isCorrect ?? (mainStatus === 'correct'));
+  
+  const isDisplayCorrect = localUserAnswer ? (
+    isNumericalType && actualCorrectAnswer
+      ? parseFloat(localUserAnswer) === parseFloat(actualCorrectAnswer)
+      : localUserAnswer === actualCorrectAnswer
+  ) : (
+    attemptData?.isCorrect ?? (mainStatus === 'correct')
+  );
 
   const isQuestionSolved = sessionSolved[activeQuestionId] !== undefined 
     ? sessionSolved[activeQuestionId] 
@@ -207,7 +224,6 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
           marksPos={currentQuestion.meta.marksPos}
           marksNeg={currentQuestion.meta.marksNeg}
           showTools={true}
-          // 🔥 WIRED UP: Bookmark props passed to the header
           isBookmarked={!!bookmarkedQuestions[activeQuestionId]}
           onBookmark={() => toggleBookmark(activeQuestionId)}
         />
@@ -243,17 +259,27 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
         <QuestionText content={currentQuestion.text} hasImage={currentQuestion.hasImage} imageUrl={currentQuestion.imageUrl} />
 
         {activeTab === 'question' && (
-          <>
-            {currentQuestion.section === "Single Correct" && (
+          <div className="mt-4">
+            {/* 1. SINGLE CORRECT (MCQ) */}
+            {(currentQuestion.section === "Single Correct" || currentQuestion.section === "SingleCorrect" || currentQuestion.section === "SingleChoice") && (
               <OptionsList 
                 options={currentQuestion.options} 
-                correctAnswer={currentQuestion.correctAnswer} 
+                correctAnswer={actualCorrectAnswer} 
                 selectedOptionId={localUserAnswer} 
                 onOptionSelect={(optId) => selectOption(activeQuestionId, optId)} 
                 isSubmitted={false} 
               />
             )}
-          </>
+
+            {/* 2. NUMERICAL / INTEGER TYPE */}
+            {isNumericalType && (
+              <NumericalInput
+                value={localUserAnswer || ""}
+                onChange={(val) => selectOption(activeQuestionId, val)}
+                isSubmitted={false}
+              />
+            )}
+          </div>
         )}
 
         {activeTab === 'solution' && (
@@ -278,7 +304,9 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Your Answer:</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '16px' }}>
                       {isDisplayCorrect ? <FiCheck size={18} strokeWidth={3} color="#22C55E" /> : <FiX size={18} strokeWidth={3} color="#EF4444" />}
-                      <span style={{ color: 'var(--dashboard-primary-text-color)' }}>Option {displayUserAnswer}</span>
+                      <span style={{ color: 'var(--dashboard-primary-text-color)' }}>
+                        {isNumericalType ? displayUserAnswer : `Option ${displayUserAnswer}`}
+                      </span>
                     </div>
                   </div>
 
@@ -286,7 +314,9 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Correct Answer:</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '16px' }}>
                       <FiCheck size={18} strokeWidth={3} color="#22C55E" />
-                      <span style={{ color: 'var(--dashboard-primary-text-color)' }}>Option {currentQuestion.correctAnswer}</span>
+                      <span style={{ color: 'var(--dashboard-primary-text-color)' }}>
+                        {isNumericalType ? actualCorrectAnswer : `Option ${actualCorrectAnswer}`}
+                      </span>
                     </div>
                   </div>
                </div>

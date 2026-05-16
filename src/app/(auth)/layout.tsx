@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
+// @ts-expect-error - Suppress TS warning for side-effect CSS import in nested layout
 import './layout.css';
+
 import { OnboardingCarousel } from '@/components/layout/LoginCarausel';
 import { ChevronUp } from 'lucide-react';
 
