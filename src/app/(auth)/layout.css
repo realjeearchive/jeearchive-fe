@@ -1,6 +1,114 @@
+:root {
+  --login-background-color: #181823;
+  --form-background: rgba(30, 43, 62, 0.973);
+  --form-background-mobile: rgba(25, 36, 52, 0.98);
+  --toggle-button-bg: rgba(40, 56, 82, 0.95);
+  --toggle-button-hover: rgba(50, 66, 92, 0.98);
+  --backdrop-color: rgba(0, 0, 0, 0.5);
+  --transition-duration: 0.35s;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --mobile-form-height-collapsed: 64px;
+  --mobile-form-height-expanded: 75vh;
+  
+  --login-box-1-color: #F94F39;
+  --login-box-2-color: #1E7CD3;
+  --login-box-3-color: #6B66DA;
+  --login-page-primary-text-color: #FAFAFC;
+  --login-page-secondary-text-color: #8B8AA0;
+  --input-background-color: #7976a439;
+  --input-border-color: #595F81;
+  --login-close-icon-color: #8b8aa0d5;
+}
+
+.onboarding {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--login-background-color);
+}
+
+.carousel-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: 100vh;
+  transition: transform var(--transition-duration) var(--transition-timing);
+}
+
 /* =========================================
-     🔥 OPTIMIZED GPU-ACCELERATED BOTTOM SHEET
-     ========================================= */
+   🔥 DESKTOP STYLES (Restored Perfectly)
+   ========================================= */
+.form-section:not(.mobile) {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  min-width: 360px;
+  max-width: 620px;
+  height: 100vh;
+
+  background:
+    radial-gradient(circle at 18% 22%, rgba(249, 79, 57, 0.24), transparent 60%),
+    radial-gradient(circle at 82% 24%, rgba(30, 124, 211, 0.34), transparent 60%),
+    radial-gradient(circle at 68% 78%, rgba(107, 102, 218, 0.34), transparent 65%),
+    var(--form-background);
+
+  backdrop-filter: blur(26px) saturate(125%);
+  -webkit-backdrop-filter: blur(26px) saturate(125%);
+
+  box-shadow: -40px 0 80px rgba(0, 0, 0, 0.75);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+  z-index: 1;
+}
+
+.form-section:not(.mobile) > * {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-content:not(.mobile) {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =========================================
+   🔥 MOBILE STYLES (Smooth & Optimized)
+   ========================================= */
+@media (max-width: 899px) {
+  .onboarding.mobile-view {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  .carousel-wrapper {
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .form-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--backdrop-color);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 90;
+    animation: fadeIn 0.3s ease-out;
+  }
 
   .form-section.mobile {
     position: fixed;
@@ -12,38 +120,33 @@
     display: flex;
     flex-direction: column;
     
-    /* 🔥 1. Permanently set the height. We will hide it using transform instead */
     height: var(--mobile-form-height-expanded);
     
-    /* 🔥 2. Apply background permanently so it doesn't snap during animation */
     background:
       radial-gradient(circle at 18% 22%, rgba(249, 79, 57, 0.14), transparent 60%),
       radial-gradient(circle at 82% 24%, rgba(30, 124, 211, 0.14), transparent 60%),
       radial-gradient(circle at 68% 78%, rgba(107, 102, 218, 0.14), transparent 65%),
-      var(--form-background);
+      var(--form-background-mobile);
+      
     backdrop-filter: blur(26px) saturate(125%);
     -webkit-backdrop-filter: blur(26px) saturate(125%);
     
-    /* 🔥 3. Hardware Accelerated Transitions */
     transition: transform var(--transition-duration) var(--transition-timing),
                 border-radius var(--transition-duration) var(--transition-timing);
     will-change: transform;
   }
 
   .form-section.mobile.collapsed {
-    /* Push the sheet down so ONLY the top 64px (the button) is visible */
     transform: translateY(calc(100% - var(--mobile-form-height-collapsed)));
     border-radius: 0;
   }
 
   .form-section.mobile.expanded {
-    /* Slide the sheet up smoothly */
     transform: translateY(0);
     border-radius: 24px 24px 0 0;
     box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
   }
 
-  /* Move toggle button to the TOP of the sliding sheet, so it rides up and down with it */
   .form-toggle-button {
     position: absolute; 
     top: 0;
@@ -64,17 +167,16 @@
     cursor: pointer;
     padding: 0 24px;
     transition: all 0.2s ease;
-    z-index: 101111;
+    z-index: 101;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
   }
-  
+
   .form-toggle-button.expanded {
-    border-radius: 24px 24px 0 0; /* Matches sheet radius when expanded */
+    border-radius: 24px 24px 0 0;
   }
 
   .form-toggle-button:hover {
     background-color: #1f1f2d;
-    opacity: 0.9;
   }
 
   .toggle-icon {
@@ -92,7 +194,6 @@
 
   .form-content.mobile {
     width: 100vw;
-    /* Push the content below the toggle button */
     margin-top: var(--mobile-form-height-collapsed);
     height: calc(100% - var(--mobile-form-height-collapsed));
     padding: 24px;
@@ -101,8 +202,7 @@
     -webkit-overflow-scrolling: touch;
     flex: 1;
     padding-bottom: 120px;
-    
-    /* 🔥 Removing `display: none` completely fixes the browser freezing on click! */
+    background-color: transparent; 
   }
 
   .form-content.mobile > * {
@@ -124,3 +224,75 @@
     background: var(--login-box-2-color);
     border-radius: 3px;
   }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .form-section.mobile.expanded {
+    width: 100vw;
+    max-width: none;
+    margin: 0;
+    left: 0;
+    transform: translateY(0);
+    border-radius: 24px 24px 0 0;
+  }
+
+  .form-toggle-button {
+    width: 100vw;
+  }
+
+  .form-content.mobile > * {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 399px) {
+  :root {
+    --mobile-form-height-collapsed: 60px;
+    --mobile-form-height-expanded: 70vh;
+  }
+
+  .form-toggle-button {
+    height: 60px;
+    min-height: 60px;
+    font-size: 15px;
+  }
+
+  .form-content.mobile {
+    height: calc(100% - 60px);
+    padding: 20px 16px;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 599px) {
+  .form-content.mobile {
+    padding: 24px 20px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .form-toggle-button {
+    min-height: 64px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .form-content.mobile {
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --transition-duration: 1ms; }
+  .form-section,
+  .form-backdrop,
+  .carousel-wrapper,
+  .toggle-icon {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}
