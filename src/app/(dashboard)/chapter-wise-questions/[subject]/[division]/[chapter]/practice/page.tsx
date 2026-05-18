@@ -61,6 +61,9 @@ export default function PracticePage() {
             status: isCorrect ? "correct" : isIncorrect ? "incorrect" : "unattempted",
             userAnswer: null, 
             
+            // 🔥 YOU MUST ADD THIS LINE HERE!
+            isBookmarked: q.isBookmarked || false,
+            
             solution: q.solution?.text || "<p>No solution provided.</p>",
             stats: { userTime: "0s", avgTime: "1m 30s", accuracy: 50 },
             meta: { difficulty: "Medium", marksPos: q.positiveMarks || 4, marksNeg: q.negativeMarks || 1 },

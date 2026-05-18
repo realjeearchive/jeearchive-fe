@@ -32,6 +32,7 @@ export interface QuestionData {
   text: string; hasImage?: boolean; imageUrl?: string; options: Option[];
   correctAnswer: string | string[]; 
   userAnswer: string | null; status: StatusString;
+  isBookmarked?: boolean; // 🔥 NEW: Passed down to the interface
   solution: string; stats: QuestionStatsData; meta: QuestionMetaData; chapter: string; topic: string;
 }
 

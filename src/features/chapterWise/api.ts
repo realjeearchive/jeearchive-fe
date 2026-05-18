@@ -61,7 +61,8 @@ export interface QuestionListItem {
   correctAnswer: string[] | string;
   options?: QuestionOption; 
   solution?: QuestionSolution; 
-  papers?: PaperInfo; // 🔥 Attached paper info to the question for filtering
+  papers?: PaperInfo; 
+  isBookmarked?: boolean; // 🔥 NEW: Added from backend
   attemptStatus: "Successfully attempted" | "Not successfully done" | "Unattempted" | string;
 }
 

@@ -39,9 +39,11 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
   bookmarkedQuestions: {}, 
 
   // --- Actions ---
-  initStore: (fetchedQuestions, initialQuestionId) => {
+// --- Actions ---
+initStore: (fetchedQuestions, initialQuestionId) => {
     const initialUserAnswers: Record<string, string> = {};
     const initialSubmissions: Record<string, boolean> = {};
+    const initialBookmarks: Record<string, boolean> = {}; 
 
     const perfectlyNumberedQuestions = fetchedQuestions.map((q, index) => ({
       ...q,
@@ -53,6 +55,10 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       if (q.status === "correct" || q.status === "incorrect" || q.status === "answered" || q.userAnswer) {
         initialSubmissions[q.id] = true;
       }
+      // 🔥 STRICT CHECK: Load backend bookmark state instantly
+      if (q.isBookmarked === true) {
+        initialBookmarks[q.id] = true;
+      }
     });
 
     const startingId = perfectlyNumberedQuestions.find(q => q.id === initialQuestionId)?.id || perfectlyNumberedQuestions[0]?.id || "";
@@ -62,6 +68,7 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       activeQuestionId: startingId,
       userAnswers: initialUserAnswers,
       submissions: initialSubmissions,
+      bookmarkedQuestions: initialBookmarks, // 🔥 Injects the true/false states into the UI
       revealedSolutions: {},
       questionTimes: {},
       isTimerRunning: false, 
@@ -96,7 +103,8 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
   // 🔥 Optimistic UI Bookmark Action
 // 🔥 Optimistic UI Bookmark Action
   toggleBookmark: async (questionId) => {
-    const isCurrentlyBookmarked = get().bookmarkedQuestions[questionId];
+    // Ensure we are strictly reading a boolean
+    const isCurrentlyBookmarked = !!get().bookmarkedQuestions[questionId];
 
     // Instantly toggle the UI state so it feels lightning fast
     set((state) => ({
@@ -104,37 +112,32 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
     }));
 
     try {
-      // 🔥 FIX 1: Dynamically choose the endpoint. 
-      // If it WAS bookmarked, we want to remove it. If it WASN'T, we add it.
-      // (Note: Adjust `/bookMarked/remove` if your backend uses a different URL or a DELETE method)
+      // 🔥 DYNAMIC ENDPOINT: If it's already bookmarked, call Remove. Otherwise, call Add.
       const endpoint = isCurrentlyBookmarked ? `/bookMarked/remove` : `/bookMarked/add`;
 
       const res = await authenticatedFetch(endpoint, {
-        method: "POST",
+        method: "POST", // Note: If your backend uses DELETE for remove, change this dynamically too!
         body: JSON.stringify({ questionId }),
       });
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-
-        // 🔥 FIX 2: Graceful Exception Handling for "Already Added"
-        // If the frontend thought it wasn't bookmarked, but the backend says it already is,
-        // then our optimistic UI (which just turned it ON) is actually correct! Do not revert.
         const errorString = String(errorData?.errors || "");
+
+        // Self-Healing Logic: If UI thought it wasn't bookmarked, but backend says "Already Added"
         if (!isCurrentlyBookmarked && errorString.includes("Already Added")) {
-          console.log("Question was already bookmarked on the server. UI is now synced.");
+          console.log("Question was already bookmarked on server. UI synced.");
           return; 
         }
 
-        // 🔥 FIX 3: Stop using 'throw new Error'. Use console.warn and revert the UI.
-        console.warn(`Backend rejected bookmark sync (${endpoint}). Details:`, errorData);
+        // Revert UI on a genuine failure
+        console.warn(`Backend rejected bookmark sync (${endpoint}).`, errorData);
         set((state) => ({
           bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
         }));
       }
     } catch (err) {
       console.warn("Network error while bookmarking:", err);
-
       // Revert the UI if the network request completely failed
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
