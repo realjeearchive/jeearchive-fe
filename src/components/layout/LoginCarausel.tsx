@@ -67,7 +67,7 @@ export function OnboardingCarousel() {
                 className="border-0 h-full relative overflow-hidden"
                 style={{ background: slide.colorVar }}
               >
-                <CardContent className="h-full flex flex-col items-center justify-start p-4 lg:p-8 text-white gap-16 lg:gap-16">
+                <CardContent className="h-full flex flex-col items-center justify-start p-4 lg:p-4 text-white gap-16 lg:gap-5">
                   
                   {/* Top Text */}
                   <div className="flex justify-center items-center max-w-lg z-10 pt-8 lg:pt-12 px-4 lg:px-0">
@@ -98,11 +98,10 @@ export function OnboardingCarousel() {
 
 // --- The "App Window" Container ---
 function InnerAppCard({ slideId }: { slideId: number }) {
-  
+  const containerClass = "relative w-full max-w-[380px] flex-1 min-h-0 flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-center";
   if (slideId === 1) {
     return (
-      <div className="relative w-full max-w-[380px] h-[450px] flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top lg:origin-center">
-        
+<div className={containerClass}>        
         <motion.div
            initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
            whileInView={{ 

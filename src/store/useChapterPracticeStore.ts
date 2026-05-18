@@ -102,43 +102,44 @@ initStore: (fetchedQuestions, initialQuestionId) => {
 
   // 🔥 Optimistic UI Bookmark Action
 // 🔥 Optimistic UI Bookmark Action
+  // 🔥 Optimistic UI Bookmark Action
   toggleBookmark: async (questionId) => {
-    // Ensure we are strictly reading a boolean
     const isCurrentlyBookmarked = !!get().bookmarkedQuestions[questionId];
 
-    // Instantly toggle the UI state so it feels lightning fast
+    // 1. Instantly toggle UI state
     set((state) => ({
       bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: !isCurrentlyBookmarked }
     }));
 
     try {
-      // 🔥 DYNAMIC ENDPOINT: If it's already bookmarked, call Remove. Otherwise, call Add.
-      const endpoint = isCurrentlyBookmarked ? `/bookMarked/remove` : `/bookMarked/add`;
+      if (!isCurrentlyBookmarked) {
+        // --- ADD LOGIC (POST) ---
+        const res = await authenticatedFetch(`/bookMarked/add`, {
+          method: "POST",
+          body: JSON.stringify({ questionId }),
+        });
 
-      const res = await authenticatedFetch(endpoint, {
-        method: "POST", // Note: If your backend uses DELETE for remove, change this dynamically too!
-        body: JSON.stringify({ questionId }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        const errorString = String(errorData?.errors || "");
-
-        // Self-Healing Logic: If UI thought it wasn't bookmarked, but backend says "Already Added"
-        if (!isCurrentlyBookmarked && errorString.includes("Already Added")) {
-          console.log("Question was already bookmarked on server. UI synced.");
-          return; 
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          // If server says already added, our UI state is actually correct, so just log and exit
+          if (errorData?.errors?.includes("Already Added")) return;
+          
+          throw new Error("Failed to add bookmark");
         }
+      } else {
+        // --- REMOVE LOGIC (DELETE) ---
+        // 🔥 Using the exact structure shown in your Postman screenshot
+        const res = await authenticatedFetch(`/bookMarked/remove?questionId=${encodeURIComponent(questionId)}`, {
+          method: "DELETE", // Backend expects DELETE
+        });
 
-        // Revert UI on a genuine failure
-        console.warn(`Backend rejected bookmark sync (${endpoint}).`, errorData);
-        set((state) => ({
-          bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
-        }));
+        if (!res.ok) {
+          throw new Error("Failed to remove bookmark");
+        }
       }
     } catch (err) {
-      console.warn("Network error while bookmarking:", err);
-      // Revert the UI if the network request completely failed
+      console.warn("Bookmark sync error:", err);
+      // Revert UI on failure
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
       }));
