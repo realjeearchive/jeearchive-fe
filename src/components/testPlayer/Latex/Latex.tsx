@@ -68,6 +68,7 @@ export default function Latex({ children }: LatexProps) {
 }
 
 // --- SUB-COMPONENT: Render Math safely ---
+// --- SUB-COMPONENT: Render Math safely ---
 function RenderMath({ math, block }: { math: string; block: boolean }) {
   let html: string | null = null;
 
@@ -83,8 +84,15 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
   }
 
   if (!html) {
-    // If render fails, show the code in red so you can debug it
-    return <code style={{ color: "red", fontSize: "0.8em" }}>{math}</code>;
+    // 🔥 FIXED: Added explicit console error so you can find bad DB data instantly during testing
+    console.error(`[LaTeX Error] Failed to parse string: ${math}`);
+    
+    // Made the visual error slightly more distinct so it stands out to the tester
+    return (
+      <code style={{ color: "#ef4444", backgroundColor: "#fee2e2", padding: "2px 4px", borderRadius: "4px", fontSize: "0.9em" }}>
+        {math}
+      </code>
+    );
   }
 
   return (
@@ -92,7 +100,6 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
       dangerouslySetInnerHTML={{ __html: html }}
       className={block ? "katex-block" : "katex-inline"}
     />
-    
   );
 }
 

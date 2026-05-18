@@ -1,4 +1,3 @@
-// src/app/(exam)/previous-year-questions/jee-advanced/[year]/tests/[testId]/page.tsx
 'use client';
 
 import { use, useEffect, useMemo } from 'react';
@@ -7,12 +6,15 @@ import { TestOverviewPageClient } from "./testOverviewPageClient";
 import { Loader } from "@/components/ui/loader";
 
 interface TestOverviewPageProps {
-  params: Promise<{ year: string; testId: string }>;
+  params: Promise<{ examType: string; year: string; testId: string }>;
 }
 
 export default function TestOverviewPage(props: TestOverviewPageProps) {
-  const { year, testId } = use(props.params);
+  const { examType, year, testId } = use(props.params);
   const { papers, getPapers, isLoading } = usePaperStore();
+
+  // Convert URL param to API enum
+  const apiExamType = examType === 'jee-advanced' ? 'JEE_ADVANCED' : 'JEE_MAIN';
 
   const selectedPaper = useMemo(() => {
     return papers.find((p) => p.id === testId);
@@ -20,34 +22,31 @@ export default function TestOverviewPage(props: TestOverviewPageProps) {
 
   useEffect(() => {
     if (papers.length === 0 && !isLoading) {
-       getPapers(year, 'JEE_MAIN');
+       getPapers(year, apiExamType);
     }
-  }, [papers.length, year, getPapers, isLoading]);
+  }, [papers.length, year, getPapers, isLoading, apiExamType]);
 
   if (isLoading || (!selectedPaper && papers.length === 0)) {
     return (
       <div className="flex h-[60vh] w-full items-center justify-center">
-        <Loader label="Loading Paper Details..." size="h-6 w-6" />
+        <Loader label="Loading Test Details..." size="h-6 w-6" />
       </div>
     );
   }
 
   if (!selectedPaper) {
-    return (
-      <div className="p-8 text-red-500 text-center">
-        Paper not found. Please go back to the list.
-      </div>
-    );
+    return <div className="p-8 text-red-500 text-center">Test not found.</div>;
   }
 
-  const title = `JEE Main ${selectedPaper.year} ${selectedPaper.date || ''} (${selectedPaper.shift || 'Paper'})`;
+  const title = `${examType === 'jee-advanced' ? 'JEE Advanced' : 'JEE Main'} ${selectedPaper.year} ${selectedPaper.date || ''} (${selectedPaper.shift || 'Paper'})`;
 
   return (
     <TestOverviewPageClient
       summaryTitle={title}
-      sectionsCount={3}
-      paperId={testId} 
+      sectionsCount={3} 
+      paperId={testId}
       year={year}
+      examType={examType} // Pass this down
     />
   );
 }

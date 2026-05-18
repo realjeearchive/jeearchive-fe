@@ -2,36 +2,15 @@
 
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "./TestSubmissionSummary.module.css";
-import { toast } from "sonner"; // Optional: assuming you use sonner/hot-toast
+import { toast } from "sonner";
 
 export function TestSubmissionSummary() {
-  // Pull metadata and existing store data
-  const { sections, questionsById, paperMetadata, submitTest } = useTestEngineStore();
+  // 🔥 FIXED: Grab formattedBannerText from store instead of paperMetadata
+  const { sections, questionsById, formattedBannerText, submitTest } = useTestEngineStore();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Create the dynamic formatted header with proper underscore cleaning
-  const formattedHeader = useMemo(() => {
-    if (!paperMetadata) return "JEE TEST UPDATED AS PER LATEST NTA PATTERN";
-
-    const { examName, year, date, month, shift } = paperMetadata;
-
-    // Clean "JEE_MAIN" to "JEE MAIN"
-    const cleanExamName = examName?.replace(/_/g, " ") || "JEE MAIN";
-
-    // Construct parts in proper order: Year, Date, Month, Shift
-    const parts = [
-      cleanExamName,
-      year,
-      date,
-      month,
-      shift ? `${shift} SHIFT` : ""
-    ].filter(Boolean);
-
-    return `${parts.join(" ").toUpperCase()} UPDATED AS PER LATEST NTA PATTERN`;
-  }, [paperMetadata]);
 
   const summaryData = sections.map((section) => {
     const sectionQuestions = section.questions;
@@ -63,14 +42,11 @@ export function TestSubmissionSummary() {
     setIsSubmitting(true);
 
     try {
-      // Wait for the API call to complete
       await submitTest();
-      
-      // Only redirect on success
       router.push("/dashboard");
     } catch (error) {
-      console.error("Submission failed", error);
-      // Optional: Show an error toast here
+      // 🔥 FIXED: Standardized logging for the final mile
+      console.error("[TestPlayer: Submit] Final submission failed in UI layer", error);
       toast.error("Failed to submit test. Please try again.");
       setIsSubmitting(false);
     }
@@ -78,9 +54,8 @@ export function TestSubmissionSummary() {
 
   return (
     <div className={styles.pageWrapper}>
-      {/* Banner matches TopStrip formatting exactly */}
       <header className={styles.topBanner}>
-        {formattedHeader}
+        {formattedBannerText || "JEE TEST UPDATED AS PER LATEST NTA PATTERN"}
       </header>
       
       <div className={styles.contentContainer}>

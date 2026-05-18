@@ -3,30 +3,35 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
-import Styles from '../jeeAdvanced.module.css'; 
+// Make sure to rename your CSS file to match this, or point it to your existing CSS file
+import Styles from "../yearPage.module.css"; 
 import TestListSection2, { TestCardItem } from '@/components/testPlayer/TestListSection2/TestListSection2';
 import { Loader } from "@/components/ui/loader";
 import { fetchPaperAttemptsDetails, createTestSession, PaperAttemptDetail } from "@/features/tests/api";
 
 interface YearPageProps {
-  params: Promise<{ year: string }>;
+  params: Promise<{ examType: string; year: string }>;
 }
 
-export default function JeeAdvancedYearPage(props: YearPageProps) {
-  const { year } = use(props.params);
+export default function UnifiedYearPage(props: YearPageProps) {
+  const { examType, year } = use(props.params);
   const router = useRouter(); 
   
   const [papersWithStatus, setPapersWithStatus] = useState<PaperAttemptDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. Bulk Fetch Papers and Status on Mount for JEE ADVANCED
+  // Derive constants based on the URL parameter
+  const isMains = examType === 'jee-mains';
+  const apiExamType = isMains ? "JEE_MAIN" : "JEE_ADVANCED";
+  const displayTitle = isMains ? "JEE Main" : "JEE Advanced";
+
+  // 1. Bulk Fetch Papers and Status on Mount
   useEffect(() => {
     async function loadData() {
-      if (!year) return;
+      if (!year || !examType) return;
       setIsLoading(true);
       try {
-        // Explicitly calling for JEE_ADVANCED
-        const res = await fetchPaperAttemptsDetails("JEE_ADVANCED", year);
+        const res = await fetchPaperAttemptsDetails(apiExamType, year);
         if (res.success && res.data) {
           setPapersWithStatus(res.data);
         } else {
@@ -40,23 +45,26 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
       }
     }
     loadData();
-  }, [year]);
+  }, [year, examType, apiExamType]);
 
   // 2. Transform Data directly for the Card UI
   const formattedItems: TestCardItem[] = papersWithStatus.map((paper) => {
-    // Map backend status to our strict UI status
     let status: TestCardItem["status"] = "NOT_ATTEMPTED";
     
     if (paper.latestAttempt) {
-       // The latest attempt overrides general status
        status = paper.latestAttempt.status;
     } else if (paper.attemptStatus === "completed") {
        status = "COMPLETED";
     }
 
-    // Clean formatting for Advanced tests (which might not have specific shifts)
-    const shiftText = paper.shift ? `(${paper.shift})` : '';
-    const title = `JEE Advanced ${paper.year} ${paper.date || ''} ${paper.month || ''} ${shiftText}`.trim().replace(/\s+/g, ' ');
+    // Dynamic Title Formatting
+    let title = "";
+    if (isMains) {
+      title = `${displayTitle} ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`;
+    } else {
+      const shiftText = paper.shift ? `(${paper.shift})` : '';
+      title = `${displayTitle} ${paper.year} ${paper.date || ''} ${paper.month || ''} ${shiftText}`.trim().replace(/\s+/g, ' ');
+    }
 
     return {
       id: paper.paperId,
@@ -72,8 +80,8 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
     try {
       const res = await createTestSession(paperId);
       if (res.success && res.data?.testId) {
-        // Route specifically to jee-advanced player
-        router.push(`/previous-year-questions/jee-advanced/${year}/tests/${paperId}?sid=${res.data.testId}`);
+        // Dynamically route to the correct exam type in the test player
+        router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}?sid=${res.data.testId}`);
       } else {
         toast.error("Failed to start test session");
       }
@@ -83,7 +91,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
   };
 
   const handleResume = (paperId: string, sessionId: string) => {
-    router.push(`/previous-year-questions/jee-advanced/${year}/tests/${paperId}?sid=${sessionId}`);
+    router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}?sid=${sessionId}`);
   };
 
   const handleRestart = async (paperId: string) => {
@@ -101,30 +109,26 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
   // --- RENDER ---
   if (isLoading) {
     return (
-      <div className={Styles.jeeAdvancedPage}>
-        <div className="flex h-[60vh] w-full items-center justify-center">
-           <Loader label="Loading papers..." size="h-6 w-6" />
-        </div>
+      <div className={Styles.pageContainer || "flex h-[60vh] w-full items-center justify-center"}>
+         <Loader label={`Loading ${displayTitle} papers...`} size="h-6 w-6" />
       </div>
     );
   }
 
   if (!formattedItems || formattedItems.length === 0) {
     return (
-      <div className={Styles.jeeAdvancedPage}>
-        <div className="flex h-[50vh] w-full flex-col items-center justify-center text-center">
-          <p className="text-lg text-gray-400 font-medium">
-            Papers for JEE Advanced {year} are not available yet.
-          </p>
-        </div>
+      <div className={Styles.pageContainer || "flex h-[50vh] w-full flex-col items-center justify-center text-center"}>
+        <p className="text-lg text-gray-400 font-medium">
+          Papers for {displayTitle} {year} are not available yet.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={Styles.jeeAdvancedPage}>
+    <div className={Styles.pageContainer || ""}>
       <TestListSection2 
-        heading={`JEE Advanced ${year} Papers`} 
+        heading={`${displayTitle} ${year} Papers`} 
         items={formattedItems} 
         onStart={handleStart}
         onResume={handleResume}
@@ -132,6 +136,6 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
         onViewAnalytics={handleAnalytics}
         onViewSolutions={handleSolutions}
       />
-    </div> 
+    </div>
   );
 }

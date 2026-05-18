@@ -15,14 +15,13 @@ import { useAuthStore } from '@/store';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
-  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,36 +40,36 @@ export function LoginForm() {
 
     try {
       parsed = loginSchema.parse(rawData);
-      console.log('LoginForm: parsed data: ', parsed);
     } catch (err) {
       if (err instanceof z.ZodError) {
         const fieldErrs: Record<string, string> = {};
         err.issues.forEach((issue) => {
           const field = issue.path[0] as string;
-          if (!fieldErrs[field]) {
-            fieldErrs[field] = issue.message;
-          }
+          if (!fieldErrs[field]) fieldErrs[field] = issue.message;
         });
         setFieldErrors(fieldErrs);
         toast.error('Please fix the highlighted fields.');
         setLoading(false);
         return;
       }
-
       setError('Invalid form data');
       setLoading(false);
       return;
     }
 
     try {
+      console.info(`[Auth: LoginForm] Attempting login for: ${parsed.email}`);
       const data: LoginResponse = await loginRequest(rawData);
 
       setAccessToken(data.accessToken); 
+      console.info(`[Auth: LoginForm] Login successful for: ${parsed.email}`);
       toast.success('Logged in successfully.');
+      
       const redirectTo = searchParams.get('redirectTo') || '/dashboard';
       router.replace(redirectTo);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Something went wrong';
+      const message = err instanceof Error ? err.message : 'Authentication failed';
+      console.error(`[Auth: LoginForm] Login failed:`, err);
       setError(message);
       toast.error(message);
     } finally {
@@ -81,55 +80,22 @@ export function LoginForm() {
   return (
     <div className={Styles.loginFormContainer}>
       <div className={Styles.loginHeader}>
-        <Image
-          src={Logo}
-          alt="jeearchive-logo"
-          width={60}
-          height={60}
-          className={Styles.logo} 
-        />
+        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
         <h2 className={Styles.loginHeading}>Welcome back</h2>
       </div>
 
       <FormError message={error} />
 
       <form onSubmit={handleSubmit} className={Styles.loginForm}>
-        <AuthInput
-          id="email"
-          name="email"
-          type="email"
-          label="Email address"
-          required
-          placeholder="Email"
-          error={fieldErrors.email}
-        />
-
-        <AuthInput
-          id="password"
-          name="password"
-          type="password"
-          label="Password"
-          required
-          placeholder="Password"
-          error={fieldErrors.password}
-        />
+        <AuthInput id="email" name="email" type="email" label="Email address" required placeholder="Email" error={fieldErrors.email} />
+        <AuthInput id="password" name="password" type="password" label="Password" required placeholder="Password" error={fieldErrors.password} />
 
         <div className={Styles.formExtras}>
           <div className={Styles.rememberMe}>
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className={Styles.checkbox}
-            />
-            <label htmlFor="remember-me" className={Styles.checkboxLabel}>
-              Remember me
-            </label>
+            <input id="remember-me" name="remember-me" type="checkbox" className={Styles.checkbox} />
+            <label htmlFor="remember-me" className={Styles.checkboxLabel}>Remember me</label>
           </div>
-
-          <Link href="/forgot-password" className={Styles.forgotPassword}>
-            Forgot password?
-          </Link>
+          <Link href="/forgot-password" className={Styles.forgotPassword}>Forgot password?</Link>
         </div>
 
         <AuthButton type="submit" loading={loading}>
@@ -138,12 +104,7 @@ export function LoginForm() {
 
         <p className={Styles.onboardingNavigationText}>
           {"Don't have an account?"}{' '}
-          <Link
-            href="/signup"
-            className={`${Styles.onboardingNavigation} font-medium`}
-          >
-            Sign up
-          </Link>
+          <Link href="/signup" className={`${Styles.onboardingNavigation} font-medium`}>Sign up</Link>
         </p>
       </form>
     </div>

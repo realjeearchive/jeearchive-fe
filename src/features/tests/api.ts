@@ -79,6 +79,7 @@ export async function fetchPapersByYear(params: {
   accessToken: string; 
   examName?: 'JEE_MAIN' | 'JEE_ADVANCED'; 
 }) {
+  console.info(`[API: Test] Fetching paper list for ${params.examName || 'JEE_MAIN'} ${params.year}`);
   const res = await authenticatedFetch(
     `/paper/get?year=${params.year}&examName=${params.examName || 'JEE_MAIN'}`, 
     { method: 'GET' }
@@ -86,8 +87,8 @@ export async function fetchPapersByYear(params: {
   return handleJson<PaperApiResponse>(res);
 }
 
-// [NEW] Bulk fetch for all papers in a year with their attempt status
 export async function fetchPaperAttemptsDetails(examName: string, year: string) {
+  console.info(`[API: Test] Fetching bulk attempt details for ${examName} ${year}`);
   const res = await authenticatedFetch(
     `/testStatus/paperAttemptsDetails?examName=${examName}&year=${year}`, 
     { method: 'GET' }
@@ -96,11 +97,15 @@ export async function fetchPaperAttemptsDetails(examName: string, year: string) 
 }
 
 export async function fetchTestContent(paperId: string): Promise<TestDefinition | null> {
+  console.info(`[API: Test] Fetching and decrypting questions for paper: ${paperId}`);
   const res = await authenticatedFetch(`/question/paperQuestions/${paperId}`, { method: 'GET' });
   const json = await handleJson<{ data: string }>(res);
   const decryptedData = decryptData<unknown>(json.data);
 
-  if (!decryptedData) throw new Error("Decryption failed");
+  if (!decryptedData) {
+    console.error(`[API: Test] Decryption failed for paper: ${paperId}`);
+    throw new Error("Decryption failed");
+  }
 
   let questionsArray: BackendQuestion[] = [];
   if (Array.isArray(decryptedData)) {
@@ -115,26 +120,31 @@ export async function fetchTestContent(paperId: string): Promise<TestDefinition 
 }
 
 export async function fetchLastTestStatus(paperId: string) {
+  console.info(`[API: Test] Fetching last test status for paper: ${paperId}`);
   const res = await authenticatedFetch(`/testStatus/lastTestDetails?paperId=${paperId}`, { method: 'GET' });
   return handleJson<LastTestStatusResponse>(res);
 }
 
 export async function createTestSession(paperId: string) {
+  console.info(`[API: Test] Creating new test session for paper: ${paperId}`);
   const res = await authenticatedFetch(`/testStatus/create`, { method: 'POST', body: JSON.stringify({ paperId }) });
   return handleJson<CreateTestResponse>(res);
 }
 
 export async function fetchTestSession(testStatusId: string) {
+  console.info(`[API: Test] Fetching session data for session: ${testStatusId}`);
   const res = await authenticatedFetch(`/testStatus/getPaper?testStatusId=${testStatusId}`, { method: 'GET' });
   return handleJson<SessionDataResponse>(res);
 }
 
 export async function updateTestSession(payload: UpdateTestStatusPayload) {
+  // Silent log here because this fires every 2 minutes (handled in testEngineStore.ts)
   const res = await authenticatedFetch(`/testStatus/update`, { method: 'POST', body: JSON.stringify(payload), keepalive: true });
   return handleJson<{ success: boolean; message: string }>(res);
 }
 
 export async function submitTestSession(payload: UpdateTestStatusPayload) {
+  console.info(`[API: Test] Submitting final test evaluation for session: ${payload.testId}`);
   const res = await authenticatedFetch(`/testStatus/submitTest`, { method: 'POST', body: JSON.stringify(payload) });
   return handleJson<{ success: boolean; message: string }>(res);
 }

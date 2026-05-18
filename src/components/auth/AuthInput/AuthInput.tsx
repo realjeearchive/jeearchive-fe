@@ -26,8 +26,7 @@ export function AuthInput({
   const isPasswordField = type === 'password';
 
   const inputType = isPasswordField && showPassword ? 'text' : type;
-  const resolvedPlaceholder =
-    placeholder || (isPasswordField ? label : undefined);
+  const resolvedPlaceholder = placeholder || (isPasswordField ? label : undefined);
 
   return (
     <div className={Styles.inputWrapper}>
@@ -38,6 +37,8 @@ export function AuthInput({
           type={inputType}
           required={required}
           placeholder={resolvedPlaceholder}
+          aria-label={label} // 🔥 ADDED: Crucial for accessibility since there's no visible <label> tag
+          aria-invalid={!!error}
           className={`${Styles.onboardingInput} ${
             error ? Styles.inputError : Styles.inputNormal
           }`}
@@ -53,7 +54,11 @@ export function AuthInput({
           </button>
         )}
       </div>
-      {error && <p className={Styles.errorText}>{error}</p>}
+      {error && (
+        <p className={Styles.errorText} role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

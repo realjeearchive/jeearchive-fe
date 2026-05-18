@@ -1,4 +1,3 @@
-// src/features/auth/api.ts
 import { useAuthStore } from "@/store/authStore";
 import type { SignupInput, LoginInput } from './schemas';
 
@@ -13,10 +12,8 @@ export class ApiError extends Error {
   }
 }
 
-// --- SHARED PROMISE LOCK ---
 let refreshPromise: Promise<string> | null = null;
 
-// --- AUTHENTICATED FETCH WRAPPER ---
 export async function authenticatedFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const store = useAuthStore.getState();
   const token = store.accessToken;
@@ -40,11 +37,14 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
       return response;
     }
 
+    console.warn(`[API: Auth] 401/403 received for ${endpoint}. Attempting token refresh...`);
     try {
       const newToken = await getRefreshToken();
       headers.set('Authorization', `Bearer ${newToken}`);
+      console.info(`[API: Auth] Token refreshed successfully. Retrying ${endpoint}...`);
       return fetch(`${API_BASE_URL}${endpoint}`, { ...config, headers });
     } catch (err) {
+      console.error(`[API: Auth] Token refresh failed. Logging user out.`, err);
       store.logout();
       return response;
     }
@@ -53,7 +53,6 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
   return response;
 }
 
-// --- SINGLETON REFRESH LOGIC ---
 async function getRefreshToken(): Promise<string> {
   if (refreshPromise) {
     return refreshPromise;
@@ -78,7 +77,6 @@ async function getRefreshToken(): Promise<string> {
       if (!newToken) throw new Error("No token returned");
 
       useAuthStore.getState().setAccessToken(newToken);
-      
       return newToken;
     } catch (error) {
       throw error;
@@ -90,7 +88,6 @@ async function getRefreshToken(): Promise<string> {
   return refreshPromise;
 }
 
-// --- HELPER HANDLER ---
 export async function handleJson<T>(res: Response): Promise<T> {
   const data: unknown = await res.json().catch(() => null);
 
@@ -172,7 +169,6 @@ export async function verifyPasswordOtpRequest(params: { email: string; otp: str
   return handleJson<VerifyPasswordOtpResponse>(res);
 }
 
-
 export async function passwordChangeRequest(params: { password: string; accessToken: string }) {
   const res = await fetch(`${API_BASE_URL}/auth/passwordChange`, {
     method: 'POST',
@@ -188,7 +184,6 @@ export async function passwordChangeRequest(params: { password: string; accessTo
   return handleJson<PasswordChangeResponse>(res);
 }
 
-// EXPORTED REFRESH FUNCTION 
 export async function refreshTokenRequest() {
   try {
     const accessToken = await getRefreshToken(); 

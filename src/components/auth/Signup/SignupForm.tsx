@@ -43,30 +43,29 @@ export function SignupForm() {
         const fieldErrs: Record<string, string> = {};
         err.issues.forEach((issue) => {
           const field = issue.path[0] as string;
-          if (!fieldErrs[field]) {
-            fieldErrs[field] = issue.message;
-          }
+          if (!fieldErrs[field]) fieldErrs[field] = issue.message;
         });
         setFieldErrors(fieldErrs);
         toast.error('Please fix the highlighted fields.');
         setLoading(false);
         return;
       }
-
       setError('Invalid form data');
       setLoading(false);
       return;
     }
 
     try {
+      console.info(`[Auth: SignupForm] Attempting account creation for: ${parsed.email}`);
       const data: SignupResponse = await signupRequest(parsed);
+      
+      console.info(`[Auth: SignupForm] Account created successfully, awaiting OTP for: ${parsed.email}`);
       toast.success(data.message || 'OTP sent to your email.');
 
-      // FIX: Add the redirectTo parameter here!
       router.push(`/verify-email?email=${encodeURIComponent(parsed.email)}&redirectTo=/onboarding`);
-      
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Something went wrong';
+      const message = err instanceof Error ? err.message : 'Signup failed';
+      console.error(`[Auth: SignupForm] Signup failed:`, err);
       setError(message);
       toast.error(message);
     } finally {
@@ -77,58 +76,17 @@ export function SignupForm() {
   return (
     <div className={Styles.signupFormContainer}>
       <div className={Styles.signupHeader}>
-        <Image
-          src={Logo}
-          alt="jeearchive-logo"
-          width={60}
-          height={60}
-          className={Styles.logo}
-        />
+        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
         <h2 className={Styles.signupHeading}>{"Let's get started"}</h2>
       </div>
 
       <FormError message={error} />
 
       <form onSubmit={handleSubmit} className={Styles.signupForm}>
-        <AuthInput
-          id="name"
-          name="name"
-          type="text"
-          label="Full Name"
-          required
-          placeholder="Full Name"
-          error={fieldErrors.name}
-        />
-
-        <AuthInput
-          id="email"
-          name="email"
-          type="email"
-          label="Email address"
-          required
-          placeholder="Email"
-          error={fieldErrors.email}
-        />
-
-        <AuthInput
-          id="password"
-          name="password"
-          type="password"
-          label="Password"
-          required
-          placeholder="Password"
-          error={fieldErrors.password}
-        />
-
-        <AuthInput
-          id="confirm-password"
-          name="confirm-password"
-          type="password"
-          label="Confirm Password"
-          required
-          placeholder="Confirm Password"
-          error={fieldErrors.confirmPassword}
-        />
+        <AuthInput id="name" name="name" type="text" label="Full Name" required placeholder="Full Name" error={fieldErrors.name} />
+        <AuthInput id="email" name="email" type="email" label="Email address" required placeholder="Email" error={fieldErrors.email} />
+        <AuthInput id="password" name="password" type="password" label="Password" required placeholder="Password" error={fieldErrors.password} />
+        <AuthInput id="confirm-password" name="confirm-password" type="password" label="Confirm Password" required placeholder="Confirm Password" error={fieldErrors.confirmPassword} />
 
         <AuthButton type="submit" loading={loading}>
           <div className="font-medium">Create account</div>
@@ -136,12 +94,7 @@ export function SignupForm() {
 
         <p className={Styles.onboardingNavigationText}>
           Already have an account?{' '}
-          <Link
-            href="/login"
-            className={`${Styles.onboardingNavigation} font-medium`}
-          >
-            Sign in
-          </Link>
+          <Link href="/login" className={`${Styles.onboardingNavigation} font-medium`}>Sign in</Link>
         </p>
       </form>
     </div>

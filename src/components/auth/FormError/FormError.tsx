@@ -1,3 +1,5 @@
+// src/components/auth/FormError/FormError.tsx
+
 import Styles from './FormError.module.css';
 
 interface FormErrorProps {

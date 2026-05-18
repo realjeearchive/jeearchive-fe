@@ -221,16 +221,38 @@
 }
 
 /* Force LIST-I and LIST-II into a two-column layout if they come as specific tags or tables */
+/* Styling for tables inside questions to look like standard JEE interface */
 .htmlContent table {
   width: 100%;
   border-collapse: collapse;
   margin: 15px 0;
+  border: 1px solid var(--test-player-border-color, #ccc);
 }
 
 .htmlContent td, .htmlContent th {
   padding: 8px 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--test-player-border-color, #e0e0e0);
   vertical-align: top;
+}
+
+/* Light mode defaults */
+.htmlContent th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #111; /* Force dark text in light mode so it never washes out */
+  text-align: center;
+}
+
+/* 🔥 DARK MODE FIX FOR TABLES 🔥 */
+:global(.dark) .htmlContent table,
+:global(.dark) .htmlContent td,
+:global(.dark) .htmlContent th {
+  border-color: #444; /* Darker borders for dark mode */
+}
+
+:global(.dark) .htmlContent th {
+  background-color: #2a2a2a; /* Dark background for table header */
+  color: #f4f4f5; /* Light text for perfect visibility */
 }
 
 /* Handle Match the following lists (often delivered as <p> or <div> blocks) */

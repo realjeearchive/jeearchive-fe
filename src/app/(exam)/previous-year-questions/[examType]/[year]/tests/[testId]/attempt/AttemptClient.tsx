@@ -15,6 +15,7 @@ import type {
 interface AttemptClientProps {
   year: string;
   testId: string;
+  examType: string; // Added to enable dynamic routing
 }
 
 /**
@@ -46,7 +47,7 @@ function isDirectSessionResponse(
   );
 }
 
-export function AttemptClient({ year, testId }: AttemptClientProps) {
+export function AttemptClient({ year, testId, examType }: AttemptClientProps) {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sid");
 
@@ -79,6 +80,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
       hasFetched.current = true;
 
       try {
+        console.info(`[AttemptClient] Fetching session: ${sessionId} for ${examType}`);
         const response: SessionDataResponse | HierarchicalSessionData =
           await fetchTestSession(sessionId);
 
@@ -96,7 +98,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
 
         initFromBackendSession(sessionData);
       } catch (err) {
-        console.error("Session load failed:", err);
+        console.error("[AttemptClient] Session load failed:", err);
         setError("Network error. Could not load the test.");
       } finally {
         setLoading(false);
@@ -104,7 +106,7 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
     }
 
     loadSession();
-  }, [sessionId, authInitialized, initAuth, initFromBackendSession]);
+  }, [sessionId, authInitialized, initAuth, initFromBackendSession, examType]);
 
   // ---------------- UI STATES ----------------
 
@@ -120,9 +122,10 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-zinc-900 text-red-500">
         <p className="text-lg font-semibold">{error}</p>
-        <a
-          href={`/previous-year-questions/jee-mains/${year}/tests/${testId}`}
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+        <a 
+          // 🔥 DYNAMIC LINK: Uses the examType prop correctly
+          href={`/previous-year-questions/${examType}/${year}/tests/${testId}`}
+          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
         >
           Return to Instructions
         </a>
@@ -134,5 +137,3 @@ export function AttemptClient({ year, testId }: AttemptClientProps) {
 
   return <TestPlayerLayout />;
 }
-
-export default AttemptClient;

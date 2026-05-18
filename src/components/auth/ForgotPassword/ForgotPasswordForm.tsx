@@ -33,7 +33,6 @@ export function ForgotPasswordForm() {
 
     let parsed: ForgotPasswordEmailInput;
 
-    // Zod validation
     try {
       parsed = forgotPasswordEmailSchema.parse(rawData);
     } catch (err) {
@@ -41,44 +40,39 @@ export function ForgotPasswordForm() {
         const fieldErrs: Record<string, string> = {};
         err.issues.forEach((issue) => {
           const field = issue.path[0] as string;
-          if (!fieldErrs[field]) {
-            fieldErrs[field] = issue.message;
-          }
+          if (!fieldErrs[field]) fieldErrs[field] = issue.message;
         });
         setFieldErrors(fieldErrs);
         setLoading(false);
         return;
       }
-
       setError('Invalid form data');
       setLoading(false);
       return;
     }
 
     try {
-  await passwordEmailVerificationRequest({ email: parsed.email });
+      console.info(`[Auth: ForgotPassword] Requesting OTP for: ${parsed.email}`);
+      await passwordEmailVerificationRequest({ email: parsed.email });
 
-  toast.success('If an account exists, a reset code has been sent to your email.');
-  router.push(`/reset-password?email=${encodeURIComponent(parsed.email)}`);
-} catch (err) {
-  const message = err instanceof Error ? err.message : 'Something went wrong';
-  setError(message);
-  toast.error(message);
-} finally {
-  setLoading(false);
-}
+      console.info(`[Auth: ForgotPassword] OTP sent successfully to: ${parsed.email}`);
+      toast.success('If an account exists, a reset code has been sent to your email.');
+      
+      router.push(`/reset-password?email=${encodeURIComponent(parsed.email)}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      console.error(`[Auth: ForgotPassword] Request failed:`, err);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={Styles.forgotPasswordFormContainer}>
       <div className={Styles.forgotPasswordHeader}>
-        <Image
-          src={Logo}
-          alt="jeearchive-logo"
-          width={60}
-          height={60}
-          className={Styles.logo}
-        />
+        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
         <h2 className={Styles.forgotPasswordHeading}>Reset your password</h2>
         <p className={Styles.forgotPasswordSubtext}>
           Enter your email address and we will send you an OTP to reset your password.
@@ -88,16 +82,7 @@ export function ForgotPasswordForm() {
       <FormError message={error} />
 
       <form onSubmit={handleSubmit} className={Styles.forgotPasswordForm}>
-        <AuthInput
-          id="email"
-          name="email"
-          type="email"
-          label="Email address"
-          required
-          placeholder="Email"
-          error={fieldErrors.email}
-        />
-
+        <AuthInput id="email" name="email" type="email" label="Email address" required placeholder="Email" error={fieldErrors.email} />
 
         <AuthButton type="submit" loading={loading}>
           <div className="font-medium">Verify Email</div>

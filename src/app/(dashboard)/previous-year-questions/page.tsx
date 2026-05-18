@@ -1,3 +1,4 @@
+// src/app/(dashboard)/previous-year-questions/page.tsx
 'use client';
 
 import { useState } from 'react';

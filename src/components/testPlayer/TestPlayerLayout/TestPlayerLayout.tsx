@@ -35,9 +35,9 @@ export function TestPlayerLayout() {
     saveAndNext,
     clearResponse,
     markForReview,
-    submitTest,
     syncWithServer,
-    tickTimer,
+    startTimer, // 🔥 Brought in startTimer
+    stopTimer,  // 🔥 Brought in stopTimer
   } = useTestEngineStore((s) => s);
 
   const { theme, setTheme } = useTestPlayerTheme();
@@ -51,15 +51,18 @@ export function TestPlayerLayout() {
     if (!isInitialized || !testId) return;
     const syncInterval = setInterval(() => { 
       syncWithServer(); 
-    }, 120000); // 2 Minutes
+    }, 120000); 
     return () => clearInterval(syncInterval);
   }, [isInitialized, testId, syncWithServer]);
 
+  // 🔥 FIXED: Centralized timer logic using the store's built-in actions
   useEffect(() => {
     if (!isInitialized) return;
-    const timerId = setInterval(() => { tickTimer(); }, 1000);
-    return () => clearInterval(timerId);
-  }, [isInitialized, tickTimer]);
+    startTimer();
+    return () => {
+      stopTimer();
+    };
+  }, [isInitialized, startTimer, stopTimer]);
 
   useEffect(() => {
     const checkScreen = () => {
@@ -79,6 +82,7 @@ export function TestPlayerLayout() {
 
   const handleKeyNavigation = useCallback((e: KeyboardEvent) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    // Add logging here later if needed for shortcuts
   }, []);
 
   useEffect(() => {

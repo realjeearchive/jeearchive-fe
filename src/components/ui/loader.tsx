@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface LoaderProps {
@@ -8,14 +7,18 @@ interface LoaderProps {
 }
 
 export function Loader({ 
-  className = "text-current", 
+  // 🔥 FIX 1: Default to your light text variable instead of text-current.
+  // This makes it visible on dark backgrounds out-of-the-box. 
+  // Buttons that pass "text-current" will still override this perfectly!
+  className = "text-[var(--login-page-primary-text-color,#FAFAFC)]", 
   size = "h-5 w-5", 
   label 
 }: LoaderProps) {
   return (
-    <div className="flex items-center justify-center font-medium">
+    // 🔥 FIX 2: Applied className to the OUTER div so BOTH the spinner and text inherit the color
+    <div className={`flex items-center justify-center font-medium ${className}`}>
       <svg 
-        className={`animate-spin ${size} ${className} ${label ? 'mr-3' : ''}`} 
+        className={`animate-spin ${size} ${label ? 'mr-3' : ''}`} 
         xmlns="http://www.w3.org/2000/svg" 
         fill="none" 
         viewBox="0 0 24 24"

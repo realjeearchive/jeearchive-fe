@@ -155,8 +155,7 @@
     width: 100vw;
     height: var(--mobile-form-height-collapsed);
     min-height: var(--mobile-form-height-collapsed);
-    background-color: #1f1f2d;
-    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--login-page-primary-text-color);
     font-size: 16px;
     font-weight: 600;
@@ -168,7 +167,6 @@
     padding: 0 24px;
     transition: all 0.2s ease;
     z-index: 101;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
   }
 
   .form-toggle-button.expanded {
@@ -176,7 +174,6 @@
   }
 
   .form-toggle-button:hover {
-    background-color: #1f1f2d;
   }
 
   .toggle-icon {

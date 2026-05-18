@@ -16,8 +16,6 @@ export function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') ?? '';
-  
-  // This will now successfully grab "/onboarding" from the URL thanks to our SignupForm update!
   const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
 
   const [loading, setLoading] = useState(false);
@@ -29,20 +27,19 @@ export function VerifyEmail() {
 
   useEffect(() => {
     if (!emailFromQuery) {
+      console.warn('[Auth: VerifyEmail] No email found in query params. Redirecting to signup.');
       router.replace('/signup');
     }
   }, [emailFromQuery, router]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value.trim();
-
     if (value === '') {
       const newOtp = [...otp];
       newOtp[index] = '';
       setOtp(newOtp);
       return;
     }
-
     if (!/^\d$/.test(value)) return;
 
     const newOtp = [...otp];
@@ -57,7 +54,6 @@ export function VerifyEmail() {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === 'Backspace') {
       e.preventDefault();
-
       if (otp[index] !== '') {
         const newOtp = [...otp];
         newOtp[index] = '';
@@ -74,7 +70,6 @@ export function VerifyEmail() {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
-
     if (!/^\d+$/.test(pastedData)) return;
 
     const newOtp = pastedData.split('').concat(Array(6 - pastedData.length).fill(''));
@@ -89,33 +84,31 @@ export function VerifyEmail() {
     setError('');
 
     const otpValue = otp.join('');
-
     if (otpValue.length !== 6) {
-      setError('Please enter all 6 digits');
+      setError('Please enter all 6 digits.');
       return;
     }
-
     if (!emailFromQuery) {
       setError('Missing email. Please sign up again.');
       return;
     }
 
     setLoading(true);
-
     try {
+      console.info(`[Auth: VerifyEmail] Attempting OTP verification for: ${emailFromQuery}`);
       const data: VerifyOtpResponse = await verifyOtpRequest({
         email: emailFromQuery,
         otp: otpValue,
       });
 
       setAccessToken(data.accessToken); 
+      console.info(`[Auth: VerifyEmail] Verification successful for: ${emailFromQuery}`);
       toast.success('Email verified successfully.');
       
-      // FIX: Cleanly route to the param (which is now /onboarding)
       router.push(redirectTo);
-      
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Something went wrong';
+      const message = err instanceof Error ? err.message : 'Verification failed';
+      console.error(`[Auth: VerifyEmail] Verification failed:`, err);
       setError(message);
       toast.error(message);
     } finally {
@@ -125,21 +118,17 @@ export function VerifyEmail() {
 
   const handleResendOTP = async () => {
     setError('');
-    if (!emailFromQuery) {
-      const msg = 'Missing email. Please sign up again.';
-      setError(msg);
-      toast.error(msg);
-      return;
-    }
+    if (!emailFromQuery) return;
 
     setResendLoading(true);
-
     try {
+      console.info(`[Auth: VerifyEmail] Attempting OTP resend for: ${emailFromQuery}`);
       await passwordEmailVerificationRequest({ email: emailFromQuery });
+      console.info(`[Auth: VerifyEmail] OTP resend successful.`);
       toast.success('OTP sent successfully.');
     } catch (err) {
-      const message = 'Failed to resend OTP';
-      console.log(err);
+      const message = 'Failed to resend OTP. Please try again.';
+      console.error(`[Auth: VerifyEmail] OTP resend failed:`, err);
       setError(message);
       toast.error(message);
     } finally {
@@ -150,13 +139,7 @@ export function VerifyEmail() {
   return (
     <div className={Styles.verificationFormContainer}>
       <div className={Styles.verificationHeader}>
-        <Image
-          src={Logo}
-          alt="jeearchive-logo"
-          width={60}
-          height={60}
-          className={Styles.logo}
-        />
+        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
         <h2 className={Styles.verificationHeading}>Verify your email</h2>
         <p className={Styles.verificationSubtext}>
           We have sent a 6-digit code to <span className={Styles.emailText}>{emailFromQuery}</span>. Please enter it below.
@@ -170,9 +153,7 @@ export function VerifyEmail() {
           {otp.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
+              ref={(el) => { inputRefs.current[index] = el; }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -182,6 +163,7 @@ export function VerifyEmail() {
               onPaste={index === 0 ? handlePaste : undefined}
               className={Styles.otpInput}
               autoFocus={index === 0}
+              aria-label={`Digit ${index + 1}`}
             />
           ))}
         </div>
@@ -193,12 +175,7 @@ export function VerifyEmail() {
         <div className={Styles.resendSection}>
           <p className={Styles.resendText}>
             Did not receive the code?{' '}
-            <button
-              type="button"
-              onClick={handleResendOTP}
-              className={Styles.resendButton}
-              disabled={resendLoading}
-            >
+            <button type="button" onClick={handleResendOTP} className={Styles.resendButton} disabled={resendLoading}>
               {resendLoading ? 'Resending...' : 'Resend OTP'}
             </button>
           </p>
@@ -206,9 +183,7 @@ export function VerifyEmail() {
 
         <p className={Styles.onboardingNavigationText}>
           Wrong email?{' '}
-          <Link href="/signup" className={`${Styles.onboardingNavigation} font-medium`}>
-            Go back
-          </Link>
+          <Link href="/signup" className={`${Styles.onboardingNavigation} font-medium`}>Go back</Link>
         </p>
       </form>
     </div>

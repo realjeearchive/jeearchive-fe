@@ -1,3 +1,5 @@
+// src/features/auth/types.ts
+
 export interface AccessTokenPayload {
   id: string;         
   name: string;

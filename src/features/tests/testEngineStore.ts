@@ -29,6 +29,7 @@ interface TestEngineState {
   testId: string | null;
   paperId: string | null; 
   title: string;
+  formattedBannerText: string;
   sections: TestSection[];
   timeLeftSeconds: number;
   sectionTimeSpent: Record<string, number>;
@@ -261,6 +262,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     testId: null,
     paperId: null,
     title: "",
+    formattedBannerText: "",
     sections: [],
     timeLeftSeconds: 0,
     sectionTimeSpent: {}, 
@@ -284,12 +286,24 @@ export const useTestEngineStore = create<TestEngineState>()(
           qMap[initialQ].isVisited = true;
       }
 
+      // 🔥 FIXED: Calculate the banner text exactly once here
+      const cleanExamName = (paper.exam?.name || "JEE MAIN").replace(/_/g, " ");
+      const bannerParts = [
+        cleanExamName,
+        paper.year,
+        paper.date,
+        paper.month,
+        paper.shift ? `${paper.shift} SHIFT` : ""
+      ].filter(Boolean);
+      const formattedBannerText = `${bannerParts.join(" ").toUpperCase()} UPDATED AS PER LATEST NTA PATTERN`;
+
       const newState = {
         isInitialized: true,
         testId: session.testId,
         paperId: paper.id, 
         title: `JEE ${paper.exam?.name || 'Test'} ${paper.year}`,
-        timeLeftSeconds: session.timeLeft, 
+        formattedBannerText, // 🔥 ADD THIS TO NEW STATE
+        timeLeftSeconds: session.timeLeft,
         activeQuestionId: initialQ,
         activeSectionId: initialSec,
         questionsById: qMap,
@@ -316,10 +330,11 @@ export const useTestEngineStore = create<TestEngineState>()(
       if (!payload) return;
 
       try {
+        console.info(`[TestEngine] Auto-syncing ${Object.keys(payload.questionsById).length} changed questions...`);
         await updateTestSession(payload);
         set({ changedQuestionIds: new Set() });
       } catch (err) {
-        console.warn("Sync failed", err);
+        console.error("[TestEngine] Auto-sync failed:", err);
       }
     },
 
@@ -493,8 +508,9 @@ export const useTestEngineStore = create<TestEngineState>()(
       
       if (payload) {
         try {
+            console.info(`[TestEngine] Submitting final test payload for Session: ${payload.testId}`);
             await submitTestSession(payload);
-            console.log("Test Submitted Successfully!");
+            console.info("[TestEngine] Test Submitted Successfully!");
             
             // Clean up local storage
             if (state.testId) {
@@ -504,8 +520,9 @@ export const useTestEngineStore = create<TestEngineState>()(
             // Reset changed IDs so we don't try to sync again if something persists
             set({ changedQuestionIds: new Set() });
         } catch (err) {
-            console.error("Submission failed", err);
-            // Optionally handle error UI feedback here
+            console.error("[TestEngine] Final Submission failed:", err);
+            // Re-throw so the UI (TestSubmissionSummary) can catch it and show a toast
+            throw err; 
         }
       }
     },

@@ -23,8 +23,7 @@ const CATEGORIES = [
 const CLASSES = ["Class 11", "Class 12", "Dropper", "Class 10 or below"];
 const GENDERS = ["Male", "Female", "Other"];
 
-// 🔥 NEW: API ENUM MAPPINGS
-// This maps the pretty UI strings to the exact Prisma Enum values your backend expects
+// API ENUM MAPPINGS
 const CLASS_MAP: Record<string, string> = {
   "Class 11": "class_11",
   "Class 12": "class_12",
@@ -86,7 +85,7 @@ export default function OnboardingWizard() {
       }
       setIsSubmitting(true);
       try {
-        // 🔥 Use CLASS_MAP to send the correct enum to the backend
+        console.info(`[Onboarding] Submitting Stage 1: Class [${formData.studentClass}]`);
         const mappedClass = CLASS_MAP[formData.studentClass];
         
         await submitStage1Request({ className: mappedClass });
@@ -95,6 +94,7 @@ export default function OnboardingWizard() {
         setStep(2);
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "Failed to save class. Please try again.";
+        console.error(`[Onboarding] Stage 1 failed:`, error);
         toast.error(message);
       } finally {
         setIsSubmitting(false);
@@ -109,7 +109,7 @@ export default function OnboardingWizard() {
       }
       setIsSubmitting(true);
       try {
-        // 🔥 Use MAPPINGS to send the correct enums to the backend
+        console.info(`[Onboarding] Submitting Stage 2: Category [${formData.category}], Gender [${formData.gender}]`);
         const mappedCategory = CATEGORY_MAP[formData.category];
         const mappedGender = GENDER_MAP[formData.gender];
 
@@ -123,6 +123,7 @@ export default function OnboardingWizard() {
         setStep(3);
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "Failed to save details. Please try again.";
+        console.error(`[Onboarding] Stage 2 failed:`, error);
         toast.error(message);
       } finally {
         setIsSubmitting(false);
@@ -144,22 +145,21 @@ export default function OnboardingWizard() {
 
     setIsSubmitting(true);
     try {
+      console.info(`[Onboarding] Submitting Stage 3: Finalizing profile.`);
       await submitStage3Request({ 
         countryCode: "91", 
         mobileNumber: Number(formData.mobile) 
       });
       
-      // 🔥 FIX: Instantly tell the global store that onboarding is complete!
-      // This immediately unblocks the RouteGuard so the redirect is seamless.
       setStageNumber(4);
+      fetchProfile(); // Quietly fetch full profile
       
-      // Fire off the profile fetch in the background
-      fetchProfile();
-      
+      console.info(`[Onboarding] Setup complete. Redirecting to ${redirectTo}`);
       toast.success("Profile setup complete! Welcome aboard.");
       router.replace(redirectTo);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      console.error(`[Onboarding] Stage 3 failed:`, error);
       toast.error(message);
       setIsSubmitting(false);
     }

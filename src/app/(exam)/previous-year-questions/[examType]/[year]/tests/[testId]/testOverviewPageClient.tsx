@@ -1,3 +1,5 @@
+// src/app/(exam)/previous-year-questions/jee-mains/[year]/tests/[testId]/testOverviewPageClient.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -18,31 +20,24 @@ interface Props {
   sectionsCount: number;
   paperId: string;
   year: string;
+  examType: string;
 }
 
-export function TestOverviewPageClient({
-  summaryTitle,
-  sectionsCount,
-  paperId,
-  year,
-}: Props) {
+export function TestOverviewPageClient({ summaryTitle, sectionsCount, paperId, year, examType }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("sid");
 
-  const [showMobilePanel, setShowMobilePanel] = useState(false);
-
   const handleBegin = () => {
-    // 1. Validation: Ensure we have a session ID
     if (!sessionId) {
-      toast.error("Session ID missing. Please return to the dashboard and restart.");
+      toast.error("Session ID missing.");
       return;
     }
-    
-    // 2. Navigation: Go to Attempt Page with SID
-    router.push(`/previous-year-questions/jee-mains/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
+    // Dynamic routing using examType
+    router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
   };
-
+  
+  const [showMobilePanel, setShowMobilePanel] = useState(false);
   return (
     <div className={layoutStyles.page}>
       <header className={layoutStyles.topBar}>

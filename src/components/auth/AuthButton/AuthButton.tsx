@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Styles from './AuthButton.module.css';
 import { Loader } from '@/components/ui/loader'; 
@@ -28,11 +27,12 @@ export function AuthButton({
       onClick={onClick}
       disabled={disabled || loading}
       className={`${Styles.onboardingButton} ${fullWidth ? 'w-full' : ''}`}
+      aria-busy={loading}
     >
       {loading ? (
         <Loader 
           label="Loading..." 
-          className="text-black -ml-1" 
+          className="text-current -ml-1" 
           size="h-5 w-5" 
         />
       ) : (
