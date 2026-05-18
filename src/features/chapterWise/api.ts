@@ -139,7 +139,7 @@ export interface ChapterAttempt {
 
 export interface QuestionAttemptsResponse {
   chapterAttempts: ChapterAttempt[];
-  testAttempts: any[]; // You can type this later if needed
+  testAttempts: unknown[]; 
 }
 
 export async function fetchQuestionAttempts(questionId: string): Promise<QuestionAttemptsResponse> {
