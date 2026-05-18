@@ -21,6 +21,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
 
   // 1. Bulk Fetch Papers and Status on Mount
   useEffect(() => {
+
     async function loadData() {
       if (!year) return;
       setIsLoading(true);
@@ -81,9 +82,7 @@ export default function JeeMainsYearPage(props: YearPageProps) {
   };
 
   const handleRestart = async (paperId: string) => {
-    if(confirm("Are you sure you want to restart? Your previous progress will be lost.")) {
-       handleStart(paperId); 
-    }
+    handleStart(paperId);
   };
 
   const handleAnalytics = (paperId: string) => {

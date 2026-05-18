@@ -150,3 +150,112 @@
   border-color: rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.02);
 }
+
+
+/* =========================================
+   🔥 CUSTOM CONFIRMATION MODAL (Minimal)
+   ========================================= */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.modalContent {
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px; /* Reduced padding */
+  width: 100%;
+  max-width: 300px; /* Shrunk from 400px to 300px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalIconWrapper {
+  width: 36px; /* Smaller icon circle */
+  height: 36px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.modalIcon {
+  color: #EF4444; 
+}
+
+.modalTitle {
+  font-size: 15px; /* Scaled down */
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color, #fff);
+  margin: 0 0 6px 0;
+}
+
+.modalDesc {
+  font-size: 13px; /* Scaled down */
+  color: var(--dashboard-secondary-text-color, #a1a1aa);
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px; /* Tighter gap between buttons */
+  width: 100%;
+}
+
+.modalBtnCancel, .modalBtnConfirm {
+  flex: 1;
+  padding: 8px 0; /* Thinner buttons */
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modalBtnCancel {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color, #fff);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modalBtnCancel:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modalBtnConfirm {
+  background-color: #EF4444;
+  color: #fff;
+}
+
+.modalBtnConfirm:hover {
+  background-color: #DC2626;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

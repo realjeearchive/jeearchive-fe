@@ -87,9 +87,7 @@ export default function JeeAdvancedYearPage(props: YearPageProps) {
   };
 
   const handleRestart = async (paperId: string) => {
-    if(confirm("Are you sure you want to restart? Your previous progress will be lost.")) {
-       handleStart(paperId); 
-    }
+    handleStart(paperId);
   };
 
   const handleAnalytics = (paperId: string) => {

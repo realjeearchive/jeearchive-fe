@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { FiPlay, FiBarChart2, FiBookOpen, FiRefreshCw } from "react-icons/fi";
+import React, { useState } from "react";
+import { FiPlay, FiBarChart2, FiBookOpen, FiRefreshCw, FiAlertTriangle } from "react-icons/fi";
 import styles from "./TestListSection2.module.css";
 
 export interface TestCardItem {
@@ -34,6 +34,28 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
   onViewAnalytics,
   onViewSolutions
 }) => {
+  // 🔥 NEW: State to manage the custom confirmation popup
+  const [restartModal, setRestartModal] = useState<{ isOpen: boolean; testId: string | null }>({
+    isOpen: false,
+    testId: null,
+  });
+
+  // Intercept the restart click to show the modal instead of an alert
+  const handleRestartClick = (id: string) => {
+    setRestartModal({ isOpen: true, testId: id });
+  };
+
+  // Confirm the restart and fire the actual prop function
+  const confirmRestart = () => {
+    if (restartModal.testId) {
+      onRestart(restartModal.testId);
+    }
+    setRestartModal({ isOpen: false, testId: null });
+  };
+
+  const closeModal = () => {
+    setRestartModal({ isOpen: false, testId: null });
+  };
 
   const renderButtons = (item: TestCardItem) => {
     // --- CASE 1: Test Completed ---
@@ -48,7 +70,7 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
           </button>
           
           {!hideRestart && (
-            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => onRestart(item.id)}>
+            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => handleRestartClick(item.id)}>
               <FiRefreshCw size={14} /> Restart
             </button>
           )}
@@ -65,7 +87,7 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
           </button>
           
           {!hideRestart && (
-            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => onRestart(item.id)}>
+            <button className={`${styles.btn} ${styles.btnGhost}`} onClick={() => handleRestartClick(item.id)}>
               <FiRefreshCw size={14} /> Restart
             </button>
           )}
@@ -84,39 +106,64 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
   };
 
   return (
-    <section className={styles.section}>
-      {heading && (
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.heading}>{heading}</h2>
+    <>
+      <section className={styles.section}>
+        {heading && (
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.heading}>{heading}</h2>
+          </div>
+        )}
+
+        <div className={styles.cardGrid}>
+          {items.map((item, index) => (
+            <div key={`${item.id}-${index}`} className={styles.card}>
+              
+              <div className={styles.cardContent}>
+                <div className={styles.headerRow}>
+                  <h3 className={styles.title}>{item.title}</h3>
+                  <div 
+                    className={`${styles.statusDot} ${
+                      item.status === 'COMPLETED' ? styles.dotCompleted : 
+                      item.status === 'IN_PROGRESS' || item.status === 'PAUSED' ? styles.dotActive : 
+                      styles.dotNone
+                    }`} 
+                  />
+                </div>
+                <p className={styles.meta}>{item.meta}</p>
+              </div>
+
+              <div className={styles.cardFooter}>
+                {renderButtons(item)}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 🔥 REFINED: Minimal Confirmation Modal */}
+      {restartModal.isOpen && (
+        <div className={styles.modalOverlay} onClick={closeModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIconWrapper}>
+              <FiAlertTriangle size={18} className={styles.modalIcon} />
+            </div>
+            <h3 className={styles.modalTitle}>Restart Test?</h3>
+            <p className={styles.modalDesc}>
+              This will clear your previous progress.
+            </p>
+            <div className={styles.modalActions}>
+              <button className={styles.modalBtnCancel} onClick={closeModal}>
+                Cancel
+              </button>
+              <button className={styles.modalBtnConfirm} onClick={confirmRestart}>
+                Restart
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      <div className={styles.cardGrid}>
-        {items.map((item, index) => (
-          <div key={`${item.id}-${index}`} className={styles.card}>
-            
-            <div className={styles.cardContent}>
-              <div className={styles.headerRow}>
-                <h3 className={styles.title}>{item.title}</h3>
-                <div 
-                  className={`${styles.statusDot} ${
-                    item.status === 'COMPLETED' ? styles.dotCompleted : 
-                    item.status === 'IN_PROGRESS' || item.status === 'PAUSED' ? styles.dotActive : 
-                    styles.dotNone
-                  }`} 
-                />
-              </div>
-              <p className={styles.meta}>{item.meta}</p>
-            </div>
-
-            <div className={styles.cardFooter}>
-              {renderButtons(item)}
-            </div>
-
-          </div>
-        ))}
-      </div>
-    </section>
+    </>
   );
 };
 
