@@ -22,6 +22,7 @@ interface SolutionSidebarProps {
 
 type FilterType = "all" | "correct" | "incorrect" | "unattempted";
 
+
 export const SolutionSidebar = ({ 
   questions, 
   activeQuestionId, 
@@ -32,6 +33,7 @@ export const SolutionSidebar = ({
 }: SolutionSidebarProps) => {
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+
 
   const counts = {
     all: questions.length,
@@ -45,7 +47,7 @@ export const SolutionSidebar = ({
     return q.status === activeFilter;
   });
 
-  const sections = ["Single Correct", "Numerical", "Multiple Correct"];
+  const sections = Array.from(new Set(questions.map(q => q.section)));
   
   const renderSection = (sectionName: string) => {
     // 🔥 Ensure the buttons are always sorted exactly 1, 2, 3...

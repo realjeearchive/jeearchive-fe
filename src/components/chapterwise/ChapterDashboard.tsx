@@ -103,16 +103,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Re-added: Close popover when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
-        setIsFilterOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
   
   const sortedBaseQuestions = [...baseQuestions].sort((a, b) => {
     const numA = a.questionNumber || 0;

@@ -1,10 +1,13 @@
+// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/practice/page.tsx
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { fetchChapterInfo } from "@/features/chapterWise/api";
-import { ChapterWiseInterface, QuestionData, Subject } from "@/components/chapterwise/ChapterWiseInterface";
+import { ChapterWiseInterface, QuestionData, Subject, SectionType } from "@/components/chapterwise/ChapterWiseInterface";
 import { chapterConfig } from '@/features/chapterWise/config';
+import { Loader } from '@/components/ui/loader';
 
 const getSubjectFromSlug = (slug: string): Subject => {
   const s = slug.toLowerCase();
@@ -33,37 +36,39 @@ export default function PracticePage() {
         const data = await fetchChapterInfo(exactChapterName);
         const validSubject = getSubjectFromSlug(subject);
 
+        // Replace the existing mapped logic inside loadQuestions with this:
         const mapped: QuestionData[] = data.jeeMain.map((q, index) => {
           const options = [];
-          if (q.type === "SingleCorrect" && q.options) {
+          if ((q.type === "SingleCorrect" || q.type === "MultiCorrect" || q.type === "Comprehension") && q.options) {
             if (q.options.optionAtext) options.push({ id: "A", text: q.options.optionAtext });
             if (q.options.optionBtext) options.push({ id: "B", text: q.options.optionBtext });
             if (q.options.optionCtext) options.push({ id: "C", text: q.options.optionCtext });
             if (q.options.optionDtext) options.push({ id: "D", text: q.options.optionDtext });
           }
 
-          // 🔥 THE FIX: Translate backend attempt status into frontend UI status!
           const isCorrect = q.attemptStatus === "Successfully attempted";
           const isIncorrect = q.attemptStatus === "Not successfully done";
+
+          // 🔥 FIXED: Accurately map all NTA question types
+          let sectionType = "Single Correct";
+          if (q.type === "Numerical" || q.type === "Integer") sectionType = "Numerical";
+          else if (q.type === "MultiCorrect") sectionType = "Multiple Correct";
+          else if (q.type === "Comprehension") sectionType = "Comprehension";
 
           return {
             id: q.id,
             number: index + 1, 
             subject: validSubject,
-            section: (q.type === "SingleCorrect" ? "Single Correct" : "Numerical") as "Single Correct" | "Numerical",
+            section: sectionType as SectionType, // 🔥 Uses the dynamic type
+            comprehensionContent: q.comprehensionContent, // 🔥 Passing the passage!
             text: q.content,
             hasImage: !!(q.image && q.image.length > 0),
             imageUrl: q.image?.[0] || undefined,
             options,
-            correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer[0] : q.correctAnswer,
-            
-            // Set the status based on history, but leave userAnswer NULL so the interface knows to fetch it!
+            correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer].filter(Boolean),
             status: isCorrect ? "correct" : isIncorrect ? "incorrect" : "unattempted",
             userAnswer: null, 
-            
-            // 🔥 YOU MUST ADD THIS LINE HERE!
             isBookmarked: q.isBookmarked || false,
-            
             solution: q.solution?.text || "<p>No solution provided.</p>",
             stats: { userTime: "0s", avgTime: "1m 30s", accuracy: 50 },
             meta: { difficulty: "Medium", marksPos: q.positiveMarks || 4, marksNeg: q.negativeMarks || 1 },
@@ -82,8 +87,14 @@ export default function PracticePage() {
     loadQuestions();
   }, [exactChapterName, subject]);
 
-  if (loading) return <div className="h-screen flex items-center justify-center bg-[var(--dashboard-background-color,#141312)] text-white">Loading Questions...</div>;
-
+if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[var(--dashboard-background-color,#141312)]">
+        {/* 🔥 UNIFIED LOADER */}
+        <Loader label="Loading questions..." />
+      </div>
+    );
+  }
   return (
     <ChapterWiseInterface
       questions={questions}

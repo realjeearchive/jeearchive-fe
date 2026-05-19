@@ -14,10 +14,10 @@ export interface Option {
 
 interface OptionsListProps {
   options: Option[];
-  selectedOptionId?: string | null;
+  selectedOptionId?: string | string[] | null; // 🔥 Accepts array
   onOptionSelect?: (id: string) => void;
   isSubmitted?: boolean;
-  correctAnswer?: string;
+  correctAnswer?: string | string[]; // 🔥 Accepts array
 }
 
 export const OptionsList = ({ 
@@ -61,8 +61,14 @@ export const OptionsList = ({
   return (
     <div className={styles.grid}>
       {options.map((opt) => {
-        const isSelected = opt.id === selectedOptionId;
-        const isCorrect = opt.id === correctAnswer;
+        // 🔥 Upgrade matching logic to handle arrays safely
+        const isSelected = Array.isArray(selectedOptionId) 
+          ? selectedOptionId.includes(opt.id) 
+          : opt.id === selectedOptionId;
+          
+        const isCorrect = Array.isArray(correctAnswer)
+          ? correctAnswer.includes(opt.id)
+          : opt.id === correctAnswer;
         
         let cardClass = styles.optionCard;
 

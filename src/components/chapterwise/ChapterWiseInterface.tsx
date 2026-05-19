@@ -31,6 +31,7 @@ export interface QuestionData {
   id: string; number: number; subject: Subject | string; section: SectionType;
   text: string; hasImage?: boolean; imageUrl?: string; options: Option[];
   correctAnswer: string | string[]; 
+  comprehensionContent?: string;
   userAnswer: string | null; status: StatusString;
   isBookmarked?: boolean; // 🔥 NEW: Passed down to the interface
   solution: string; stats: QuestionStatsData; meta: QuestionMetaData; chapter: string; topic: string;
@@ -169,8 +170,10 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   const handleNext = () => currentIndex < questions.length - 1 && setActiveQuestionId(questions[currentIndex + 1].id);
   const handlePrev = () => currentIndex > 0 && setActiveQuestionId(questions[currentIndex - 1].id);
 
+  const isMultiType = currentQuestion?.section.toLowerCase().includes("multi");
+
   const handleCheckAnswer = async () => {
-    if (!hasSelectedOption) {
+    if (!hasSelectedOption || (Array.isArray(localUserAnswer) && localUserAnswer.length === 0)) {
       setWarningMsg("Please select an option first!");
       setTimeout(() => setWarningMsg(""), 3000); 
       return;
@@ -179,9 +182,18 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
     setWarningMsg("");
 
     if (currentQuestion && actualCorrectAnswer) {
-      const isCorrect = isNumericalType
-        ? parseFloat(localUserAnswer) === parseFloat(actualCorrectAnswer)
-        : localUserAnswer === actualCorrectAnswer;
+      let isCorrect = false;
+
+      if (isNumericalType) {
+        isCorrect = parseFloat(localUserAnswer as string) === parseFloat(actualCorrectAnswer as string);
+      } else if (isMultiType) {
+        // Array comparison for Multiple Correct
+        const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer];
+        const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
+        isCorrect = u.length === c.length && u.every(val => c.includes(val as string));
+      } else {
+        isCorrect = localUserAnswer === actualCorrectAnswer;
+      }
         
       setSessionSolved(prev => ({ ...prev, [activeQuestionId]: isCorrect }));
 
@@ -198,13 +210,26 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
 
   const displayUserAnswer = localUserAnswer || attemptData?.userAnswer?.[0];
   
-  const isDisplayCorrect = localUserAnswer ? (
-    isNumericalType && actualCorrectAnswer
-      ? parseFloat(localUserAnswer) === parseFloat(actualCorrectAnswer)
-      : localUserAnswer === actualCorrectAnswer
-  ) : (
-    attemptData?.isCorrect ?? (mainStatus === 'correct')
-  );
+  const isDisplayCorrect = (() => {
+    if (!localUserAnswer) {
+      return attemptData?.isCorrect ?? (mainStatus === 'correct');
+    }
+
+    if (isNumericalType && actualCorrectAnswer) {
+      const userStr = Array.isArray(localUserAnswer) ? localUserAnswer[0] : localUserAnswer;
+      const correctStr = Array.isArray(actualCorrectAnswer) ? actualCorrectAnswer[0] : actualCorrectAnswer;
+      return parseFloat(userStr || "0") === parseFloat(correctStr || "0");
+    }
+
+    if (isMultiType) {
+      const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer];
+      const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
+      return u.length === c.length && u.every(val => c.includes(val));
+    }
+
+    // Single Correct default fallback
+    return localUserAnswer === actualCorrectAnswer;
+  })();
 
   const isQuestionSolved = sessionSolved[activeQuestionId] !== undefined 
     ? sessionSolved[activeQuestionId] 
@@ -257,15 +282,32 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
           isSolved={isQuestionSolved} 
         />
 
+        {/* 🔥 NEW: Render Comprehension Passage if it exists */}
+        {currentQuestion.comprehensionContent && (
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.05)', // Faint blue background
+            borderLeft: '4px solid #3b82f6', // Blue accent line
+            padding: '16px',
+            marginBottom: '20px',
+            borderRadius: '0 8px 8px 0'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#3b82f6', textTransform: 'uppercase', marginBottom: '8px' }}>
+              Passage
+            </div>
+            <QuestionText content={currentQuestion.comprehensionContent} />
+          </div>
+        )}
+
+        {/* The main question text */}
         <QuestionText content={currentQuestion.text} hasImage={currentQuestion.hasImage} imageUrl={currentQuestion.imageUrl} />
 
         {activeTab === 'question' && (
           <div className="mt-4">
-            {/* 1. SINGLE CORRECT (MCQ) */}
-            {(currentQuestion.section === "Single Correct" || currentQuestion.section === "SingleCorrect" || currentQuestion.section === "SingleChoice") && (
+            {/* 🔥 FIXED: Now accepts Single Correct AND Multiple Correct */}
+            {(currentQuestion.section.toLowerCase().includes("single") || currentQuestion.section.toLowerCase().includes("multi")) && (
               <OptionsList 
                 options={currentQuestion.options} 
-                correctAnswer={actualCorrectAnswer} 
+                correctAnswer={currentQuestion.correctAnswer} 
                 selectedOptionId={localUserAnswer} 
                 onOptionSelect={(optId) => selectOption(activeQuestionId, optId)} 
                 isSubmitted={false} 
@@ -275,7 +317,7 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
             {/* 2. NUMERICAL / INTEGER TYPE */}
             {isNumericalType && (
               <NumericalInput
-                value={localUserAnswer || ""}
+                value={(localUserAnswer as string) || ""}
                 onChange={(val) => selectOption(activeQuestionId, val)}
                 isSubmitted={false}
               />

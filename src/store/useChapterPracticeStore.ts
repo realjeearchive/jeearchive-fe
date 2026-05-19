@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { QuestionData } from "@/components/chapterwise/ChapterWiseInterface";
 import { authenticatedFetch } from "@/features/auth/api";
+import { toast } from "sonner";
 
 interface ChapterPracticeState {
   questions: QuestionData[];
   activeQuestionId: string;
-  userAnswers: Record<string, string>;
+  userAnswers: Record<string, string | string[]>;
   submissions: Record<string, boolean>;
   revealedSolutions: Record<string, boolean>;
   questionTimes: Record<string, number>;
@@ -81,9 +82,28 @@ initStore: (fetchedQuestions, initialQuestionId) => {
   }),
 
   selectOption: (questionId, optionId) => {
-    set((state) => ({
-      userAnswers: { ...state.userAnswers, [questionId]: optionId }
-    }));
+    set((state) => {
+      const question = state.questions.find((q) => q.id === questionId);
+      const isMulti = question?.section.toLowerCase().includes("multi");
+
+      const current = state.userAnswers[questionId];
+      let nextAnswer: string | string[];
+
+      if (isMulti) {
+        // Multi-correct: Toggle the option in an array
+        const arr = Array.isArray(current) ? current : (current ? [current as string] : []);
+        if (arr.includes(optionId)) {
+          nextAnswer = arr.filter((id) => id !== optionId); // Remove if exists
+        } else {
+          nextAnswer = [...arr, optionId].sort(); // Add and sort (e.g., ["A", "C"])
+        }
+      } else {
+        // Single/Numerical: Just replace it
+        nextAnswer = optionId;
+      }
+
+      return { userAnswers: { ...state.userAnswers, [questionId]: nextAnswer } };
+    });
   },
 
   revealSolution: (questionId) => {
@@ -106,14 +126,13 @@ initStore: (fetchedQuestions, initialQuestionId) => {
   toggleBookmark: async (questionId) => {
     const isCurrentlyBookmarked = !!get().bookmarkedQuestions[questionId];
 
-    // 1. Instantly toggle UI state
+    // 1. Instantly toggle UI state for that snappy feel
     set((state) => ({
       bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: !isCurrentlyBookmarked }
     }));
 
     try {
       if (!isCurrentlyBookmarked) {
-        // --- ADD LOGIC (POST) ---
         const res = await authenticatedFetch(`/bookMarked/add`, {
           method: "POST",
           body: JSON.stringify({ questionId }),
@@ -121,16 +140,12 @@ initStore: (fetchedQuestions, initialQuestionId) => {
 
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({}));
-          // If server says already added, our UI state is actually correct, so just log and exit
           if (errorData?.errors?.includes("Already Added")) return;
-          
           throw new Error("Failed to add bookmark");
         }
       } else {
-        // --- REMOVE LOGIC (DELETE) ---
-        // 🔥 Using the exact structure shown in your Postman screenshot
         const res = await authenticatedFetch(`/bookMarked/remove?questionId=${encodeURIComponent(questionId)}`, {
-          method: "DELETE", // Backend expects DELETE
+          method: "DELETE", 
         });
 
         if (!res.ok) {
@@ -138,8 +153,10 @@ initStore: (fetchedQuestions, initialQuestionId) => {
         }
       }
     } catch (err) {
-      console.warn("Bookmark sync error:", err);
-      // Revert UI on failure
+      console.warn("[ChapterPractice] Bookmark sync error:", err);
+      // 🔥 STUDENT-FRIENDLY TOAST
+      toast.error("Bookmark not saved. Check your connection.");      
+      // Revert UI on failure so it doesn't lie to the user
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
       }));
@@ -150,20 +167,20 @@ initStore: (fetchedQuestions, initialQuestionId) => {
     const { userAnswers, questionTimes } = get();
     const selectedOption = userAnswers[questionId];
     
-    if (!selectedOption) return;
+    // Prevent empty array submission
+    if (!selectedOption || (Array.isArray(selectedOption) && selectedOption.length === 0)) return;
 
     set((state) => ({
       submissions: { ...state.submissions, [questionId]: true },
-      isTimerRunning: false // Auto-pause timer when submitted
+      isTimerRunning: false 
     }));
 
     try {
-      const timeSpent = questionTimes[questionId] || 0;
-      
       const payload = {
         status: "answered", 
-        timeSpent: timeSpent,
-        userAnswerRaw: [selectedOption] 
+        timeSpent: questionTimes[questionId] || 0,
+        // 🔥 Safely wrap in array for the backend
+        userAnswerRaw: Array.isArray(selectedOption) ? selectedOption : [selectedOption] 
       };
 
       const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/submit`, {
@@ -171,21 +188,15 @@ initStore: (fetchedQuestions, initialQuestionId) => {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        // 🔥 FIX: Extract the actual backend error to see what went wrong
-        const errorData = await res.json().catch(() => ({}));
-        
-        // 🔥 FIX: Use console.warn instead of console.error to prevent the Next.js Red Screen
-        console.warn("Backend rejected the answer submission. Details:", {
-          status: res.status,
-          error: errorData
-        });
-      } else {
-        console.log("Answer synced to backend successfully!");
-      }
+      if (!res.ok) throw new Error("Backend rejection");
+      
     } catch (err) {
-      // 🔥 FIX: Use console.warn here as well
-      console.warn("Network or code error while updating question:", err);
+      console.warn("[ChapterPractice] Submit error:", err);
+      toast.error("Network issue. Couldn't save answer."); // 🔥 SHORT TOAST
+      
+      set((state) => ({
+        submissions: { ...state.submissions, [questionId]: false }
+      }));
     }
   }
 }));

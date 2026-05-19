@@ -1,3 +1,4 @@
+// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/question-config.ts
 import { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
 
 // Generic 5-question template

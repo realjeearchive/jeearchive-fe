@@ -88,11 +88,13 @@ export interface ChapterInfoResponse {
 }
 
 export async function fetchChapterInfo(chapterName: string): Promise<ChapterInfoResponse> {
+  console.info(`[API: ChapterWise] Fetching data for chapter: ${chapterName}`);
   const res = await authenticatedFetch(`/chapterWise/${encodeURIComponent(chapterName)}/info`, {
     method: 'GET'
   });
 
   if (!res.ok) {
+    console.error(`[API: ChapterWise] Failed to fetch chapter info. Status: ${res.status}`);
     throw new Error(`Failed to fetch: ${res.status}`);
   }
 
@@ -109,20 +111,20 @@ export interface ChapterWiseAttemptPayload {
 
 // (Optional: You can remove this if you strictly use the fetch call directly inside Zustand now)
 export async function submitChapterWiseAttempt(payload: ChapterWiseAttemptPayload) {
+  console.info(`[API: ChapterWise] Submitting attempt for question: ${payload.questionId}`);
   const res = await authenticatedFetch(`/chapterWise/attempt`, { 
     method: 'POST',
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
+    console.error(`[API: ChapterWise] Attempt submission failed. Status: ${res.status}`);
     throw new Error(`Failed to submit attempt: ${res.status}`);
   }
 
   return await res.json();
 }
 
-
-// --- NEW: Types for Question Attempts History ---
 export interface ChapterAttempt {
   id: string;
   questionId: string;
@@ -143,14 +145,18 @@ export interface QuestionAttemptsResponse {
 }
 
 export async function fetchQuestionAttempts(questionId: string): Promise<QuestionAttemptsResponse> {
+  console.info(`[API: ChapterWise] Fetching historical attempts for question: ${questionId}`);
   const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/attempts`, {
     method: 'GET'
   });
 
   if (!res.ok) {
+    console.error(`[API: ChapterWise] Failed to fetch historical attempts. Status: ${res.status}`);
     throw new Error(`Failed to fetch attempts: ${res.status}`);
   }
 
   const json = await res.json();
   return json.data;
 }
+
+

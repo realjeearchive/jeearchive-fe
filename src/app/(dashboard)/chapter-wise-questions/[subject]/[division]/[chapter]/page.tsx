@@ -1,3 +1,4 @@
+// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -5,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { fetchChapterInfo, ChapterInfoResponse } from "@/features/chapterWise/api";
 import { chapterConfig } from "@/features/chapterWise/config";
 import { ChapterDashboard } from "@/components/chapterwise/ChapterDashboard"; 
+import { Loader } from '@/components/ui/loader';
 
 export default function ChapterDashboardPage() {
   const params = useParams();
@@ -39,9 +41,9 @@ export default function ChapterDashboardPage() {
     return (
       <div 
         style={{ backgroundColor: 'var(--dashboard-background-color)' }} 
-        className="flex min-h-screen w-full flex-1 items-center justify-center text-[#B5B4B4]"
+        className="flex min-h-screen w-full flex-1 items-center justify-center"
       >
-        Loading chapter data...
+        <Loader label="Loading chapter..." />
       </div>
     );
   }
