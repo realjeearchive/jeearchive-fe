@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-between;
   position: sticky;
-  top: -1;
+  top: -1px;
   z-index: 2;
   background-color: var(--dashboard-background-color);
 
@@ -14,7 +14,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-right: 4px;
 }
 
 .sidebarToggle {
@@ -41,7 +40,9 @@
   gap: 4px;
 }
 
+/* --- Unified Icon Button Style --- */
 .iconButton {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,8 +51,8 @@
   border-radius: 8px;
   color: var(--dashboard-icons-color);
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease,
-    transform 0.1s ease;
+  border: 1px solid transparent;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
 }
 
 .iconButton:hover {
@@ -61,24 +62,38 @@
   transform: translateY(-0.5px);
 }
 
-/* add these */
-
 .iconButtonActive {
   color: var(--dashboard-primary-text-color);
 }
 
-.iconButtonDisabled {
-  opacity: 0.4;
-  cursor: default;
+/* --- Tooltip (After) --- */
+.iconButton::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 4px 8px;
+  background-color: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-dividerline-color);
+  color: var(--dashboard-primary-text-color);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.15s ease;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.iconButtonDisabled:hover {
-  background: transparent;
-  color: var(--dashboard-icons-color);
-  border-color: transparent;
-  transform: none;
+.iconButton:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
 }
-
 
 .breadcrumb {
   display: flex;
@@ -88,85 +103,38 @@
   font-size: 13px;
 }
 
-.breadcrumbFolder {
-  color: var(--dashboard-secondary-text-color);
-}
-
-.breadcrumbSeparator {
-  color: var(--dashboard-icons-color);
-}
-
-.breadcrumbCurrent {
-  color: var(--dashboard-primary-text-color);
-  font-weight: 500;
-}
+.breadcrumbFolder { color: var(--dashboard-secondary-text-color); }
+.breadcrumbSeparator { color: var(--dashboard-icons-color); }
+.breadcrumbCurrent { color: var(--dashboard-primary-text-color); font-weight: 500; }
 
 .rightSection {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-left: 4px;
 }
 
-.primaryButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  background: var(--dashboard-sidebar-background-color);
-  color: var(--dashboard-primary-text-color);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.18s ease, transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.primaryButton:hover {
-  background: var(--dashboard-sidebar-background-color);
-}
-
-.primaryButton:active {
-  transform: translateY(0);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: var(--dashboard-header-avatar-background-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 1px solid var(--dashboard-header-avatar-border-color);
-}
-
-.avatarInitial {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
-}
-
+/* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-  .header {
-    padding: 0 0 10px 0;
+  /* Hide specific icons on mobile */
+  .rightSection .iconButton[data-title="Discord"],
+  .rightSection .iconButton[data-title="Activity"],
+  .rightSection .iconButton[data-title="Planner"] {
+    display: none !important;
   }
 
-  .breadcrumb {
-    display: none;
-  }
-
-  .primaryButton span {
-    display: none;
-  }
+  .header { padding: 0 10px; }
+  .breadcrumb { display: none; }
 }
-
 
 @media (max-width: 600px) {
-  .header{
-    padding: 0;
+  .header { padding: 0 5px; }
+}
+
+/* --- Hide tooltips on mobile devices --- */
+@media (max-width: 768px) {
+  .iconButton::after {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
 }

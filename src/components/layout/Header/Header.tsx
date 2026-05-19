@@ -2,10 +2,9 @@
 
 import React, { useState } from "react";
 import styles from "./header.module.css";
-import { PiSidebar } from "react-icons/pi";
-import { IoChevronBack, IoChevronForward, IoCalendarOutline } from "react-icons/io5";
-import { FiSearch, FiPlay, FiBell } from "react-icons/fi";
-import { HiOutlineLightningBolt } from "react-icons/hi";
+import { PiSidebar, PiDiscordLogo } from "react-icons/pi"; // Added PiDiscordLogo
+import { IoChevronBack, IoChevronForward, IoCalendarOutline, IoTimeOutline } from "react-icons/io5"; // Added IoTimeOutline
+import { FiBell } from "react-icons/fi"; // Removed FiSearch, FiPlay
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store";
 
@@ -17,7 +16,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const router = useRouter();  
   const profile = useUserStore((s) => s.profile);
-  const initials = profile?.name?.trim()?.charAt(0)?.toUpperCase() || "G";
 
   const [canGoBack] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -71,31 +69,46 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
       </div>
 
       <div className={styles.rightSection}>
-        {/* Start Mock Test */}
-        <button type="button" className={styles.primaryButton}>
-          <FiPlay size={14} />
-          <span>Start Test</span>
-        </button>
 
-        {/* Quick Practice Mode */}
-        <button type="button" className={styles.iconButton} title="Quick Practice">
-          <HiOutlineLightningBolt size={16} />
-        </button>
+  {/* Discord Link */}
+  <a 
+    href="https://discord.gg/your-link" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className={styles.iconButton} 
+    data-title="Join Discord" 
+  >
+    <PiDiscordLogo size={18} />
+  </a>
 
-        {/* Exam Calendar */}
-        <button type="button" className={styles.iconButton} title="Exam Planner">
-          <IoCalendarOutline size={16} />
-        </button>
+  {/* Clock */}
+  <button 
+    type="button" 
+    className={styles.iconButton} 
+    data-title="Timer App"
+  >
+    <IoTimeOutline size={18} />
+  </button>
 
-        {/* Announcements & Alerts */}
-        <button type="button" className={styles.iconButton} title="Notifications">
-          <FiBell size={16} />
-        </button>
+  {/* Exam Calendar */}
+  <button 
+    type="button" 
+    className={styles.iconButton} 
+    data-title="Calendar App"
+  >
+    <IoCalendarOutline size={16} />
+  </button>
 
-        <div className={styles.avatar}>
-          <span className={styles.avatarInitial}>{initials}</span>
-        </div>
-      </div>
+  {/* Announcements */}
+  <button 
+    type="button" 
+    className={styles.iconButton} 
+    data-title="Notifications"
+  >
+    <FiBell size={16} />
+  </button>
+
+</div>
     </header>
   );
 };

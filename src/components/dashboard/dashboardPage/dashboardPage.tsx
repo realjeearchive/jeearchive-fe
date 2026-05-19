@@ -126,7 +126,7 @@ export default function DashboardPage() {
         </>
       )}
 
-      <div className={styles.listSectionWrapper}>
+      {/* <div className={styles.listSectionWrapper}>
         <TestListSection 
           heading="Recent Mock Tests" 
           items={uiData.recentTestItems.length > 0 ? uiData.recentTestItems : pyqItems} 
@@ -136,7 +136,7 @@ export default function DashboardPage() {
 
       <div className={styles.detailedAnalysisWrapper}>
         <DetailedAnalysisSection disabled={newUser} />
-      </div>
+      </div> */}
     </div>
   );
 }
