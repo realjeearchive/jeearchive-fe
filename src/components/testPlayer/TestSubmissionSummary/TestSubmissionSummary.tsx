@@ -38,19 +38,18 @@ export function TestSubmissionSummary() {
   });
 
   const handleFinalSubmit = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+  if (isSubmitting) return;
+  setIsSubmitting(true);
 
-    try {
-      await submitTest();
-      router.push("/dashboard");
-    } catch (error) {
-      // 🔥 FIXED: Standardized logging for the final mile
-      console.error("[TestPlayer: Submit] Final submission failed in UI layer", error);
-      toast.error("Failed to submit test. Please try again.");
-      setIsSubmitting(false);
-    }
-  };
+  try {
+    await submitTest();
+    router.push("/dashboard");
+  } catch (error) {
+    console.error("[TestPlayer: Submit] Final submission failed in UI layer", error);
+    toast.error("Submission failed. Your answers are safe — please try again.");
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className={styles.pageWrapper}>

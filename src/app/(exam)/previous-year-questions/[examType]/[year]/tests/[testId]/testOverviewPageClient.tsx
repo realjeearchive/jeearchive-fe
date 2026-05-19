@@ -29,13 +29,12 @@ export function TestOverviewPageClient({ summaryTitle, sectionsCount, paperId, y
   const sessionId = searchParams.get("sid");
 
   const handleBegin = () => {
-    if (!sessionId) {
-      toast.error("Session ID missing.");
-      return;
-    }
-    // Dynamic routing using examType
-    router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
-  };
+  if (!sessionId) {
+    toast.error("Session expired. Go back and start the test again.");
+    return;
+  }
+  router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}/attempt?sid=${sessionId}`);
+};
   
   const [showMobilePanel, setShowMobilePanel] = useState(false);
   return (

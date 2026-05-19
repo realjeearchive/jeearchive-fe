@@ -27,25 +27,25 @@ export default function UnifiedYearPage(props: YearPageProps) {
 
   // 1. Bulk Fetch Papers and Status on Mount
   useEffect(() => {
-    async function loadData() {
-      if (!year || !examType) return;
-      setIsLoading(true);
-      try {
-        const res = await fetchPaperAttemptsDetails(apiExamType, year);
-        if (res.success && res.data) {
-          setPapersWithStatus(res.data);
-        } else {
-          toast.error("Failed to load papers.");
-        }
-      } catch (e) {
-        console.error("Fetch failed", e);
-        toast.error("Error connecting to server.");
-      } finally {
-        setIsLoading(false);
+  async function loadData() {
+    if (!year || !examType) return;
+    setIsLoading(true);
+    try {
+      const res = await fetchPaperAttemptsDetails(apiExamType, year);
+      if (res.success && res.data) {
+        setPapersWithStatus(res.data);
+      } else {
+        toast.error("Couldn't load papers. Try refreshing the page.");
       }
+    } catch (e) {
+      console.error("Fetch failed", e);
+      toast.error("No internet? Check your connection and refresh.");
+    } finally {
+      setIsLoading(false);
     }
-    loadData();
-  }, [year, examType, apiExamType]);
+  }
+  loadData();
+}, [year, examType, apiExamType]);
 
   // 2. Transform Data directly for the Card UI
   const formattedItems: TestCardItem[] = papersWithStatus.map((paper) => {
@@ -77,18 +77,17 @@ export default function UnifiedYearPage(props: YearPageProps) {
 
   // --- ACTIONS ---
   const handleStart = async (paperId: string) => {
-    try {
-      const res = await createTestSession(paperId);
-      if (res.success && res.data?.testId) {
-        // Dynamically route to the correct exam type in the test player
-        router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}?sid=${res.data.testId}`);
-      } else {
-        toast.error("Failed to start test session");
-      }
-    } catch (e) {
-      toast.error("Error creating session");
+  try {
+    const res = await createTestSession(paperId);
+    if (res.success && res.data?.testId) {
+      router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}?sid=${res.data.testId}`);
+    } else {
+      toast.error("Couldn't start the test. Please try again.");
     }
-  };
+  } catch (e) {
+    toast.error("No internet? Check your connection and retry.");
+  }
+};
 
   const handleResume = (paperId: string, sessionId: string) => {
     router.push(`/previous-year-questions/${examType}/${year}/tests/${paperId}?sid=${sessionId}`);

@@ -65,48 +65,41 @@ export function AttemptClient({ year, testId, examType }: AttemptClientProps) {
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    async function loadSession() {
-      if (!sessionId) {
-        setError("Invalid Session ID. Please go back.");
-        setLoading(false);
-        return;
-      }
-
-      if (!authInitialized) {
-        await initAuth();
-      }
-
-      if (hasFetched.current) return;
-      hasFetched.current = true;
-
-      try {
-        console.info(`[AttemptClient] Fetching session: ${sessionId} for ${examType}`);
-        const response: SessionDataResponse | HierarchicalSessionData =
-          await fetchTestSession(sessionId);
-
-        let sessionData: HierarchicalSessionData | null = null;
-
-        if (isWrappedSessionResponse(response)) {
-          sessionData = response.data;
-        } else if (isDirectSessionResponse(response)) {
-          sessionData = response;
-        }
-
-        if (!sessionData) {
-          throw new Error("Invalid session payload");
-        }
-
-        initFromBackendSession(sessionData);
-      } catch (err) {
-        console.error("[AttemptClient] Session load failed:", err);
-        setError("Network error. Could not load the test.");
-      } finally {
-        setLoading(false);
-      }
+  async function loadSession() {
+    if (!sessionId) {
+      setError("Session not found. Go back and start the test again.");
+      setLoading(false);
+      return;
     }
 
-    loadSession();
-  }, [sessionId, authInitialized, initAuth, initFromBackendSession, examType]);
+    if (!authInitialized) {
+      await initAuth();
+    }
+
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    try {
+      console.info(`[AttemptClient] Fetching session: ${sessionId} for ${examType}`);
+      const response: SessionDataResponse | HierarchicalSessionData = await fetchTestSession(sessionId);
+
+      let sessionData: HierarchicalSessionData | null = null;
+      if (isWrappedSessionResponse(response)) sessionData = response.data;
+      else if (isDirectSessionResponse(response)) sessionData = response;
+
+      if (!sessionData) throw new Error("Invalid session payload");
+
+      initFromBackendSession(sessionData);
+    } catch (err) {
+      console.error("[AttemptClient] Session load failed:", err);
+      setError("Couldn't load questions. Check your connection and refresh.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadSession();
+}, [sessionId, authInitialized, initAuth, initFromBackendSession, examType]);
 
   // ---------------- UI STATES ----------------
 
