@@ -23,17 +23,16 @@ export const useSingleTestStore = create<SingleTestStore>((set) => ({
     try {
       const response = await fetchSingleTestAnalytics(testId, createdAt);
       if (response.success && response.data) {
+        console.info(`[Analytics: SingleTest] Successfully loaded details for test: ${testId}`);
         set({ data: response.data, isLoading: false });
       } else {
-        set({ error: response.message || "Failed to load test analytics", isLoading: false });
+        set({ error: "Couldn't load your test results. Please try again.", isLoading: false });
       }
     } catch (err: unknown) {
-      console.error("Single Test Fetch Error:", err);
-      if (err instanceof Error) {
-        set({ error: err.message, isLoading: false });
-      } else {
-        set({ error: "An unexpected error occurred", isLoading: false });
-      }
+      // 🔥 FIXED: Used console.warn to prevent Next.js red-screen crashes during dev
+      console.warn("[Analytics: SingleTest] Fetch Error:", err);
+      // 🔥 FIXED: Short, student-friendly error message
+      set({ error: "Connection drop. Please check your internet and refresh.", isLoading: false });
     }
   },
 

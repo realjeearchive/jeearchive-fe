@@ -14,12 +14,13 @@ export interface TransformedQuestion {
   number: number;
   subject: Subject;
   section: SectionType;
+  comprehensionContent?: string; // 🔥 NEW: Added Passage support
   text: string;
   hasImage: boolean;
   imageUrl?: string;
   options: TransformedOption[];
-  correctAnswer: string;
-  userAnswer: string | null;
+  correctAnswer: string[]; // 🔥 FIXED: Now an array
+  userAnswer: string[] | null; // 🔥 FIXED: Now an array
   status: QuestionStatus;
   chapter: string;
   topic: string;
@@ -132,12 +133,13 @@ export const transformSolutionData = (data: SolutionDataPayload | null): Transfo
           number: q.questionNumber,
           subject: subject,
           section: uiSection,
+          comprehensionContent: extractText(q.comprehensionContent), // 🔥 Extract passage
           text: extractText(q.content),
           hasImage: false, 
           imageUrl: undefined,
           options: options,
-          correctAnswer: correctAnsArr.join(", "),
-          userAnswer: userAnswerArr.join(", ") || null,
+          correctAnswer: correctAnsArr, // 🔥 Pass array directly
+          userAnswer: userAnswerArr.length > 0 ? userAnswerArr : null, // 🔥 Pass array directly
           status: status,
           chapter: q.chapter || "Mixed Concepts",
           topic: "JEE Syllabus", 

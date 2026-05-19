@@ -36,6 +36,7 @@ async function handleJson<T>(res: Response): Promise<T> {
 // ==========================================
 
 export const fetchAnalyticsData = async (): Promise<AnalyticsApiResponse> => {
+  console.info("[API: Analytics] Querying overall student performance timelines...");
   const res = await authenticatedFetch(`/analytics/analyticsWindow`, {
     method: "GET",
   });

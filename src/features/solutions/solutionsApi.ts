@@ -125,7 +125,7 @@ async function handleJson<T>(res: Response): Promise<T> {
 // ==========================================
 
 export const fetchTestSolutionData = async (testStatusId: string): Promise<SolutionApiResponse> => {
-  // 🚨 FIX: Updated to the exact URL you provided!
+  console.info(`[API: Solutions] Fetching deep solution data for session: ${testStatusId}`);
   const res = await authenticatedFetch(`/testStatus/getPaper?testStatusId=${testStatusId}`, {
     method: "GET",
   });

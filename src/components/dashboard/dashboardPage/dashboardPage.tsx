@@ -13,13 +13,13 @@ import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTyp
 import TestListSection, { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner/WelcomeBanner';
+import { Loader } from '@/components/ui/loader'; // 🔥 UNIFIED LOADER IMPORT
 
 // Logic & Store
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { fetchDashboardData } from '@/features/dashboard/api';
 import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
 
-// Fallbacks just in case
 const pyqItems: TestListItem[] = [
   { id: "pyq-2025", title: "JEE Main 2025 PYQs", meta: "19 Papers", href: "/pyq/2025" },
   { id: "pyq-2024", title: "JEE Main 2024 PYQs", meta: "20 Papers", href: "/pyq/2024" },
@@ -40,13 +40,18 @@ export default function DashboardPage() {
       try {
         const response = await fetchDashboardData();
         if (response.success && response.data) {
+          console.info("[Dashboard] Successfully loaded performance graphs.");
           setDashboardData(response.data);
         } else {
-          setError("Failed to load data.");
+          setError("Metrics unavailable.");
         }
       } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
-        else setError("An unexpected error occurred");
+        console.error("[Dashboard] Background fetch failed:", err);
+        if (err instanceof Error) {
+          setError("Connection drop. Please refresh.");
+        } else {
+          setError("Connection drop. Please refresh.");
+        }
       }
     };
 
@@ -54,11 +59,11 @@ export default function DashboardPage() {
     else setLoading(false);
   }, [rawReport, setDashboardData, setLoading, setError]);
 
+  // 🔥 FIXED: Standardized loader implementation matching the test suite
   if (isLoading) {
     return (
       <div className={styles.loaderContainer}>
-        <div className={styles.spinner}></div>
-        <p>Analyzing your performance...</p>
+        <Loader label="Analyzing your performance..." />
       </div>
     );
   }
@@ -74,7 +79,6 @@ export default function DashboardPage() {
 
   return (
     <div className={styles.page}>
-      
       {!newUser && 
         <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
       }
@@ -85,14 +89,12 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 1. Progress Cards (Global) */}
       <div className={styles.progressRow}>
         <PyqProgressCard label="Physics" solved={uiData.progress.phy.solved} total={uiData.progress.phy.total} />
         <PyqProgressCard label="Chemistry" solved={uiData.progress.chem.solved} total={uiData.progress.chem.total} />
         <PyqProgressCard label="Mathematics" solved={uiData.progress.math.solved} total={uiData.progress.math.total} />
       </div>
 
-      {/* 2. Dynamic KPI Row */}
       <div className={styles.kpiRow}>
         {activeKpis.map((kpi, i) => (
           <KpiCard
@@ -105,7 +107,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* 3. Dynamic Charts Section */}
       {!newUser && (
         <>
           {viewMode === "test" ? (
@@ -125,7 +126,6 @@ export default function DashboardPage() {
         </>
       )}
 
-      {/* 🚨 FIX: Pass dynamically generated tests to the list! */}
       <div className={styles.listSectionWrapper}>
         <TestListSection 
           heading="Recent Mock Tests" 

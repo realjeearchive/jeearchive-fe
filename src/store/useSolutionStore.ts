@@ -20,21 +20,19 @@ export const useSolutionStore = create<SolutionStore>((set) => ({
   fetchData: async (paperId: string) => {
     set({ isLoading: true, error: null });
     try {
-      // Dynamic import prevents circular dependency issues during SSR
       const { fetchTestSolutionData } = await import("@/features/solutions/solutionsApi");
       const res = await fetchTestSolutionData(paperId);
       
       if (res.success && res.data) {
+        console.info(`[Solutions] Successfully loaded solution data.`);
         set({ rawSolutionData: res.data, isLoading: false });
       } else {
-        set({ error: "Failed to load solution data", isLoading: false });
+        set({ error: "Failed to load solution data. Please try again.", isLoading: false });
       }
     } catch (err: unknown) {
-        if (err instanceof Error) {
-            set({ error: err.message, isLoading: false });
-        } else {
-            set({ error: "An unexpected error occurred while fetching solutions.", isLoading: false });
-        }
+      // 🔥 FIXED: Prevent dev crashes and use student-friendly errors
+      console.warn("[Solutions] Data fetch failed:", err);
+      set({ error: "Connection drop. Please check your internet and refresh.", isLoading: false });
     }
   },
 

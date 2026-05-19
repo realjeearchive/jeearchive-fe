@@ -16,6 +16,7 @@ import { OptionsList } from "@/components/solution-interface/question/OptionsLis
 import { SolutionContent } from "@/components/solution-interface/question/SolutionContent/SolutionContent";
 import { QuestionStats } from "@/components/solution-interface/question/QuestionStats/QuestionStats";
 import { QuestionMeta } from "@/components/solution-interface/question/QuestionMeta/QuestionMeta";
+import { Loader } from "@/components/ui/loader";
 
 // --- Navigation Components ---
 import { BottomBar } from "@/components/solution-interface/navigation/BottomBar";
@@ -127,11 +128,10 @@ export default function SolutionPage(props: PageProps) {
 
   // --- 6. RENDER LOADING & ERROR STATES ---
   
-  if (isLoading) {
+if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-[#a1a1aa] bg-[var(--dashboard-background-color)]">
-        <div className="w-10 h-10 border-4 border-[#f59e0b33] border-t-[#f59e0b] rounded-full animate-spin mb-4"></div>
-        <p className="text-sm tracking-wide">Loading detailed solutions...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--dashboard-background-color)]">
+        <Loader label="Loading detailed solutions..." />
       </div>
     );
   }
@@ -139,7 +139,7 @@ export default function SolutionPage(props: PageProps) {
   if (error || !TEST_DATA || !currentQuestion) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-red-500 bg-[var(--dashboard-background-color)] gap-4">
-        <p className="text-sm font-medium">Error: {error || "Solution data not available."}</p>
+        <p className="text-sm font-medium">{error || "Solution data not available."}</p>
         <button 
           onClick={() => router.back()} 
           className="px-5 py-2 border border-[#f59e0b] text-[#f59e0b] text-sm font-medium rounded-md hover:bg-[#f59e0b] hover:text-white transition-colors duration-200"
@@ -199,6 +199,22 @@ export default function SolutionPage(props: PageProps) {
           marksNeg={currentQuestion.meta.marksNeg}
         />
 
+        {/* 🔥 NEW: Render Comprehension Passage if it exists */}
+        {currentQuestion.comprehensionContent && (
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.05)',
+            borderLeft: '4px solid #3b82f6',
+            padding: '16px',
+            marginBottom: '20px',
+            borderRadius: '0 8px 8px 0'
+          }}>
+            <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#3b82f6', textTransform: 'uppercase', marginBottom: '8px' }}>
+              Passage
+            </div>
+            <QuestionText content={currentQuestion.comprehensionContent} />
+          </div>
+        )}
+
         <QuestionText 
           content={currentQuestion.text}
           hasImage={currentQuestion.hasImage}
@@ -214,11 +230,12 @@ export default function SolutionPage(props: PageProps) {
         ) : (
           <div className="mb-6 p-5 rounded-lg border border-[var(--dashboard-dividerline-color)] bg-[var(--dashboard-card-background)]">
             <div className="flex flex-col gap-3">
-              {currentQuestion.userAnswer ? (
+              {currentQuestion.userAnswer && currentQuestion.userAnswer.length > 0 ? (
                 <div className="flex items-center gap-3">
                   <span className="text-[13px] text-[var(--dashboard-secondary-text-color)] font-medium uppercase tracking-wider">Your Answer:</span>
                   <span className={`text-lg font-bold ${currentQuestion.status === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
-                    {currentQuestion.userAnswer}
+                    {/* 🔥 Safely join numerical arrays */}
+                    {currentQuestion.userAnswer.join(", ")}
                   </span>
                 </div>
               ) : (
@@ -232,7 +249,8 @@ export default function SolutionPage(props: PageProps) {
               <div className="flex items-center gap-3">
                 <span className="text-[13px] text-[var(--dashboard-secondary-text-color)] font-medium uppercase tracking-wider">Correct Answer:</span>
                 <span className="text-lg font-bold text-green-500">
-                  {currentQuestion.correctAnswer}
+                  {/* 🔥 Safely join numerical arrays */}
+                  {currentQuestion.correctAnswer.join(", ")}
                 </span>
               </div>
             </div>

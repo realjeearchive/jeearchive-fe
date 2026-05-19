@@ -36,7 +36,8 @@ async function handleJson<T>(res: Response): Promise<T> {
 }
 
 export const fetchDashboardData = async (): Promise<ApiResponse> => {
-
+  console.info("[API: Dashboard] Requesting student aggregate performance metrics...");
+  
   const res = await authenticatedFetch(`/analytics/dashboard`, {
     method: "GET",
   });

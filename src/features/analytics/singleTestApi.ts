@@ -119,8 +119,8 @@ async function handleJson<T>(res: Response): Promise<T> {
 // ==========================================
 
 export const fetchSingleTestAnalytics = async (testId: string, createdAt: string): Promise<SingleTestApiResponse> => {
-  // Ensure the date is properly URL-encoded (e.g. 2026-02-06T21:27:59.932Z -> 2026-02-06T21%3A27%3A59.932Z)
   const encodedDate = encodeURIComponent(createdAt);
+  console.info(`[API: Analytics] Fetching deep test analytics. ID: ${testId}, Timestamp: ${createdAt}`);
   
   const res = await authenticatedFetch(
     `/analytics/test?testId=${testId}&created_at=${encodedDate}`, 

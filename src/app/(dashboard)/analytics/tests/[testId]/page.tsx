@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import styles from "./analysis.module.css";
 import { AnalysisLayout } from "@/components/analytics/TestAnalysis/AnalysisLayout";
 import { FiDownload, FiBookOpen } from "react-icons/fi";
+import { Loader } from "@/components/ui/loader"; // 🔥 UNIFIED LOADER IMPORT
 
 // Stores & API
 import { useAnalyticsStore } from "@/store/useAnalyticsStore";
@@ -19,11 +20,8 @@ export default function SingleTestAnalysisPage(props: PageProps) {
   const { testId } = use(props.params);
   const router = useRouter();
 
-  // Zustand Stores
   const { rawAnalytics, setAnalyticsData } = useAnalyticsStore();
   const { data, isLoading, error, fetchData, clearData } = useSingleTestStore();
-  
-  // Local state for missing test errors
   const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,59 +29,53 @@ export default function SingleTestAnalysisPage(props: PageProps) {
       try {
         let currentGlobalData = rawAnalytics;
 
-        // 1. Handle Hard Refresh: If global data isn't in store, fetch it first
         if (!currentGlobalData) {
           const globalRes = await fetchAnalyticsData();
           if (globalRes.success && globalRes.data) {
             setAnalyticsData(globalRes.data);
             currentGlobalData = globalRes.data;
           } else {
-            setLocalError("Failed to load global test data.");
+            setLocalError("Performance metrics unavailable.");
             return;
           }
         }
 
-        // 2. Find the test to get its 'created_at' timestamp
         const testDetail = currentGlobalData?.allTests?.find((t) => t.id === testId);
 
         if (!testDetail) {
-          setLocalError("Test not found in your history.");
+          setLocalError("Test history data not found.");
           return;
         }
 
-        // 3. Fetch the detailed single test analytics
         await fetchData(testId, testDetail.created_at);
         
       } catch (err: unknown) {
-        console.error(err);
-        setLocalError("An error occurred while loading the test.");
+        console.error("[SingleTestAnalysis] Data process failure:", err);
+        setLocalError("Connection drop. Please refresh.");
       }
     };
 
     loadTestData();
 
-    // Cleanup when leaving the page so the next test doesn't flash the old data
     return () => clearData();
   }, [testId, rawAnalytics, setAnalyticsData, fetchData, clearData]);
 
-  // --- LOADING STATE ---
+  // 🔥 FIXED: Standardized loader animation implementation
   if (isLoading && !error && !localError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-[#a1a1aa] text-sm">
-        <div className="w-10 h-10 border-4 border-[#f59e0b33] border-t-[#f59e0b] rounded-full animate-spin mb-4"></div>
-        <p>Crunching detailed test performance...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader label="Crunching detailed test performance..." />
       </div>
     );
   }
 
-  // --- ERROR STATE ---
   if (error || localError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-red-500 text-sm gap-4">
-        <p>Error: {error || localError}</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-red-500 text-sm font-medium gap-4">
+        <p>{error || localError}</p>
         <button 
           onClick={() => router.push('/analytics')} 
-          className="px-4 py-2 bg-[#211f1c] border border-[#f59e0b] text-[#f59e0b] rounded-md transition hover:bg-[#f59e0b] hover:text-white"
+          className="px-4 py-2 bg-[#211f1c] border border-[#f59e0b] text-[#f59e0b] rounded-md transition hover:bg-[#f59e0b] hover:text-white text-xs font-semibold"
         >
           Back to Analytics
         </button>
@@ -91,15 +83,12 @@ export default function SingleTestAnalysisPage(props: PageProps) {
     );
   }
 
-  // Safeguard
   if (!data) return null;
 
-  // --- EXTRACT & FORMAT HEADER METADATA ---
   const testContext = rawAnalytics?.allTests?.find((t) => t.id === testId);
   const dateObj = testContext ? new Date(testContext.created_at) : new Date();
   const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-  // Strictly type the context extraction to avoid 'any' errors
   const safeTestContext = testContext as unknown as {
     exam?: string;
     paperMeta?: {
@@ -122,25 +111,18 @@ export default function SingleTestAnalysisPage(props: PageProps) {
   const month = pd?.month || "";
   const shift = pd?.shift ? `(${pd.shift})` : "";
 
-  // Intelligently combine to build the title
   let testName = [formattedExamName, year, date, month, shift].filter(Boolean).join(" ").trim();
   
-  // Fallback if paper details are entirely missing
   if (!year && !date && !month) {
       testName = `${formattedExamName} Mock Test`;
   }
 
   return (
     <div className={styles.pageContainer}>
-      
-      {/* HEADER ROW */}
       <div className={styles.headerWrapper}>
         <div className={styles.headerRow}>
-          {/* Left: Test Info */}
           <div className={styles.testInfo}>
-            <h1 className={styles.title}>
-              {testName}
-            </h1>
+            <h1 className={styles.title}>{testName}</h1>
             <p className={styles.meta}>
               <span>{formattedDate}</span>
               <span className={styles.dot}></span>
@@ -150,12 +132,10 @@ export default function SingleTestAnalysisPage(props: PageProps) {
         </div>
       </div>
 
-      {/* CONTENT LAYOUT */}
       <div className={styles.contentLayout}>
         <AnalysisLayout />
       </div>
 
-      {/* FOOTER ACTIONS */}
       <div className={styles.footerActions}>
         <button className={`${styles.btn} ${styles.reportBtn}`}>
           <FiDownload size={14} /> Report
@@ -168,7 +148,6 @@ export default function SingleTestAnalysisPage(props: PageProps) {
           <FiBookOpen size={14} /> View Solutions
         </button>
       </div>
-
     </div>
   );
 }

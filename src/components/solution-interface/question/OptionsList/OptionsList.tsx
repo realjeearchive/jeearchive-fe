@@ -14,8 +14,8 @@ interface Option {
 
 interface OptionsListProps {
   options: Option[];
-  correctAnswer: string; 
-  userAnswer?: string | null; 
+  correctAnswer: string[]; // 🔥 FIXED: Accepts Array
+  userAnswer?: string[] | null; // 🔥 FIXED: Accepts Array
 }
 
 export const OptionsList = ({ options, correctAnswer, userAnswer }: OptionsListProps) => {
@@ -46,8 +46,9 @@ export const OptionsList = ({ options, correctAnswer, userAnswer }: OptionsListP
   return (
     <div className={styles.grid}>
       {options.map((opt) => {
-        const isCorrect = opt.id === correctAnswer;
-        const isUserSelected = opt.id === userAnswer;
+        // 🔥 FIXED: Check against arrays instead of exact string matches
+        const isCorrect = correctAnswer.includes(opt.id);
+        const isUserSelected = userAnswer ? userAnswer.includes(opt.id) : false;
         
         let cardClass = styles.optionCard;
         if (isCorrect) cardClass += ` ${styles.correct}`;
