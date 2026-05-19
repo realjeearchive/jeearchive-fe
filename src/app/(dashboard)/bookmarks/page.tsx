@@ -1,9 +1,5 @@
-const Bookmarks = () => {
-  return (
-    <div>
-      Bookmark page...
-    </div>
-  );
-};
+import BookmarksPage from "@/components/bookmarks/BookmarksPage";
 
-export default Bookmarks;
+export default function Page() {
+  return <BookmarksPage />;
+}

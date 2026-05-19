@@ -126,7 +126,6 @@ const Leaderboard: React.FC = () => {
               We are currently gathering data from the first batch of tests. 
               Rankings will go live shortly.
             </p>
-            <div className={styles.statusBadge}>MVP Phase 1</div>
           </div>
         </div>
       )}
