@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   {/* Discord Link */}
   <a 
-    href="https://discord.gg/your-link" 
+    href="https://discord.com/invite/8Q9Nb2fATj" 
     target="_blank" 
     rel="noopener noreferrer" 
     className={styles.iconButton} 

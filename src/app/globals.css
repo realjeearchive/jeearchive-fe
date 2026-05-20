@@ -330,3 +330,13 @@ body {
     min-width: 100vw !important;
   }
 }
+
+
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  overflow-x: hidden; /* This is your immediate defense */
+  width: 100%;
+}

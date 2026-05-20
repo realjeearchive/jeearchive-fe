@@ -122,12 +122,7 @@
     display: none !important;
   }
 
-  .header { padding: 0 10px; }
   .breadcrumb { display: none; }
-}
-
-@media (max-width: 600px) {
-  .header { padding: 0 5px; }
 }
 
 /* --- Hide tooltips on mobile devices --- */

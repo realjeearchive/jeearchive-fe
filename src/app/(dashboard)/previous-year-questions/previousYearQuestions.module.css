@@ -1,92 +1,229 @@
-.previousYearQuestions {
-  width: 100%;
+/* --- APP CONTAINER BOUNDS --- */
+.pageContainer {
   display: flex;
   flex-direction: column;
-}
-
-/* --- ZERO BOXES: Clean text-based tab container --- */
-.tabsContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  margin-bottom: 2rem;
+  margin: 0 auto;
+  box-sizing: border-box;
+  /* 🔥 FULL HEIGHT LOCK: Restricts parent layout from breaking viewport tracking lines */
+  height: calc(100vh - 48px - 20px); 
+  overflow: hidden;
 }
 
-.tabs {
+.splitLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 16px;
+  padding: 20px 0;
+  align-items: stretch;
+}
+
+/* --- LEFT SIDEBAR PANEL (Full height viewport card matching chapterwise metrics) --- */
+.leftSidebar {
+  width: 300px;
+  background-color: var(--dashboard-sidebar-background-color, #1A1817);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 100%; /* Spans all the way from top to bottom */
+}
+
+.cardHeader {
   display: flex;
   align-items: center;
-  /* Slightly reduced gap because the divider now takes up space in the middle */
-  gap: 24px; 
-
+  gap: 14px;
 }
 
-/* --- The Elegant Vertical Line --- */
-.divider {
-  width: 1px;
-  height: 14px; 
-  background-color: var(--dashboard-sidebar-border-color, #36312F);
-  /* Offsets the 12px bottom padding of the buttons so the line centers perfectly with the text */
-  margin-bottom: 4px; 
+.iconSquare {
+  width: 42px;
+  height: 42px;
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--dashboard-core-color, #F59E0B);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
 }
 
-/* --- The Buttons --- */
-.tabButton {
-  /* Only padding at the bottom to create space between text and the line */
-  padding: 0 0 4px 0; 
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  cursor: pointer;
+.cardTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color, #F4F4F4);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.cardSubtitle {
+  font-size: 12px;
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  margin: 2px 0 0 0;
+}
+
+/* Exam Segment Switching Track */
+.segmentedControl {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.segmentBtn {
+  flex: 1;
   background: transparent;
   border: none;
-  outline: none;
-  position: relative; /* Required for the underline */
-  transition: color 0.2s ease;
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.activeTab {
-  /* Bright white for the active text */
+.segmentBtn:hover {
   color: var(--dashboard-primary-text-color, #F4F4F4);
 }
 
-/* The Sleek Underline for the Active Tab */
-.activeTab::after {
-  content: '';
-  position: absolute;
-  /* Pulls it down to perfectly overlap the container's bottom line */
-  bottom: -1px; 
-  left: 0;
+.segmentActive {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--dashboard-primary-text-color, #F4F4F4);
+}
+
+/* Scrollable Interactive Years List Component Track */
+.yearsListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0; /* Important context boundary limit for vertical list containers */
+}
+
+.listLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-left: 4px;
+}
+
+.yearsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: none; /* Hide scrollbars for structural elegance */
+}
+
+.yearsList::-webkit-scrollbar {
+  display: none;
+}
+
+.yearRowItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 2px;
-  background-color: var(--dashboard-core-color, #F59E0B); /* Your brand amber */
-  border-radius: 2px 2px 0 0;
-  /* Very subtle glow to make it pop in dark mode */
-  box-shadow: 0 -2px 8px rgba(245, 158, 11, 0.4); 
+  padding: 10px 14px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
 }
 
-.inactiveTab {
-  /* Faded gray for inactive text */
-  color: var(--dashboard-secondary-text-color, #8A8886); 
+.yearRowItem:hover {
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
-.inactiveTab:hover {
-  /* Lightens up when hovered */
-  color: var(--dashboard-primary-text-color, #E8E8E8);
+.yearRowActive {
+  background-color: rgba(245, 158, 11, 0.06);
+  border-color: rgba(245, 158, 11, 0.15);
 }
 
-/* --- Smooth Content Transition --- */
-.fadeContainer {
-  animation: fadeIn 0.3s ease-out forwards;
+.yearNumberText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color, #F4F4F4);
+  transition: color 0.15s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
+.yearRowActive .yearNumberText {
+  color: var(--dashboard-core-color, #F59E0B);
+  font-weight: 600;
+}
+
+.yearCountMeta {
+  font-size: 12px;
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+}
+
+/* --- ISOLATED RIGHT PANELS CONTENT RUN TRACK --- */
+.rightContent {
+  flex: 1;
+  height: 100%;
+  /* 🔥 ISOLATED INDEPENDENT VERTICAL SCROLL */
+  overflow-y: auto; 
+  min-width: 0;
+  scrollbar-width: none;
+}
+
+.rightContent::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollContentWrapper {
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 24px;
+}
+
+.centerState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.emptyText {
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* --- RESPONSIVE COLLAPSE CONTEXT OVERRIDES --- */
+@media (max-width: 1024px) {
+  .pageContainer {
+    height: auto;
+    overflow: visible;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .splitLayout {
+    flex-direction: column;
+    height: auto;
+  }
+  .leftSidebar {
+    width: 100%;
+    height: auto;
+  }
+  .yearsList {
+    max-height: 200px; /* Constraints bounds on tablets */
+  }
+  .rightContent {
+    overflow-y: visible;
+    height: auto;
   }
 }
