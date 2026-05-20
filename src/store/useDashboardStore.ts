@@ -5,6 +5,7 @@ import { create } from "zustand";
 // --- STRICT TYPESCRIPT INTERFACES ---
 
 // 1. Types for Individual Test Attempts
+// 1. Types for Individual Test Attempts
 export interface DashboardSubjectStat {
   subjectName: string;
   marks: number;
@@ -15,24 +16,21 @@ export interface DashboardSubjectStat {
   accuracy: number;
 }
 
-export interface DashboardQuestionWiseStat {
-  questionType: string;
-  marks: number;
-  correct: number;
-  wrong: number;
-  accuracy: number;
-}
-
 export interface DashboardTestAttempt {
   testId: string;
   createdAt: string;
   source: string;
   paperDetails?: {
     exam?: { name: string };
-    year?: number;
+    year?: number | string;
     month?: string;
+    day?: string;           // <-- Added
+    date?: string | number; // <-- Added
     shift?: string;
+    mode?: string;          // <-- Added
     totalMarks?: number;
+    totalDuration?: number; // <-- Added
+    totalQuestions?: number;// <-- Added
   };
   overall: {
     marks: number;
@@ -44,10 +42,8 @@ export interface DashboardTestAttempt {
     math?: DashboardSubjectStat;
     physics?: DashboardSubjectStat;
     chemistry?: DashboardSubjectStat;
-    // Allow fallback for unexpected subject keys
     [key: string]: DashboardSubjectStat | undefined; 
   };
-  questionWise?: DashboardQuestionWiseStat[];
 }
 
 // 2. Types for the Aggregate Data
@@ -72,9 +68,15 @@ export interface Last5Aggregate {
   totalMarks: number;
   totalMaxMarks: number;
   overallAccuracy: number;
+  overallPercentage: number;
   avgTimeTaken: number;
   subjects: AggregateSubjectStat[];
   questionWise: AggregateQuestionWiseStat[];
+}
+
+export interface TestCategoryData {
+  last5: DashboardTestAttempt[];
+  aggregate: Last5Aggregate;
 }
 
 // 3. Types for Practice & Unique Questions
@@ -108,14 +110,10 @@ export interface QuestionTypeStat {
   avgTimePerQuestion: number;
 }
 
-export interface ExamStat {
-  examName: string;
-  attempts: number;
-  timeSpent: number;
-  marksEarned: number;
-  maxPossible: number;
-  accuracy: number;
-  avgTimePerQuestion: number;
+export interface PracticeCategoryData {
+  overall: PracticeOverall;
+  subjects: SubjectPractice[];
+  questionTypes: QuestionTypeStat[];
 }
 
 export interface SubjectQuestions {
@@ -127,19 +125,18 @@ export interface SubjectQuestions {
 export interface DashboardDataPayload {
   studentId: string;
   generatedAt: string;
+  totalUniqueMockTests: number;
   
   tests?: {
-    last5: DashboardTestAttempt[];
-    last5Aggregate?: Last5Aggregate; // Strictly typed now!
+    overall?: TestCategoryData;
+    jeeMain?: TestCategoryData;
+    jeeAdvanced?: TestCategoryData;
   };
   
   practice?: {
-    studentId?: string;
-    generatedAt?: string;
-    overall?: PracticeOverall;
-    subjects?: SubjectPractice[];
-    questionTypes?: QuestionTypeStat[];
-    exams?: ExamStat[];
+    overall?: PracticeCategoryData;
+    jeeMain?: PracticeCategoryData;
+    jeeAdvanced?: PracticeCategoryData;
   };
   
   uniqueQuestionsAttempted?: {
@@ -177,21 +174,10 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     const report = get().rawReport;
     if (!report) return true;
     
-    // 1. Check for Mock Tests in the new nested structure
-    const testCount = report.tests?.last5?.length || 0;
+    // The backend now provides a clean "totalUniqueMockTests" metric!
+    const testCount = report.totalUniqueMockTests || 0;
+    const practiceCount = report.uniqueQuestionsAttempted?.total || 0;
     
-    // 2. Check for overall practice attempts
-    const practiceAttempts = report.practice?.overall?.totalAttempts || 0;
-    
-    // 3. Check for ANY uniquely solved questions across subjects
-    const uniqueMath = report.uniqueQuestionsAttempted?.subjectWise?.Mathematics?.uniqueAttempted || 0;
-    const uniquePhy = report.uniqueQuestionsAttempted?.subjectWise?.Physics?.uniqueAttempted || 0;
-    const uniqueChem = report.uniqueQuestionsAttempted?.subjectWise?.Chemistry?.uniqueAttempted || 0;
-    
-    // Add them up
-    const totalUnique = report.uniqueQuestionsAttempted?.total || (uniqueMath + uniquePhy + uniqueChem);
-
-    // If they have 0 tests AND 0 practice attempts AND 0 unique questions solved, they are new.
-    return testCount === 0 && practiceAttempts === 0 && totalUnique === 0;
+    return testCount === 0 && practiceCount === 0;
   }
 }));

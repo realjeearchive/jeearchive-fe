@@ -11,7 +11,7 @@ import { RecentTestsList } from "@/components/analytics/Overall/RecentTestsList/
 import { SubjectDeepDive } from "@/components/analytics/Overall/SubjectDeepDive/SubjectDeepDive";
 import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatrix/EfficiencyMatrix";
 import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
-import { Loader } from "@/components/ui/loader"; // 🔥 UNIFIED LOADER IMPORT
+import { Loader } from "@/components/ui/loader";
 
 // Store & Logic
 import { useAnalyticsStore } from "@/store/useAnalyticsStore";
@@ -65,7 +65,6 @@ export default function AnalyticsPage() {
     }
   }, [rawAnalytics, setAnalyticsData, setLoading, setError]);
 
-  // 🔥 FIXED: Swapped for your uniform design component loader configuration
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">

@@ -102,6 +102,7 @@
   z-index: 98;                   
   opacity: 0;
   animation: fadeIn 0.2s ease forwards;
+  
 }
 
 @keyframes fadeIn {

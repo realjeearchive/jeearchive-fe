@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
 
   useEffect(() => {
+
     const loadDashboard = async () => {
       setLoading(true);
       try {

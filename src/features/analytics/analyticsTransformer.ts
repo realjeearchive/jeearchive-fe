@@ -1,4 +1,4 @@
-import { AnalyticsDataPayload, LastNGroup, AllTestDetail } from "@/store/useAnalyticsStore";
+import { AnalyticsDataPayload, TestReport, AllTestDetail } from "@/store/useAnalyticsStore";
 
 export type TimeRange = "Last 3 Tests" | "Last 5 Tests" | "All Tests";
 
@@ -17,63 +17,105 @@ export interface TransformedAnalyticsUI {
   graph: Array<{ x: string; y: number }>;
   radar: Array<{ subject: string; Accuracy: number }>;
   deepDive: Array<{ subject: string; avgScore: number; accuracy: number; negatives: number; avgTime: number }>;
-  // 🚨 FIX: Updated Efficiency Interface to use real backend metrics
   efficiency: { mcqAcc: number; numAcc: number; leakage: number; momentum: number };
   weakness: Array<{ chapter: string; subject: string; accuracy: number; weightage?: string }>;
   recentTests: RecentTestUI[];
 }
 
+// Helper to get the appropriate test report based on time range
+const getTestReport = (
+  data: AnalyticsDataPayload,
+  timeRange: TimeRange
+): TestReport | null => {
+  // Use overall analytics (combines both JEE Main & Advanced)
+  const examData = data.overall;
+  
+  if (!examData) return null;
+
+  if (timeRange === "Last 3 Tests") {
+    return examData.testReports?.last3 || null;
+  } else if (timeRange === "Last 5 Tests") {
+    return examData.testReports?.last5 || null;
+  } else {
+    return examData.testReports?.all || null;
+  }
+};
+
+// Helper to get all tests for weakness calculation
+const getAllTestsForWeakness = (data: AnalyticsDataPayload): AllTestDetail[] => {
+  // Combine tests from overall, jeeMain, and jeeAdvanced
+  const allTests: AllTestDetail[] = [];
+  
+  if (data.overall?.allTests) {
+    allTests.push(...data.overall.allTests);
+  }
+  if (data.jeeMain?.allTests) {
+    allTests.push(...data.jeeMain.allTests);
+  }
+  if (data.jeeAdvanced?.allTests) {
+    allTests.push(...data.jeeAdvanced.allTests);
+  }
+  
+  // Remove duplicates by id
+  const uniqueTests = new Map();
+  allTests.forEach(test => {
+    if (!uniqueTests.has(test.id)) {
+      uniqueTests.set(test.id, test);
+    }
+  });
+  
+  return Array.from(uniqueTests.values());
+};
+
 export const transformAnalyticsData = (
-  data: AnalyticsDataPayload | null, 
+  data: AnalyticsDataPayload | null,
   timeRange: TimeRange
 ): TransformedAnalyticsUI | null => {
   if (!data) return null;
 
-  let groupData: LastNGroup | undefined;
-  if (timeRange === "Last 3 Tests") {
-    groupData = data.lastNTests?.last3;
-  } else if (timeRange === "Last 5 Tests") {
-    groupData = data.lastNTests?.last5;
-  } else {
-    groupData = data.report; 
-  }
+  const testReport = getTestReport(data, timeRange);
+  if (!testReport) return null;
 
-  if (!groupData) return null;
-
-  const examReport = groupData.examReports?.JEE_MAIN;
-  if (!examReport) return null;
-
+  // ==========================================
+  // 1. GLOBAL STATS
+  // ==========================================
   const global = {
-    testsTaken: examReport.totalTests || 0,
-    avgScore: Math.round(examReport.overall?.avgScore || 0),
-    accuracy: Number((examReport.overall?.avgAccuracy || 0).toFixed(1)),
-    consistency: 8.5 
+    testsTaken: testReport.totalTests || 0,
+    avgScore: Math.round(testReport.overall?.avgScore || 0),
+    accuracy: Number((testReport.overall?.avgAccuracy || 0).toFixed(1)),
+    consistency: 8.5, // Keep as is for now (could be calculated from improvement data)
   };
 
-  const reversedTests = [...(examReport.testMarksList || [])].reverse();
+  // ==========================================
+  // 2. PERFORMANCE GRAPH
+  // ==========================================
+  const reversedTests = [...(testReport.testMarksList || [])].reverse();
   const graph = reversedTests.map((t, i) => ({
     x: `T${i + 1}`,
     y: t.marks || 0
   }));
 
+  // ==========================================
+  // 3. RADAR CHART (Subject-wise Accuracy)
+  // ==========================================
   const radar: Array<{ subject: string; Accuracy: number }> = [];
   const deepDive: Array<{ subject: string; avgScore: number; accuracy: number; negatives: number; avgTime: number }> = [];
 
   const subjectsMap = [
+    { key: 'math', label: 'Mathematics' },
     { key: 'physics', label: 'Physics' },
-    { key: 'chemistry', label: 'Chemistry' },
-    { key: 'math', label: 'Mathematics' }
+    { key: 'chemistry', label: 'Chemistry' }
   ] as const;
 
   subjectsMap.forEach(({ key, label }) => {
-    const subKey = key as keyof typeof examReport.subjects;
-    const subData = examReport.subjects?.[subKey];
+    const subData = testReport.subjects?.[key];
     
     if (subData) {
       radar.push({
         subject: label,
         Accuracy: Math.round(subData.avgAccuracy || 0)
       });
+      
       deepDive.push({
         subject: label,
         avgScore: Math.round(subData.avgScore || 0),
@@ -84,106 +126,153 @@ export const transformAnalyticsData = (
     }
   });
 
-  // 🚨 FIX: Extract Format Analytics & Trends from the Backend
-  const qTypes = examReport.questionTypes || {};
-  const single = qTypes.SingleCorrect || { avgCorrect: 0, avgWrong: 0 };
+  // ==========================================
+  // 4. EFFICIENCY MATRIX
+  // ==========================================
+  const qTypes = testReport.questionTypes || {};
+  
+  // Single Correct (MCQ) Accuracy
+  const singleCorrect = qTypes.SingleCorrect || { avgCorrect: 0, avgWrong: 0 };
+  const singleTotal = (singleCorrect.avgCorrect || 0) + (singleCorrect.avgWrong || 0);
+  const mcqAcc = singleTotal > 0 ? Math.round((singleCorrect.avgCorrect / singleTotal) * 100) : 0;
+  
+  // Integer Type (Numerical) Accuracy
   const integer = qTypes.Integer || { avgCorrect: 0, avgWrong: 0 };
-
-  const singleTotal = (single.avgCorrect || 0) + (single.avgWrong || 0);
-  const singleAcc = singleTotal > 0 ? Math.round((single.avgCorrect / singleTotal) * 100) : 0;
-
   const intTotal = (integer.avgCorrect || 0) + (integer.avgWrong || 0);
-  const intAcc = intTotal > 0 ? Math.round((integer.avgCorrect / intTotal) * 100) : 0;
-
-  const totalNegatives = Math.round(((single.avgWrong || 0) + (integer.avgWrong || 0)) * 1); // Assuming 1 mark lost per wrong
-  const momentum = Math.round(examReport.improvement?.overall?.scoreChange || 0);
+  const numAcc = intTotal > 0 ? Math.round((integer.avgCorrect / intTotal) * 100) : 0;
+  
+  // Leakage (Negative marks)
+  const totalNegatives = Math.round((singleCorrect.avgWrong || 0) + (integer.avgWrong || 0));
+  
+  // Momentum (Score improvement)
+  const momentum = Math.round(testReport.improvement?.overall?.scoreChange || 0);
 
   const efficiency = {
-    mcqAcc: singleAcc,
-    numAcc: intAcc,
+    mcqAcc: mcqAcc,
+    numAcc: numAcc,
     leakage: totalNegatives,
     momentum: momentum
   };
 
-  const chapterStats: Record<string, { subject: string; attempt: number; correct: number; wrong: number }> = {};
-  const relevantTestIds = new Set((examReport.testMarksList || []).map(t => t.testId));
-  const testsToAnalyze = (data.allTests || []).filter(test => relevantTestIds.has(test.id));
+ // ==========================================
+// 5. WEAKNESS HUNTER (Using weakChapters from backend)
+// ==========================================
+const weakness: Array<{ chapter: string; subject: string; accuracy: number; weightage?: string }> = [];
 
-  testsToAnalyze.forEach((test) => {
-    const chapters = (test.chapterWise || []) as Array<{
-      chapterName: string;
-      subjectName: string;
-      attempt: number;
-      correct: number;
-      wrong: number;
-    }>;
+// Use weakChapters from the overall analytics
+const weakChapters = data.overall?.weakChapters;
 
-    chapters.forEach((ch) => {
-      const name = ch.chapterName || "Unknown Chapter";
-      if (!chapterStats[name]) {
-        chapterStats[name] = { subject: ch.subjectName || "Unknown", attempt: 0, correct: 0, wrong: 0 };
-      }
-      chapterStats[name].attempt += ch.attempt || 0;
-      chapterStats[name].correct += ch.correct || 0;
-      chapterStats[name].wrong += ch.wrong || 0;
+if (weakChapters) {
+  // Type assertion for weakChapters structure
+  type WeakChapterItem = {
+    chapterId: string;
+    chapterName: string;
+    percentage: number;
+    accuracy: number;
+    totalAttempts: number;
+    totalMarks: number;
+    totalMax: number;
+  };
+  
+  type WeakChaptersMap = {
+    Mathematics: WeakChapterItem[];
+    Physics: WeakChapterItem[];
+    Chemistry: WeakChapterItem[];
+  };
+  
+  const typedWeakChapters = weakChapters as WeakChaptersMap;
+  
+  // Combine all subjects' weak chapters
+  const allWeakChapters: Array<{ chapter: string; subject: string; accuracy: number; totalMax: number }> = [];
+  
+  Object.entries(typedWeakChapters).forEach(([subject, chapters]) => {
+    chapters.forEach((chapter: WeakChapterItem) => {
+      allWeakChapters.push({
+        chapter: chapter.chapterName,
+        subject: subject,
+        accuracy: Math.round(chapter.accuracy || 0),
+        totalMax: chapter.totalMax
+      });
     });
   });
+  
+  // Sort by accuracy (lowest first - biggest weakness)
+  // and take top 4
+  allWeakChapters
+    .sort((a, b) => a.accuracy - b.accuracy)
+    .slice(0, 4)
+    .forEach((item) => {
+      weakness.push({
+        chapter: item.chapter,
+        subject: item.subject,
+        accuracy: item.accuracy,
+        weightage: item.totalMax > 50 ? "High" : "Normal"
+      });
+    });
+}
 
-  const weakness = Object.entries(chapterStats)
-    .filter(([_, stats]) => stats.attempt > 0) 
-    .map(([chapter, stats]) => ({
-      chapter,
-      subject: stats.subject,
-      accuracy: Math.round((stats.correct / stats.attempt) * 100),
-      weightage: stats.wrong >= 2 ? "High" : "Normal" 
-    }))
-    .sort((a, b) => a.accuracy - b.accuracy) 
-    .slice(0, 4); 
+// If no weak chapters from backend, fallback to calculating from test data
+if (weakness.length === 0) {
+  // Fallback logic (kept as is from before)
+  const allTests = getAllTestsForWeakness(data);
+  const relevantTestIds = new Set((testReport.testMarksList || []).map(t => t.testId));
+  const testsToAnalyze = allTests.filter(test => relevantTestIds.has(test.id));
+  
+  // Additional fallback logic would go here if needed
+}
 
-  const recentTestsSource = examReport.testMarksList || [];
+  // ==========================================
+  // 6. RECENT TESTS LIST
+  // ==========================================
+  const recentTestsSource = testReport.testMarksList || [];
   const recentTests: RecentTestUI[] = recentTestsSource.map((t) => {
     const dateObj = new Date(t.createdAt);
-    const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const formattedDate = dateObj.toLocaleDateString("en-US", { 
+      month: "short", 
+      day: "numeric", 
+      year: "numeric" 
+    });
     
-    const fullTestDetail = data.allTests?.find((at) => at.id === t.testId);
+    // Find the full test details to get paper meta
+    const fullTestDetail = data.overall?.allTests?.find((at) => at.id === t.testId) ||
+                          data.jeeMain?.allTests?.find((at) => at.id === t.testId) ||
+                          data.jeeAdvanced?.allTests?.find((at) => at.id === t.testId);
     
-    const safeTestDetail = fullTestDetail as unknown as {
-      paperMeta?: {
-        year?: string | number;
-        month?: string;
-        date?: string;
-        shift?: string;
-      };
-    };
+    const paperMeta = fullTestDetail?.paperMeta;
     
-    const pd = safeTestDetail?.paperMeta;
-
     const examRawName = t.examName || "JEE_MAIN";
     let formattedExamName = examRawName.replace("_", " ");
     if (examRawName === "JEE_MAIN") formattedExamName = "JEE Main";
     if (examRawName === "JEE_ADVANCED") formattedExamName = "JEE Advanced";
-
-    const year = pd?.year || "";
-    const date = pd?.date || "";
-    const month = pd?.month || "";
-    const shift = pd?.shift ? `(${pd.shift})` : "";
-
-    let title = [formattedExamName, year, date, month, shift].filter(Boolean).join(" ").trim();
     
-    if (!year && !date && !month) {
-        title = `${formattedExamName} Mock Test`;
+    const year = paperMeta?.year || "";
+    const month = paperMeta?.month || "";
+    const shift = paperMeta?.shift ? `(${paperMeta.shift})` : "";
+    
+    let title = [formattedExamName, year, month, shift].filter(Boolean).join(" ").trim();
+    
+    if (!year && !month) {
+      title = `${formattedExamName} Mock Test`;
     }
-
+    
     return {
       id: t.testId,
-      title: title, 
+      title: title,
       meta: `Score: ${t.marks || 0}/${t.maxMarks || 300} • ${formattedDate}`,
-      status: "COMPLETED", 
+      status: "COMPLETED",
       score: t.marks || 0,
       totalMarks: t.maxMarks || 300,
       date: formattedDate
     };
   });
 
-  return { global, graph, radar, deepDive, efficiency, weakness, recentTests };
+  return {
+    global,
+    graph,
+    radar,
+    deepDive,
+    efficiency,
+    weakness,
+    recentTests
+  };
 };

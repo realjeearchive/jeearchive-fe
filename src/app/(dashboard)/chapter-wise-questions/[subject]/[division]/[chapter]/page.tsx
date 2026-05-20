@@ -1,23 +1,24 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import React, { useEffect, useState, use } from 'react';
 import { fetchChapterInfo, ChapterInfoResponse } from "@/features/chapterWise/api";
 import { chapterConfig } from "@/features/chapterWise/config";
 import { ChapterDashboard } from "@/components/chapterwise/ChapterDashboard"; 
 import { Loader } from '@/components/ui/loader';
 
-export default function ChapterDashboardPage() {
-  const params = useParams();
-  const subject = params.subject as string;
-  const division = params.division as string;
-  const chapter = params.chapter as string;
+interface ChapterPageProps {
+  params: Promise<{ subject: string; division: string; chapter: string }>;
+}
+
+export default function ChapterDashboardPage(props: ChapterPageProps) {
+  // Unwrap the promise-based params for Next.js App Router
+  const { subject, division, chapter } = use(props.params);
 
   const [data, setData] = useState<ChapterInfoResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // Derive the exact chapter title from your config
   const divisionChapters = chapterConfig[division] || [];
   const exactChapterName = divisionChapters.find(c => c.id === chapter)?.title || chapter;
 
@@ -43,7 +44,7 @@ export default function ChapterDashboardPage() {
         style={{ backgroundColor: 'var(--dashboard-background-color)' }} 
         className="flex min-h-screen w-full flex-1 items-center justify-center"
       >
-        <Loader label="Loading chapter..." />
+        <Loader label={`Loading ${exactChapterName}...`} />
       </div>
     );
   }
@@ -60,7 +61,6 @@ export default function ChapterDashboardPage() {
   }
 
   return (
-    // 🔥 THE FIX: This wrapper div with "flex-1 w-full" is what removes the white border!
     <div 
       className="flex-1 w-full min-h-screen" 
       style={{ backgroundColor: 'var(--dashboard-background-color)' }}

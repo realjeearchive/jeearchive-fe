@@ -29,9 +29,9 @@ export const useSingleTestStore = create<SingleTestStore>((set) => ({
         set({ error: "Couldn't load your test results. Please try again.", isLoading: false });
       }
     } catch (err: unknown) {
-      // 🔥 FIXED: Used console.warn to prevent Next.js red-screen crashes during dev
+      // Using console.warn to prevent Next.js red-screen crashes during dev
       console.warn("[Analytics: SingleTest] Fetch Error:", err);
-      // 🔥 FIXED: Short, student-friendly error message
+      // Short, student-friendly error message
       set({ error: "Connection drop. Please check your internet and refresh.", isLoading: false });
     }
   },

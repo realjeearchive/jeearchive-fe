@@ -179,6 +179,7 @@
   overflow-y: auto; 
   min-width: 0;
   scrollbar-width: none;
+  padding: 50px;
 }
 
 .rightContent::-webkit-scrollbar {

@@ -5,16 +5,44 @@ import { useRouter } from "next/navigation";
 import styles from "./analysis.module.css";
 import { AnalysisLayout } from "@/components/analytics/TestAnalysis/AnalysisLayout";
 import { FiDownload, FiBookOpen } from "react-icons/fi";
-import { Loader } from "@/components/ui/loader"; // 🔥 UNIFIED LOADER IMPORT
+import { Loader } from "@/components/ui/loader";
 
 // Stores & API
-import { useAnalyticsStore } from "@/store/useAnalyticsStore";
+import { useAnalyticsStore, AnalyticsDataPayload, AllTestDetail } from "@/store/useAnalyticsStore";
 import { fetchAnalyticsData } from "@/features/analytics/api";
 import { useSingleTestStore } from "@/store/useSingleTestStore";
 
 interface PageProps {
   params: Promise<{ testId: string }>;
 }
+
+// Helper function to find a test across all exam categories
+const findTestById = (
+  rawAnalytics: AnalyticsDataPayload | null,
+  testId: string
+): AllTestDetail | null => {
+  if (!rawAnalytics) return null;
+  
+  // Check in overall tests
+  if (rawAnalytics.overall?.allTests) {
+    const found = rawAnalytics.overall.allTests.find((t: AllTestDetail) => t.id === testId);
+    if (found) return found;
+  }
+  
+  // Check in JEE Main tests
+  if (rawAnalytics.jeeMain?.allTests) {
+    const found = rawAnalytics.jeeMain.allTests.find((t: AllTestDetail) => t.id === testId);
+    if (found) return found;
+  }
+  
+  // Check in JEE Advanced tests
+  if (rawAnalytics.jeeAdvanced?.allTests) {
+    const found = rawAnalytics.jeeAdvanced.allTests.find((t: AllTestDetail) => t.id === testId);
+    if (found) return found;
+  }
+  
+  return null;
+};
 
 export default function SingleTestAnalysisPage(props: PageProps) {
   const { testId } = use(props.params);
@@ -40,7 +68,8 @@ export default function SingleTestAnalysisPage(props: PageProps) {
           }
         }
 
-        const testDetail = currentGlobalData?.allTests?.find((t) => t.id === testId);
+        // Find the test using the helper function
+        const testDetail = findTestById(currentGlobalData, testId);
 
         if (!testDetail) {
           setLocalError("Test history data not found.");
@@ -48,7 +77,6 @@ export default function SingleTestAnalysisPage(props: PageProps) {
         }
 
         await fetchData(testId, testDetail.created_at);
-        
       } catch (err: unknown) {
         console.error("[SingleTestAnalysis] Data process failure:", err);
         setLocalError("Connection drop. Please refresh.");
@@ -60,7 +88,6 @@ export default function SingleTestAnalysisPage(props: PageProps) {
     return () => clearData();
   }, [testId, rawAnalytics, setAnalyticsData, fetchData, clearData]);
 
-  // 🔥 FIXED: Standardized loader animation implementation
   if (isLoading && !error && !localError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -85,36 +112,30 @@ export default function SingleTestAnalysisPage(props: PageProps) {
 
   if (!data) return null;
 
-  const testContext = rawAnalytics?.allTests?.find((t) => t.id === testId);
+  // Find test context for displaying header info
+  const testContext = findTestById(rawAnalytics, testId);
   const dateObj = testContext ? new Date(testContext.created_at) : new Date();
-  const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const formattedDate = dateObj.toLocaleDateString("en-US", { 
+    month: "short", 
+    day: "numeric", 
+    year: "numeric" 
+  });
 
-  const safeTestContext = testContext as unknown as {
-    exam?: string;
-    paperMeta?: {
-      year?: string | number;
-      month?: string;
-      date?: string;
-      shift?: string;
-    };
-  };
-
-  const pd = safeTestContext?.paperMeta;
-  const examRawName = safeTestContext?.exam || "JEE_MAIN";
+  const paperMeta = testContext?.paperMeta;
+  const examRawName = testContext?.exam || "JEE_MAIN";
   
   let formattedExamName = examRawName.replace("_", " ");
   if (examRawName === "JEE_MAIN") formattedExamName = "JEE Main";
   if (examRawName === "JEE_ADVANCED") formattedExamName = "JEE Advanced";
 
-  const year = pd?.year || "";
-  const date = pd?.date || "";
-  const month = pd?.month || "";
-  const shift = pd?.shift ? `(${pd.shift})` : "";
+  const year = paperMeta?.year || "";
+  const month = paperMeta?.month || "";
+  const shift = paperMeta?.shift ? `(${paperMeta.shift})` : "";
 
-  let testName = [formattedExamName, year, date, month, shift].filter(Boolean).join(" ").trim();
+  let testName = [formattedExamName, year, month, shift].filter(Boolean).join(" ").trim();
   
-  if (!year && !date && !month) {
-      testName = `${formattedExamName} Mock Test`;
+  if (!year && !month) {
+    testName = `${formattedExamName} Mock Test`;
   }
 
   return (

@@ -1,13 +1,14 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/practice/page.tsx
-
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import React, { useEffect, useState, use } from 'react';
 import { fetchChapterInfo } from "@/features/chapterWise/api";
 import { ChapterWiseInterface, QuestionData, Subject, SectionType } from "@/components/chapterwise/ChapterWiseInterface";
 import { chapterConfig } from '@/features/chapterWise/config';
 import { Loader } from '@/components/ui/loader';
+
+interface PracticePageProps {
+  params: Promise<{ subject: string; division: string; chapter: string }>;
+}
 
 const getSubjectFromSlug = (slug: string): Subject => {
   const s = slug.toLowerCase();
@@ -16,13 +17,8 @@ const getSubjectFromSlug = (slug: string): Subject => {
   return "Physics";
 };
 
-const IMAGE_BASE_URL = "https://jee-mock-test-backend-5bgg.onrender.com/images/"; 
-
-export default function PracticePage() {
-  const params = useParams();
-  const subject = params.subject as string;
-  const division = params.division as string;
-  const chapter = params.chapter as string;
+export default function PracticePage(props: PracticePageProps) {
+  const { subject, division, chapter } = use(props.params);
 
   const [questions, setQuestions] = useState<QuestionData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +32,6 @@ export default function PracticePage() {
         const data = await fetchChapterInfo(exactChapterName);
         const validSubject = getSubjectFromSlug(subject);
 
-        // Replace the existing mapped logic inside loadQuestions with this:
         const mapped: QuestionData[] = data.jeeMain.map((q, index) => {
           const options = [];
           if ((q.type === "SingleCorrect" || q.type === "MultiCorrect" || q.type === "Comprehension") && q.options) {
@@ -49,7 +44,6 @@ export default function PracticePage() {
           const isCorrect = q.attemptStatus === "Successfully attempted";
           const isIncorrect = q.attemptStatus === "Not successfully done";
 
-          // 🔥 FIXED: Accurately map all NTA question types
           let sectionType = "Single Correct";
           if (q.type === "Numerical" || q.type === "Integer") sectionType = "Numerical";
           else if (q.type === "MultiCorrect") sectionType = "Multiple Correct";
@@ -59,14 +53,14 @@ export default function PracticePage() {
             id: q.id,
             number: index + 1, 
             subject: validSubject,
-            section: sectionType as SectionType, // 🔥 Uses the dynamic type
-            comprehensionContent: q.comprehensionContent, // 🔥 Passing the passage!
+            section: sectionType as SectionType,
+            comprehensionContent: q.comprehensionContent,
             text: q.content,
             hasImage: !!(q.image && q.image.length > 0),
             imageUrl: q.image?.[0] || undefined,
             options,
             correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer].filter(Boolean),
-            status: isCorrect ? "correct" : isIncorrect ? "incorrect" : "unattempted",
+            status: (isCorrect ? "correct" : isIncorrect ? "incorrect" : "unattempted") as QuestionData["status"],
             userAnswer: null, 
             isBookmarked: q.isBookmarked || false,
             solution: q.solution?.text || "<p>No solution provided.</p>",
@@ -87,14 +81,14 @@ export default function PracticePage() {
     loadQuestions();
   }, [exactChapterName, subject]);
 
-if (loading) {
+  if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[var(--dashboard-background-color,#141312)]">
-        {/* 🔥 UNIFIED LOADER */}
-        <Loader label="Loading questions..." />
+      <div className="flex h-screen items-center justify-center bg-[var(--dashboard-background-color)]">
+        <Loader label={`Preparing ${exactChapterName} practice...`} />
       </div>
     );
   }
+
   return (
     <ChapterWiseInterface
       questions={questions}

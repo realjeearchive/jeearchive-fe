@@ -5,7 +5,7 @@
   width: 100%;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 10px; 
+  padding: 20px 0;
   background-color: var(--dashboard-background-color);
   animation: fadeIn 0.4s ease-out;
 }

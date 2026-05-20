@@ -16,7 +16,11 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
   if (!data) return null;
 
   const { tests, practice, uniqueQuestionsAttempted } = data;
-  const last5Tests = tests?.last5 || [];
+  
+  // Point to the new "overall" grouping
+  const last5Tests = tests?.overall?.last5 || [];
+  const testAggregates = tests?.overall?.aggregate;
+  const practiceOverall = practice?.overall?.overall;
 
   // 1. Map Progress Cards
   const progress = {
@@ -26,43 +30,45 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
   };
 
   // --- KPI CALCULATIONS ---
-  const testCount = last5Tests.length;
-  const avgTestAcc = testCount > 0 ? last5Tests.reduce((acc, t) => acc + (t.overall?.accuracy || 0), 0) / testCount : 0;
-  const avgTestScore = testCount > 0 ? last5Tests.reduce((acc, t) => acc + (t.overall?.marks || 0), 0) / testCount : 0;
+  // Using the beautifully provided backend aggregates!
+  const avgTestAcc = testAggregates?.overallAccuracy ?? 0;
+  const testsIncluded = testAggregates?.testsIncluded || 1;
+  const avgTestScore = testAggregates?.totalMarks ? testAggregates.totalMarks / testsIncluded : 0;
+  const totalMocks = data.totalUniqueMockTests || 0;
 
   // 2A. Test KPIs
   const testKpis = [
-    { label: "Mock Accuracy", value: testCount > 0 ? `${avgTestAcc.toFixed(1)}%` : "--", sub: "Avg in recent tests", icon: React.createElement(FiTarget, { size: 16 }) },
-    { label: "Avg Score", value: testCount > 0 ? Math.round(avgTestScore).toString() : "--", sub: "Out of 300", icon: React.createElement(FiActivity, { size: 16 }) },
+    { label: "Mock Accuracy", value: `${avgTestAcc.toFixed(1)}%`, sub: "Avg in recent tests", icon: React.createElement(FiTarget, { size: 16 }) },
+    { label: "Avg Score", value: Math.round(avgTestScore).toString(), sub: "Per Test Average", icon: React.createElement(FiActivity, { size: 16 }) },
     { label: "AIR Prediction", value: "--", sub: "Take more tests to unlock", icon: React.createElement(FiAward, { size: 16 }) },
-    { label: "Mocks Attempted", value: testCount.toString(), sub: "Recent tests recorded", icon: React.createElement(FiCheckSquare, { size: 16 }) },
+    { label: "Mocks Attempted", value: totalMocks.toString(), sub: "Total tests recorded", icon: React.createElement(FiCheckSquare, { size: 16 }) },
   ];
 
   // 2B. Practice KPIs
   const chapterKpis = [
-    { label: "Practice Accuracy", value: practice?.overall?.accuracy ? `${practice.overall.accuracy.toFixed(1)}%` : "--", sub: "Overall chapter accuracy", icon: React.createElement(FiCrosshair, { size: 16 }) },
-    { label: "Avg Time", value: practice?.overall?.avgTimePerQuestion ? `${Math.round(practice.overall.avgTimePerQuestion)}s` : "--", sub: "Per question", icon: React.createElement(FiClock, { size: 16 }) },
-    { label: "Total Marks", value: practice?.overall?.totalMarksEarned?.toString() ?? "0", sub: "Earned in practice", icon: React.createElement(FiAward, { size: 16 }) },
-    { label: "Questions Solved", value: practice?.overall?.totalAttempts?.toString() ?? "0", sub: "Total attempts made", icon: React.createElement(FiCheckSquare, { size: 16 }) },
+    { label: "Practice Accuracy", value: practiceOverall?.accuracy ? `${practiceOverall.accuracy.toFixed(1)}%` : "--", sub: "Overall chapter accuracy", icon: React.createElement(FiCrosshair, { size: 16 }) },
+    { label: "Avg Time", value: practiceOverall?.avgTimePerQuestion ? `${Math.round(practiceOverall.avgTimePerQuestion)}s` : "--", sub: "Per question", icon: React.createElement(FiClock, { size: 16 }) },
+    { label: "Total Marks", value: practiceOverall?.totalMarksEarned?.toString() ?? "0", sub: "Earned in practice", icon: React.createElement(FiAward, { size: 16 }) },
+    { label: "Questions Solved", value: practiceOverall?.totalAttempts?.toString() ?? "0", sub: "Total attempts made", icon: React.createElement(FiCheckSquare, { size: 16 }) },
   ];
 
-  // 3. Map Score Growth
+  // 3. Map Score Growth (Reversed for chronological left-to-right order)
   const scoreData = [{
     id: 'Mock Score',
     data: last5Tests.map((test: DashboardTestAttempt, index: number) => ({
-      x: `Test ${index + 1}`,
+      x: `T${last5Tests.length - index}`,
       y: test.overall?.marks || 0
     })).reverse() 
   }];
 
-  // 4. Map Subject Accuracy 
-  const radarData = (practice?.subjects || []).map((sub: SubjectPractice, index: number) => ({
+  // 4. Map Subject Accuracy (Point to the new practice.overall grouping)
+  const radarData = (practice?.overall?.subjects || []).map((sub: SubjectPractice, index: number) => ({
     subject: sub.subjectName || getSubjectName(sub.subjectId, index),
     Accuracy: sub.accuracy || 0
   }));
 
-  // 5. Map Question Types 
-  const typeData = (practice?.questionTypes || []).map((qt: QuestionTypeStat) => ({
+  // 5. Map Question Types (Point to the new practice.overall grouping)
+  const typeData = (practice?.overall?.questionTypes || []).map((qt: QuestionTypeStat) => ({
     type: qt.questionType || 'Unknown',
     accuracy: qt.accuracy || 0
   }));
@@ -72,15 +78,7 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
     const dateObj = new Date(test.createdAt);
     const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     
-    // --- 🚨 FIX: STRICT TYPING INSTEAD OF 'any' ---
-    const pd = test.paperDetails as {
-      exam?: { name: string };
-      year?: number | string;
-      date?: string;
-      month?: string;
-      shift?: string;
-    } | undefined;
-    
+    const pd = test.paperDetails;
     const examRawName = pd?.exam?.name || "Mock";
     
     // Clean up exam name formatting
@@ -88,19 +86,13 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
     if (examRawName === "JEE_MAIN") formattedExamName = "JEE Main";
     if (examRawName === "JEE_ADVANCED") formattedExamName = "JEE Advanced";
 
-    // Grab detailed components safely
     const year = pd?.year || "";
     const date = pd?.date || "";
     const month = pd?.month || "";
-    const shift = pd?.shift ? `(${pd.shift})` : "";
+    const shift = pd?.shift ? `(${pd.shift.replace("_", " ")})` : "";
 
-    // Combine them intelligently
     let title = [formattedExamName, year, date, month, shift].filter(Boolean).join(" ").trim();
-    
-    // If paper details are missing entirely, fallback safely
-    if (!year && !date && !month) {
-        title = `${formattedExamName} Test`;
-    }
+    if (!year && !date && !month) title = `${formattedExamName} Test`;
 
     return {
         id: test.testId,

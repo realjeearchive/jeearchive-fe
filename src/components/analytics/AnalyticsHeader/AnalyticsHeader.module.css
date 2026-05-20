@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: space-between;
   margin: 10px 0;
+  z-index: 1;
 }
 
 .title {
@@ -33,6 +34,7 @@
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
+
 }
 
 .trigger:hover {

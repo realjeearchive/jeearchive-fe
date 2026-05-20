@@ -65,7 +65,7 @@ export interface FinalVerdictItem {
   timeSpent: number;
   markedForReview: boolean;
   userAnswer: string[];
-  verdict: "correct" | "wrong" | "unattempted" | "partial"; // Assuming these are the possible values based on standard logic
+  verdict: "correct" | "wrong" | "unattempted" | "partial";
   marks: number;
   totalPositiveMarks: number;
   totalNegativeMarks: number;

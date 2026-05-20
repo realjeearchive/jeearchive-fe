@@ -1,12 +1,14 @@
 // src/features/analytics/singleTestTransformer.ts
 
+import { SingleTestPayload } from "./singleTestApi";
+
 export interface TransformedSingleTestUI {
   meta: {
     myScore: number;
     totalMarks: number;
     accuracy: number;
-    timeTaken: number; 
-    examType: "MAIN" | "ADVANCED"; // 🚨 NEW: Added exam type tracking
+    timeTaken: number;
+    examType: "MAIN" | "ADVANCED";
   };
   stats: {
     correct: number;
@@ -22,62 +24,70 @@ export interface TransformedSingleTestUI {
   };
 }
 
-export interface RawAnalyticsInput {
-  testName?: string; // For dynamic extraction
-  name?: string;
-  overall?: Record<string, number | string>;
-  overAllAnalytics?: Record<string, number>;
-  math?: Record<string, number> | null;
-  physics?: Record<string, number> | null;
-  chemistry?: Record<string, number> | null;
-}
-
-export const transformSingleTestData = (rawData: unknown): TransformedSingleTestUI | null => {
+export const transformSingleTestData = (rawData: SingleTestPayload | null): TransformedSingleTestUI | null => {
   if (!rawData) return null;
 
-  const data = rawData as RawAnalyticsInput;
-  const overallData = data.overall || data.overAllAnalytics || {};
+  const { math, physics, chemistry, overall, exam } = rawData;
 
-  const math = data.math || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
-  const phy = data.physics || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
-  const chem = data.chemistry || { marks: 0, attempt: 0, accuracy: 0, timeTaken: 0, positiveMarks: 0, negativeMarks: 0 };
+  // Calculate total marks based on exam type
+  const isAdvanced = exam?.toLowerCase().includes("advanced") || false;
+  const totalMarks = isAdvanced ? 180 : 300;
+  const marksPerSubject = totalMarks / 3;
 
-  const myScore = (overallData.totalScore as number) ?? (math.marks + phy.marks + chem.marks);
-  const totalMarks = (overallData.maxScore as number) ?? 300;
-  
-  const positiveScore = (math.positiveMarks || 0) + (phy.positiveMarks || 0) + (chem.positiveMarks || 0);
-  const negativeScore = (math.negativeMarks || 0) + (phy.negativeMarks || 0) + (chem.negativeMarks || 0);
-  
-  const totalQs = (overallData.totalQuestions as number) || (overallData["total Questions"] as number) || 75;
-  const attempted = (overallData.totalAttempted as number) || (overallData.attempt as number) || 0;
-  const correct = (overallData.totalCorrect as number) || (overallData.correct as number) || 0;
-  const timeTakenSecs = (overallData.totalTimeTaken as number) || (overallData["total Time Taken"] as number) || 0;
-  const accuracy = (overallData.overallAccuracy as number) || (overallData.accuracy as number) || 0;
+  // My Score (total marks obtained)
+  const myScore = (math?.marks || 0) + (physics?.marks || 0) + (chemistry?.marks || 0);
 
-  // 🚨 FIX: Extract exam type dynamically based on Test Name or Total Marks
-  const testNameStr = (data.testName || data.name || "").toLowerCase();
-  const isAdvanced = testNameStr.includes("advanced") || totalMarks !== 300;
-  const examType = isAdvanced ? "ADVANCED" : "MAIN";
+  // Positive and Negative scores
+  const positiveScore = (math?.positiveMarks || 0) + (physics?.positiveMarks || 0) + (chemistry?.positiveMarks || 0);
+  const negativeScore = (math?.negativeMarks || 0) + (physics?.negativeMarks || 0) + (chemistry?.negativeMarks || 0);
+
+  // Stats from overall
+  const totalQs = overall?.totalQuestions || 75;
+  const attempted = overall?.totalAttempted || 0;
+  const correct = overall?.totalCorrect || 0;
+  const accuracy = overall?.overallAccuracy || 0;
+  const timeTakenSecs = overall?.totalTimeTaken || 0;
 
   return {
     meta: {
       myScore: myScore,
-      totalMarks: totalMarks, 
+      totalMarks: totalMarks,
       accuracy: Number(accuracy.toFixed(1)),
-      timeTaken: Math.round(timeTakenSecs / 60), 
-      examType: examType, // Passes to the UI
+      timeTaken: Math.round(timeTakenSecs / 60), // Convert seconds to minutes
+      examType: isAdvanced ? "ADVANCED" : "MAIN",
     },
     stats: {
       correct: correct,
       attempted: attempted,
       totalQs: totalQs,
       positiveScore: positiveScore,
-      negativeScore: negativeScore
+      negativeScore: negativeScore,
     },
     subjects: {
-      maths: { name: "Mathematics", score: math.marks, total: totalMarks/3, attempted: math.attempt, accuracy: Math.round(math.accuracy), time: Math.round(math.timeTaken / 60) },
-      physics: { name: "Physics", score: phy.marks, total: totalMarks/3, attempted: phy.attempt, accuracy: Math.round(phy.accuracy), time: Math.round(phy.timeTaken / 60) },
-      chemistry: { name: "Chemistry", score: chem.marks, total: totalMarks/3, attempted: chem.attempt, accuracy: Math.round(chem.accuracy), time: Math.round(chem.timeTaken / 60) }
-    }
+      maths: {
+        name: "Mathematics",
+        score: math?.marks || 0,
+        total: marksPerSubject,
+        attempted: math?.attempt || 0,
+        accuracy: Math.round(math?.accuracy || 0),
+        time: Math.round((math?.timeTaken || 0) / 60),
+      },
+      physics: {
+        name: "Physics",
+        score: physics?.marks || 0,
+        total: marksPerSubject,
+        attempted: physics?.attempt || 0,
+        accuracy: Math.round(physics?.accuracy || 0),
+        time: Math.round((physics?.timeTaken || 0) / 60),
+      },
+      chemistry: {
+        name: "Chemistry",
+        score: chemistry?.marks || 0,
+        total: marksPerSubject,
+        attempted: chemistry?.attempt || 0,
+        accuracy: Math.round(chemistry?.accuracy || 0),
+        time: Math.round((chemistry?.timeTaken || 0) / 60),
+      },
+    },
   };
 };
