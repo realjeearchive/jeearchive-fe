@@ -179,7 +179,11 @@
   overflow-y: auto; 
   min-width: 0;
   scrollbar-width: none;
-  padding: 50px;
+  padding: 25px;
+}
+
+@media (max-width: 768px) {
+  .rightContent { padding: 0; }
 }
 
 .rightContent::-webkit-scrollbar {
