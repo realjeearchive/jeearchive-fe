@@ -1,11 +1,13 @@
 .appWrap {
   display: flex;
   min-height: 100vh;
+  height: 100vh;
+  padding: 10px;
+  overflow-x: hidden;
+  width: 100%;
   background: var(--dashboard-background-color);
   color: #ddd;
   font-family: Inter, sans-serif;
-  padding: 10px;
-  height: 100vh;
 }
 
 .sidebarContainer {
@@ -23,10 +25,10 @@
 
 .dashboard {
   flex: 1;
+  min-width: 0;
   padding: 0 16px;
-  overflow-y: auto;              
-  scrollbar-width: none;         
-  -ms-overflow-style: none;   
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 @media (max-width: 600px) {
