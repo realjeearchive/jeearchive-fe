@@ -1,88 +1,116 @@
-.listContainer {
+.container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-top: 8px;
-  position: relative;
+  gap: 12px;
+  padding-top: 4px;
+  height: 100%;
 }
 
-.faded {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--dashboard-secondary-text-color);
-  width: 120px; /* Fixed width for perfect alignment */
+/* Chart */
+.chartArea {
+  width: 100%;
+  height: 200px;
   flex-shrink: 0;
 }
 
-.track {
-  flex: 1;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-  overflow: hidden;
+/* Stats Row */
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.fill {
-  height: 100%;
-  background-color: var(--dashboard-core-color);
-  border-radius: 4px;
-  transition: width 0.5s ease;
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.value {
-  font-size: 14px;
+.statIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statIcon[data-type="leakage"] {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.statIcon[data-type="positive"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.statIcon[data-type="negative"] {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.statLabel {
+  font-size: 10px;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.statValue {
+  font-size: 16px;
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
   font-family: monospace;
-  width: 40px;
-  text-align: right;
-  flex-shrink: 0;
 }
 
-.spacer {
-  flex: 1;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+.statValue.positive {
+  color: #10b981;
 }
 
-.valueBadge {
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
-  color: var(--dashboard-primary-text-color);
+.statValue.negative {
+  color: #ef4444;
 }
-
-/* Subtle tints for momentum/leakage if desired, otherwise kept neutral */
-.negative { color: var(--dashboard-core-color); }
-.positive { color: #10b981; }
 
 .divider {
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.05);
-  margin: 4px 0;
+  width: 1px;
+  height: 28px;
+  background: var(--dashboard-sidebar-border-color);
+  opacity: 0.4;
 }
 
-.emptyOverlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #1e1d1b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  gap: 8px;
   color: var(--dashboard-secondary-text-color);
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.emptyIcon {
+  opacity: 0.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chartArea {
+    height: 170px;
+  }
 }

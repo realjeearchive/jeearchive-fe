@@ -4,6 +4,80 @@
   position: relative;
 }
 
+/* Tooltip */
+.tooltip {
+  background: #1a1917;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipSubject {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+}
+
+.tooltipValue {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  font-family: monospace;
+}
+
+/* Badges Row */
+.badgesRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 0 0;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.badgeBest {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.badgeWorst {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.badgeLabel {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.badgeSubject {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 500;
+}
+
+.badgeValue {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+/* Empty state */
 .emptyState {
   width: 100%;
   height: 100%;
@@ -11,17 +85,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  opacity: 0.5; /* Keeps it subtle so it doesn't distract */
+  gap: 10px;
 }
 
-.emptyIcon {
-  font-size: 32px;
+.emptyIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.4;
 }
 
-.emptyText {
+.emptyTitle {
   font-size: 13px;
   font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  opacity: 0.5;
+}
+
+.emptySub {
+  font-size: 11px;
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.4;
 }

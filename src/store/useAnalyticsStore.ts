@@ -1,3 +1,4 @@
+// src/store/useAnalyticsStore.ts
 "use client";
 
 import { create } from "zustand";

@@ -4,6 +4,45 @@
   position: relative;
 }
 
+/* Tooltip */
+.tooltip {
+  background: #1a1917;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.tooltipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltipLabel {
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 500;
+}
+
+.tooltipValue {
+  color: var(--dashboard-primary-text-color);
+  font-weight: 600;
+  font-family: monospace;
+  margin-left: auto;
+}
+
+/* Empty state */
 .emptyState {
   width: 100%;
   height: 100%;
@@ -11,29 +50,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 🚨 Removed the weird gray background box, made it transparent */
-  background: transparent;
-  gap: 8px;
+  gap: 10px;
 }
 
-.emptyIcon {
+.emptyIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--dashboard-secondary-text-color);
-  opacity: 0.4; /* Made slightly more subtle */
+  opacity: 0.4;
 }
 
-.emptyText {
+.emptyTitle {
   font-size: 13px;
-  color: var(--dashboard-secondary-text-color);
   font-weight: 500;
-  opacity: 0.6; /* Made slightly more subtle */
+  color: var(--dashboard-primary-text-color);
+  opacity: 0.5;
 }
 
-.fakeGraph {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  width: 100%;
-  height: 40px;
-  opacity: 0.15; /* 🚨 Reduced opacity so it doesn't distract */
-  pointer-events: none;
+.emptySub {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.4;
 }

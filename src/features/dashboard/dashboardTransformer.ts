@@ -1,6 +1,7 @@
 import React from 'react';
 import { FiAward, FiClock, FiTarget, FiCheckSquare, FiActivity, FiCrosshair } from 'react-icons/fi';
 import { DashboardDataPayload, DashboardTestAttempt, SubjectPractice, QuestionTypeStat } from '@/store/useDashboardStore';
+import { ExamFilter } from '@/components/dashboard/DashboardHeader/DashboardHeader';
 
 const getSubjectName = (id: string, index: number): string => {
   const map: Record<string, string> = {
@@ -12,17 +13,18 @@ const getSubjectName = (id: string, index: number): string => {
   return map[id] || fallback[index] || "Unknown";
 };
 
-export const transformDashboardData = (data: DashboardDataPayload | null) => {
+export const transformDashboardData = (data: DashboardDataPayload | null, examFilter: ExamFilter = "overall") => {
   if (!data) return null;
 
   const { tests, practice, uniqueQuestionsAttempted } = data;
-  
-  // Point to the new "overall" grouping
-  const last5Tests = tests?.overall?.last5 || [];
-  const testAggregates = tests?.overall?.aggregate;
-  const practiceOverall = practice?.overall?.overall;
 
-  // 1. Map Progress Cards
+  // Use examFilter to pick the right data
+  const last5Tests = tests?.[examFilter]?.last5 || [];
+  const testAggregates = tests?.[examFilter]?.aggregate;
+  const practiceCategory = practice?.[examFilter];
+  const practiceOverall = practiceCategory?.overall;
+
+  // 1. Map Progress Cards (always from overall uniqueQuestionsAttempted)
   const progress = {
     phy: { solved: uniqueQuestionsAttempted?.subjectWise?.Physics?.uniqueAttempted ?? 0, total: uniqueQuestionsAttempted?.subjectWise?.Physics?.totalQuestions ?? 3200 },
     chem: { solved: uniqueQuestionsAttempted?.subjectWise?.Chemistry?.uniqueAttempted ?? 0, total: uniqueQuestionsAttempted?.subjectWise?.Chemistry?.totalQuestions ?? 3200 },
@@ -30,11 +32,10 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
   };
 
   // --- KPI CALCULATIONS ---
-  // Using the beautifully provided backend aggregates!
   const avgTestAcc = testAggregates?.overallAccuracy ?? 0;
   const testsIncluded = testAggregates?.testsIncluded || 1;
   const avgTestScore = testAggregates?.totalMarks ? testAggregates.totalMarks / testsIncluded : 0;
-  const totalMocks = data.totalUniqueMockTests || 0;
+  const totalMocks = testAggregates?.testsIncluded || data.totalUniqueMockTests || 0;
 
   // 2A. Test KPIs
   const testKpis = [
@@ -52,36 +53,35 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
     { label: "Questions Solved", value: practiceOverall?.totalAttempts?.toString() ?? "0", sub: "Total attempts made", icon: React.createElement(FiCheckSquare, { size: 16 }) },
   ];
 
-  // 3. Map Score Growth (Reversed for chronological left-to-right order)
+  // 3. Map Score Growth
   const scoreData = [{
     id: 'Mock Score',
     data: last5Tests.map((test: DashboardTestAttempt, index: number) => ({
       x: `T${last5Tests.length - index}`,
       y: test.overall?.marks || 0
-    })).reverse() 
+    })).reverse()
   }];
 
-  // 4. Map Subject Accuracy (Point to the new practice.overall grouping)
-  const radarData = (practice?.overall?.subjects || []).map((sub: SubjectPractice, index: number) => ({
+  // 4. Map Subject Accuracy (from practice category for selected exam)
+  const radarData = (practiceCategory?.subjects || []).map((sub: SubjectPractice, index: number) => ({
     subject: sub.subjectName || getSubjectName(sub.subjectId, index),
     Accuracy: sub.accuracy || 0
   }));
 
-  // 5. Map Question Types (Point to the new practice.overall grouping)
-  const typeData = (practice?.overall?.questionTypes || []).map((qt: QuestionTypeStat) => ({
+  // 5. Map Question Types
+  const typeData = (practiceCategory?.questionTypes || []).map((qt: QuestionTypeStat) => ({
     type: qt.questionType || 'Unknown',
     accuracy: qt.accuracy || 0
   }));
 
-  // 6. Map Recent Tests perfectly for the UI List Component
+  // 6. Map Recent Tests
   const recentTestItems = last5Tests.map((test) => {
     const dateObj = new Date(test.createdAt);
     const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-    
+
     const pd = test.paperDetails;
     const examRawName = pd?.exam?.name || "Mock";
-    
-    // Clean up exam name formatting
+
     let formattedExamName = examRawName.replace("_", " ");
     if (examRawName === "JEE_MAIN") formattedExamName = "JEE Main";
     if (examRawName === "JEE_ADVANCED") formattedExamName = "JEE Advanced";
@@ -95,10 +95,10 @@ export const transformDashboardData = (data: DashboardDataPayload | null) => {
     if (!year && !date && !month) title = `${formattedExamName} Test`;
 
     return {
-        id: test.testId,
-        title: title, 
-        meta: `Score: ${test.overall?.marks}/${test.overall?.maxMarks || 300} • ${formattedDate}`,
-        href: `/analytics/tests/${test.testId}`
+      id: test.testId,
+      title: title,
+      meta: `Score: ${test.overall?.marks}/${test.overall?.maxMarks || 300} • ${formattedDate}`,
+      href: `/analytics/tests/${test.testId}`
     };
   });
 

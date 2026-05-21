@@ -1,87 +1,139 @@
-.list {
+.container {
   display: flex;
   flex-direction: column;
-  padding-top: 8px;
+  height: 100%;
+  width: 100%;
 }
 
-.row {
+/* --- Filter Pills --- */
+.filterRow {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: background-color 0.2s ease;
-  border-radius: 6px;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.row:last-child {
-  border-bottom: none;
-}
-
-.row:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-}
-
-.left {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.dotAlert {
-  background-color: var(--dashboard-core-color); /* Highlights high priority */
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-}
-
-.textStack {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.chapter {
-  font-size: 13px;
+.filterBtn {
+  background: transparent;
+  border: none;
+  color: var(--dashboard-secondary-text-color);
+  font-size: 11px;
   font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterBtn:hover {
   color: var(--dashboard-primary-text-color);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeFilter {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--dashboard-primary-text-color);
+}
+
+/* --- Chart Area --- */
+.chartWrapper {
+  height: 280px; /* Gives the scatter plot plenty of room to breathe */
+  width: 100%;
+}
+
+/* Container for the tooltip */
+.tooltipRoot {
+  pointer-events: none;
+  z-index: 10000; /* High z-index to stay above everything */
+}
+
+.tooltipContainer {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 10px;
+  min-width: 120px;
+}
+
+.tooltipHeader {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 8px;
+}
+
+.tooltipSubject {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 700;
+}
+
+.tooltipChapter {
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
   line-height: 1.3;
 }
 
-.subject {
-  font-size: 11px;
-  color: var(--dashboard-secondary-text-color);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.right {
+.tooltipStats {
   display: flex;
-  align-items: center;
+  gap: 12px;
 }
 
-.accuracy {
-  font-size: 14px;
+.statBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dashboard-core-color);
   font-family: monospace;
-  font-weight: 600;
+}
+
+.statLabel {
+  font-size:8;
   color: var(--dashboard-secondary-text-color);
 }
 
-.row:hover .accuracy {
-  color: var(--dashboard-primary-text-color); /* Brightens on hover */
+.statBad {
+  color: #ef4444; /* Highlights the bad accuracy */
+  font-family: monospace;
+  font-size: 12px;
 }
 
-.empty {
-  padding: 40px 0;
-  text-align: center;
-  font-size: 13px;
+/* --- Empty State --- */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
   color: var(--dashboard-secondary-text-color);
   opacity: 0.5;
+}
+
+.emptyIcon {
+  color: #10b981;
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+}
+
+.emptySub {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .filterRow {
+    display: none; /* Can hide on very small screens, or turn into a dropdown */
+  }
 }

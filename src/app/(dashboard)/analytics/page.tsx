@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import AnalyticsHeader, { TimeRange } from "@/components/analytics/AnalyticsHeader/AnalyticsHeader";
+import styles from "./analyticsPage.module.css";
+import AnalyticsHeader, { TimeRange, ExamTypeUI } from "@/components/analytics/AnalyticsHeader/AnalyticsHeader";
 
 // Components
 import { GlobalStats } from "@/components/analytics/Overall/GlobalStats/GlobalStats";
@@ -13,7 +14,6 @@ import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatri
 import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
 import { Loader } from "@/components/ui/loader";
 
-// Store & Logic
 import { useAnalyticsStore } from "@/store/useAnalyticsStore";
 import { fetchAnalyticsData } from "@/features/analytics/api";
 import { transformAnalyticsData, TransformedAnalyticsUI } from "@/features/analytics/analyticsTransformer";
@@ -30,6 +30,7 @@ const DATA_EMPTY: TransformedAnalyticsUI = {
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("Last 5 Tests");
+  const [examType, setExamType] = useState<ExamTypeUI>("Overall");
 
   const { 
     rawAnalytics, 
@@ -47,69 +48,63 @@ export default function AnalyticsPage() {
       try {
         const response = await fetchAnalyticsData();
         if (response.success && response.data) {
-          console.info("[Analytics] Overall history analytics compiled successfully.");
           setAnalyticsData(response.data);
         } else {
           setError("Performance analysis metrics are unavailable right now.");
         }
       } catch (err: unknown) {
-        console.error("[Analytics] History fetch failed:", err);
         setError("Connection drop. Please refresh.");
       }
     };
 
-    if (!rawAnalytics) {
-      loadAnalytics();
-    } else {
-      setLoading(false);
-    }
+    if (!rawAnalytics) loadAnalytics();
+    else setLoading(false);
   }, [rawAnalytics, setAnalyticsData, setLoading, setError]);
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      <div className={styles.loaderContainer}>
         <Loader label="Crunching your performance data..." />
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh] text-red-500 text-sm font-medium">
-        {error}
-      </div>
-    );
+    return <div className={styles.errorContainer}>{error}</div>;
   }
 
   const newUser = isNewUser();
-  const transformedData = transformAnalyticsData(rawAnalytics, timeRange);
+  // Pass BOTH filters to the transformer
+  const transformedData = transformAnalyticsData(rawAnalytics, timeRange, examType);
   const currentData = (newUser || !transformedData) ? DATA_EMPTY : transformedData;
 
   return (
-    <div className="max-w-[1600px] mx-auto min-h-screen">
+    <div className={styles.pageContainer}>
       <AnalyticsHeader 
         selectedRange={timeRange} 
         onRangeChange={setTimeRange} 
+        selectedExam={examType}
+        onExamChange={setExamType}
       />
 
       <GlobalStats data={currentData.global} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 mb-[16px]">
-        <div className="lg:col-span-2">
+      <div className={styles.gridChartRow}>
+        <div className={styles.chartSpan2}>
           <PerformanceGraph data={currentData.graph} />
         </div>
-        <div className="lg:col-span-1">
+        <div>
           <SubjectRadar data={currentData.radar} />
         </div>
       </div>
 
       <SubjectDeepDive data={currentData.deepDive} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-[16px]">
-        <div className="min-w-0">
+      <div className={styles.gridMetricRow}>
+        <div className={styles.minWidth0}>
           <EfficiencyMatrix data={currentData.efficiency} />
         </div>
-        <div className="min-w-0">
+        <div className={styles.minWidth0}>
           <WeaknessHunter data={currentData.weakness} />
         </div>
       </div>

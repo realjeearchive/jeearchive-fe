@@ -1,76 +1,64 @@
 .headerContainer {
   display: flex;
-  justify-content: start;
   align-items: center;
-  padding-bottom: 0;
-  z-index: 1;
-}
-
-.staticTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--dashboard-primary-text-color);
-  margin: 0;
-  letter-spacing: -0.01em;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .dropdownWrapper {
   position: relative;
-  z-index: 50;
-  min-width: 200px;
+  z-index: 2;
 }
 
 .triggerButton {
-  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  
+  gap: 8px;
   background: transparent;
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--dashboard-primary-text-color);
-  
-  padding: 8px 12px;
+  padding: 7px 12px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .triggerButton:hover {
   background: rgba(255, 255, 255, 0.03);
-  border-color: var(--dashboard-dividerline-color);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .triggerButton.active {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--dashboard-dividerline-color);
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 .triggerText {
   font-size: 13px;
-  font-weight: 500;
 }
 
 .chevron {
-  font-size: 14px;
   color: var(--dashboard-secondary-text-color);
+  font-size: 14px;
   transition: transform 0.2s ease;
 }
-.rotate { transform: rotate(180deg); }
+
+.rotate {
+  transform: rotate(180deg);
+}
 
 .dropdownMenu {
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
-  width: 100%;
-  
+  left: 0;
+  min-width: 160px;
   background: #18181b;
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   padding: 4px;
-  
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   animation: fadeIn 0.15s ease-out;
 }
 
@@ -97,17 +85,4 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 600px) {
-  .headerContainer {
-    flex-direction: row;
-    align-items: center;
-  }
-  .staticTitle {
-    font-size: 18px;
-  }
-  .dropdownWrapper {
-    min-width: 160px;
-  }
 }

@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './dashboardPage.module.css';
 
-// Components
-import DashboardHeader from '@/components/dashboard/DashboardHeader/DashboardHeader';
+import DashboardHeader, { ExamFilter } from '@/components/dashboard/DashboardHeader/DashboardHeader';
 import KpiCard from '@/components/dashboard/KpiCard/KpiCard';
 import PyqProgressCard from "@/components/dashboard/PyqProgressCard/PyqProgressCard";
 import ScoreGrowthChart from '@/components/dashboard/ScoreGrowthChart/ScoreGrowthChart';
@@ -13,9 +12,8 @@ import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTyp
 import TestListSection, { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
 import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner/WelcomeBanner';
-import { Loader } from '@/components/ui/loader'; // 🔥 UNIFIED LOADER IMPORT
+import { Loader } from '@/components/ui/loader';
 
-// Logic & Store
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { fetchDashboardData } from '@/features/dashboard/api';
 import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
@@ -31,28 +29,22 @@ const chapterItems: TestListItem[] = [
 
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
+  const [examFilter, setExamFilter] = useState<ExamFilter>("overall");
 
   const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
 
   useEffect(() => {
-
     const loadDashboard = async () => {
       setLoading(true);
       try {
         const response = await fetchDashboardData();
         if (response.success && response.data) {
-          console.info("[Dashboard] Successfully loaded performance graphs.");
           setDashboardData(response.data);
         } else {
           setError("Metrics unavailable.");
         }
       } catch (err: unknown) {
-        console.error("[Dashboard] Background fetch failed:", err);
-        if (err instanceof Error) {
-          setError("Connection drop. Please refresh.");
-        } else {
-          setError("Connection drop. Please refresh.");
-        }
+        setError("Connection drop. Please refresh.");
       }
     };
 
@@ -60,7 +52,6 @@ export default function DashboardPage() {
     else setLoading(false);
   }, [rawReport, setDashboardData, setLoading, setError]);
 
-  // 🔥 FIXED: Standardized loader implementation matching the test suite
   if (isLoading) {
     return (
       <div className={styles.loaderContainer}>
@@ -72,17 +63,22 @@ export default function DashboardPage() {
   if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
 
   const newUser = isNewUser();
-  const uiData = transformDashboardData(rawReport); 
+  const uiData = transformDashboardData(rawReport, examFilter);
 
-  if (!uiData) return null; 
+  if (!uiData) return null;
 
   const activeKpis = viewMode === "test" ? uiData.testKpis : uiData.chapterKpis;
 
   return (
     <div className={styles.page}>
-      {!newUser && 
-        <DashboardHeader currentView={viewMode} onViewChange={setViewMode} />
-      }
+      {!newUser && (
+        <DashboardHeader
+          currentView={viewMode}
+          onViewChange={setViewMode}
+          examFilter={examFilter}
+          onExamFilterChange={setExamFilter}
+        />
+      )}
 
       {newUser && (
         <div style={{ marginBottom: '8px' }}>
@@ -126,18 +122,6 @@ export default function DashboardPage() {
           )}
         </>
       )}
-
-      {/* <div className={styles.listSectionWrapper}>
-        <TestListSection 
-          heading="Recent Mock Tests" 
-          items={uiData.recentTestItems.length > 0 ? uiData.recentTestItems : pyqItems} 
-        />
-        <TestListSection heading="Chapter-wise Practice" items={chapterItems} />
-      </div>
-
-      <div className={styles.detailedAnalysisWrapper}>
-        <DetailedAnalysisSection disabled={newUser} />
-      </div> */}
     </div>
   );
 }

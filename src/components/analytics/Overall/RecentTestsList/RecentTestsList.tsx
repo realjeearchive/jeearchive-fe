@@ -26,65 +26,48 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
 
   if (isEmpty || !data || data.length === 0) {
     return (
-      <AnalyticsCard title="Recent Test Activity">
+      <AnalyticsCard title="Recent Activity">
         <div className={styles.emptyState}>
-          <FiClock size={20} className={styles.emptyIcon} />
-          <span className={styles.emptyText}>No recent tests found</span>
+          <FiClock size={16} className={styles.emptyIcon} />
+          <span>No recent tests</span>
         </div>
       </AnalyticsCard>
     );
   }
 
   return (
-    <AnalyticsCard title="Recent Test Activity">
-      <div className={styles.ledgerContainer}>
-        
-        {/* Optional Header Row for Context (Like a table header) */}
-        <div className={styles.ledgerHeader}>
-          <div className={styles.colInfo}>TEST DETAILS</div>
-          <div className={styles.colScore}>FINAL SCORE</div>
-          <div className={styles.colActions}>ACTIONS</div>
-        </div>
-
-        <div className={styles.listWrapper}>
-          {data.map((test, index) => (
-            <div key={`${test.id}-${index}`} className={styles.row}>
-              
-              {/* Left: Status, Title, Date */}
-              <div className={styles.colInfo}>
-                <div className={styles.textStack}>
-                  <span className={styles.title}>{test.title}</span>
-                  <span className={styles.date}>{test.date}</span>
-                </div>
-              </div>
-
-              {/* Middle: Score */}
-              <div className={styles.colScore}>
-                <div className={styles.scoreBlock}>
-                  <span className={styles.score}>{test.score}</span>
-                  <span className={styles.maxScore}>/ {test.totalMarks}</span>
-                </div>
-              </div>
-
-              {/* Right: Actions */}
-              <div className={styles.colActions}>
-                <button 
-                  className={`${styles.btn} ${styles.btnPrimary}`} 
-                  onClick={() => router.push(`/analytics/tests/${test.id}`)}
-                >
-                  <FiBarChart2 size={12} /> <span>Analytics</span>
-                </button>
-                <button 
-                  className={`${styles.btn} ${styles.btnSecondary}`} 
-                  onClick={() => router.push(`/solutions/${test.id}`)}
-                >
-                  <FiBookOpen size={12} /> <span>Solutions</span>
-                </button>
-              </div>
-
+    <AnalyticsCard title="Recent Activity">
+      <div className={styles.list}>
+        {data.map((test, index) => (
+          <div key={`${test.id}-${index}`} className={styles.row}>
+            <div className={styles.info}>
+              <span className={styles.title}>{test.title}</span>
+              <span className={styles.meta}>{test.date}</span>
             </div>
-          ))}
-        </div>
+
+            <div className={styles.right}>
+              <span className={styles.score}>
+                {test.score}<span className={styles.max}>/{test.totalMarks}</span>
+              </span>
+
+              <button
+                className={styles.btn}
+                onClick={() => router.push(`/analytics/tests/${test.id}`)}
+                title="View Analytics"
+              >
+                <FiBarChart2 size={13} />
+              </button>
+
+              <button
+                className={styles.btn}
+                onClick={() => router.push(`/solutions/${test.id}`)}
+                title="View Solutions"
+              >
+                <FiBookOpen size={13} />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </AnalyticsCard>
   );
