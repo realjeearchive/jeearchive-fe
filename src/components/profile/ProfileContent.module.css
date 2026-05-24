@@ -1,14 +1,16 @@
 
 .container {
-  margin: 0 auto;
   background: var(--dashboard-background-color);
   color: var(--dashboard-primary-text-color);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .pageTitle {
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 28px;
 }
 
 .topSection {
@@ -23,6 +25,16 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
   padding: 12px 14px;
+}
+
+.actionCard{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  button{
+    text-align: center;
+  }
 }
 
 .avatarCard {
@@ -118,8 +130,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 24px;
-  margin-bottom: 24px;
 }
 
 .sectionHeading {
@@ -272,8 +282,7 @@
 
 .saveActionRow {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
+  justify-content: flex-start;
 }
 
 .saveBtn {

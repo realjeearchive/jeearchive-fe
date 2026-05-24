@@ -34,10 +34,10 @@
 .qBadge {
   background: rgba(245, 158, 11, 0.1);
   color: var(--dashboard-core-color);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 800;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +47,7 @@
 
 .faqQuestion {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--dashboard-primary-text-color);
 }
 
@@ -88,11 +88,10 @@
 /* Answer Indicator */
 .aBadge {
   background: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-secondary-text-color);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 800;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -102,7 +101,7 @@
 
 .faqAnswerText {
   color: var(--dashboard-secondary-text-color);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   margin: 0;
   font-weight: 400;
@@ -111,18 +110,20 @@
 /* --- REMAINDER OF BASE STYLES --- */
 .container {
   background: var(--dashboard-background-color);
+  padding : 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .pageTitle {
   font-size: 24px;
   font-weight: 700;
-  margin-bottom: 28px;
 }
 .infoCard {
   background: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
   padding: 14px;
-  margin-bottom: 12px;
 }
 .label {
   font-size: 11px;
@@ -146,7 +147,6 @@
 .sectionHeading {
   font-size: 16px;
   font-weight: 600;
-  margin: 24px 0 12px 4px;
 }
 .rowHeader {
   display: flex;
@@ -159,7 +159,6 @@
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
   padding: 14px;
-  margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -191,8 +190,7 @@
 }
 .saveActionRow {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
+  justify-content: flex-start;
 }
 .saveBtn {
   background-color: var(--dashboard-primary-text-color);
@@ -225,7 +223,9 @@
   color: var(--dashboard-core-color);
 }
 .detailsSection {
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 @media (max-width: 768px) {

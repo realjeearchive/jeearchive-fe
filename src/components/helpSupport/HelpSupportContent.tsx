@@ -113,12 +113,6 @@ export default function HelpSupportContent() {
           </button>
         </div>
       </div>
-
-      <div className={styles.actionCard}>
-        <div className={styles.versionLabel}>
-          JEE Archive Web App — <span className={styles.versionNumber}>v1.0.4 (MVP)</span>
-        </div>
-      </div>
     </div>
   );
 }
