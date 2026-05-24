@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0; /* Prevent overflow */
 }
 
 .sidebarToggle {
@@ -26,6 +27,7 @@
   background: transparent;
   color: var(--dashboard-icons-color); 
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .sidebarToggle:hover {
@@ -37,6 +39,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 /* --- Unified Icon Button Style --- */
@@ -51,10 +54,11 @@
   color: var(--dashboard-icons-color);
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
+  background: transparent;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.1s ease, opacity 0.18s ease;
 }
 
-.iconButton:hover {
+.iconButton:hover:not(:disabled) {
   background: var(--dashboard-link-hover-color);
   color: var(--dashboard-active-icon-color);
   border-color: var(--dashboard-dividerline-color);
@@ -63,6 +67,12 @@
 
 .iconButtonActive {
   color: var(--dashboard-primary-text-color);
+}
+
+.iconButtonDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* --- Tooltip (After) --- */
@@ -88,23 +98,25 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.iconButton:hover::after {
+.iconButton:hover:not(:disabled)::after {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) scale(1);
 }
 
-.breadcrumb {
+/* --- Page Title Style --- */
+.pageTitle {
   display: flex;
   align-items: center;
-  gap: 6px;
   padding-left: 8px;
   font-size: 13px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.breadcrumbFolder { color: var(--dashboard-secondary-text-color); }
-.breadcrumbSeparator { color: var(--dashboard-icons-color); }
-.breadcrumbCurrent { color: var(--dashboard-primary-text-color); font-weight: 500; }
 
 .rightSection {
   display: flex;
@@ -112,7 +124,16 @@
   gap: 8px;
 }
 
-/* --- Mobile Responsiveness --- */
+/* --- Responsive Design --- */
+
+/* Hide page title on tablets and below */
+@media (max-width: 1024px) {
+  .pageTitle {
+    display: none;
+  }
+}
+
+/* Mobile specific styles */
 @media (max-width: 768px) {
   /* Hide specific icons on mobile */
   .rightSection .iconButton[data-title="Discord"],
@@ -120,12 +141,10 @@
   .rightSection .iconButton[data-title="Planner"] {
     display: none !important;
   }
-
-  .breadcrumb { display: none; }
 }
 
-/* --- Hide tooltips on mobile devices --- */
-@media (max-width: 768px) {
+/* --- Hide tooltips on touch devices --- */
+@media (hover: none) and (pointer: coarse) {
   .iconButton::after {
     display: none !important;
     opacity: 0 !important;
