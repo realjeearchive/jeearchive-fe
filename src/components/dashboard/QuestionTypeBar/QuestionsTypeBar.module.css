@@ -54,41 +54,17 @@
 .emptyState {
   width: 100%;
   height: 100%;
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.01);
-  border-radius: 8px;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.emptyBarContainer {
-  position: absolute;
-  bottom: 0;
-  left: 20%;
-  right: 20%;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  opacity: 0.1;
-}
-
-.ghostBar {
-  width: 40px;
-  background: var(--dashboard-secondary-text-color);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.emptyOverlay {
-  z-index: 2;
-  align-self: center;
+.emptyContent {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: var(--dashboard-sidebar-background-color);
+  background: rgba(255, 255, 255, 0.02);
   padding: 16px 24px;
   border-radius: 8px;
   border: 1px dashed rgba(255, 255, 255, 0.1);

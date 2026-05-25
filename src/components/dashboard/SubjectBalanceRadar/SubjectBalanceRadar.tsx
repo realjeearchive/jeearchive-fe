@@ -81,7 +81,6 @@ const SubjectBalanceBar: React.FC<SubjectBalanceBarProps> = ({ data }) => {
         ) : (
           <div className={styles.emptyState}>
              <div className={styles.emptyContent}>
-                <FiCrosshair size={24} className={styles.emptyIcon} />
                 <span className={styles.emptyText}>No subject data available</span>
              </div>
           </div>

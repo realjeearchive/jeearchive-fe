@@ -151,3 +151,121 @@
     visibility: hidden !important;
   }
 }
+
+/* --- Streak Base Layout --- */
+.streakItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px; 
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.streakText {
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.streakIcon {
+  transition: transform 0.2s ease;
+}
+
+.streakItem:hover {
+  transform: translateY(-0.5px);
+}
+
+.streakItem:hover .streakIcon {
+  transform: scale(1.1); /* Subtle pop on hover */
+}
+
+/* --- Dynamic Streak Colors --- */
+
+/* 0-5 Streak (Default) */
+.streakDefault {
+  color: var(--dashboard-icons-color);
+}
+.streakDefault .streakText {
+  color: var(--dashboard-secondary-text-color);
+}
+.streakDefault:hover {
+  background: var(--dashboard-link-hover-color);
+  color: var(--dashboard-active-icon-color);
+  border-color: var(--dashboard-dividerline-color);
+}
+.streakDefault:hover .streakText {
+  color: var(--dashboard-primary-text-color);
+}
+
+/* 6-10 Streak (Yellow/Amber) */
+.streakYellow {
+  color: #FBBF24; 
+}
+.streakYellow .streakText {
+  color: #FBBF24;
+}
+.streakYellow:hover {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.2);
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+}
+
+/* 11-15 Streak (Orange) */
+.streakOrange {
+  color: #F97316; 
+}
+.streakOrange .streakText {
+  color: #F97316;
+}
+.streakOrange:hover {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.2);
+  text-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+}
+
+/* 16+ Streak (Red/Hot) */
+.streakRed {
+  color: #EF4444; 
+}
+.streakRed .streakText {
+  color: #EF4444;
+}
+.streakRed:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* --- Tooltip Logic for Streak --- */
+.streakItem::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 4px 8px;
+  background-color: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-dividerline-color);
+  color: var(--dashboard-primary-text-color);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.15s ease;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.streakItem:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}

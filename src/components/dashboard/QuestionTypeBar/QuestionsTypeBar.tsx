@@ -82,14 +82,9 @@ const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyBarContainer}>
-               <div className={styles.ghostBar} style={{ height: '40%' }}></div>
-               <div className={styles.ghostBar} style={{ height: '60%' }}></div>
-            </div>
-            <div className={styles.emptyOverlay}>
-              <FiPieChart size={20} className={styles.emptyIcon} />
-              <span className={styles.emptyText}>No question data yet</span>
-            </div>
+             <div className={styles.emptyContent}>
+                <span className={styles.emptyText}>No subject data available</span>
+             </div>
           </div>
         )}
       </div>

@@ -2,25 +2,23 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import styles from "./header.module.css";
-import { PiSidebar, PiDiscordLogo } from "react-icons/pi";
+import { PiSidebar, PiDiscordLogo, PiFire } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline, IoTimeOutline } from "react-icons/io5";
 import { FiBell } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
 import { useUserStore } from "@/store";
+import { useStreakStore } from "@/store/useStreakStore";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
 }
 
-// UUID regex pattern
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Navigation history manager using module-level variables
 let navigationStack: string[] = [];
 let currentStackIndex: number = -1;
 
-// Initialize from sessionStorage
 if (typeof window !== "undefined") {
   try {
     const stored = sessionStorage.getItem("navState");
@@ -35,7 +33,6 @@ if (typeof window !== "undefined") {
   }
 }
 
-// Helper functions
 const formatSegment = (segment: string): string => {
   return segment
     .split("-")
@@ -58,24 +55,27 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
   const profile = useUserStore((s) => s.profile);
   
-  // This is the ONLY state we need - a simple counter to trigger re-renders
+  // Load streak state
+  const { streak, loadStreak } = useStreakStore();
+
   const [renderTick, setRenderTick] = useState(0);
   const previousPathnameRef = useRef(pathname);
 
-  // Update navigation stack when pathname changes - happens DURING rendering, not in effect
+  // Load the streak on mount
+  useEffect(() => {
+    loadStreak();
+  }, [loadStreak]);
+
   if (pathname !== previousPathnameRef.current) {
     const existingIndex = navigationStack.indexOf(pathname);
     
     if (existingIndex !== -1) {
-      // Navigating to existing path in history
       currentStackIndex = existingIndex;
     } else {
-      // New path - add to stack, clear forward history
       navigationStack = [...navigationStack.slice(0, currentStackIndex + 1), pathname];
       currentStackIndex = navigationStack.length - 1;
     }
     
-    // Save to sessionStorage
     if (typeof window !== "undefined") {
       sessionStorage.setItem("navState", JSON.stringify({
         stack: navigationStack,
@@ -86,51 +86,33 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
     previousPathnameRef.current = pathname;
   }
 
-  // Calculate navigation state during rendering (no effects needed!)
   const canGoBack = currentStackIndex > 0;
   const canGoForward = currentStackIndex < navigationStack.length - 1;
 
-  // Calculate page title during rendering
   const pageTitle = useMemo(() => getPageTitle(pathname), [pathname]);
 
-  // Event handlers - update state here, not in effects
   const handleBack = useCallback(() => {
     if (currentStackIndex <= 0) return;
-    
     currentStackIndex--;
     const targetPath = navigationStack[currentStackIndex];
-    
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("navState", JSON.stringify({
-        stack: navigationStack,
-        index: currentStackIndex
-      }));
+      sessionStorage.setItem("navState", JSON.stringify({ stack: navigationStack, index: currentStackIndex }));
     }
-    
-    // Force re-render and navigate
     setRenderTick(t => t + 1);
     router.push(targetPath);
   }, [router]);
 
   const handleForward = useCallback(() => {
     if (currentStackIndex >= navigationStack.length - 1) return;
-    
     currentStackIndex++;
     const targetPath = navigationStack[currentStackIndex];
-    
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("navState", JSON.stringify({
-        stack: navigationStack,
-        index: currentStackIndex
-      }));
+      sessionStorage.setItem("navState", JSON.stringify({ stack: navigationStack, index: currentStackIndex }));
     }
-    
-    // Force re-render and navigate
     setRenderTick(t => t + 1);
     router.push(targetPath);
   }, [router]);
 
-  // Handle browser's native back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
       const currentPath = window.location.pathname;
@@ -138,19 +120,14 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
       
       if (pathIndex !== -1) {
         currentStackIndex = pathIndex;
-        sessionStorage.setItem("navState", JSON.stringify({
-          stack: navigationStack,
-          index: currentStackIndex
-        }));
+        sessionStorage.setItem("navState", JSON.stringify({ stack: navigationStack, index: currentStackIndex }));
         setRenderTick(t => t + 1);
       }
     };
-
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyboard = (e: KeyboardEvent) => {
       if (e.altKey && e.key === "ArrowLeft") {
@@ -162,10 +139,21 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         handleForward();
       }
     };
-
     window.addEventListener("keydown", handleKeyboard);
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleBack, handleForward]);
+
+  // --- Dynamic Streak Color Logic ---
+  const currentStreak = streak?.currentStreak || 0;
+  let streakColorClass = styles.streakDefault;
+  
+  if (currentStreak > 15) {
+    streakColorClass = styles.streakRed;
+  } else if (currentStreak > 10) {
+    streakColorClass = styles.streakOrange;
+  } else if (currentStreak > 5) {
+    streakColorClass = styles.streakYellow;
+  }
 
   return (
     <header className={styles.header}>
@@ -212,6 +200,17 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
       </div>
 
       <div className={styles.rightSection}>
+        {/* 🚨 UPDATED STREAK COMPONENT */}
+        <button 
+          type="button" 
+          className={`${styles.streakItem} ${streakColorClass}`} 
+          data-title={`Max Streak: ${streak?.maxStreak || 0}`}
+          aria-label="View streak"
+        >
+          <span className={styles.streakText}>{currentStreak}</span>
+          <PiFire size={18} className={styles.streakIcon} />
+        </button>
+        
         <a 
           href="https://discord.com/invite/8Q9Nb2fATj" 
           target="_blank" 
