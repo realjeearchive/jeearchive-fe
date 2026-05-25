@@ -1,5 +1,7 @@
 .card {
-  width: 100%;
+  flex: 1;
+  /* 🚨 PRO FIX 5: Prevent flexbox blowout */
+  min-width: 0; 
   border-radius: 10px;
   background: var(--dashboard-sidebar-background-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
@@ -33,6 +35,20 @@
   width: 100%;
   height: 280px;
   position: relative;
+  /* 🚨 PRO FIX 6: Container constraint for Nivo SVG */
+  min-width: 0; 
+}
+
+/* 🚨 PRO FIX 7: Extracted tooltip CSS */
+.tooltip {
+  background: #18181b;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 .emptyState {
@@ -73,17 +89,29 @@
   align-items: center;
   gap: 8px;
   background: var(--dashboard-sidebar-background-color);
-  padding: 12px 16px;
+  padding: 16px 24px;
   border-radius: 8px;
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
 .emptyIcon {
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.7;
 }
 
 .emptyText {
   font-size: 12px;
   font-weight: 500;
   color: var(--dashboard-secondary-text-color);
+  opacity: 0.7;
+}
+
+/* 🚨 PRO FIX 8: Mobile Constraints */
+@media (max-width: 640px) {
+  .card {
+    padding: 14px 12px 16px 12px;
+  }
+  .chartWrapper {
+    height: 240px;
+  }
 }
