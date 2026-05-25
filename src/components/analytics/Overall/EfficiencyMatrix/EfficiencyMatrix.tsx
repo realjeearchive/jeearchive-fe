@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import * as echarts from "echarts";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { FiZap, FiTrendingDown, FiTrendingUp } from "react-icons/fi";
+import { FiZap } from "react-icons/fi";
 import styles from "./EfficiencyMatrix.module.css";
 
+interface QuestionTypeEfficiency {
+  type: string;
+  accuracy: number;
+  color: string;
+}
+
 interface EfficiencyData {
-  mcqAcc: number;
-  numAcc: number;
+  questionTypes: QuestionTypeEfficiency[];
   leakage: number;
   momentum: number;
 }
@@ -17,21 +22,47 @@ interface EfficiencyMatrixProps {
   data: EfficiencyData;
 }
 
+const getShortLabel = (type: string): string => {
+  const map: Record<string, string> = {
+    "Single Correct": "MCQ",
+    "Multiple Correct": "Multi MCQ",
+    "Numerical": "Numerical",
+    "Integer": "Numerical",
+    "Comprehension SCQ": "Comp MCQ",
+    "Comprehension MCQ": "Comp Multi",
+    "Comprehension Num": "Comp Num",
+  };
+  return map[type] || type;
+};
+
 export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
-  const isZero = data.mcqAcc === 0 && data.numAcc === 0;
+  
+  const isZero = useMemo(() => {
+    return data.questionTypes.every(qt => qt.accuracy === 0);
+  }, [data.questionTypes]);
+
+  const activeTypes = useMemo(() => {
+    return data.questionTypes.filter(qt => qt.accuracy > 0);
+  }, [data.questionTypes]);
 
   useEffect(() => {
-    if (!chartRef.current || isZero) return;
+    if (!chartRef.current || isZero || activeTypes.length === 0) return;
 
-    // Dispose previous instance if it exists
     if (chartInstance.current) {
       chartInstance.current.dispose();
     }
 
-    // Initialize chart
     chartInstance.current = echarts.init(chartRef.current);
+
+    const chartData = activeTypes.map(qt => ({
+      value: qt.accuracy,
+      name: getShortLabel(qt.type),
+      itemStyle: {
+        color: qt.color,
+      },
+    }));
 
     const option: echarts.EChartsOption = {
       tooltip: {
@@ -51,17 +82,17 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
         bottom: 0,
         textStyle: {
           color: "rgba(255,255,255,0.5)",
-          fontSize: 11,
+          fontSize: 10,
         },
         itemWidth: 8,
         itemHeight: 8,
-        itemGap: 20,
+        itemGap: 16,
       },
       series: [
         {
           name: "Accuracy",
           type: "pie",
-          radius: ["25%", "60%"],
+          radius: activeTypes.length > 3 ? ["25%", "65%"] : ["30%", "70%"],
           center: ["50%", "45%"],
           roseType: "area",
           itemStyle: {
@@ -76,27 +107,12 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
             scaleSize: 6,
             label: {
               show: true,
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: "bold",
               color: "#fff",
             },
           },
-          data: [
-            {
-              value: data.mcqAcc,
-              name: "MCQ",
-              itemStyle: {
-                color: "#F59E0B",
-              },
-            },
-            {
-              value: data.numAcc,
-              name: "Numerical",
-              itemStyle: {
-                color: "#3B82F6",
-              },
-            },
-          ],
+          data: chartData,
         },
       ],
     };
@@ -111,9 +127,8 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [data, isZero]);
+  }, [activeTypes, isZero]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       chartInstance.current?.dispose();
@@ -124,41 +139,13 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   return (
     <AnalyticsCard title="Format Efficiency" subtitle="Accuracy by question type">
       <div className={styles.container}>
-        {isZero ? (
+        {isZero || activeTypes.length === 0 ? (
           <div className={styles.emptyState}>
             <FiZap size={20} className={styles.emptyIcon} />
             <span>Not enough data yet</span>
           </div>
         ) : (
-          <>
-            {/* Nightingale / Rose Chart */}
-            <div ref={chartRef} className={styles.chartArea} />
-
-            {/* Leakage & Momentum */}
-            <div className={styles.statsRow}>
-              <div className={styles.statItem}>
-                <div className={styles.statIcon} data-type="leakage">
-                  <FiTrendingDown size={14} />
-                </div>
-                <div className={styles.statInfo}>
-                  <span className={styles.statLabel}>Score Leakage</span>
-                  <span className={styles.statValue}>-{data.leakage}</span>
-                </div>
-              </div>
-              <div className={styles.divider} />
-              <div className={styles.statItem}>
-                <div className={styles.statIcon} data-type={data.momentum >= 0 ? "positive" : "negative"}>
-                  <FiTrendingUp size={14} />
-                </div>
-                <div className={styles.statInfo}>
-                  <span className={styles.statLabel}>Momentum</span>
-                  <span className={`${styles.statValue} ${data.momentum >= 0 ? styles.positive : styles.negative}`}>
-                    {data.momentum >= 0 ? "+" : ""}{data.momentum}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </>
+          <div ref={chartRef} className={styles.chartArea} />
         )}
       </div>
     </AnalyticsCard>

@@ -27,6 +27,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1;
+  justify-content: center;
 }
 
 .statIcon {
@@ -39,19 +41,14 @@
   flex-shrink: 0;
 }
 
-.statIcon[data-type="leakage"] {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
-.statIcon[data-type="positive"] {
+.statIcon[data-type="best"] {
   background: rgba(16, 185, 129, 0.1);
   color: #10b981;
 }
 
-.statIcon[data-type="negative"] {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+.statIcon[data-type="weakest"] {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
 }
 
 .statInfo {
@@ -70,18 +67,10 @@
 }
 
 .statValue {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
   font-family: monospace;
-}
-
-.statValue.positive {
-  color: #10b981;
-}
-
-.statValue.negative {
-  color: #ef4444;
 }
 
 .divider {
@@ -112,5 +101,9 @@
 @media (max-width: 768px) {
   .chartArea {
     height: 170px;
+  }
+  
+  .statValue {
+    font-size: 12px;
   }
 }

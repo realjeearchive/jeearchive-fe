@@ -23,7 +23,11 @@ const DATA_EMPTY: TransformedAnalyticsUI = {
   graph: [],
   radar: [],
   deepDive: [],
-  efficiency: { mcqAcc: 0, numAcc: 0, leakage: 0, momentum: 0 },
+  efficiency: { 
+    questionTypes: [], 
+    leakage: 0, 
+    momentum: 0 
+  },
   weakness: [],
   recentTests: []
 };
@@ -112,4 +116,4 @@ export default function AnalyticsPage() {
       <RecentTestsList isEmpty={newUser} data={currentData.recentTests} />
     </div>
   );
-}
+};

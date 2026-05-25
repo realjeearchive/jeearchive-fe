@@ -18,6 +18,12 @@ export interface RecentTestUI {
   date: string;
 }
 
+export interface QuestionTypeEfficiency {
+  type: string;
+  accuracy: number;
+  color: string;
+}
+
 export interface TransformedAnalyticsUI {
   global: {
     testsTaken: number;
@@ -35,8 +41,7 @@ export interface TransformedAnalyticsUI {
     avgTime: number;
   }>;
   efficiency: {
-    mcqAcc: number;
-    numAcc: number;
+    questionTypes: QuestionTypeEfficiency[];
     leakage: number;
     momentum: number;
   };
@@ -71,6 +76,86 @@ const getTestReport = (
   if (timeRange === "Last 3 Tests") return examData.testReports?.last3 || null;
   if (timeRange === "Last 5 Tests") return examData.testReports?.last5 || null;
   return examData.testReports?.all || null;
+};
+
+// 🔥 NEW: Get readable label for question type
+const getQuestionTypeLabel = (rawType: string): string => {
+  const typeMap: Record<string, string> = {
+    "SingleCorrect": "Single Correct",
+    "MultiCorrect": "Multiple Correct",
+    "Integer": "Numerical",
+    "ComprehensionSingleCorrect": "Comprehension SCQ",
+    "ComprehensionMultiCorrect": "Comprehension MCQ",
+    "ComprehensionInteger": "Comprehension Num",
+  };
+  return typeMap[rawType] || rawType;
+};
+
+// 🔥 NEW: Get color for question type
+const getTypeColor = (type: string): string => {
+  const colors: Record<string, string> = {
+    "SingleCorrect": "#F59E0B",      // Amber
+    "MultiCorrect": "#8B5CF6",       // Purple
+    "Integer": "#3B82F6",            // Blue
+    "ComprehensionSingleCorrect": "#10B981",  // Emerald
+    "ComprehensionMultiCorrect": "#EC4899",    // Pink
+    "ComprehensionInteger": "#6366F1",         // Indigo
+  };
+  return colors[type] || "#6B7280"; // Gray fallback
+};
+
+// 🔥 NEW: Type for question type data from backend
+interface QuestionTypeData {
+  avgCorrect?: number;
+  avgWrong?: number;
+  avgAccuracy?: number;
+  avgTime?: number;
+  totalCorrect?: number;
+  totalWrong?: number;
+}
+
+// 🔥 NEW: Calculate efficiency for all question types dynamically
+const calculateEfficiency = (testReport: TestReport) => {
+  const qTypes: Record<string, QuestionTypeData> = testReport.questionTypes || {};
+  const questionTypes: QuestionTypeEfficiency[] = [];
+  let totalNegatives = 0;
+
+  // Dynamically process ALL question types that have data
+  Object.keys(qTypes).forEach((typeKey) => {
+    const typeData = qTypes[typeKey];
+    const avgCorrect = typeData?.avgCorrect || 0;
+    const avgWrong = typeData?.avgWrong || 0;
+    const total = avgCorrect + avgWrong;
+
+    if (total > 0) {
+      const accuracy = Math.round((avgCorrect / total) * 100);
+      questionTypes.push({
+        type: getQuestionTypeLabel(typeKey),
+        accuracy,
+        color: getTypeColor(typeKey),
+      });
+      
+      totalNegatives += avgWrong;
+    }
+  });
+
+  // If no question types found, provide defaults
+  if (questionTypes.length === 0) {
+    questionTypes.push(
+      { type: "Single Correct", accuracy: 0, color: "#F59E0B" },
+      { type: "Numerical", accuracy: 0, color: "#3B82F6" }
+    );
+  }
+
+  const momentum = Math.round(
+    testReport.improvement?.overall?.scoreChange || 0,
+  );
+
+  return {
+    questionTypes,
+    leakage: Math.round(totalNegatives),
+    momentum,
+  };
 };
 
 export const transformAnalyticsData = (
@@ -132,59 +217,38 @@ export const transformAnalyticsData = (
     }
   });
 
-  // 4. EFFICIENCY MATRIX
-  const qTypes = testReport.questionTypes || {};
-  const singleCorrect = qTypes.SingleCorrect || { avgCorrect: 0, avgWrong: 0 };
-  const singleTotal =
-    (singleCorrect.avgCorrect || 0) + (singleCorrect.avgWrong || 0);
-  const mcqAcc =
-    singleTotal > 0
-      ? Math.round((singleCorrect.avgCorrect / singleTotal) * 100)
-      : 0;
+  // 4. EFFICIENCY MATRIX (Dynamic - handles all question types)
+  const efficiency = calculateEfficiency(testReport);
 
-  const integer = qTypes.Integer || { avgCorrect: 0, avgWrong: 0 };
-  const intTotal = (integer.avgCorrect || 0) + (integer.avgWrong || 0);
-  const numAcc =
-    intTotal > 0 ? Math.round((integer.avgCorrect / intTotal) * 100) : 0;
+  // 5. WEAKNESS HUNTER
+  const weakness: Array<{
+    chapter: string;
+    subject: string;
+    accuracy: number;
+    weightage?: string;
+    totalMax: number;
+  }> = [];
 
-  const totalNegatives = Math.round(
-    (singleCorrect.avgWrong || 0) + (integer.avgWrong || 0),
-  );
-  const momentum = Math.round(
-    testReport.improvement?.overall?.scoreChange || 0,
-  );
+  const weakChapters = data[examKey]?.weakChapters;
 
-  const efficiency = { mcqAcc, numAcc, leakage: totalNegatives, momentum };
-
-// 5. WEAKNESS HUNTER
-const weakness: Array<{
-  chapter: string;
-  subject: string;
-  accuracy: number;
-  weightage?: string;
-  totalMax: number;
-}> = [];
-
-const weakChapters = data[examKey]?.weakChapters;
-
-if (weakChapters) {
-  (Object.keys(weakChapters) as Array<keyof typeof weakChapters>).forEach(
-    (subject) => {
-      const chapters = weakChapters[subject];
-      if (Array.isArray(chapters)) {
-        chapters.forEach((ch: WeakChapter) => {
-          weakness.push({
-            chapter: ch.chapterName,
-            subject: String(subject),
-            accuracy: Math.round(ch.accuracy || 0),
-            totalMax: ch.totalMax || 10,
-            weightage: (ch.totalMax || 10) > 50 ? "High" : "Normal",
+  if (weakChapters) {
+    (Object.keys(weakChapters) as Array<keyof typeof weakChapters>).forEach(
+      (subject) => {
+        const chapters = weakChapters[subject];
+        if (Array.isArray(chapters)) {
+          chapters.forEach((ch: WeakChapter) => {
+            weakness.push({
+              chapter: ch.chapterName,
+              subject: String(subject),
+              accuracy: Math.round(ch.accuracy || 0),
+              totalMax: ch.totalMax || 10,
+              weightage: (ch.totalMax || 10) > 50 ? "High" : "Normal",
+            });
           });
-        });
-      }
-    },
-  );
-}
+        }
+      },
+    );
+  }
 
   // 6. RECENT TESTS
   const recentTests: RecentTestUI[] = (testReport.testMarksList || []).map(
@@ -223,7 +287,7 @@ if (weakChapters) {
         id: t.testId,
         title: title,
         meta: `Score: ${t.marks || 0}/${t.maxMarks || 300} • ${formattedDate}`,
-        status: "COMPLETED",
+        status: "COMPLETED" as const,
         score: t.marks || 0,
         totalMarks: t.maxMarks || 300,
         date: formattedDate,
