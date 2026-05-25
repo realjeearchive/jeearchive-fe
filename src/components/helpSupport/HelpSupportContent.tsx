@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import styles from "./HelpSupportContent.module.css";
 import { FiMail, FiMessageCircle, FiChevronDown, FiAlertCircle, FiSend } from "react-icons/fi";
-import { toast } from "sonner";
+import { useHelpSupport } from "@/features/helpSupport/useHelpSupport";
 
 const FAQ_LIST = [
   { q: "How do I reset my mock test progress?", a: "Go to Analytics and select 'Reset Data' in the settings menu." },
@@ -15,26 +15,26 @@ const FAQ_LIST = [
 export default function HelpSupportContent() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [bugDescription, setBugDescription] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { isSubmitting, handleSubmitBugReport } = useHelpSupport();
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  const handleEmailClick = () => { window.location.href = "mailto:contactjeearchive@gmail.com"; };
-  const handleDiscordClick = () => { window.open("https://discord.com/invite/8Q9Nb2fATj", "_blank"); };
+  const handleEmailClick = () => { 
+    window.location.href = "mailto:contactjeearchive@gmail.com"; 
+  };
+  
+  const handleDiscordClick = () => { 
+    window.open("https://discord.com/invite/8Q9Nb2fATj", "_blank"); 
+  };
 
-  const handleReportBug = () => {
-    if (!bugDescription.trim()) {
-      toast.error("Please describe the bug before submitting.");
-      return;
-    }
-    setIsSubmitting(true);
-    setTimeout(() => {
-      toast.success("Bug report submitted successfully!");
+  const handleReportBug = async () => {
+    const success = await handleSubmitBugReport(bugDescription);
+    if (success) {
       setBugDescription("");
-      setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -101,13 +101,18 @@ export default function HelpSupportContent() {
           </div>
           <textarea 
             className={styles.bugTextArea} 
-            placeholder="Describe the issue in detail..."
+            placeholder="Describe the issue in detail... (e.g., my percentile is not coming correctly)"
             value={bugDescription}
             onChange={(e) => setBugDescription(e.target.value)}
+            disabled={isSubmitting}
           />
         </div>
         <div className={styles.saveActionRow}>
-          <button className={styles.saveBtn} onClick={handleReportBug} disabled={isSubmitting}>
+          <button 
+            className={styles.saveBtn} 
+            onClick={handleReportBug} 
+            disabled={isSubmitting || !bugDescription.trim()}
+          >
             <FiSend size={14} style={{ marginRight: '8px' }} />
             {isSubmitting ? "Submitting..." : "Submit Bug Report"}
           </button>
