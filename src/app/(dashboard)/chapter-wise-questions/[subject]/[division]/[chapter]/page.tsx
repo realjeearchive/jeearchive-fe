@@ -1,3 +1,5 @@
+// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
+
 'use client';
 
 import React, { useEffect, useState, use } from 'react';

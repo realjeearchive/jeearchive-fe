@@ -54,7 +54,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
   const availableSessions = useMemo(() => {
     const filtered = baseQuestions.filter(q => {
-      // Safely check if year exists before checking includes
       return selectedYears.length === 0 || (q.papers?.year !== undefined && selectedYears.includes(q.papers.year));
     });
     return Array.from(new Set(filtered.map(q => q.papers?.session).filter(Boolean))) as string[];
@@ -88,13 +87,10 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
       
-      // 1. If clicking completely outside the filter button & popover
       if (filterRef.current && !filterRef.current.contains(target)) {
         setIsFilterOpen(false);
         setOpenDropdown(null); 
-      } 
-      // 2. If clicking inside the popover, but outside a dropdown container
-      else if (!target.closest('[data-dropdown]')) {
+      } else if (!target.closest('[data-dropdown]')) {
         setOpenDropdown(null);
       }
     };
@@ -152,6 +148,33 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
   const activeFilterCount = selectedYears.length + selectedSessions.length + selectedDates.length + selectedShifts.length;
 
+  // 🔥 NEW: Build practice URL with filter params
+  const practiceUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('type', activeFilter.toLowerCase());
+    
+    if (selectedYears.length > 0) params.set('years', selectedYears.join(','));
+    if (selectedSessions.length > 0) params.set('sessions', selectedSessions.join(','));
+    if (selectedDates.length > 0) params.set('dates', selectedDates.join(','));
+    if (selectedShifts.length > 0) params.set('shifts', selectedShifts.join(','));
+    
+    return `/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?${params.toString()}`;
+  }, [activeFilter, selectedYears, selectedSessions, selectedDates, selectedShifts, subject, divisionSlug, chapterSlug]);
+
+  // 🔥 NEW: Helper to build question-specific URLs with filters preserved
+  const getQuestionUrl = (questionId: string) => {
+    const params = new URLSearchParams();
+    params.set('type', activeFilter.toLowerCase());
+    params.set('q', questionId);
+    
+    if (selectedYears.length > 0) params.set('years', selectedYears.join(','));
+    if (selectedSessions.length > 0) params.set('sessions', selectedSessions.join(','));
+    if (selectedDates.length > 0) params.set('dates', selectedDates.join(','));
+    if (selectedShifts.length > 0) params.set('shifts', selectedShifts.join(','));
+    
+    return `/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?${params.toString()}`;
+  };
+
   return (
     <div className={Styles.container}>
       <aside className={Styles.sidebar}>
@@ -168,12 +191,10 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
           {chapterData && (
             <div className={Styles.syllabusWrapper}>
               {!chapterData.isJeeMain && !chapterData.isJeeAdvanced ? (
-                /* Shows ONLY this if the chapter is excluded */
                 <span className={Styles.badgeExcluded} style={{ width: 'fit-content' }}>
                   <Minus size={12} strokeWidth={3} /> Excluded Chapter
                 </span>
               ) : (
-                /* Shows 'Included in:' and the green/yellow badges if included */
                 <>
                   <span className={Styles.syllabusLabel}>Included in:</span>
                   <div className={Styles.syllabusBadges}>
@@ -194,7 +215,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
           )}
 
           <Link 
-            href={`/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?type=${activeFilter.toLowerCase()}`} 
+            href={practiceUrl}
             className={Styles.practiceBtn}
           >
             <Play size={16} fill="currentColor" strokeWidth={1} />
@@ -248,7 +269,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
               />
             </div>
 
-            {/* 2. FILTER BUTTON (Moved next to search) */}
+            {/* 2. FILTER BUTTON */}
             <div className={Styles.lcFilterContainer} ref={filterRef}>
               <button 
                 className={`${Styles.lcFilterToggle} ${activeFilterCount > 0 ? Styles.lcFilterActive : ''}`}
@@ -380,7 +401,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
               )}
             </div>
 
-            {/* 3. TABS (Moved to the far right via CSS) */}
+            {/* 3. TABS */}
             <div className={Styles.filterTabs}>
               <button className={`${Styles.filterBtn} ${activeFilter === 'Main' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Main'); clearFilters(); setSearchQuery(''); }}>JEE Main</button>
               <button className={`${Styles.filterBtn} ${activeFilter === 'Advanced' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Advanced'); clearFilters(); setSearchQuery(''); }}>JEE Advanced</button>
@@ -395,7 +416,11 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
               const isSuccess = q.attemptStatus === "Successfully attempted";
               const plainTextContent = prepareForPreview(q.content);
               return (
-                <Link key={q.id} href={`/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?type=${activeFilter.toLowerCase()}&q=${q.id}`} className={Styles.row}>
+                <Link 
+                  key={q.id} 
+                  href={getQuestionUrl(q.id)} 
+                  className={Styles.row}
+                >
                   <div className={Styles.rowLeft}>
                       <div className={Styles.statusIcon}>
                         {isSuccess ? <Check size={16} strokeWidth={3} className={Styles.iconSuccess} /> : <span className={Styles.iconEmpty}></span>}
