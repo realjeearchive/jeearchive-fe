@@ -12,7 +12,6 @@
 
 @media (min-width: 768px) {
   .container {
-
     gap: 32px;
   }
 }
@@ -99,6 +98,56 @@
 .practiceBtn:hover {
   background-color: var(--dashboard-core-color);
   transform: translateY(-2px);
+}
+
+/* 🔥 NEW: Sidebar Search Wrapper */
+.sidebarSearchWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  color: var(--dashboard-secondary-text-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.searchContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%; 
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--dashboard-secondary-text-color);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  background-color: var(--dashboard-background-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  padding: 8px 35px;
+  border-radius: 50px;
+  color: var(--dashboard-primary-text-color);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.searchInput:focus {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* --- CIRCULAR PROGRESS SECTION --- */
@@ -260,53 +309,13 @@
   }
 }
 
-.searchContainer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%; 
-}
-
-@media (min-width: 768px) {
-  .searchContainer {
-    width: 260px; 
-  }
-}
-
-.searchIcon {
-  position: absolute;
-  left: 12px;
-  color: var(--dashboard-secondary-text-color);
-  pointer-events: none;
-}
-
-.searchInput {
-  width: 100%;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid transparent;
-  padding: 8px 35px;
-  border-radius: 50px;
-  color: var(--dashboard-primary-text-color);
-  font-size: 13px;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.searchInput::placeholder {
-  color: var(--dashboard-secondary-text-color);
-}
-
-.searchInput:focus {
-  background-color: var(--dashboard-sidebar-background-color);
-  border-color: var(--dashboard-sidebar-border-color);
-}
-
 .filterTabs {
   display: inline-flex; 
   background-color: var(--dashboard-sidebar-background-color);
   padding: 4px;
   border-radius: 50px;
   gap: 4px;
+  margin-left: auto; /* 🔥 Pushes tabs to the far right */
 }
 
 .filterBtn {
@@ -361,27 +370,25 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* 🔥 FIX 1: Strict bounds for the left content so it truncates cleanly */
 .rowLeft {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1; 
   min-width: 0; 
-  overflow: hidden; /* This absolutely stops math superscripts from bleeding past the dots */
+  overflow: hidden; 
   padding-right: 80px;
 }
 
 @media (min-width: 768px) {
   .rowLeft {
     gap: 16px;
-    /* padding-right: 30px; */
   }
 }
 
 @media (max-width: 768px){
     .rowLeft {
-        padding-right: 10px; /* Reduced padding on mobile to allow more space for text */
+        padding-right: 10px;
     }
 }
 
@@ -410,7 +417,6 @@
   width: 100%;
 }
 
-/* Force KaTeX elements to obey the single-line truncation */
 .qText * {
   white-space: nowrap !important;
 }
@@ -425,15 +431,14 @@
   color: var(--dashboard-secondary-text-color); 
 }
 
-/* 🔥 FIX 2: Fixed width for the tags so the text ends at an exact straight line */
 .rowRight {
   display: flex;
   align-items: center;
   gap: 10px;
-  justify-content: flex-end; /* Align the tags to the right */
+  justify-content: flex-end; 
   flex-shrink: 0; 
-  width: 85px; /* Ensures consistent width regardless of tag text */
-  margin-left: 20px; /* Provides the requested space before the tags */
+  width: 85px; 
+  margin-left: 20px; 
 }
 
 .rowRight span{
@@ -444,7 +449,7 @@
 @media (min-width: 768px) {
   .rowRight {
     width: 100px;
-    margin-left: 48px; /* Larger gap on desktop */
+    margin-left: 48px; 
   }
 }
 
@@ -479,8 +484,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-
-/* 🔥 UPGRADED STYLES: Syllabus Target Badges */
 .syllabusWrapper {
   display: flex;
   flex-direction: column;
@@ -524,8 +527,6 @@
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-
-/* 🔥 NEW STYLES: Filter Header Controls */
 .headerControls {
   display: flex;
   align-items: center;
@@ -579,33 +580,18 @@
   justify-content: center;
 }
 
-/* =========================================
-   🔥 NATIVE THEME - FILTER POPOVER
-   ========================================= */
-
 .headerControls {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   width: 100%;
 }
 
 .lcFilterContainer {
   position: relative;
-  /* margin-left removed so it sits perfectly next to search */
 }
 
-/* Pushes the JEE Main / Advanced tabs to the far right */
-.filterTabs {
-  display: inline-flex; 
-  background-color: var(--dashboard-sidebar-background-color);
-  padding: 4px;
-  border-radius: 50px;
-  gap: 4px;
-  margin-left: auto; 
-}
-
-/* The subtle circular funnel button */
 .lcFilterToggle {
   display: flex;
   align-items: center;
@@ -637,16 +623,15 @@
   right: 8px;
   width: 6px;
   height: 6px;
-  background-color: #EF4444; /* Red dot indicator */
+  background-color: #EF4444; 
   border-radius: 50%;
 }
 
-/* 🔥 The Native Popover Canvas */
 .lcPopover {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0; /* Aligned to the left under the button */
-  width: 320px; /* Slimmer, tighter width since 'is' column is gone */
+  left: 0; 
+  width: 320px; 
   background: var(--dashboard-background-color); 
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 12px;
@@ -662,7 +647,6 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* Row Layout */
 .lcRowsContainer {
   display: flex;
   flex-direction: column;
@@ -676,9 +660,8 @@
   width: 100%;
 }
 
-/* Column 1: Label */
 .lcLabel {
-  width: 80px; /* Reduced width */
+  width: 80px; 
   display: flex;
   align-items: center;
   gap: 8px;
@@ -692,7 +675,6 @@
   opacity: 0.7;
 }
 
-/* Column 2: Value Dropdown Container */
 .lcValueWrapper {
   flex: 1;
   position: relative;
@@ -725,7 +707,6 @@
   max-width: 140px;
 }
 
-/* Column 3: Minus Icon */
 .lcRemoveIcon {
   color: var(--dashboard-secondary-text-color);
   cursor: pointer;
@@ -734,11 +715,10 @@
   opacity: 0.6;
 }
 .lcRemoveIcon:hover {
-  color: #EF4444; /* Turns red to indicate delete action */
+  color: #EF4444; 
   opacity: 1;
 }
 
-/* Inner Dropdown Checkbox Menu */
 .lcDropdownMenu {
   position: absolute;
   top: calc(100% + 4px);
@@ -799,7 +779,6 @@
   margin-bottom: 2px;
 }
 
-/* Reset Footer */
 .lcFooter {
   margin-top: 20px;
   padding-top: 16px;

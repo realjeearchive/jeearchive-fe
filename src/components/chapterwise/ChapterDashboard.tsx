@@ -6,7 +6,7 @@ import { ChapterInfoResponse } from "@/features/chapterWise/api";
 import Styles from './ChapterDashboard.module.css';
 
 import Latex from "@/components/testPlayer/Latex/Latex";
-import { Play, Check, Search, Filter, ChevronDown, RotateCcw, Calendar, Clock, Tag, Sun, Minus, Plus } from 'lucide-react';
+import { Play, Check, Search, Filter, ChevronDown, RotateCcw, Calendar, Clock, Tag, Sun, Minus } from 'lucide-react';
 
 interface ChapterDashboardProps {
   data: ChapterInfoResponse;
@@ -36,7 +36,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   // --- Filter Popover State ---
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<'year' | 'session' | 'date' | 'shift' | null>(null);  
-  // Selected filter arrays
+  
   const [selectedYears, setSelectedYears] = useState<number[]>([]);
   const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
@@ -46,7 +46,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   const { stats, jeeMain, jeeAdvanced, chapterData } = data;
   const baseQuestions = activeFilter === 'Main' ? jeeMain : jeeAdvanced;
 
-  // --- CASCADING DYNAMIC FILTERS ---
   const availableYears = useMemo(() => {
     const years = Array.from(new Set(baseQuestions.map(q => q.papers?.year).filter(Boolean))) as number[];
     return years.sort((a, b) => b - a);
@@ -82,7 +81,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     return Array.from(new Set(filtered.map(q => q.papers?.shift).filter(Boolean))) as string[];
   }, [baseQuestions, selectedYears, selectedSessions, selectedDates]);
 
-  // 🔥 THE FIX: Enhanced outside click listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
@@ -99,14 +97,12 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  
   const sortedBaseQuestions = [...baseQuestions].sort((a, b) => {
     const numA = a.questionNumber || 0;
     const numB = b.questionNumber || 0;
     return numA - numB;
   });
 
-  // --- FILTER ENGINE ---
   const activeQuestions = sortedBaseQuestions.filter((q, index) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -148,7 +144,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
   const activeFilterCount = selectedYears.length + selectedSessions.length + selectedDates.length + selectedShifts.length;
 
-  // 🔥 NEW: Build practice URL with filter params
   const practiceUrl = useMemo(() => {
     const params = new URLSearchParams();
     params.set('type', activeFilter.toLowerCase());
@@ -161,7 +156,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     return `/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?${params.toString()}`;
   }, [activeFilter, selectedYears, selectedSessions, selectedDates, selectedShifts, subject, divisionSlug, chapterSlug]);
 
-  // 🔥 NEW: Helper to build question-specific URLs with filters preserved
   const getQuestionUrl = (questionId: string) => {
     const params = new URLSearchParams();
     params.set('type', activeFilter.toLowerCase());
@@ -222,6 +216,21 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
             Practice {activeFilter}
           </Link>
 
+          {/* 🔥 MOVED SEARCH BAR: Now perfectly matching the Bookmarks page */}
+          <div className={Styles.sidebarSearchWrapper}>
+            <span className={Styles.sectionLabel}>SEARCH</span>
+            <div className={Styles.searchContainer}>
+              <Search size={16} className={Styles.searchIcon} />
+              <input 
+                type="text" 
+                placeholder="Search questions..." 
+                className={Styles.searchInput} 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+              />
+            </div>
+          </div>
+
           <div className={Styles.progressContainer}>
              <div className={Styles.progressHeader}><span>Progress</span></div>
              <div className={Styles.progressContent}>
@@ -257,19 +266,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
         <div className={Styles.listHeader}>
           <div className={Styles.headerControls}>
             
-            {/* 1. SEARCH */}
-            <div className={Styles.searchContainer}>
-              <Search size={16} className={Styles.searchIcon} />
-              <input 
-                type="text" 
-                placeholder="Search questions" 
-                className={Styles.searchInput} 
-                value={searchQuery} 
-                onChange={(e) => setSearchQuery(e.target.value)} 
-              />
-            </div>
-
-            {/* 2. FILTER BUTTON */}
+            {/* FILTER BUTTON */}
             <div className={Styles.lcFilterContainer} ref={filterRef}>
               <button 
                 className={`${Styles.lcFilterToggle} ${activeFilterCount > 0 ? Styles.lcFilterActive : ''}`}
@@ -279,12 +276,9 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                 {activeFilterCount > 0 && <span className={Styles.lcFilterDot} />}
               </button>
 
-              {/* NATIVE POPOVER */}
               {isFilterOpen && (
                 <div className={Styles.lcPopover}>
-                  
                   <div className={Styles.lcRowsContainer}>
-                    
                     {/* 1. YEAR ROW */}
                     {availableYears.length > 0 && (
                       <div className={Styles.lcRow}>
@@ -390,7 +384,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                     )}
                   </div>
 
-                  {/* RESET FOOTER */}
                   <div className={Styles.lcFooter}>
                     <button onClick={clearFilters} className={Styles.lcResetBtn}>
                       <RotateCcw size={14} /> Reset Filters
@@ -401,7 +394,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
               )}
             </div>
 
-            {/* 3. TABS */}
+            {/* TABS */}
             <div className={Styles.filterTabs}>
               <button className={`${Styles.filterBtn} ${activeFilter === 'Main' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Main'); clearFilters(); setSearchQuery(''); }}>JEE Main</button>
               <button className={`${Styles.filterBtn} ${activeFilter === 'Advanced' ? Styles.activeFilter : ''}`} onClick={() => { setActiveFilter('Advanced'); clearFilters(); setSearchQuery(''); }}>JEE Advanced</button>
