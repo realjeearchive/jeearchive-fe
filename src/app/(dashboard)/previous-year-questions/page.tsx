@@ -8,11 +8,18 @@ import TestListSection2, { TestCardItem } from '@/components/testPlayer/TestList
 import { fetchPaperAttemptsDetails, createTestSession, PaperAttemptDetail } from "@/features/tests/api";
 import Styles from './previousYearQuestions.module.css';
 
+// 🚨 NEW: Import Rate Limit Store and Modal
+import { RateLimitModal } from '@/components/ui/RateLimitModal/RateLimitModal';
+import { useRateLimitStore } from '@/store/useRateLimitStore';
+
 const MAIN_YEARS = ["2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014"];
 const ADV_YEARS = ["2026", "2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013", "2012"];
 
 export default function UnifiedPreviousYearQuestions() {
   const router = useRouter();
+
+  // 🚨 NEW: Listen to rate limit state
+  const { isRateLimited } = useRateLimitStore();
 
   // --- STATE ---
   const [examType, setExamType] = useState<'MAIN' | 'ADVANCED'>('MAIN');
@@ -43,12 +50,18 @@ export default function UnifiedPreviousYearQuestions() {
         if (res.success && res.data) {
           setPapersWithStatus(res.data);
         } else {
-          toast.error("Couldn't load papers. Try refreshing.");
+          // Check if we are rate limited before showing generic toast
+          if (!useRateLimitStore.getState().isRateLimited) {
+            toast.error("Couldn't load papers. Try refreshing.");
+          }
           setPapersWithStatus([]);
         }
       } catch (e) {
         console.error("Fetch failed", e);
-        toast.error("Network issue. Please check your connection.");
+        // 🚨 FIX: Don't show generic toast if the 429 modal is taking over
+        if (!useRateLimitStore.getState().isRateLimited) {
+          toast.error("Network issue. Please check your connection.");
+        }
         setPapersWithStatus([]);
       } finally {
         setIsLoading(false);
@@ -89,10 +102,15 @@ export default function UnifiedPreviousYearQuestions() {
       if (res.success && res.data?.testId) {
         router.push(`/previous-year-questions/${examPath}/${selectedYear}/tests/${paperId}?sid=${res.data.testId}`);
       } else {
-        toast.error("Couldn't start the test. Please try again.");
+        if (!useRateLimitStore.getState().isRateLimited) {
+          toast.error("Couldn't start the test. Please try again.");
+        }
       }
     } catch (e) {
-      toast.error("Network error. Please try again.");
+      // 🚨 FIX: Suppress generic toast if rate limited
+      if (!useRateLimitStore.getState().isRateLimited) {
+        toast.error("Network error. Please try again.");
+      }
     }
   };
 
@@ -109,81 +127,87 @@ export default function UnifiedPreviousYearQuestions() {
   };
 
   return (
-    <div className={Styles.pageContainer}>
-      <div className={Styles.splitLayout}>
-        
-        {/* LEFT SIDEBAR PANEL: Absolute Sticky Full Height */}
-        <aside className={Styles.leftSidebar}>
-          <div className={Styles.cardHeader}>
-            <div className={Styles.iconSquare}>P</div>
-            <div>
-              <h1 className={Styles.cardTitle}>Past Papers</h1>
-              <p className={Styles.cardSubtitle}>JEE Archive • Navigation</p>
-            </div>
-          </div>
+    <>
+      {/* 🚨 THE RATE LIMIT MODAL */}
+      <RateLimitModal />
 
-          {/* Exam Segment Switcher */}
-          <div className={Styles.segmentedControl}>
-            <button 
-              onClick={() => setExamType('MAIN')} 
-              className={`${Styles.segmentBtn} ${examType === 'MAIN' ? Styles.segmentActive : ''}`}
-            >
-              JEE Main
-            </button>
-            <button 
-              onClick={() => setExamType('ADVANCED')} 
-              className={`${Styles.segmentBtn} ${examType === 'ADVANCED' ? Styles.segmentActive : ''}`}
-            >
-              JEE Advanced
-            </button>
-          </div>
+      <div className={Styles.pageContainer}>
+        <div className={Styles.splitLayout}>
+          
+          {/* LEFT SIDEBAR PANEL: Absolute Sticky Full Height */}
+          <aside className={Styles.leftSidebar}>
+            <div className={Styles.cardHeader}>
+              <div className={Styles.iconSquare}>P</div>
+              <div>
+                <h1 className={Styles.cardTitle}>Past Papers</h1>
+                <p className={Styles.cardSubtitle}>JEE Archive • Navigation</p>
+              </div>
+            </div>
 
-          {/* Interactive Years List (No more dropdown menus) */}
-          <div className={Styles.yearsListContainer}>
-            <span className={Styles.listLabel}>Select Year</span>
-            <div className={Styles.yearsList}>
-              {currentYearOptions.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={`${Styles.yearRowItem} ${selectedYear === year ? Styles.yearRowActive : ''}`}
-                >
-                  <span className={Styles.yearNumberText}>{year}</span>
-                  <span className={Styles.yearCountMeta}>
-                    {isMains ? "20 Tests" : "2 Papers"}
-                  </span>
-                </button>
-              ))}
+            {/* Exam Segment Switcher */}
+            <div className={Styles.segmentedControl}>
+              <button 
+                onClick={() => setExamType('MAIN')} 
+                className={`${Styles.segmentBtn} ${examType === 'MAIN' ? Styles.segmentActive : ''}`}
+              >
+                JEE Main
+              </button>
+              <button 
+                onClick={() => setExamType('ADVANCED')} 
+                className={`${Styles.segmentBtn} ${examType === 'ADVANCED' ? Styles.segmentActive : ''}`}
+              >
+                JEE Advanced
+              </button>
             </div>
-          </div>
-        </aside>
 
-        {/* RIGHT CONTENT TRACK: Isolated Scroll Window Container */}
-        <main className={Styles.rightContent}>
-          {isLoading ? (
-            <div className={Styles.centerState}>
-              <Loader label={`Loading ${displayTitle} ${selectedYear} papers...`} />
+            {/* Interactive Years List */}
+            <div className={Styles.yearsListContainer}>
+              <span className={Styles.listLabel}>Select Year</span>
+              <div className={Styles.yearsList}>
+                {currentYearOptions.map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => setSelectedYear(year)}
+                    className={`${Styles.yearRowItem} ${selectedYear === year ? Styles.yearRowActive : ''}`}
+                  >
+                    <span className={Styles.yearNumberText}>{year}</span>
+                    <span className={Styles.yearCountMeta}>
+                      {isMains ? "20 Tests" : "2 Papers"}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : formattedItems.length > 0 ? (
-            <div className={Styles.scrollContentWrapper}>
-              <TestListSection2 
-                heading={`${displayTitle} ${selectedYear} Papers`} 
-                items={formattedItems} 
-                onStart={handleStart}
-                onResume={handleResume}
-                onRestart={handleStart}
-                onViewAnalytics={handleAnalytics}
-                onViewSolutions={handleSolutions}
-              />
-            </div>
-          ) : (
-            <div className={Styles.centerState}>
-              <p className={Styles.emptyText}>Papers for {displayTitle} {selectedYear} are not available yet.</p>
-            </div>
-          )}
-        </main>
+          </aside>
 
+          {/* RIGHT CONTENT TRACK */}
+          <main className={Styles.rightContent}>
+            {/* 🚨 FIX: Don't show loader if rate limited, let modal handle it */}
+            {isLoading && !isRateLimited ? (
+              <div className={Styles.centerState}>
+                <Loader label={`Loading ${displayTitle} ${selectedYear} papers...`} />
+              </div>
+            ) : formattedItems.length > 0 ? (
+              <div className={Styles.scrollContentWrapper}>
+                <TestListSection2 
+                  heading={`${displayTitle} ${selectedYear} Papers`} 
+                  items={formattedItems} 
+                  onStart={handleStart}
+                  onResume={handleResume}
+                  onRestart={handleStart}
+                  onViewAnalytics={handleAnalytics}
+                  onViewSolutions={handleSolutions}
+                />
+              </div>
+            ) : (
+              <div className={Styles.centerState}>
+                <p className={Styles.emptyText}>Papers for {displayTitle} {selectedYear} are not available yet.</p>
+              </div>
+            )}
+          </main>
+
+        </div>
       </div>
-    </div>
+    </>
   );
 }

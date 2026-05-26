@@ -1,4 +1,6 @@
-import { authenticatedFetch } from "../auth/api";
+import { authenticatedFetch, ApiError } from "../auth/api";
+// 🚨 NEW: Import the rate limit store
+import { useRateLimitStore } from "@/store/useRateLimitStore";
 
 export interface ChapterStats {
   totalQuestions: number;
@@ -93,9 +95,15 @@ export async function fetchChapterInfo(chapterName: string): Promise<ChapterInfo
     method: 'GET'
   });
 
+  // 🚨 NEW: 429 Interceptor
+  if (res.status === 429) {
+    useRateLimitStore.getState().setRateLimited(true);
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   if (!res.ok) {
     console.error(`[API: ChapterWise] Failed to fetch chapter info. Status: ${res.status}`);
-    throw new Error(`Failed to fetch: ${res.status}`);
+    throw new ApiError(`Failed to fetch: ${res.status}`, res.status);
   }
 
   const json = await res.json();
@@ -117,9 +125,15 @@ export async function submitChapterWiseAttempt(payload: ChapterWiseAttemptPayloa
     body: JSON.stringify(payload),
   });
 
+  // 🚨 NEW: 429 Interceptor
+  if (res.status === 429) {
+    useRateLimitStore.getState().setRateLimited(true);
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   if (!res.ok) {
     console.error(`[API: ChapterWise] Attempt submission failed. Status: ${res.status}`);
-    throw new Error(`Failed to submit attempt: ${res.status}`);
+    throw new ApiError(`Failed to submit attempt: ${res.status}`, res.status);
   }
 
   return await res.json();
@@ -150,13 +164,17 @@ export async function fetchQuestionAttempts(questionId: string): Promise<Questio
     method: 'GET'
   });
 
+  // 🚨 NEW: 429 Interceptor
+  if (res.status === 429) {
+    useRateLimitStore.getState().setRateLimited(true);
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   if (!res.ok) {
     console.error(`[API: ChapterWise] Failed to fetch historical attempts. Status: ${res.status}`);
-    throw new Error(`Failed to fetch attempts: ${res.status}`);
+    throw new ApiError(`Failed to fetch attempts: ${res.status}`, res.status);
   }
 
   const json = await res.json();
   return json.data;
 }
-
-

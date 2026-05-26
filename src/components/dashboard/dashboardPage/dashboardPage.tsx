@@ -14,6 +14,11 @@ import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSect
 import WelcomeBanner from '@/components/dashboard/WelcomeBanner/WelcomeBanner';
 import { Loader } from '@/components/ui/loader';
 
+// 🚨 NEW: Import the Modal, Store, and Icons for the fallback error state
+import { RateLimitModal } from '@/components/ui/RateLimitModal/RateLimitModal';
+import { useRateLimitStore } from '@/store/useRateLimitStore';
+import { FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
+
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { fetchDashboardData } from '@/features/dashboard/api';
 import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
@@ -32,6 +37,9 @@ export default function DashboardPage() {
   const [examFilter, setExamFilter] = useState<ExamFilter>("overall");
 
   const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
+  
+  // 🚨 NEW: Listen to global rate limit state
+  const { isRateLimited } = useRateLimitStore(); 
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -44,6 +52,7 @@ export default function DashboardPage() {
           setError("Metrics unavailable.");
         }
       } catch (err: unknown) {
+        // If it's a 429, the global store handles it. We just set a generic error to stop loading.
         setError("Connection drop. Please refresh.");
       }
     };
@@ -52,7 +61,9 @@ export default function DashboardPage() {
     else setLoading(false);
   }, [rawReport, setDashboardData, setLoading, setError]);
 
-  if (isLoading) {
+  // 🚨 FIX: Only show the loader if we are NOT rate limited. 
+  // If we are rate limited, the modal will handle the UI.
+  if (isLoading && !isRateLimited) {
     return (
       <div className={styles.loaderContainer}>
         <Loader label="Analyzing your performance..." />
@@ -60,68 +71,84 @@ export default function DashboardPage() {
     );
   }
 
-  if (error) return <div className={styles.errorContainer}>Error: {error}</div>;
+  // 🚨 FIX: Upgraded generic error UI (Only visible if NOT rate limited)
+  if (error && !isRateLimited) {
+    return (
+      <div className={styles.errorContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', gap: '16px' }}>
+        <FiAlertTriangle size={32} color="#ef4444" />
+        <div style={{ color: 'var(--dashboard-primary-text-color)', fontSize: '16px', fontWeight: 500 }}>
+          {error}
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--dashboard-core-color)', color: '#000', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+        >
+          <FiRefreshCw size={14} /> Try Again
+        </button>
+      </div>
+    );
+  }
 
   const newUser = isNewUser();
   const uiData = transformDashboardData(rawReport, examFilter);
 
-  if (!uiData) return null;
-
-  const activeKpis = viewMode === "test" ? uiData.testKpis : uiData.chapterKpis;
-
   return (
-    <div className={styles.page}>
-      {!newUser && (
-        <DashboardHeader
-          currentView={viewMode}
-          onViewChange={setViewMode}
-          examFilter={examFilter}
-          onExamFilterChange={setExamFilter}
-        />
-      )}
+    <>
+      {/* 🚨 THE RATE LIMIT MODAL - Mounts globally over everything if triggered */}
+      <RateLimitModal />
 
-      {newUser && (
-        <div style={{ marginBottom: '8px' }}>
-          <WelcomeBanner />
-        </div>
-      )}
+      {/* 🚨 Render the dashboard only if we have data or if the modal is currently covering the screen */}
+      {uiData && (
+        <div className={styles.page}>
+          {!newUser && (
+            <DashboardHeader
+              currentView={viewMode}
+              onViewChange={setViewMode}
+              examFilter={examFilter}
+              onExamFilterChange={setExamFilter}
+            />
+          )}
 
-      <div className={styles.progressRow}>
-        <PyqProgressCard label="Physics" solved={uiData.progress.phy.solved} total={uiData.progress.phy.total} />
-        <PyqProgressCard label="Chemistry" solved={uiData.progress.chem.solved} total={uiData.progress.chem.total} />
-        <PyqProgressCard label="Mathematics" solved={uiData.progress.math.solved} total={uiData.progress.math.total} />
-      </div>
-
-      <div className={styles.kpiRow}>
-        {activeKpis.map((kpi, i) => (
-          <KpiCard
-            key={i}
-            label={kpi.label}
-            value={kpi.value}
-            subLabel={kpi.sub}
-            icon={kpi.icon}
-          />
-        ))}
-      </div>
-
-      {!newUser && (
-        <>
-          {viewMode === "test" ? (
-            <div className={styles.growthSection}>
-              <ScoreGrowthChart data={uiData.scoreData} />
-            </div>
-          ) : (
-            <div className={styles.bottomRow}>
-              <div className={styles.bottomItem}>
-                <SubjectBalanceRadar data={uiData.radarData} />
-              </div>
-              <div className={styles.bottomItem}>
-                <QuestionTypeBar data={uiData.typeData} />
-              </div>
+          {newUser && (
+            <div style={{ marginBottom: '8px' }}>
+              <WelcomeBanner />
             </div>
           )}
-        </>
+
+          <div className={styles.progressRow}>
+            <PyqProgressCard label="Physics" solved={uiData.progress.phy.solved} total={uiData.progress.phy.total} />
+            <PyqProgressCard label="Chemistry" solved={uiData.progress.chem.solved} total={uiData.progress.chem.total} />
+            <PyqProgressCard label="Mathematics" solved={uiData.progress.math.solved} total={uiData.progress.math.total} />
+          </div>
+
+          <div className={styles.kpiRow}>
+            {viewMode === "test" ? uiData.testKpis.map((kpi, i) => (
+              <KpiCard key={i} label={kpi.label} value={kpi.value} subLabel={kpi.sub} icon={kpi.icon} />
+            )) : uiData.chapterKpis.map((kpi, i) => (
+              <KpiCard key={i} label={kpi.label} value={kpi.value} subLabel={kpi.sub} icon={kpi.icon} />
+            ))}
+          </div>
+
+          {!newUser && (
+            <>
+              {viewMode === "test" ? (
+                <div className={styles.growthSection}>
+                  <ScoreGrowthChart data={uiData.scoreData} />
+                </div>
+              ) : (
+                <div className={styles.bottomRow}>
+                  <div className={styles.bottomItem}>
+                    <SubjectBalanceRadar data={uiData.radarData} />
+                  </div>
+                  <div className={styles.bottomItem}>
+                    <QuestionTypeBar data={uiData.typeData} />
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }

@@ -1,5 +1,3 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
-
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
@@ -8,6 +6,10 @@ import { chapterConfig } from "@/features/chapterWise/config";
 import { ChapterDashboard } from "@/components/chapterwise/ChapterDashboard"; 
 import { Loader } from '@/components/ui/loader';
 
+// 🚨 NEW: Import Rate Limit Store and Modal
+import { RateLimitModal } from '@/components/ui/RateLimitModal/RateLimitModal';
+import { useRateLimitStore } from '@/store/useRateLimitStore';
+
 interface ChapterPageProps {
   params: Promise<{ subject: string; division: string; chapter: string }>;
 }
@@ -15,6 +17,9 @@ interface ChapterPageProps {
 export default function ChapterDashboardPage(props: ChapterPageProps) {
   // Unwrap the promise-based params for Next.js App Router
   const { subject, division, chapter } = use(props.params);
+
+  // 🚨 NEW: Listen to global rate limit state
+  const { isRateLimited } = useRateLimitStore();
 
   const [data, setData] = useState<ChapterInfoResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,9 +35,17 @@ export default function ChapterDashboardPage(props: ChapterPageProps) {
         setLoading(true);
         const chapterData = await fetchChapterInfo(exactChapterName);
         setData(chapterData);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error(err);
-        setError(true);
+        
+        // 🚨 FIX: Explicitly check if the error is a 429 OR if the store is already active
+        // If it is rate limited, we do NOT set the generic error state.
+        const error = err as { status?: number; message?: string };
+        if (error?.status === 429 || useRateLimitStore.getState().isRateLimited) {
+          // Do nothing. Let the Modal handle it.
+        } else {
+          setError(true);
+        }
       } finally {
         setLoading(false);
       }
@@ -40,7 +53,8 @@ export default function ChapterDashboardPage(props: ChapterPageProps) {
     loadData();
   }, [exactChapterName]);
 
-  if (loading) {
+  // 🚨 FIX: Only show the loader if we are NOT rate limited
+  if (loading && !isRateLimited) {
     return (
       <div 
         style={{ backgroundColor: 'var(--dashboard-background-color)' }} 
@@ -51,7 +65,8 @@ export default function ChapterDashboardPage(props: ChapterPageProps) {
     );
   }
 
-  if (error || !data) {
+  // 🚨 FIX: Only show the generic error if we are NOT rate limited
+  if ((error || !data) && !isRateLimited) {
     return (
       <div 
         style={{ backgroundColor: 'var(--dashboard-background-color)' }} 
@@ -63,17 +78,25 @@ export default function ChapterDashboardPage(props: ChapterPageProps) {
   }
 
   return (
-    <div 
-      className="flex-1 w-full min-h-screen" 
-      style={{ backgroundColor: 'var(--dashboard-background-color)' }}
-    >
-      <ChapterDashboard 
-        data={data}
-        subject={subject}
-        chapterSlug={chapter}
-        divisionSlug={division}
-        chapterName={exactChapterName}
-      />
-    </div>
+    <>
+      {/* 🚨 THE RATE LIMIT MODAL - Mounts globally over everything if triggered */}
+      <RateLimitModal />
+
+      {/* Render the dashboard only if we have data or if the modal is currently covering the screen */}
+      {data && (
+        <div 
+          className="flex-1 w-full min-h-screen" 
+          style={{ backgroundColor: 'var(--dashboard-background-color)' }}
+        >
+          <ChapterDashboard 
+            data={data}
+            subject={subject}
+            chapterSlug={chapter}
+            divisionSlug={division}
+            chapterName={exactChapterName}
+          />
+        </div>
+      )}
+    </>
   );
 }

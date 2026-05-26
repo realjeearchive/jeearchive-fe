@@ -1,6 +1,8 @@
 // src/features/analytics/api.ts
 import { authenticatedFetch, ApiError } from "@/features/auth/api";
 import { AnalyticsDataPayload } from "@/store/useAnalyticsStore";
+// 🚨 NEW: Import the rate limit store
+import { useRateLimitStore } from "@/store/useRateLimitStore";
 
 export interface AnalyticsApiResponse {
   message: string;
@@ -10,6 +12,12 @@ export interface AnalyticsApiResponse {
 
 // --- STRICT RESPONSE HANDLER ---
 async function handleJson<T>(res: Response): Promise<T> {
+  // 🚨 FIX: Trigger the global modal instead of a generic error
+  if (res.status === 429) {
+    useRateLimitStore.getState().setRateLimited(true);
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   const data: unknown = await res.json().catch(() => null);
 
   if (!res.ok) {

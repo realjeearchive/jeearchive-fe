@@ -1,5 +1,7 @@
 // src/features/analytics/singleTestApi.ts
 import { authenticatedFetch, ApiError } from "@/features/auth/api";
+// 🚨 NEW: Import the rate limit store
+import { useRateLimitStore } from "@/store/useRateLimitStore";
 
 // --- STRICT TYPES FOR SINGLE TEST ANALYTICS ---
 
@@ -93,6 +95,12 @@ export interface SingleTestApiResponse {
 
 // --- STRICT RESPONSE HANDLER ---
 async function handleJson<T>(res: Response): Promise<T> {
+  // 🚨 FIX: Trigger the global modal instead of a generic error
+  if (res.status === 429) {
+    useRateLimitStore.getState().setRateLimited(true);
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   const data: unknown = await res.json().catch(() => null);
 
   if (!res.ok) {

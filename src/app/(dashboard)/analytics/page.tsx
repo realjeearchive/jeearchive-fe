@@ -1,3 +1,4 @@
+// src/app/(dashboard)/analytics/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -13,6 +14,11 @@ import { SubjectDeepDive } from "@/components/analytics/Overall/SubjectDeepDive/
 import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatrix/EfficiencyMatrix";
 import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
 import { Loader } from "@/components/ui/loader";
+
+// 🚨 NEW: Import the Modal, Store, and Icons
+import { RateLimitModal } from '@/components/ui/RateLimitModal/RateLimitModal';
+import { useRateLimitStore } from '@/store/useRateLimitStore';
+import { FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
 
 import { useAnalyticsStore } from "@/store/useAnalyticsStore";
 import { fetchAnalyticsData } from "@/features/analytics/api";
@@ -46,6 +52,9 @@ export default function AnalyticsPage() {
     isNewUser 
   } = useAnalyticsStore();
 
+  // 🚨 NEW: Listen to global rate limit state
+  const { isRateLimited } = useRateLimitStore();
+
   useEffect(() => {
     const loadAnalytics = async () => {
       setLoading(true);
@@ -57,6 +66,7 @@ export default function AnalyticsPage() {
           setError("Performance analysis metrics are unavailable right now.");
         }
       } catch (err: unknown) {
+        // If it's a 429, the global store handles it. We just set a generic error to stop loading.
         setError("Connection drop. Please refresh.");
       }
     };
@@ -65,7 +75,8 @@ export default function AnalyticsPage() {
     else setLoading(false);
   }, [rawAnalytics, setAnalyticsData, setLoading, setError]);
 
-  if (isLoading) {
+  // 🚨 FIX: Only show loader if NOT rate limited
+  if (isLoading && !isRateLimited) {
     return (
       <div className={styles.loaderContainer}>
         <Loader label="Crunching your performance data..." />
@@ -73,47 +84,65 @@ export default function AnalyticsPage() {
     );
   }
 
-  if (error) {
-    return <div className={styles.errorContainer}>{error}</div>;
+  // 🚨 FIX: Upgraded generic error UI (Only visible if NOT rate limited)
+  if (error && !isRateLimited) {
+    return (
+      <div className={styles.errorContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', gap: '16px' }}>
+        <FiAlertTriangle size={32} color="#ef4444" />
+        <div style={{ color: 'var(--dashboard-primary-text-color)', fontSize: '16px', fontWeight: 500 }}>
+          {error}
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--dashboard-core-color)', color: '#000', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+        >
+          <FiRefreshCw size={14} /> Try Again
+        </button>
+      </div>
+    );
   }
 
   const newUser = isNewUser();
-  // Pass BOTH filters to the transformer
   const transformedData = transformAnalyticsData(rawAnalytics, timeRange, examType);
   const currentData = (newUser || !transformedData) ? DATA_EMPTY : transformedData;
 
   return (
-    <div className={styles.pageContainer}>
-      <AnalyticsHeader 
-        selectedRange={timeRange} 
-        onRangeChange={setTimeRange} 
-        selectedExam={examType}
-        onExamChange={setExamType}
-      />
+    <>
+      {/* 🚨 THE RATE LIMIT MODAL */}
+      <RateLimitModal />
 
-      <GlobalStats data={currentData.global} />
+      <div className={styles.pageContainer}>
+        <AnalyticsHeader 
+          selectedRange={timeRange} 
+          onRangeChange={setTimeRange} 
+          selectedExam={examType}
+          onExamChange={setExamType}
+        />
 
-      <div className={styles.gridChartRow}>
-        <div className={styles.chartSpan2}>
-          <PerformanceGraph data={currentData.graph} />
+        <GlobalStats data={currentData.global} />
+
+        <div className={styles.gridChartRow}>
+          <div className={styles.chartSpan2}>
+            <PerformanceGraph data={currentData.graph} />
+          </div>
+          <div>
+            <SubjectRadar data={currentData.radar} />
+          </div>
         </div>
-        <div>
-          <SubjectRadar data={currentData.radar} />
+
+        <SubjectDeepDive data={currentData.deepDive} />
+
+        <div className={styles.gridMetricRow}>
+          <div className={styles.minWidth0}>
+            <EfficiencyMatrix data={currentData.efficiency} />
+          </div>
+          <div className={styles.minWidth0}>
+            <WeaknessHunter data={currentData.weakness} />
+          </div>
         </div>
+
+        <RecentTestsList isEmpty={newUser} data={currentData.recentTests} />
       </div>
-
-      <SubjectDeepDive data={currentData.deepDive} />
-
-      <div className={styles.gridMetricRow}>
-        <div className={styles.minWidth0}>
-          <EfficiencyMatrix data={currentData.efficiency} />
-        </div>
-        <div className={styles.minWidth0}>
-          <WeaknessHunter data={currentData.weakness} />
-        </div>
-      </div>
-
-      <RecentTestsList isEmpty={newUser} data={currentData.recentTests} />
-    </div>
+    </>
   );
 };
