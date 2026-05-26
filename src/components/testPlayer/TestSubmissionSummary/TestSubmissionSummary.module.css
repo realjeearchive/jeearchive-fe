@@ -21,30 +21,39 @@
 .tableContainer {
   width: 100%;
   margin-bottom: 50px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .summaryTable {
-  width: 100%; /* Full width as requested */
+  width: 100%;
   border-collapse: collapse;
   border: 1px solid #757575;
+  white-space: nowrap;
 }
 
 .summaryTable th {
   background-color: #f5f5f5;
   border: 1px solid #757575;
-  padding: 10px;
+  padding: 10px 8px;
   text-align: left;
   font-size: 13px;
   color: #212121;
+  white-space: nowrap;
 }
 
 .summaryTable td {
   border: 1px solid #757575;
-  padding: 10px;
+  padding: 10px 8px;
   text-align: left;
   font-size: 13px;
 }
 
+.centerAlign {
+  text-align: center;
+}
+
+/* Action Section */
 .actionSection {
   text-align: center;
   margin-top: 40px;
@@ -54,6 +63,7 @@
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 25px;
+  color: #212121;
 }
 
 .btnRow {
@@ -72,13 +82,11 @@
   transition: opacity 0.2s;
 }
 
-/* Gray button from image */
 .noBtn {
   background-color: #616e7c;
   color: white;
 }
 
-/* Red button from image */
 .yesBtn {
   background-color: #d63031;
   color: white;
@@ -86,4 +94,83 @@
 
 .noBtn:hover, .yesBtn:hover {
   opacity: 0.9;
+}
+
+.noBtn:disabled, .yesBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Tablet - 768px and below */
+@media (max-width: 768px) {
+  .contentContainer {
+    padding: 16px;
+  }
+
+  .summaryTable th,
+  .summaryTable td {
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .summaryTable th {
+    font-size: 10px;
+  }
+
+  .topBanner {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .btnRow {
+    gap: 12px;
+  }
+
+  .noBtn, .yesBtn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile - 480px and below */
+@media (max-width: 480px) {
+  .contentContainer {
+    padding: 10px;
+  }
+
+  .topBanner {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .summaryTable th,
+  .summaryTable td {
+    padding: 6px 5px;
+    font-size: 10px;
+  }
+
+  .summaryTable th {
+    font-size: 9px;
+  }
+
+  .promptText {
+    font-size: 13px;
+    padding: 0 8px;
+  }
+
+  .actionSection {
+    margin-top: 30px;
+  }
+
+  .btnRow {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .noBtn, .yesBtn {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
 }
