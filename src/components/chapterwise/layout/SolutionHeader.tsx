@@ -23,9 +23,9 @@ interface SolutionHeaderProps {
   marksPos?: number;
   marksNeg?: number;
   showTools?: boolean;
-  // 🔥 NEW: Bookmark props
   isBookmarked?: boolean;
   onBookmark?: () => void;
+  showTimerPrompt?: boolean;
 }
 
 export const SolutionHeader = ({ 
@@ -46,7 +46,8 @@ export const SolutionHeader = ({
   marksNeg,
   showTools,
   isBookmarked,
-  onBookmark
+  onBookmark,
+  showTimerPrompt
 }: SolutionHeaderProps) => {
 
   const getTabsRowClass = () => {
@@ -91,7 +92,6 @@ export const SolutionHeader = ({
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-
           {!isSidebarOpen && (
             <button className={styles.settingsBtn} onClick={onToggleSidebar}>
               <FiMenu size={14} /> <span>Question Panel</span>
@@ -117,14 +117,24 @@ export const SolutionHeader = ({
 
         {showTools && (
           <div className={styles.toolsContainer}>
-            <button 
-              onClick={onToggleTimer}
-              className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ''}`}
-              title={isTimerRunning ? "Pause Timer" : "Start Timer"}
-            >
-              <span>{timer}</span>
-              {isTimerRunning ? <FiPauseCircle size={16} /> : <FiPlayCircle size={16} />}
-            </button>
+            {/* Timer with Prompt */}
+            <div className={styles.timerWrapper}>
+              <button 
+                onClick={onToggleTimer}
+                className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ''}`}
+                title={isTimerRunning ? "Pause Timer" : "Start Timer"}
+              >
+                <span>{timer || "00:00"}</span>
+                {isTimerRunning ? <FiPauseCircle size={16} /> : <FiPlayCircle size={16} />}
+              </button>
+              
+              {/* 🔥 Timer Prompt - Shows only when timer is NOT running */}
+              {showTimerPrompt && !isTimerRunning && (
+                <div className={styles.timerPrompt}>
+                  Click to start timer
+                </div>
+              )}
+            </div>
 
             <div className={styles.divider} />
 
@@ -134,7 +144,6 @@ export const SolutionHeader = ({
               <span className={styles.negMark}>-{marksNeg}</span>
             </div>
             
-            {/* 🔥 UPDATED: Dynamic Bookmark Button */}
             <button 
               className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ''}`}
               onClick={onBookmark}

@@ -18,6 +18,7 @@ interface OptionsListProps {
   onOptionSelect?: (id: string) => void;
   isSubmitted?: boolean;
   correctAnswer?: string | string[]; // 🔥 Accepts array
+  isMultiSelect?: boolean; // 🔥 New prop to indicate if multiple options can be selected
 }
 
 export const OptionsList = ({ 
@@ -25,7 +26,8 @@ export const OptionsList = ({
   selectedOptionId, 
   onOptionSelect, 
   isSubmitted = false,
-  correctAnswer 
+  correctAnswer,
+  isMultiSelect = false
 }: OptionsListProps) => {
 
   const handleSelect = (id: string) => {

@@ -33,7 +33,7 @@ export interface QuestionData {
   correctAnswer: string | string[]; 
   comprehensionContent?: string;
   userAnswer: string | null; status: StatusString;
-  isBookmarked?: boolean; // 🔥 NEW: Passed down to the interface
+  isBookmarked?: boolean;
   solution: string; stats: QuestionStatsData; meta: QuestionMetaData; chapter: string; topic: string;
 }
 
@@ -68,17 +68,45 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   const [warningMsg, setWarningMsg] = useState("");
   const [scorePopup, setScorePopup] = useState<{ text: string, color: string } | null>(null);
   const [sessionSolved, setSessionSolved] = useState<Record<string, boolean>>({});
+  const [showTimerPrompt, setShowTimerPrompt] = useState(false);
   
   const [attemptData, setAttemptData] = useState<ChapterAttempt | null>(null);
   const [isLoadingAttempt, setIsLoadingAttempt] = useState(false);
 
+  // Initialize store with questions
   useEffect(() => {
-    if (questions && questions.length > 0) {
-      const params = new URLSearchParams(window.location.search);
-      initStore(questions, params.get('q') || undefined);
+  if (questions && questions.length > 0) {
+    const params = new URLSearchParams(window.location.search);
+    initStore(questions, params.get('q') || undefined);
+  }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [questions, initStore]);
+
+// 🚀 Show timer prompt on EVERY question if timer is not running
+useEffect(() => {
+  if (!activeQuestionId || activeTab !== "question") return;
+
+  // Use requestAnimationFrame to ensure DOM is ready
+  const frameId = requestAnimationFrame(() => {
+    const storeState = useChapterPracticeStore.getState();
+    
+    if (!storeState.isTimerRunning) {
+      // Show prompt
+      setShowTimerPrompt(true);
+      
+      // Hide after 5 seconds
+      const hideTimer = setTimeout(() => {
+        setShowTimerPrompt(false);
+      }, 5000);
+      
+      return () => clearTimeout(hideTimer);
+    } else {
+      setShowTimerPrompt(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions, initStore]);
+  });
+
+  return () => cancelAnimationFrame(frameId);
+}, [activeQuestionId, activeTab, isTimerRunning]);
 
   useEffect(() => {
     setActiveTab("question");
@@ -87,11 +115,11 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
   }, [activeQuestionId]);
 
   useEffect(() => {
-    if (!activeQuestionId || activeTab === 'solution' || !isTimerRunning) return; 
-    
-    const timerId = setInterval(() => incrementTime(activeQuestionId), 1000);
-    return () => clearInterval(timerId);
-  }, [activeQuestionId, activeTab, isTimerRunning, incrementTime]);
+  if (!activeQuestionId || activeTab === 'solution' || !isTimerRunning) return; 
+  
+  const timerId = setInterval(() => incrementTime(activeQuestionId), 1000);
+  return () => clearInterval(timerId);
+}, [activeQuestionId, activeTab, isTimerRunning, incrementTime]);
 
   useEffect(() => {
     const handleResize = () => setIsSidebarOpen(window.innerWidth > 1024);
@@ -166,15 +194,28 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
     : currentQuestion?.correctAnswer;
 
   const isNumericalType = currentQuestion?.section.toLowerCase().includes("numerical") || currentQuestion?.section.toLowerCase().includes("integer");
+  const isMultiType = currentQuestion?.section.toLowerCase().includes("multi");
+  const isSingleType = currentQuestion?.section.toLowerCase().includes("single");
 
   const handleNext = () => currentIndex < questions.length - 1 && setActiveQuestionId(questions[currentIndex + 1].id);
   const handlePrev = () => currentIndex > 0 && setActiveQuestionId(questions[currentIndex - 1].id);
 
-  const isMultiType = currentQuestion?.section.toLowerCase().includes("multi");
+  // Smart warning messages based on question type
+  const getWarningMessage = (): string => {
+    if (!currentQuestion) return "";
+    
+    if (isNumericalType) {
+      return "Enter a numerical value";
+    }
+    if (isMultiType) {
+      return "Select all correct options";
+    }
+    return "Select an option to continue";
+  };
 
   const handleCheckAnswer = async () => {
     if (!hasSelectedOption || (Array.isArray(localUserAnswer) && localUserAnswer.length === 0)) {
-      setWarningMsg("Please select an option first!");
+      setWarningMsg(getWarningMessage());
       setTimeout(() => setWarningMsg(""), 3000); 
       return;
     }
@@ -187,7 +228,6 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
       if (isNumericalType) {
         isCorrect = parseFloat(localUserAnswer as string) === parseFloat(actualCorrectAnswer as string);
       } else if (isMultiType) {
-        // Array comparison for Multiple Correct
         const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer];
         const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
         isCorrect = u.length === c.length && u.every(val => c.includes(val as string));
@@ -227,7 +267,6 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
       return u.length === c.length && u.every(val => c.includes(val));
     }
 
-    // Single Correct default fallback
     return localUserAnswer === actualCorrectAnswer;
   })();
 
@@ -241,9 +280,15 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
       onCloseSidebar={() => setIsSidebarOpen(false)}
       header={
         <SolutionHeader
-          testName={chapterName} activeSubject={safeSubject}
-          onBack={() => router.back()} isSidebarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen(true)}
-          mode="practice" activeTab={activeTab} onTabChange={setActiveTab} isCurrentQuestionSubmitted={isSubmitted}
+          testName={chapterName} 
+          activeSubject={safeSubject}
+          onBack={() => router.back()} 
+          isSidebarOpen={isSidebarOpen} 
+          onToggleSidebar={() => setIsSidebarOpen(true)}
+          mode="practice" 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+          isCurrentQuestionSubmitted={isSubmitted}
           timer={formatTime(currentTimeSpent)}
           isTimerRunning={isTimerRunning}
           onToggleTimer={toggleTimer}
@@ -252,13 +297,17 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
           showTools={true}
           isBookmarked={!!bookmarkedQuestions[activeQuestionId]}
           onBookmark={() => toggleBookmark(activeQuestionId)}
+          showTimerPrompt={showTimerPrompt}
         />
       }
       sidebar={
         <SolutionSidebar
-          subjectName={safeSubject} questions={sidebarQuestions}
-          activeQuestionId={activeQuestionId} onQuestionClick={setActiveQuestionId}
-          onClose={() => setIsSidebarOpen(false)} mode="practice"
+          subjectName={safeSubject} 
+          questions={sidebarQuestions}
+          activeQuestionId={activeQuestionId} 
+          onQuestionClick={setActiveQuestionId}
+          onClose={() => setIsSidebarOpen(false)} 
+          mode="practice"
         />
       }
       footer={
@@ -282,11 +331,10 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
           isSolved={isQuestionSolved} 
         />
 
-        {/* 🔥 NEW: Render Comprehension Passage if it exists */}
         {currentQuestion.comprehensionContent && (
           <div style={{
-            background: 'rgba(59, 130, 246, 0.05)', // Faint blue background
-            borderLeft: '4px solid #3b82f6', // Blue accent line
+            background: 'rgba(59, 130, 246, 0.05)',
+            borderLeft: '4px solid #3b82f6',
             padding: '16px',
             marginBottom: '20px',
             borderRadius: '0 8px 8px 0'
@@ -298,23 +346,21 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
           </div>
         )}
 
-        {/* The main question text */}
         <QuestionText content={currentQuestion.text} hasImage={currentQuestion.hasImage} imageUrl={currentQuestion.imageUrl} />
 
         {activeTab === 'question' && (
           <div className="mt-4">
-            {/* 🔥 FIXED: Now accepts Single Correct AND Multiple Correct */}
-            {(currentQuestion.section.toLowerCase().includes("single") || currentQuestion.section.toLowerCase().includes("multi")) && (
+            {(isSingleType || isMultiType) && (
               <OptionsList 
                 options={currentQuestion.options} 
                 correctAnswer={currentQuestion.correctAnswer} 
                 selectedOptionId={localUserAnswer} 
                 onOptionSelect={(optId) => selectOption(activeQuestionId, optId)} 
                 isSubmitted={false} 
+                isMultiSelect={isMultiType}
               />
             )}
 
-            {/* 2. NUMERICAL / INTEGER TYPE */}
             {isNumericalType && (
               <NumericalInput
                 value={(localUserAnswer as string) || ""}
