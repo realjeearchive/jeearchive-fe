@@ -1,3 +1,4 @@
+// src/features/solutions/solutionsApi.ts
 import { authenticatedFetch, ApiError } from "@/features/auth/api";
 
 // --- STRICT TYPES FOR SOLUTION PAYLOAD ---

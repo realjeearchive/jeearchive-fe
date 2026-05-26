@@ -1,3 +1,4 @@
+// src/features/streak/api.ts
 import { authenticatedFetch, ApiError } from "@/features/auth/api";
 
 export interface StreakData {

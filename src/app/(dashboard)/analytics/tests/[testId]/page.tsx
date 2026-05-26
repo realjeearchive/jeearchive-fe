@@ -90,7 +90,7 @@ export default function SingleTestAnalysisPage(props: PageProps) {
 
   if (isLoading && !error && !localError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      <div className={styles.loaderContainer}>
         <Loader label="Crunching detailed test performance..." />
       </div>
     );
@@ -98,11 +98,18 @@ export default function SingleTestAnalysisPage(props: PageProps) {
 
   if (error || localError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-red-500 text-sm font-medium gap-4">
-        <p>{error || localError}</p>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorContent}>
+          <p className={styles.errorMessage}>
+            {error || localError}
+          </p>
+          <p className={styles.errorSubtext}>
+            This could be due to network issues or missing data.
+          </p>
+        </div>
         <button 
           onClick={() => router.push('/analytics')} 
-          className="px-4 py-2 bg-[#211f1c] border border-[#f59e0b] text-[#f59e0b] rounded-md transition hover:bg-[#f59e0b] hover:text-white text-xs font-semibold"
+          className={styles.backButton}
         >
           Back to Analytics
         </button>
@@ -143,12 +150,12 @@ export default function SingleTestAnalysisPage(props: PageProps) {
       <div className={styles.headerWrapper}>
         <div className={styles.headerRow}>
           <div className={styles.testInfo}>
-            <h1 className={styles.title}>{testName}</h1>
-            <p className={styles.meta}>
-              <span>{formattedDate}</span>
-              <span className={styles.dot}></span>
-              <span>Full Test</span>
-            </p>
+              <h1 className={styles.title}>{testName}</h1>
+              <p className={styles.meta}>
+                <span>{formattedDate}</span>
+                <span className={styles.dot}></span>
+                <span>Full Test</span>
+              </p>
           </div>
         </div>
       </div>

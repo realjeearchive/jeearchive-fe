@@ -1,0 +1,104 @@
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Navigation Wrapper */
+.navWrapper {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--dashboard-background-color);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--dashboard-dividerline-color);
+  margin-left: -1rem;
+  margin-right: -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Nav Buttons */
+.navButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navButtonActive {
+  color: #F59E0B;
+}
+
+.navButtonInactive {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.navButtonInactive:hover {
+  color: var(--dashboard-primary-text-color);
+}
+
+/* Icons */
+.iconActive {
+  color: #F59E0B;
+}
+
+.iconInactive {
+  color: var(--dashboard-secondary-text-color);
+}
+
+.navButtonInactive:hover .iconInactive {
+  color: var(--dashboard-primary-text-color);
+}
+
+/* Active Indicator */
+.activeIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #F59E0B;
+  box-shadow: 0 -1px 6px rgba(245, 158, 11, 0.4);
+}
+
+/* Content Area */
+.content {
+  min-width: 0;
+  animation: fadeSlideIn 0.5s ease-out;
+}
+
+/* Animations */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

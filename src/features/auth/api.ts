@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/store/authStore";
 import type { SignupInput, LoginInput } from './schemas';
+import { toast } from "sonner"; // 🚨 NEW: For rate limit toasts
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api';
 
@@ -13,6 +14,9 @@ export class ApiError extends Error {
 }
 
 let refreshPromise: Promise<string> | null = null;
+
+// 🚨 NEW: Global request cache to prevent React Strict Mode double-fetches
+const inFlightRequests = new Map<string, Promise<Response>>();
 
 export async function authenticatedFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const store = useAuthStore.getState();
@@ -30,27 +34,41 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
     credentials: 'include',
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  // 🚨 NEW: Deduplication Logic
+  const requestKey = `${options.method || 'GET'}:${endpoint}`;
 
-  if (response.status === 401 || response.status === 403) {
-    if (endpoint.includes('refershToken')) {
-      return response;
-    }
-
-    console.warn(`[API: Auth] 401/403 received for ${endpoint}. Attempting token refresh...`);
-    try {
-      const newToken = await getRefreshToken();
-      headers.set('Authorization', `Bearer ${newToken}`);
-      console.info(`[API: Auth] Token refreshed successfully. Retrying ${endpoint}...`);
-      return fetch(`${API_BASE_URL}${endpoint}`, { ...config, headers });
-    } catch (err) {
-      console.error(`[API: Auth] Token refresh failed. Logging user out.`, err);
-      store.logout();
-      return response;
-    }
+  if (inFlightRequests.has(requestKey)) {
+    return inFlightRequests.get(requestKey)!;
   }
 
-  return response;
+  const fetchPromise = fetch(`${API_BASE_URL}${endpoint}`, config)
+    .then(async (response) => {
+      if (response.status === 401 || response.status === 403) {
+        if (endpoint.includes('refershToken')) {
+          return response;
+        }
+
+        console.warn(`[API: Auth] 401/403 received for ${endpoint}. Attempting token refresh...`);
+        try {
+          const newToken = await getRefreshToken();
+          headers.set('Authorization', `Bearer ${newToken}`);
+          console.info(`[API: Auth] Token refreshed successfully. Retrying ${endpoint}...`);
+          return fetch(`${API_BASE_URL}${endpoint}`, { ...config, headers });
+        } catch (err) {
+          console.error(`[API: Auth] Token refresh failed. Logging user out.`, err);
+          store.logout();
+          return response;
+        }
+      }
+      return response;
+    })
+    .finally(() => {
+      // Clear the cache shortly after the request resolves
+      setTimeout(() => inFlightRequests.delete(requestKey), 300);
+    });
+
+  inFlightRequests.set(requestKey, fetchPromise);
+  return fetchPromise;
 }
 
 async function getRefreshToken(): Promise<string> {
@@ -89,6 +107,15 @@ async function getRefreshToken(): Promise<string> {
 }
 
 export async function handleJson<T>(res: Response): Promise<T> {
+  // 🚨 NEW: Global 429 Interceptor
+  if (res.status === 429) {
+    toast.error("You're moving too fast!", {
+      description: "Network is busy. Please wait a few seconds and refresh.",
+      duration: 4000,
+    });
+    throw new ApiError("Too many requests. Please wait.", 429);
+  }
+
   const data: unknown = await res.json().catch(() => null);
 
   if (!res.ok) {
