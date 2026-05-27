@@ -1,8 +1,20 @@
-"use client";
-
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/Login/LoginForm";
 import { Loader } from "@/components/ui/loader";
+
+export const metadata: Metadata = {
+  title: "Login - JEE Archive | Free JEE Mock Tests with NTA Interface",
+  description:
+    "Login to JEE Archive to access free JEE Main & Advanced mock tests. Practice with real NTA interface, chapter-wise PYQs, instant results, and detailed solutions.",
+  alternates: {
+    canonical: "https://jeearchive.com/login",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function LoginPage() {
   return (

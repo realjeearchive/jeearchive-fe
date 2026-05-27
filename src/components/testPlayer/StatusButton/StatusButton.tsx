@@ -1,5 +1,3 @@
-// StatusButton.tsx
-
 "use client";
 
 import styles from "./StatusButton.module.css";
@@ -25,6 +23,7 @@ export default function StatusButton({
       onClick={onClick}
       disabled={disabled}
       type="button"
+      aria-label={label}
     >
       {label}
     </button>

@@ -17,16 +17,26 @@ interface StatusIndicatorProps {
 
 export function StatusIndicator({ counts }: StatusIndicatorProps) {
   return (
-    <div className={styles.container}>
+    <div className={styles.container} aria-label="Question status summary">
       <div className={styles.statusGrid}>
         {/* Row 1 */}
         <div className={styles.statusRow}>
           <div className={styles.statusItem}>
-            <StatusIcon width={30} height={30} type="answered" value={counts.answered} />
+            <StatusIcon
+              width={30}
+              height={30}
+              type="answered"
+              value={counts.answered}
+            />
             <span className={styles.statusLabel}>Answered</span>
           </div>
           <div className={styles.statusItem}>
-            <StatusIcon width={30} height={30} type="notAnswered" value={counts.notAnswered} />
+            <StatusIcon
+              width={30}
+              height={30}
+              type="notAnswered"
+              value={counts.notAnswered}
+            />
             <span className={styles.statusLabel}>Not Answered</span>
           </div>
         </div>
@@ -34,11 +44,21 @@ export function StatusIndicator({ counts }: StatusIndicatorProps) {
         {/* Row 2 */}
         <div className={styles.statusRow}>
           <div className={styles.statusItem}>
-            <StatusIcon width={30} height={30} type="notVisited" value={counts.notVisited} />
+            <StatusIcon
+              width={30}
+              height={30}
+              type="notVisited"
+              value={counts.notVisited}
+            />
             <span className={styles.statusLabel}>Not Visited</span>
           </div>
           <div className={styles.statusItem}>
-            <StatusIcon width={30} height={30} type="markedForReview" value={counts.markedForReview} />
+            <StatusIcon
+              width={30}
+              height={30}
+              type="markedForReview"
+              value={counts.markedForReview}
+            />
             <span className={styles.statusLabel}>Marked for Review</span>
           </div>
         </div>
@@ -46,7 +66,12 @@ export function StatusIndicator({ counts }: StatusIndicatorProps) {
         {/* Row 3 */}
         <div className={styles.fullRow}>
           <div className={styles.statusItem}>
-            <StatusIcon type="answeredAndMarked" value={counts.answeredAndMarked} width={30} height={30} />
+            <StatusIcon
+              type="answeredAndMarked"
+              value={counts.answeredAndMarked}
+              width={30}
+              height={30}
+            />
             <span className={styles.statusLabel}>
               Answered & Marked for Review (will be evaluated)
             </span>

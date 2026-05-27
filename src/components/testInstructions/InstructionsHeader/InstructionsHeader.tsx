@@ -2,7 +2,7 @@ import styles from "./InstructionsHeader.module.css";
 
 export function InstructionsHeader() {
   return (
-    <section className={styles.block}>
+    <section className={styles.block} aria-label="General instructions">
       <h1 className={styles.mainTitle}>INSTRUCTIONS TO CANDIDATES</h1>
 
       <h2 className={styles.sectionTitle}>GENERAL INSTRUCTIONS</h2>

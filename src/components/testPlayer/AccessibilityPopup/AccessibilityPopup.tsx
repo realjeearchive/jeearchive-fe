@@ -9,7 +9,6 @@ import { GrCursor } from "react-icons/gr";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
 
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -19,14 +18,13 @@ export default function AccessibilityPopup({ open, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTestPlayerTheme();
   const {
-  fontSize,
-  setFontSize,
-  cursorTrailEnabled,
-  toggleCursorTrail,
-  cursorSize, setCursorSize
-} = useTestPlayerAccessibility();
-
-
+    fontSize,
+    setFontSize,
+    cursorTrailEnabled,
+    toggleCursorTrail,
+    cursorSize,
+    setCursorSize,
+  } = useTestPlayerAccessibility();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -36,14 +34,31 @@ export default function AccessibilityPopup({ open, onClose }: Props) {
     }
 
     if (open) document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open, onClose]);
+
+  // Handle Escape key
+  useEffect(() => {
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape" && open) {
+        onClose();
+      }
+    }
+    if (open) document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [open, onClose]);
 
   if (!open) return null;
 
+  const handleToggleKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      action();
+    }
+  };
+
   return (
-    <div className={styles.backdrop}>
+    <div className={styles.backdrop} role="dialog" aria-modal="true" aria-label="Accessibility settings">
       <div ref={ref} className={styles.popup}>
         <h2 className={styles.title}>Accessibility Adjustments</h2>
 
@@ -53,15 +68,20 @@ export default function AccessibilityPopup({ open, onClose }: Props) {
             <p className={styles.cardTitle}>Switch to Dark Mode</p>
 
             <div className={styles.row}>
-              <IoSunnyOutline size={20} />
+              <IoSunnyOutline size={20} aria-hidden="true" />
 
               <div
+                role="switch"
+                aria-checked={theme === "dark"}
+                aria-label="Toggle dark mode"
+                tabIndex={0}
                 className={styles.toggle}
                 data-active={theme === "dark"}
                 onClick={toggleTheme}
+                onKeyDown={(e) => handleToggleKeyDown(e, toggleTheme)}
               />
 
-              <IoMoonOutline size={20} />
+              <IoMoonOutline size={20} aria-hidden="true" />
             </div>
           </div>
 
@@ -70,85 +90,87 @@ export default function AccessibilityPopup({ open, onClose }: Props) {
             <p className={styles.cardTitle}>Select Font Size</p>
 
             <div className={styles.circleGroup}>
-              <div
-                className={`${styles.circle} ${
-                  fontSize === "small" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${fontSize === "small" ? styles.active : ""}`}
                 onClick={() => setFontSize("small")}
+                aria-label="Small font size"
+                aria-pressed={fontSize === "small"}
               >
                 A
-              </div>
+              </button>
 
-              <div
-                className={`${styles.circle} ${
-                  fontSize === "medium" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${fontSize === "medium" ? styles.active : ""}`}
                 onClick={() => setFontSize("medium")}
+                aria-label="Medium font size"
+                aria-pressed={fontSize === "medium"}
               >
                 A
-              </div>
+              </button>
 
-              <div
-                className={`${styles.circle} ${
-                  fontSize === "large" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${fontSize === "large" ? styles.active : ""}`}
                 onClick={() => setFontSize("large")}
+                aria-label="Large font size"
+                aria-pressed={fontSize === "large"}
               >
                 A
-              </div>
+              </button>
             </div>
           </div>
-
 
           {/* Cursor trail */}
           <div className={styles.card}>
             <p className={styles.cardTitle}>Enable Cursor Trail</p>
             <div className={styles.row}>
-              <FiMousePointer size={22} />
+              <FiMousePointer size={22} aria-hidden="true" />
 
               <div
+                role="switch"
+                aria-checked={cursorTrailEnabled}
+                aria-label="Toggle cursor trail"
+                tabIndex={0}
                 className={styles.toggle}
                 data-active={cursorTrailEnabled}
                 onClick={toggleCursorTrail}
+                onKeyDown={(e) => handleToggleKeyDown(e, toggleCursorTrail)}
               />
             </div>
           </div>
-
 
           {/* Cursor size */}
           <div className={styles.card}>
             <p className={styles.cardTitle}>Choose Cursor Trail Size</p>
 
             <div className={styles.circleGroup}>
-              <div
-                className={`${styles.circle} ${
-                  cursorSize === "small" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${cursorSize === "small" ? styles.active : ""}`}
                 onClick={() => setCursorSize("small")}
+                aria-label="Small cursor size"
+                aria-pressed={cursorSize === "small"}
               >
-                <FiMousePointer />
-              </div>
+                <FiMousePointer aria-hidden="true" />
+              </button>
 
-              <div
-                className={`${styles.circle} ${
-                  cursorSize === "medium" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${cursorSize === "medium" ? styles.active : ""}`}
                 onClick={() => setCursorSize("medium")}
+                aria-label="Medium cursor size"
+                aria-pressed={cursorSize === "medium"}
               >
-                <GrCursor />
-              </div>
+                <GrCursor aria-hidden="true" />
+              </button>
 
-              <div
-                className={`${styles.circle} ${
-                  cursorSize === "large" ? styles.active : ""
-                }`}
+              <button
+                className={`${styles.circle} ${cursorSize === "large" ? styles.active : ""}`}
                 onClick={() => setCursorSize("large")}
+                aria-label="Large cursor size"
+                aria-pressed={cursorSize === "large"}
               >
-                <GiArrowCursor />
-              </div>
+                <GiArrowCursor aria-hidden="true" />
+              </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

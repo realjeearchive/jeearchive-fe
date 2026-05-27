@@ -1,4 +1,4 @@
-// src/app/(exam)/previous-year-questions/jee-mains/[year]/tests/[testId]/testOverviewPageClient.tsx
+// src/app/(exam)/previous-year-questions/[examType]/[year]/tests/[testId]/testOverviewPageClient.tsx
 
 "use client";
 
@@ -56,7 +56,12 @@ export function TestOverviewPageClient({ summaryTitle, sectionsCount, paperId, y
         <section className={layoutStyles.instructionsPanel}>
           <InstructionsHeader />
           <div className={layoutStyles.legendImageBlock}>
-            <Image src={instructionsLegend} alt="Legend" className={layoutStyles.legendImage} priority />
+            <Image 
+  src={instructionsLegend} 
+  alt="JEE mock test question status indicators: Answered, Not Answered, Marked for Review, Not Visited" 
+  className={layoutStyles.legendImage} 
+  priority 
+/>
           </div>
           <ol className={layoutStyles.continuedList} start={4}>
             <li>The Marked for Review status for a question simply indicates that you would like to look at the question again.</li>

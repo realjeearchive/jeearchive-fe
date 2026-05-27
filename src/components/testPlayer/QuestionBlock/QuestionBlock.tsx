@@ -42,7 +42,7 @@ const parserOptions: HTMLReactParserOptions = {
           <img
             {...element.attribs}
             className={styles.questionImage} 
-            alt={element.attribs.alt || "Figure"}
+            alt={element.attribs.alt || "Question related image"}
           />
         );
       }
@@ -90,7 +90,7 @@ const parserOptions: HTMLReactParserOptions = {
           <div className={styles.imageGrid}>
             {question.images.map((imgUrl, idx) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={idx} src={imgUrl} alt={`Question Figure ${idx + 1}`} className={styles.questionImage} />
+              <img key={idx} src={imgUrl} alt={`Question diagram or figure ${idx + 1}`} className={styles.questionImage} />
             ))}
           </div>
         )}
@@ -104,7 +104,7 @@ const parserOptions: HTMLReactParserOptions = {
       {/* 3. OPTIONS */}
       {showOptions && (
         <div className={styles.optionsList}>
-          {isMulti && <p className={styles.multiHint}>* One or more options may be correct</p>}
+          {isMulti && <p className={styles.multiHint} role="note">* One or more options may be correct</p>}
           
           {question.options.map((opt) => {
             const checked = isSelected(opt.id);
@@ -116,7 +116,7 @@ const parserOptions: HTMLReactParserOptions = {
                     type={inputType}
                     name={question.id}
                     id={`${inputType}-${opt.id}`}
-                    aria-label={`Option ${opt.id}`}
+                    aria-label={`Select option ${opt.id}`}
                     checked={checked}
                     onChange={() => onSelectOption(opt.id)}
                     className={styles.optionInput} // Unified class
@@ -128,7 +128,7 @@ const parserOptions: HTMLReactParserOptions = {
                   
                   {opt.imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={opt.imageUrl} alt="Option Figure" className={styles.optImage} />
+                    <img src={opt.imageUrl} alt={`Option ${opt.id} related image`} className={styles.optImage} />
                   )}
                 </div>
               </label>

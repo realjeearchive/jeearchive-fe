@@ -8,23 +8,32 @@ import { useTestEngineStore } from "@/features/tests/testEngineStore";
 
 interface Props {
   anchorRect: DOMRect;
-  targetSectionId: string; // <--- NEW PROP: The specific section to show stats for
+  targetSectionId: string;
   onClose: () => void;
 }
 
-export function SectionStatusPopup({ anchorRect, targetSectionId, onClose }: Props) {
-  // 1. Get Global Data (All sections and all question states)
+export function SectionStatusPopup({
+  anchorRect,
+  targetSectionId,
+  onClose,
+}: Props) {
   const sections = useTestEngineStore((s) => s.sections);
   const questionsById = useTestEngineStore((s) => s.questionsById);
 
-  // Close on scroll (standard CBT behavior)
   useEffect(() => {
     const close = () => onClose();
     window.addEventListener("scroll", close, true);
     return () => window.removeEventListener("scroll", close, true);
   }, [onClose]);
 
-  // 2. Calculate Counts for the TARGET Section (not necessarily the active one)
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
   const counts = useMemo(() => {
     const currentCounts = {
       answered: 0,
@@ -36,12 +45,10 @@ export function SectionStatusPopup({ anchorRect, targetSectionId, onClose }: Pro
 
     if (!targetSectionId || !sections.length) return currentCounts;
 
-    // Find the TARGET section definition
     const targetSection = sections.find((s) => s.id === targetSectionId);
-    
+
     if (targetSection) {
       targetSection.questions.forEach((qDef) => {
-        // Look up the live state for this question
         const state = questionsById[qDef.id];
         if (state) {
           switch (state.status) {
@@ -73,34 +80,61 @@ export function SectionStatusPopup({ anchorRect, targetSectionId, onClose }: Pro
   return createPortal(
     <div
       className={styles.popup}
+      role="dialog"
+      aria-label="Section question status summary"
       style={{
         top: anchorRect.bottom + 8,
         left: anchorRect.left + anchorRect.width / 2,
         transform: "translateX(-50%)",
       }}
     >
-      <div className={styles.row}>
-        <StatusIcon type="answered" value={counts.answered} width={48} height={40} />
+      <div className={styles.row} role="listitem">
+        <StatusIcon
+          type="answered"
+          value={counts.answered}
+          width={48}
+          height={40}
+        />
         <span>Answered</span>
       </div>
 
-      <div className={styles.row}>
-        <StatusIcon type="notAnswered" value={counts.notAnswered} width={48} height={40} />
+      <div className={styles.row} role="listitem">
+        <StatusIcon
+          type="notAnswered"
+          value={counts.notAnswered}
+          width={48}
+          height={40}
+        />
         <span>Not Answered</span>
       </div>
 
-      <div className={styles.row}>
-        <StatusIcon type="notVisited" value={counts.notVisited} width={48} height={40} />
+      <div className={styles.row} role="listitem">
+        <StatusIcon
+          type="notVisited"
+          value={counts.notVisited}
+          width={48}
+          height={40}
+        />
         <span>Not Visited</span>
       </div>
 
-      <div className={styles.row}>
-        <StatusIcon type="marked" value={counts.markedForReview} width={48} height={48} />
+      <div className={styles.row} role="listitem">
+        <StatusIcon
+          type="marked"
+          value={counts.markedForReview}
+          width={48}
+          height={48}
+        />
         <span>Marked for Review</span>
       </div>
 
-      <div className={styles.row}>
-        <StatusIcon type="answeredMarked" value={counts.answeredAndMarked} width={48} height={48} />
+      <div className={styles.row} role="listitem">
+        <StatusIcon
+          type="answeredMarked"
+          value={counts.answeredAndMarked}
+          width={48}
+          height={48}
+        />
         <span>
           Answered and Marked for Review
           <br />

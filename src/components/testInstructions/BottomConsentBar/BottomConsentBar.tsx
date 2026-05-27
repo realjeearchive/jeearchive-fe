@@ -1,4 +1,3 @@
-// src/components/testInstructions/BottomConsentBar/BottomConsentBar.tsx
 "use client";
 
 import { useState } from "react";
@@ -33,7 +32,7 @@ export function BottomConsentBar({ note, onConsent, customLabel = "I am ready to
   };
 
   return (
-    <div className={styles.bottomBar}>
+    <footer className={styles.bottomBar} role="contentinfo">
       <div className={styles.inner}>
         <div className={styles.left}>
           <p className={styles.noteRed}>{note}</p>
@@ -44,8 +43,9 @@ export function BottomConsentBar({ note, onConsent, customLabel = "I am ready to
               checked={isChecked}
               onChange={(e) => setIsChecked(e.target.checked)}
               className={styles.checkbox}
+              aria-describedby="consent-declaration"
             />
-            <span className={styles.checkboxText}>
+            <span id="consent-declaration" className={styles.checkboxText}>
               I have read and understood the instructions. All computer hardware allotted to me are in proper working condition. I declare that I am not in possession of / not wearing / not carrying any prohibited gadget like mobile phone, bluetooth devices etc. If any prohibited material with me into the Examination Hall, I agree that in case of not adhering to the instructions, I shall be liable to be debarred from this Test and/or to disciplinary action, which may include ban from future Tests / Examinations.
             </span>
           </label>
@@ -56,6 +56,8 @@ export function BottomConsentBar({ note, onConsent, customLabel = "I am ready to
             type="button"
             className={styles.readyButton}
             onClick={handleBegin}
+            disabled={!isChecked}
+            aria-label={customLabel}
             style={{ 
               opacity: isChecked ? 1 : 0.7, 
               cursor: 'pointer' 
@@ -65,6 +67,6 @@ export function BottomConsentBar({ note, onConsent, customLabel = "I am ready to
           </button>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }

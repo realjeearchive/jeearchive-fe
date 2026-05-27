@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import { VerifyEmail } from '@/components/auth/VerifyEmail/VerifyEmail';
 import { Suspense } from 'react';
 import { Loader } from "@/components/ui/loader";
+
+export const metadata: Metadata = {
+  title: "Verify Email - JEE Archive",
+  description:
+    "Verify your email address to activate your JEE Archive account and access free JEE mock tests.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function VerifyEmailPage() {
   return (
@@ -9,5 +20,3 @@ export default function VerifyEmailPage() {
     </Suspense>
   );
 }
-
-export const dynamic = 'force-dynamic';

@@ -12,7 +12,6 @@ interface Props {
   title: string;
   maxMarks: number;
   questionCount: number;
-  // FIXED: Accepts all 4 question types defined in the store
   sectionType: "single" | "numerical" | "multi" | "comprehension";
   positiveMark: number;
   negativeMark: number;
@@ -27,9 +26,11 @@ export function SectionInstructionsBox({
   negativeMark,
 }: Props) {
   const [open, setOpen] = useState(false);
-  
-  // Safe handling for helper function
-  const countWord = typeof numberToWords === 'function' ? numberToWords(questionCount) : questionCount;
+
+  const countWord =
+    typeof numberToWords === "function"
+      ? numberToWords(questionCount)
+      : questionCount;
   const negativeMarkDisplay = negativeMark > 0 ? `-${negativeMark}` : "0";
 
   const renderSpecificInstructions = () => {
@@ -37,21 +38,36 @@ export function SectionInstructionsBox({
       case "numerical":
         return (
           <>
-            <li>The answer to each question is a <strong>NUMERICAL VALUE</strong>.</li>
-            <li>For each question, enter the correct numerical value (in integer or decimal notation).</li>
+            <li>
+              The answer to each question is a <strong>NUMERICAL VALUE</strong>.
+            </li>
+            <li>
+              For each question, enter the correct numerical value (in integer or
+              decimal notation).
+            </li>
           </>
         );
       case "multi":
         return (
           <>
-            <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONE OR MORE THAN ONE</strong> of these four options is the correct answer.</li>
-            <li>For each question, choose ALL the options corresponding to the correct answer.</li>
+            <li>
+              Each question has <strong>FOUR</strong> options (A), (B), (C) and
+              (D). <strong>ONE OR MORE THAN ONE</strong> of these four options is
+              the correct answer.
+            </li>
+            <li>
+              For each question, choose ALL the options corresponding to the
+              correct answer.
+            </li>
           </>
         );
       case "comprehension":
         return (
           <>
-            <li>This section contains questions based on a <strong>PARAGRAPH</strong>.</li>
+            <li>
+              This section contains questions based on a{" "}
+              <strong>PARAGRAPH</strong>.
+            </li>
             <li>Choose the correct option corresponding to the question.</li>
           </>
         );
@@ -59,8 +75,15 @@ export function SectionInstructionsBox({
       default:
         return (
           <>
-            <li>Each question has <strong>FOUR</strong> options (A), (B), (C) and (D). <strong>ONLY ONE</strong> of these four options is the correct answer.</li>
-            <li>For each question, choose the option corresponding to the correct answer.</li>
+            <li>
+              Each question has <strong>FOUR</strong> options (A), (B), (C) and
+              (D). <strong>ONLY ONE</strong> of these four options is the correct
+              answer.
+            </li>
+            <li>
+              For each question, choose the option corresponding to the correct
+              answer.
+            </li>
           </>
         );
     }
@@ -72,25 +95,38 @@ export function SectionInstructionsBox({
         type="button"
         className={styles.header}
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls="section-instructions-content"
       >
         <span>
           {title} (Maximum Marks: {maxMarks})
         </span>
 
-        <span className={styles.icon}>
-          {open ? <MdOutlineKeyboardArrowUp size={22} /> : <MdOutlineKeyboardArrowDown size={22} />}
+        <span className={styles.icon} aria-hidden="true">
+          {open ? (
+            <MdOutlineKeyboardArrowUp size={22} />
+          ) : (
+            <MdOutlineKeyboardArrowDown size={22} />
+          )}
         </span>
       </button>
 
       <div
+        id="section-instructions-content"
         className={`${styles.contentWrapper} ${
           open ? styles.open : styles.closed
         }`}
+        role="region"
+        aria-label={`Instructions for ${title}`}
       >
         <div className={styles.content}>
           <ul className={styles.mainList}>
             <li>
-              This section contains <strong>{countWord} ({questionCount})</strong> questions.
+              This section contains{" "}
+              <strong>
+                {countWord} ({questionCount})
+              </strong>{" "}
+              questions.
             </li>
 
             {renderSpecificInstructions()}
@@ -100,13 +136,20 @@ export function SectionInstructionsBox({
               <u>according to the following marking scheme</u>:
               <ul className={styles.subList}>
                 <li>
-                  <em>Full Marks</em> : +{positiveMark} if <strong>{sectionType === 'multi' ? "ALL correct options" : "CORRECT answer"}</strong> is/are chosen.
+                  <em>Full Marks</em> : +{positiveMark} if{" "}
+                  <strong>
+                    {sectionType === "multi"
+                      ? "ALL correct options"
+                      : "CORRECT answer"}
+                  </strong>{" "}
+                  is/are chosen.
                 </li>
                 <li>
                   <em>Zero Marks</em> : 0 if the question is unanswered.
                 </li>
                 <li>
-                  <em>Negative Marks</em> : {negativeMarkDisplay} in all other cases.
+                  <em>Negative Marks</em> : {negativeMarkDisplay} in all other
+                  cases.
                 </li>
               </ul>
             </li>

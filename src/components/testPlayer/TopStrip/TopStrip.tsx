@@ -11,31 +11,47 @@ import { useScreenMagnifier } from "@/features/tests/useScreenMagnifier";
 export function TopStrip() {
   const [openAccessibility, setOpenAccessibility] = useState(false);
   const { toggle } = useScreenMagnifier();
-  
-  // 🔥 FIXED: Grab the pre-calculated string directly
+
   const formattedBannerText = useTestEngineStore((s) => s.formattedBannerText);
 
   return (
     <>
-      <div className={styles.root}>
+      <header className={styles.root} role="banner">
         <div className={styles.banner}>
           {formattedBannerText || "JEE TEST UPDATED AS PER LATEST NTA PATTERN"}
         </div>
 
-        <div className={styles.utilities}>
-          <button type="button" className={styles.utilButton} onClick={() => setOpenAccessibility(true)}>
-            <span className={`${styles.icon} ${styles.accessibility}`}><IoAccessibility /></span>
+        <nav className={styles.utilities} aria-label="Test utilities">
+          <button
+            type="button"
+            className={styles.utilButton}
+            onClick={() => setOpenAccessibility(true)}
+            aria-label="Open accessibility settings"
+          >
+            <span className={`${styles.icon} ${styles.accessibility}`} aria-hidden="true">
+              <IoAccessibility />
+            </span>
             Accessibility
           </button>
 
-          <button type="button" className={styles.utilButton} onClick={toggle}>
-            <span className={`${styles.icon} ${styles.magnifier}`}><HiOutlineMagnifyingGlassPlus /></span>
+          <button
+            type="button"
+            className={styles.utilButton}
+            onClick={toggle}
+            aria-label="Toggle screen magnifier"
+          >
+            <span className={`${styles.icon} ${styles.magnifier}`} aria-hidden="true">
+              <HiOutlineMagnifyingGlassPlus />
+            </span>
             Screen Magnifier
           </button>
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      <AccessibilityPopup open={openAccessibility} onClose={() => setOpenAccessibility(false)} />
+      <AccessibilityPopup
+        open={openAccessibility}
+        onClose={() => setOpenAccessibility(false)}
+      />
     </>
   );
 }

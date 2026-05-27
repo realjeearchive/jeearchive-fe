@@ -2,13 +2,13 @@ import styles from "./NavigationAndAnswering.module.css";
 
 export function NavigationAndAnswering() {
   return (
-    <div className={styles.block}>
+    <section className={styles.block} aria-label="Navigation and answering instructions">
       {/* NAVIGATING TO A QUESTION */}
       <h2 className={styles.sectionTitle}>NAVIGATING TO A QUESTION</h2>
       <p className={styles.paragraph}>
         To navigate between questions, you need to do the following:
       </p>
-      <ol className={styles.alphaList}>
+      <ol className={styles.alphaList} aria-label="Navigation steps">
         <li>
           Click on the question number in the Question Palette at the right of
           the screen to go to that numbered question directly. Note that using
@@ -31,7 +31,7 @@ export function NavigationAndAnswering() {
       <h2 className={styles.sectionTitle}>ANSWERING A QUESTION</h2>
 
       {/* 1. MCQ single correct */}
-      <ol className={styles.numberList}>
+      <ol className={styles.numberList} aria-label="Single correct multiple choice questions">
         <li>
           Procedure for answering{" "}
           <span className={styles.bold}>
@@ -66,7 +66,7 @@ export function NavigationAndAnswering() {
       </ol>
 
       {/* 2. Multiple select (one or more correct) */}
-      <ol className={styles.numberList} start={2}>
+      <ol className={styles.numberList} start={2} aria-label="Multiple select questions">
         <li>
           Procedure for answering{" "}
           <span className={styles.bold}>
@@ -103,7 +103,7 @@ export function NavigationAndAnswering() {
       </ol>
 
       {/* 3. Numerical value type */}
-      <ol className={styles.numberList} start={3}>
+      <ol className={styles.numberList} start={3} aria-label="Numerical value questions">
         <li>
           Procedure for answering{" "}
           <span className={styles.bold}>numerical value type questions:</span>
@@ -147,13 +147,13 @@ export function NavigationAndAnswering() {
       </ol>
 
       {/* 4. Important note about evaluation */}
-      <ol className={styles.numberList} start={4}>
+      <ol className={styles.numberList} start={4} aria-label="Important evaluation note">
         <li>
           Note that <span className={styles.bold}>ONLY</span> Questions for
           which answers are saved or marked for review after answering will be
           considered for evaluation.
         </li>
       </ol>
-    </div>
+    </section>
   );
 }

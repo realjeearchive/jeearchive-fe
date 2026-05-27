@@ -2,10 +2,8 @@
 
 import { IoIosPaper } from "react-icons/io";
 import styles from "./StatusIcon.module.css";
-// Import the source of truth for types
 import type { QuestionStatus } from "@/features/tests/playertypes";
 
-// We define a union so it accepts both the Engine Status AND legacy strings (if you used them in static popups)
 export type StatusIconInput = QuestionStatus | "marked" | "answeredMarked";
 
 interface StatusIconProps {
@@ -23,31 +21,30 @@ export default function StatusIcon({
   width,
   height,
 }: StatusIconProps) {
-
-  // Helper to map incoming Status -> CSS Class Name
   const getStyleClass = (t: StatusIconInput) => {
     switch (t) {
       case "markedForReview":
       case "marked":
         return styles.marked;
-        
+
       case "answeredAndMarked":
       case "answeredMarked":
         return styles.answeredMarked;
-        
+
       case "answered":
         return styles.answered;
-        
+
       case "notAnswered":
         return styles.notAnswered;
-        
+
       case "notVisited":
       default:
         return styles.notVisited;
     }
   };
 
-  const isAnsweredMarked = type === "answeredAndMarked" || type === "answeredMarked";
+  const isAnsweredMarked =
+    type === "answeredAndMarked" || type === "answeredMarked";
 
   return (
     <div
@@ -56,6 +53,8 @@ export default function StatusIcon({
         getStyleClass(type),
         isCurrent ? styles.current : "",
       ].join(" ")}
+      role="img"
+      aria-label={`Question status: ${type}${value !== undefined ? `, ${value}` : ""}`}
       style={{
         width: width ? `${width}px` : undefined,
         height: height ? `${height}px` : undefined,
@@ -65,9 +64,8 @@ export default function StatusIcon({
         <span className={styles.value}>{value}</span>
       )}
 
-      {/* Inner green circle only for Answered & Marked */}
       {isAnsweredMarked && (
-        <span className={styles.answeredMarkedInner}>
+        <span className={styles.answeredMarkedInner} aria-hidden="true">
           <IoIosPaper />
         </span>
       )}

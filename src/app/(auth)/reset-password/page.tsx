@@ -1,6 +1,17 @@
+import type { Metadata } from "next";
 import { ResetPasswordForm } from '@/components/auth/ResetPassword/ResetPassword';
 import { Suspense } from 'react';
 import { Loader } from "@/components/ui/loader";
+
+export const metadata: Metadata = {
+  title: "Reset Password - JEE Archive",
+  description:
+    "Set a new password for your JEE Archive account to continue your JEE preparation.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function ResetPasswordPage() {
   return (
@@ -9,5 +20,3 @@ export default function ResetPasswordPage() {
     </Suspense>
   );
 }
-
-export const dynamic = 'force-dynamic';

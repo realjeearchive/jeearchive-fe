@@ -10,7 +10,7 @@ interface QuestionPaletteProps {
   currentQuestionNumber: number; // This should be the local number of the active question
   questionStates: {
     globalQuestionNumber: number;
-    localQuestionNumber: number; // <--- ADD THIS LINE
+    localQuestionNumber: number;
     questionId: string;
     status: QuestionStatus;
   }[];
@@ -23,17 +23,19 @@ export default function QuestionPalette({
   onQuestionSelect,
 }: QuestionPaletteProps) {
   return (
-    <div className={styles.palette}>
+    <div className={styles.palette} role="list" aria-label="Question navigation palette">
       {questionStates.map((qState) => {
         return (
           <button
             key={qState.questionId}
             className={styles.questionButton}
             onClick={() => onQuestionSelect(qState.questionId)}
+            aria-label={`Question ${qState.localQuestionNumber}: ${qState.status}`}
+            aria-current={qState.localQuestionNumber === currentQuestionNumber ? "true" : undefined}
           >
             <StatusIcon
               type={qState.status}
-              value={qState.localQuestionNumber} // Error will disappear now
+              value={qState.localQuestionNumber}
               isCurrent={qState.localQuestionNumber === currentQuestionNumber}
             />
           </button>

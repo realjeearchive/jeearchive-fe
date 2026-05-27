@@ -34,8 +34,9 @@ export function QuestionMetaBar({
         className={styles.scrollBtn}
         onClick={handleScrollDown}
         title="Scroll to bottom"
+        aria-label="Scroll to bottom of question"
       >
-        <FaArrowDownLong />
+        <FaArrowDownLong aria-hidden="true" />
       </button>
     </div>
   );

@@ -9,7 +9,8 @@ import styles from "./TestSubmissionSummary.module.css";
 import { toast } from "sonner";
 
 export function TestSubmissionSummary() {
-  const { sections, questionsById, formattedBannerText, submitTest } = useTestEngineStore();
+  const { sections, questionsById, formattedBannerText, submitTest } =
+    useTestEngineStore();
   const { setDashboardData } = useDashboardStore();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,38 +45,44 @@ export function TestSubmissionSummary() {
     setIsSubmitting(true);
 
     try {
-      // Submit the test first
       await submitTest();
-      
-      // Refresh dashboard data in background
+
       try {
         const dashboardResponse = await fetchDashboardData();
         if (dashboardResponse.success && dashboardResponse.data) {
           setDashboardData(dashboardResponse.data);
         }
       } catch (dashboardError) {
-        console.error("[TestPlayer: Submit] Failed to refresh dashboard data", dashboardError);
-        // Don't block navigation if dashboard fetch fails
+        console.error(
+          "[TestPlayer: Submit] Failed to refresh dashboard data",
+          dashboardError
+        );
       }
-      
-      // Navigate to dashboard
+
       router.push("/dashboard");
     } catch (error) {
-      console.error("[TestPlayer: Submit] Final submission failed in UI layer", error);
-      toast.error("Submission failed. Your answers are safe — please try again.");
+      console.error(
+        "[TestPlayer: Submit] Final submission failed in UI layer",
+        error
+      );
+      toast.error(
+        "Submission failed. Your answers are safe — please try again."
+      );
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.pageWrapper}>
+    <main className={styles.pageWrapper} aria-label="Test submission summary">
       <header className={styles.topBanner}>
-        {formattedBannerText || "JEE TEST UPDATED AS PER LATEST NTA PATTERN"}
+        <h1>
+          {formattedBannerText || "JEE TEST UPDATED AS PER LATEST NTA PATTERN"}
+        </h1>
       </header>
-      
+
       <div className={styles.contentContainer}>
         <div className={styles.tableContainer}>
-          <table className={styles.summaryTable}>
+          <table className={styles.summaryTable} aria-label="Section-wise question status">
             <thead>
               <tr>
                 <th>SECTION NAME</th>
@@ -108,23 +115,25 @@ export function TestSubmissionSummary() {
             Are you sure you wish to submit this test for marking?
           </p>
           <div className={styles.btnRow}>
-            <button 
-              className={styles.noBtn} 
+            <button
+              className={styles.noBtn}
               onClick={() => router.back()}
               disabled={isSubmitting}
+              aria-label="Go back to test paper"
             >
               No! Go Back to Paper
             </button>
-            <button 
-              className={styles.yesBtn} 
+            <button
+              className={styles.yesBtn}
               onClick={handleFinalSubmit}
               disabled={isSubmitting}
+              aria-label="Confirm test submission"
             >
               {isSubmitting ? "Submitting..." : "Yes! Submit the Test"}
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

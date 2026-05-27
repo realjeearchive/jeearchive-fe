@@ -11,15 +11,14 @@ export function CandidatePanel({ candidateLabel }: Props) {
 
   const userName = useUserStore((s) => s.profile?.name);
   
-
   const displayName = userName || candidateLabel || "Candidate Name";
 
   return (
-    <div className={styles.panel}>
-      <div className={styles.avatar} />
-      <div className={styles.name} suppressHydrationWarning>
+    <aside className={styles.panel} aria-label="Candidate information">
+      <div className={styles.avatar} aria-hidden="true" />
+      <h2 className={styles.name} suppressHydrationWarning>
         {displayName}
-      </div>
-    </div>
+      </h2>
+    </aside>
   );
 }

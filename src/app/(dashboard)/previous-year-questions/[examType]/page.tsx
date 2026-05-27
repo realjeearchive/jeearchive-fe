@@ -1,4 +1,4 @@
-// src/app/(dashboard)/previous-year-questions/jee-mains/page.tsx
+// src/app/(dashboard)/previous-year-questions/[examType]/page.tsx
 import { redirect } from 'next/navigation';
 
 export default function JeeMainsRedirect() {

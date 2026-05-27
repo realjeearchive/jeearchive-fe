@@ -26,7 +26,7 @@ export function Sidebar() {
     const state = questionsById[q.id];
     return {
       globalQuestionNumber: q.globalQuestionNumber,
-      localQuestionNumber: q.localQuestionNumber, // <--- ADDED THIS LINE
+      localQuestionNumber: q.localQuestionNumber,
       questionId: q.id,
       status: state.status,
     };
@@ -45,34 +45,37 @@ export function Sidebar() {
   const currentQState = questionsById[activeQuestionId || ""];
   const currentQNum = currentQState ? currentQState.localQuestionNumber : 0;
 
+  const userName = user?.name || "Candidate";
+
   return (
-    <aside className={styles.sidebar}>
+    <aside className={styles.sidebar} aria-label="Test navigation sidebar">
       <div className={styles.sidebarInner}>
         <div className={styles.studentProfile}>
           <div className={styles.profile}>
             <Image
               className={styles.profileImage}
               src={PlaceholderImage}
-              alt="Profile"
-              width={40} height={40}
+              alt={`${userName}'s profile picture`}
+              width={40}
+              height={40}
             />
           </div>
-          <div className={styles.studentName}>
-            {user?.name || "Candidate"}
-          </div>
+          <h2 className={styles.studentName}>
+            {userName}
+          </h2>
         </div>
 
         <div className={styles.statusIndicatorContainer}>
           <StatusIndicator counts={counts} />
         </div>
 
-        <div className={styles.sectionHeader}>
+        <h3 className={styles.sectionHeader}>
           {currentSection.label}
-        </div>
+        </h3>
 
-        <div className={styles.chooseQuestion}>
+        <p className={styles.chooseQuestion} id="palette-instruction">
           Choose a Question
-        </div>
+        </p>
 
         <QuestionPalette
           sectionId={currentSection.id}

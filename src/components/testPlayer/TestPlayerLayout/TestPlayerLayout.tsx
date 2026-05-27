@@ -36,8 +36,8 @@ export function TestPlayerLayout() {
     clearResponse,
     markForReview,
     syncWithServer,
-    startTimer, // 🔥 Brought in startTimer
-    stopTimer,  // 🔥 Brought in stopTimer
+    startTimer,
+    stopTimer,
   } = useTestEngineStore((s) => s);
 
   const { theme, setTheme } = useTestPlayerTheme();
@@ -49,13 +49,13 @@ export function TestPlayerLayout() {
   // OPTIMIZED: 2 Minute Sync Interval
   useEffect(() => {
     if (!isInitialized || !testId) return;
-    const syncInterval = setInterval(() => { 
-      syncWithServer(); 
-    }, 120000); 
+    const syncInterval = setInterval(() => {
+      syncWithServer();
+    }, 120000);
     return () => clearInterval(syncInterval);
   }, [isInitialized, testId, syncWithServer]);
 
-  // 🔥 FIXED: Centralized timer logic using the store's built-in actions
+  // Centralized timer logic using the store's built-in actions
   useEffect(() => {
     if (!isInitialized) return;
     startTimer();
@@ -94,21 +94,21 @@ export function TestPlayerLayout() {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
-        <p>Loading Question Data...</p>
+        <p role="status" aria-live="polite">Loading Question Data...</p>
       </div>
     );
   }
 
   const activeSection = sections.find((s) => s.id === activeSectionId);
-  if (!activeSection) return <div>Error: Active section not found.</div>;
+  if (!activeSection) return <div role="alert">Error: Active section not found.</div>;
 
   const activeQuestionDef = activeSection.questions.find((q) => q.id === activeQuestionId);
-  if (!activeQuestionDef) return <div>Error: Active question not found.</div>;
+  if (!activeQuestionDef) return <div role="alert">Error: Active question not found.</div>;
 
   const activeQuestionState = questionsById[activeQuestionId];
-  if (!activeQuestionState) return <div>Error: Question state missing.</div>;
+  if (!activeQuestionState) return <div role="alert">Error: Question state missing.</div>;
 
-  const templateQuestion = activeSection.questions[0]; 
+  const templateQuestion = activeSection.questions[0];
   const currentSectionType = templateQuestion?.kind || "single";
   const posMark = templateQuestion?.correctMarks || 4;
   const negMark = templateQuestion?.negativeMarks || 1;
@@ -135,11 +135,11 @@ export function TestPlayerLayout() {
               <section className={styles.questionArea}>
                 <SectionInstructionsBox
                   title={activeSection.label}
-                  maxMarks={activeSection.questions.length * posMark} 
+                  maxMarks={activeSection.questions.length * posMark}
                   questionCount={activeSection.questions.length}
                   sectionType={currentSectionType}
-                  positiveMark={posMark} 
-                  negativeMark={negMark} 
+                  positiveMark={posMark}
+                  negativeMark={negMark}
                 />
                 <QuestionBlock
                   question={activeQuestionDef}
@@ -152,7 +152,7 @@ export function TestPlayerLayout() {
         </div>
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && isSidebarOpen && (
-            <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)}>›</button>
+            <button className={styles.closeArrow} onClick={() => setIsSidebarOpen(false)} aria-label="Close sidebar">›</button>
           )}
           <div className={styles.sidebarContent}>
             <Sidebar />
@@ -160,7 +160,7 @@ export function TestPlayerLayout() {
         </aside>
       </div>
       {isMobile && !isSidebarOpen && (
-        <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)}>‹</button>
+        <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)} aria-label="Open sidebar">‹</button>
       )}
       <footer className={styles.bottomBar}>
         <div className={styles.bottomBarLeft}>

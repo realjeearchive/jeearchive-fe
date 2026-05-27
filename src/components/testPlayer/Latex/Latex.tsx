@@ -68,7 +68,6 @@ export default function Latex({ children }: LatexProps) {
 }
 
 // --- SUB-COMPONENT: Render Math safely ---
-// --- SUB-COMPONENT: Render Math safely ---
 function RenderMath({ math, block }: { math: string; block: boolean }) {
   let html: string | null = null;
 
@@ -84,12 +83,21 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
   }
 
   if (!html) {
-    // 🔥 FIXED: Added explicit console error so you can find bad DB data instantly during testing
+    // Added explicit console error so you can find bad DB data instantly during testing
     console.error(`[LaTeX Error] Failed to parse string: ${math}`);
     
     // Made the visual error slightly more distinct so it stands out to the tester
     return (
-      <code style={{ color: "#ef4444", backgroundColor: "#fee2e2", padding: "2px 4px", borderRadius: "4px", fontSize: "0.9em" }}>
+      <code
+        role="alert"
+        style={{
+          color: "#ef4444",
+          backgroundColor: "#fee2e2",
+          padding: "2px 4px",
+          borderRadius: "4px",
+          fontSize: "0.9em",
+        }}
+      >
         {math}
       </code>
     );
@@ -114,7 +122,7 @@ function SmartText({ text }: { text: string }) {
       {tokens.map((token, i) => {
         // Heuristic: If it starts with \ and isn't just a symbol, try to render it
         if (token.startsWith("\\") && token.length > 1 && !token.includes(" ")) {
-           return <RenderMath key={i} math={token} block={false} />;
+          return <RenderMath key={i} math={token} block={false} />;
         }
         return <span key={i}>{token}</span>;
       })}
