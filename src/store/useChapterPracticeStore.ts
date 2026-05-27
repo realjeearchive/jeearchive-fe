@@ -11,11 +11,9 @@ interface ChapterPracticeState {
   revealedSolutions: Record<string, boolean>;
   questionTimes: Record<string, number>;
   
-  // 🔥 New UI States
   isTimerRunning: boolean;
   bookmarkedQuestions: Record<string, boolean>;
 
-  // Actions
   initStore: (questions: QuestionData[], initialQuestionId?: string) => void;
   setActiveQuestionId: (id: string) => void;
   selectOption: (questionId: string, optionId: string) => void;
@@ -23,13 +21,11 @@ interface ChapterPracticeState {
   revealSolution: (questionId: string) => void;
   incrementTime: (questionId: string) => void;
   
-  // 🔥 New Actions
   toggleTimer: () => void;
   toggleBookmark: (questionId: string) => Promise<void>;
 }
 
 export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) => ({
-  // --- Initial State ---
   questions: [],
   activeQuestionId: "",
   userAnswers: {},
@@ -39,10 +35,8 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
   isTimerRunning: false,
   bookmarkedQuestions: {}, 
 
-  // --- Actions ---
-// --- Actions ---
-initStore: (fetchedQuestions, initialQuestionId) => {
-    const initialUserAnswers: Record<string, string> = {};
+  initStore: (fetchedQuestions, initialQuestionId) => {
+    const initialUserAnswers: Record<string, string | string[]> = {};
     const initialSubmissions: Record<string, boolean> = {};
     const initialBookmarks: Record<string, boolean> = {}; 
 
@@ -52,11 +46,20 @@ initStore: (fetchedQuestions, initialQuestionId) => {
     }));
 
     perfectlyNumberedQuestions.forEach((q) => {
-      if (q.userAnswer) initialUserAnswers[q.id] = q.userAnswer;
-      if (q.status === "correct" || q.status === "incorrect" || q.status === "answered" || q.userAnswer) {
+      // 🔥 FIX: Strict check! Prevent empty arrays [] or empty strings "" from acting as a real answer
+      const hasAnswer = q.userAnswer !== null && q.userAnswer !== undefined && 
+                        (!Array.isArray(q.userAnswer) || q.userAnswer.length > 0) &&
+                        q.userAnswer !== "";
+
+      if (hasAnswer) {
+        initialUserAnswers[q.id] = q.userAnswer as string | string[];
+      }
+      
+      // Only mark as submitted if the status explicitly says so, or if they actually answered it
+      if (q.status === "correct" || q.status === "incorrect" || q.status === "answered" || hasAnswer) {
         initialSubmissions[q.id] = true;
       }
-      // 🔥 STRICT CHECK: Load backend bookmark state instantly
+      
       if (q.isBookmarked === true) {
         initialBookmarks[q.id] = true;
       }
@@ -69,7 +72,7 @@ initStore: (fetchedQuestions, initialQuestionId) => {
       activeQuestionId: startingId,
       userAnswers: initialUserAnswers,
       submissions: initialSubmissions,
-      bookmarkedQuestions: initialBookmarks, // 🔥 Injects the true/false states into the UI
+      bookmarkedQuestions: initialBookmarks,
       revealedSolutions: {},
       questionTimes: {},
       isTimerRunning: false, 
@@ -78,7 +81,7 @@ initStore: (fetchedQuestions, initialQuestionId) => {
 
   setActiveQuestionId: (id) => set({ 
     activeQuestionId: id,
-    isTimerRunning: false // Auto-pause timer when switching questions
+    isTimerRunning: false 
   }),
 
   selectOption: (questionId, optionId) => {
@@ -90,15 +93,13 @@ initStore: (fetchedQuestions, initialQuestionId) => {
       let nextAnswer: string | string[];
 
       if (isMulti) {
-        // Multi-correct: Toggle the option in an array
         const arr = Array.isArray(current) ? current : (current ? [current as string] : []);
         if (arr.includes(optionId)) {
-          nextAnswer = arr.filter((id) => id !== optionId); // Remove if exists
+          nextAnswer = arr.filter((id) => id !== optionId); 
         } else {
-          nextAnswer = [...arr, optionId].sort(); // Add and sort (e.g., ["A", "C"])
+          nextAnswer = [...arr, optionId].sort(); 
         }
       } else {
-        // Single/Numerical: Just replace it
         nextAnswer = optionId;
       }
 
@@ -120,13 +121,9 @@ initStore: (fetchedQuestions, initialQuestionId) => {
 
   toggleTimer: () => set((state) => ({ isTimerRunning: !state.isTimerRunning })),
 
-  // 🔥 Optimistic UI Bookmark Action
-// 🔥 Optimistic UI Bookmark Action
-  // 🔥 Optimistic UI Bookmark Action
   toggleBookmark: async (questionId) => {
     const isCurrentlyBookmarked = !!get().bookmarkedQuestions[questionId];
 
-    // 1. Instantly toggle UI state for that snappy feel
     set((state) => ({
       bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: !isCurrentlyBookmarked }
     }));
@@ -154,9 +151,7 @@ initStore: (fetchedQuestions, initialQuestionId) => {
       }
     } catch (err) {
       console.warn("[ChapterPractice] Bookmark sync error:", err);
-      // 🔥 STUDENT-FRIENDLY TOAST
       toast.error("Bookmark not saved. Check your connection.");      
-      // Revert UI on failure so it doesn't lie to the user
       set((state) => ({
         bookmarkedQuestions: { ...state.bookmarkedQuestions, [questionId]: isCurrentlyBookmarked }
       }));
@@ -167,7 +162,6 @@ initStore: (fetchedQuestions, initialQuestionId) => {
     const { userAnswers, questionTimes } = get();
     const selectedOption = userAnswers[questionId];
     
-    // Prevent empty array submission
     if (!selectedOption || (Array.isArray(selectedOption) && selectedOption.length === 0)) return;
 
     set((state) => ({
@@ -179,7 +173,6 @@ initStore: (fetchedQuestions, initialQuestionId) => {
       const payload = {
         status: "answered", 
         timeSpent: questionTimes[questionId] || 0,
-        // 🔥 Safely wrap in array for the backend
         userAnswerRaw: Array.isArray(selectedOption) ? selectedOption : [selectedOption] 
       };
 
@@ -192,7 +185,7 @@ initStore: (fetchedQuestions, initialQuestionId) => {
       
     } catch (err) {
       console.warn("[ChapterPractice] Submit error:", err);
-      toast.error("Network issue. Couldn't save answer."); // 🔥 SHORT TOAST
+      toast.error("Network issue. Couldn't save answer."); 
       
       set((state) => ({
         submissions: { ...state.submissions, [questionId]: false }

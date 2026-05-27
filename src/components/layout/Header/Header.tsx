@@ -162,106 +162,109 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   }
 
   return (
-    <header className={styles.header}>
-      <div className={styles.leftSection}>
-        {!isSidebarOpen && (
-          <button
-            type="button"
-            className={styles.sidebarToggle}
-            onClick={toggleSidebar}
-            aria-label="Toggle sidebar"
-          >
-            <PiSidebar size={18} />
-          </button>
-        )}
+  <header className={styles.header}>
+    <div className={styles.leftSection}>
+      {!isSidebarOpen && (
+        <button
+          type="button"
+          className={styles.sidebarToggle}
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          data-title="Toggle sidebar"
+        >
+          <PiSidebar size={18} />
+        </button>
+      )}
 
-        <div className={styles.navArrows}>
-          <button
-            type="button"
-            className={`${styles.iconButton} ${canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled}`}
-            onClick={handleBack}
-            disabled={!canGoBack}
-          >
-            <IoChevronBack size={16} />
-          </button>
-          <button
-            type="button"
-            className={`${styles.iconButton} ${canGoForward ? styles.iconButtonActive : styles.iconButtonDisabled}`}
-            onClick={handleForward}
-            disabled={!canGoForward}
-          >
-            <IoChevronForward size={16} />
-          </button>
-        </div>
-
-        {pageTitle && (
-          <div className={styles.pageTitle}>
-            <span>{pageTitle}</span>
-          </div>
-        )}
+      <div className={styles.navArrows}>
+        <button
+          type="button"
+          className={`${styles.iconButton} ${canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled}`}
+          onClick={handleBack}
+          disabled={!canGoBack}
+          data-title="Go back (Alt + ←)"
+        >
+          <IoChevronBack size={16} />
+        </button>
+        <button
+          type="button"
+          className={`${styles.iconButton} ${canGoForward ? styles.iconButtonActive : styles.iconButtonDisabled}`}
+          onClick={handleForward}
+          disabled={!canGoForward}
+          data-title="Go forward (Alt + →)"
+        >
+          <IoChevronForward size={16} />
+        </button>
       </div>
 
-      <div className={styles.rightSection}>
+      {pageTitle && (
+        <div className={styles.pageTitle}>
+          <span>{pageTitle}</span>
+        </div>
+      )}
+    </div>
+
+    <div className={styles.rightSection}>
+      <button 
+        type="button" 
+        className={`${styles.streakItem} ${streakColorClass}`} 
+        data-title={`Max Streak: ${streak?.maxStreak || 0}`}
+      >
+        <span className={styles.streakText}>{currentStreak}</span>
+        <PiFire size={18} className={styles.streakIcon} />
+      </button>
+      
+      <a 
+        href="https://discord.com/invite/8Q9Nb2fATj" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className={styles.iconButton} 
+        data-title="Join Discord"
+      >
+        <PiDiscordLogo size={18} />
+      </a>
+
+      <button 
+        type="button" 
+        className={styles.iconButton} 
+        data-title="Timer App"
+      >
+        <IoTimeOutline size={18} />
+      </button>
+
+      <button 
+        type="button" 
+        className={styles.iconButton} 
+        data-title="Calendar App"
+      >
+        <IoCalendarOutline size={16} />
+      </button>
+
+      {/* NOTIFICATION BELL & POPUP */}
+      <div style={{ position: 'relative' }}>
         <button 
+          id="notification-bell-btn"
           type="button" 
-          className={`${styles.streakItem} ${streakColorClass}`} 
-          data-title={`Max Streak: ${streak?.maxStreak || 0}`}
+          className={styles.iconButton} 
+          data-title="Notifications"
+          onClick={() => setIsNotificationOpen(!isNotificationOpen)}
         >
-          <span className={styles.streakText}>{currentStreak}</span>
-          <PiFire size={18} className={styles.streakIcon} />
+          <FiBell size={16} />
+          {unreadCount > 0 && (
+            <span className={styles.unreadBadge}>{unreadCount}</span>
+          )}
         </button>
         
-        <a 
-          href="https://discord.com/invite/8Q9Nb2fATj" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className={styles.iconButton} 
-          data-title="Join Discord"
-        >
-          <PiDiscordLogo size={18} />
-        </a>
-
-        <button 
-          type="button" 
-          className={styles.iconButton} 
-          data-title="Timer App"
-        >
-          <IoTimeOutline size={18} />
-        </button>
-
-        <button 
-          type="button" 
-          className={styles.iconButton} 
-          data-title="Calendar App"
-        >
-          <IoCalendarOutline size={16} />
-        </button>
-
-        {/* 🚨 UPDATED NOTIFICATION BELL & POPUP */}
-        <div style={{ position: 'relative' }}>
-          <button 
-            id="notification-bell-btn"
-            type="button" 
-            className={styles.iconButton} 
-            data-title="Notifications"
-            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-          >
-            <FiBell size={16} />
-            {unreadCount > 0 && (
-              <span className={styles.unreadBadge}>{unreadCount}</span>
-            )}
-          </button>
-          
-          <NotificationPopup 
-            isOpen={isNotificationOpen} 
-            onClose={() => setIsNotificationOpen(false)} 
-            notifications={notifications}
-            onMarkAsRead={markAsRead}
-          />
-        </div>
+        <NotificationPopup 
+          isOpen={isNotificationOpen} 
+          onClose={() => setIsNotificationOpen(false)} 
+          notifications={notifications}
+          onMarkAsRead={markAsRead}
+        />
       </div>
-    </header>
-  );
+    </div>
+  </header>
+);
 };
 
 export default Header;

@@ -16,7 +16,7 @@ import { OptionsList } from "./question/OptionsList/OptionsList";
 import { QuestionMeta } from "./question/QuestionMeta/QuestionMeta";
 import { SolutionContent } from "./question/SolutionContent/SolutionContent";
 import { QuestionStats } from "./question/QuestionStats/QuestionStats";
-import { FiEye, FiCheck, FiX } from "react-icons/fi";
+import { FiCheck, FiX } from "react-icons/fi";
 import { NumericalInput } from "./question/NumericalInput/NumericalInput";
 
 export type Subject = "Physics" | "Chemistry" | "Mathematics";
@@ -75,38 +75,34 @@ export const ChapterWiseInterface = ({ questions: rawQuestions, chapterName, sub
 
   // Initialize store with questions
   useEffect(() => {
-  if (questions && questions.length > 0) {
-    const params = new URLSearchParams(window.location.search);
-    initStore(questions, params.get('q') || undefined);
-  }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [questions, initStore]);
-
-// 🚀 Show timer prompt on EVERY question if timer is not running
-useEffect(() => {
-  if (!activeQuestionId || activeTab !== "question") return;
-
-  // Use requestAnimationFrame to ensure DOM is ready
-  const frameId = requestAnimationFrame(() => {
-    const storeState = useChapterPracticeStore.getState();
-    
-    if (!storeState.isTimerRunning) {
-      // Show prompt
-      setShowTimerPrompt(true);
-      
-      // Hide after 5 seconds
-      const hideTimer = setTimeout(() => {
-        setShowTimerPrompt(false);
-      }, 5000);
-      
-      return () => clearTimeout(hideTimer);
-    } else {
-      setShowTimerPrompt(false);
+    if (questions && questions.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      initStore(questions, params.get('q') || undefined);
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions, initStore]);
 
-  return () => cancelAnimationFrame(frameId);
-}, [activeQuestionId, activeTab, isTimerRunning]);
+  // Show timer prompt on EVERY question if timer is not running
+  useEffect(() => {
+    if (!activeQuestionId || activeTab !== "question") return;
+
+    const frameId = requestAnimationFrame(() => {
+      const storeState = useChapterPracticeStore.getState();
+      
+      if (!storeState.isTimerRunning) {
+        setShowTimerPrompt(true);
+        const hideTimer = setTimeout(() => {
+          setShowTimerPrompt(false);
+        }, 5000);
+        
+        return () => clearTimeout(hideTimer);
+      } else {
+        setShowTimerPrompt(false);
+      }
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [activeQuestionId, activeTab, isTimerRunning]);
 
   useEffect(() => {
     setActiveTab("question");
@@ -115,11 +111,11 @@ useEffect(() => {
   }, [activeQuestionId]);
 
   useEffect(() => {
-  if (!activeQuestionId || activeTab === 'solution' || !isTimerRunning) return; 
-  
-  const timerId = setInterval(() => incrementTime(activeQuestionId), 1000);
-  return () => clearInterval(timerId);
-}, [activeQuestionId, activeTab, isTimerRunning, incrementTime]);
+    if (!activeQuestionId || activeTab === 'solution' || !isTimerRunning) return; 
+    
+    const timerId = setInterval(() => incrementTime(activeQuestionId), 1000);
+    return () => clearInterval(timerId);
+  }, [activeQuestionId, activeTab, isTimerRunning, incrementTime]);
 
   useEffect(() => {
     const handleResize = () => setIsSidebarOpen(window.innerWidth > 1024);
@@ -134,13 +130,14 @@ useEffect(() => {
   const isSubmitted = !!submissions[activeQuestionId];
   const localUserAnswer = userAnswers[activeQuestionId];
 
+  // 🔥 FIX: Ensure the main view respects the instant feedback
   let mainStatus: StatusString | undefined = undefined;
   
   if (activeTab === 'solution') {
-    if (!isSubmitted) {
+    if (sessionSolved[activeQuestionId] !== undefined) {
+      mainStatus = sessionSolved[activeQuestionId] ? "correct" : "incorrect";
+    } else if (!isSubmitted) {
       mainStatus = "unattempted";
-    } else if (localUserAnswer) {
-      mainStatus = localUserAnswer === currentQuestion?.correctAnswer ? "correct" : "incorrect";
     } else {
       const status = currentQuestion?.status;
       mainStatus = (status === "correct" || status === "incorrect" || status === "unattempted") 
@@ -171,18 +168,25 @@ useEffect(() => {
   const formattedSubject = subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
   const safeSubject = (["Physics", "Chemistry", "Mathematics"].includes(formattedSubject) ? formattedSubject : "Physics") as Subject;
 
+  // 🔥 FIX: Prioritize instant feedback using sessionSolved for the Sidebar
   const sidebarQuestions = useMemo(() => {
     return questions.map((q) => {
       const qIsSubmitted = submissions[q.id];
-      const qLocalAnswer = userAnswers[q.id];
-      
       let status: StatusString = "unattempted";
-      if (qIsSubmitted) {
-        status = qLocalAnswer ? (qLocalAnswer === q.correctAnswer ? "correct" : "incorrect") : q.status;
+      
+      if (sessionSolved[q.id] !== undefined) {
+        status = sessionSolved[q.id] ? "correct" : "incorrect";
+      } else if (qIsSubmitted) {
+        if (q.status === "correct" || q.status === "incorrect") {
+          status = q.status;
+        } else {
+          status = "incorrect"; 
+        }
       }
+
       return { id: q.id, number: q.number, status: status, section: q.section } as SidebarItemStatus; 
     });
-  }, [questions, submissions, userAnswers]);
+  }, [questions, submissions, sessionSolved]);
 
   if (!currentQuestion) return <div className="p-10 text-white">Loading interface...</div>;
 
@@ -200,7 +204,6 @@ useEffect(() => {
   const handleNext = () => currentIndex < questions.length - 1 && setActiveQuestionId(questions[currentIndex + 1].id);
   const handlePrev = () => currentIndex > 0 && setActiveQuestionId(questions[currentIndex - 1].id);
 
-  // Smart warning messages based on question type
   const getWarningMessage = (): string => {
     if (!currentQuestion) return "";
     
@@ -228,7 +231,7 @@ useEffect(() => {
       if (isNumericalType) {
         isCorrect = parseFloat(localUserAnswer as string) === parseFloat(actualCorrectAnswer as string);
       } else if (isMultiType) {
-        const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer];
+        const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer as string];
         const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
         isCorrect = u.length === c.length && u.every(val => c.includes(val as string));
       } else {
@@ -250,7 +253,12 @@ useEffect(() => {
 
   const displayUserAnswer = localUserAnswer || attemptData?.userAnswer?.[0];
   
+  // 🔥 FIX: Simplify isDisplayCorrect using sessionSolved
   const isDisplayCorrect = (() => {
+    if (sessionSolved[activeQuestionId] !== undefined) {
+      return sessionSolved[activeQuestionId];
+    }
+    
     if (!localUserAnswer) {
       return attemptData?.isCorrect ?? (mainStatus === 'correct');
     }
@@ -262,9 +270,9 @@ useEffect(() => {
     }
 
     if (isMultiType) {
-      const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer];
+      const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer as string];
       const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
-      return u.length === c.length && u.every(val => c.includes(val));
+      return u.length === c.length && u.every(val => c.includes(val as string));
     }
 
     return localUserAnswer === actualCorrectAnswer;
@@ -394,7 +402,12 @@ useEffect(() => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '16px' }}>
                       {isDisplayCorrect ? <FiCheck size={18} strokeWidth={3} color="#22C55E" /> : <FiX size={18} strokeWidth={3} color="#EF4444" />}
                       <span style={{ color: 'var(--dashboard-primary-text-color)' }}>
-                        {isNumericalType ? displayUserAnswer : `Option ${displayUserAnswer}`}
+                        {isNumericalType 
+                          ? displayUserAnswer 
+                          : Array.isArray(displayUserAnswer) 
+                            ? displayUserAnswer.map(opt => `Option ${opt}`).join(", ") 
+                            : `Option ${displayUserAnswer}`
+                        }
                       </span>
                     </div>
                   </div>
@@ -404,7 +417,12 @@ useEffect(() => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '16px' }}>
                       <FiCheck size={18} strokeWidth={3} color="#22C55E" />
                       <span style={{ color: 'var(--dashboard-primary-text-color)' }}>
-                        {isNumericalType ? actualCorrectAnswer : `Option ${actualCorrectAnswer}`}
+                        {isNumericalType 
+                          ? actualCorrectAnswer 
+                          : Array.isArray(currentQuestion.correctAnswer)
+                            ? currentQuestion.correctAnswer.map(opt => `Option ${opt}`).join(", ")
+                            : `Option ${actualCorrectAnswer}`
+                        }
                       </span>
                     </div>
                   </div>
