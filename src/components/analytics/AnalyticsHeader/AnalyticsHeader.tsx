@@ -39,7 +39,10 @@ const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
       
       <div className={styles.filters}>
         {/* Exam Type Dropdown */}
-        <div className={styles.dropdownWrapper} ref={examRef}>
+        <div 
+          className={`${styles.dropdownWrapper} ${isExamOpen ? styles.dropdownActive : ""}`} 
+          ref={examRef}
+        >
           <button 
             className={`${styles.trigger} ${isExamOpen ? styles.active : ""}`}
             onClick={() => { setIsExamOpen(!isExamOpen); setIsTimeOpen(false); }}
@@ -65,7 +68,10 @@ const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
         </div>
 
         {/* Time Range Dropdown */}
-        <div className={styles.dropdownWrapper} ref={timeRef}>
+        <div 
+          className={`${styles.dropdownWrapper} ${isTimeOpen ? styles.dropdownActive : ""}`} 
+          ref={timeRef}
+        >
           <button 
             className={`${styles.trigger} ${isTimeOpen ? styles.active : ""}`}
             onClick={() => { setIsTimeOpen(!isTimeOpen); setIsExamOpen(false); }}

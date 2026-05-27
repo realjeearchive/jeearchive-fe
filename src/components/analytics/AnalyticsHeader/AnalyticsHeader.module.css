@@ -19,7 +19,6 @@
 
 .dropdownWrapper {
   position: relative;
-  min-width: 160px;
   z-index: 2;
 }
 
@@ -92,13 +91,19 @@
 
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: flex-start;
     gap: 16px;
   }
   .filters {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
   }
   .dropdownWrapper { width: 100%; }
+}
+
+.dropdownActive {
+  z-index: 10;
 }

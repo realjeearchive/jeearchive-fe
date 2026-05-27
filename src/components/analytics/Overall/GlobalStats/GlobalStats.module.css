@@ -101,7 +101,7 @@
   transition: stroke-dashoffset 1s ease-out;
 }
 
-/* Responsive: 4 → 2 → 1 */
+/* Responsive: 4 → 2 */
 @media (max-width: 1023px) {
   .container {
     grid-template-columns: repeat(2, 1fr);
@@ -109,24 +109,65 @@
   }
 }
 
+/* Maintain 2x2 on Mobile */
 @media (max-width: 600px) {
   .container {
-    grid-template-columns: 1fr;
+    /* 🚨 FIX: Forced to remain 2 columns instead of 1 */
+    grid-template-columns: repeat(2, 1fr); 
     gap: 8px;
   }
 
   .statItem {
-    padding: 14px;
+    padding: 12px 10px; /* Slightly tighter padding for small screens */
   }
 
   .statValue {
-    font-size: 22px;
+    font-size: 20px; /* Scaled down slightly to fit 2 columns */
+  }
+  
+  .statLabel {
+    font-size: 10px; /* Ensure label doesn't overflow */
   }
 
   .ringWrap {
     top: 10px;
     right: 10px;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 380px) {
+  .statItem {
+    padding: 10px 8px; /* Tighter padding to save space */
+  }
+
+  .iconBox {
+    width: 24px; /* Shrink icon box */
+    height: 24px;
+  }
+
+  .statTop {
+    padding-right: 28px; /* Safe zone for the ring */
+    gap: 6px;
+  }
+
+  .statLabel {
+    font-size: 9px; /* Scale down text slightly */
+  }
+
+  .statValue {
+    font-size: 18px; /* Scale down number */
+  }
+
+  .statSubtitle {
+    font-size: 9.5px;
+  }
+
+  .ringWrap {
+    top: 8px;
+    right: 8px;
+    width: 26px; /* Smaller ring */
+    height: 26px;
   }
 }
