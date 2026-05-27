@@ -9,6 +9,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUserStore } from "@/store";
 import { useStreakStore } from "@/store/useStreakStore";
 
+// 🚨 NEW: Import the Store and the Popup
+import { useNotificationStore } from "@/store/useNotificationStore";
+import { NotificationPopup } from "@/components/popups/NotificationPopup/NotificationPopup";
+
 interface HeaderProps {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
@@ -55,16 +59,20 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
   const profile = useUserStore((s) => s.profile);
   
-  // Load streak state
   const { streak, loadStreak } = useStreakStore();
+
+  // 🚨 NEW: Notification State
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { notifications, unreadCount, loadNotifications, markAsRead } = useNotificationStore();
 
   const [renderTick, setRenderTick] = useState(0);
   const previousPathnameRef = useRef(pathname);
 
-  // Load the streak on mount
   useEffect(() => {
     loadStreak();
-  }, [loadStreak]);
+    // 🚨 NEW: Load notifications on mount
+    loadNotifications();
+  }, [loadStreak, loadNotifications]);
 
   if (pathname !== previousPathnameRef.current) {
     const existingIndex = navigationStack.indexOf(pathname);
@@ -88,7 +96,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   const canGoBack = currentStackIndex > 0;
   const canGoForward = currentStackIndex < navigationStack.length - 1;
-
   const pageTitle = useMemo(() => getPageTitle(pathname), [pathname]);
 
   const handleBack = useCallback(() => {
@@ -143,7 +150,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleBack, handleForward]);
 
-  // --- Dynamic Streak Color Logic ---
   const currentStreak = streak?.currentStreak || 0;
   let streakColorClass = styles.streakDefault;
   
@@ -175,8 +181,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
             className={`${styles.iconButton} ${canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled}`}
             onClick={handleBack}
             disabled={!canGoBack}
-            data-title="Back"
-            aria-label="Go back"
           >
             <IoChevronBack size={16} />
           </button>
@@ -185,8 +189,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
             className={`${styles.iconButton} ${canGoForward ? styles.iconButtonActive : styles.iconButtonDisabled}`}
             onClick={handleForward}
             disabled={!canGoForward}
-            data-title="Forward"
-            aria-label="Go forward"
           >
             <IoChevronForward size={16} />
           </button>
@@ -200,12 +202,10 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
       </div>
 
       <div className={styles.rightSection}>
-        {/* 🚨 UPDATED STREAK COMPONENT */}
         <button 
           type="button" 
           className={`${styles.streakItem} ${streakColorClass}`} 
           data-title={`Max Streak: ${streak?.maxStreak || 0}`}
-          aria-label="View streak"
         >
           <span className={styles.streakText}>{currentStreak}</span>
           <PiFire size={18} className={styles.streakIcon} />
@@ -217,7 +217,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           rel="noopener noreferrer" 
           className={styles.iconButton} 
           data-title="Join Discord"
-          aria-label="Join Discord"
         >
           <PiDiscordLogo size={18} />
         </a>
@@ -226,7 +225,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           type="button" 
           className={styles.iconButton} 
           data-title="Timer App"
-          aria-label="Timer App"
         >
           <IoTimeOutline size={18} />
         </button>
@@ -235,19 +233,32 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           type="button" 
           className={styles.iconButton} 
           data-title="Calendar App"
-          aria-label="Calendar App"
         >
           <IoCalendarOutline size={16} />
         </button>
 
-        <button 
-          type="button" 
-          className={styles.iconButton} 
-          data-title="Notifications"
-          aria-label="Notifications"
-        >
-          <FiBell size={16} />
-        </button>
+        {/* 🚨 UPDATED NOTIFICATION BELL & POPUP */}
+        <div style={{ position: 'relative' }}>
+          <button 
+            id="notification-bell-btn"
+            type="button" 
+            className={styles.iconButton} 
+            data-title="Notifications"
+            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+          >
+            <FiBell size={16} />
+            {unreadCount > 0 && (
+              <span className={styles.unreadBadge}>{unreadCount}</span>
+            )}
+          </button>
+          
+          <NotificationPopup 
+            isOpen={isNotificationOpen} 
+            onClose={() => setIsNotificationOpen(false)} 
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+          />
+        </div>
       </div>
     </header>
   );

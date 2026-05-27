@@ -269,3 +269,20 @@
   visibility: visible;
   transform: translateX(-50%) scale(1);
 }
+
+.unreadBadge {
+  position: absolute;
+  top: -2px;
+  right: 1px;
+  background-color: #EF4444; /* Standard Red */
+  color: white;
+  font-size: 8px;
+  font-weight: 500;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--dashboard-background-color); /* Creates a cutout effect */
+}
