@@ -38,6 +38,7 @@
 .optionRow {
   display: flex;
   align-items: center; /* Aligns checkbox to top of content */
+
   gap: 10px;
   cursor: pointer;
 }
@@ -48,10 +49,8 @@
 }
 
 .optionContent {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 }
+
 
 /* --- IMAGE HANDLING (UNIFORM SIZES) --- */
 
