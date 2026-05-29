@@ -36,6 +36,7 @@ export interface PaperAttemptDetail {
   date: string;
   shift: string;
   mode: string;
+  session?: string; // 🔥 NEW: Added session to extract 'Session_1', 'Session_2', etc.
   totalMarks: number;
   totalDuration: number;
   totalQuestions: number;

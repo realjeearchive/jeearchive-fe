@@ -75,14 +75,53 @@ export function PreviousYearQuestionsClient() {
   }, [selectedYear, apiExamType]);
 
   const formattedItems: TestCardItem[] = React.useMemo(() => {
-    return papersWithStatus.map((paper) => {
+    // 🔥 NEW: Multi-Level Custom Sorter
+    const sortedPapers = [...papersWithStatus].sort((a, b) => {
+      // 1. Sort by Session (e.g., Session_1 comes before Session_2)
+      const sessionA = a.session || "";
+      const sessionB = b.session || "";
+      if (sessionA !== sessionB) return sessionA.localeCompare(sessionB);
+
+      // 2. Sort by Month (January -> December)
+      const months: Record<string, number> = {
+        january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+        july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
+      };
+      const monthA = months[a.month?.toLowerCase()] || 99;
+      const monthB = months[b.month?.toLowerCase()] || 99;
+      if (monthA !== monthB) return monthA - monthB;
+
+      // 3. Sort by Date numerically
+      const dateA = parseInt(a.date) || 0;
+      const dateB = parseInt(b.date) || 0;
+      if (dateA !== dateB) return dateA - dateB;
+
+      // 4. Sort by Shift (Morning / Shift 1 comes before Evening / Shift 2)
+      const shiftA = a.shift?.toLowerCase() || "";
+      const shiftB = b.shift?.toLowerCase() || "";
+      if (shiftA !== shiftB) {
+        const isMorningA = shiftA.includes("morning") || shiftA.includes("1");
+        const isMorningB = shiftB.includes("morning") || shiftB.includes("1");
+        if (isMorningA && !isMorningB) return -1;
+        if (!isMorningA && isMorningB) return 1;
+        return shiftA.localeCompare(shiftB);
+      }
+
+      return 0; // Exactly the same
+    });
+
+    return sortedPapers.map((paper) => {
       let status: TestCardItem["status"] = "NOT_ATTEMPTED";
       if (paper.latestAttempt) status = paper.latestAttempt.status;
       else if (paper.attemptStatus === "completed") status = "COMPLETED";
 
       let title = "";
+      
+      // Clean up session for UI (e.g. "Session_1" -> "Session 1")
+      const sessionText = paper.session ? `${paper.session.replace('_', ' ')} - ` : "";
+
       if (isMains) {
-        title = `${displayTitle} ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`;
+        title = `${sessionText}${displayTitle} ${paper.year} ${paper.date} ${paper.month} (${paper.shift})`;
       } else {
         const shiftText = paper.shift ? `(${paper.shift})` : "";
         title = `${displayTitle} ${paper.year} ${paper.date || ""} ${paper.month || ""} ${shiftText}`

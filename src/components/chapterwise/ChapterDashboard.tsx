@@ -28,11 +28,33 @@ interface ChapterDashboardProps {
   chapterName: string;
 }
 
+// 🔥 FIX 1: Smarter Preview Parser that respects Latex.tsx heuristics
 const prepareForPreview = (html: string) => {
   if (!html) return "";
-  let text = html.replace(/<[^>]*>?/gm, "").trim();
-  text = text.replace(/\$\$/g, "$").replace(/\\\[/g, "$").replace(/\\\]/g, "$");
+  
+  // Convert break/block tags to spaces so words don't merge (e.g. "Force<br>$$F$$" -> "Force $$F$$")
+  let text = html.replace(/<br\s*\/?>/gi, " ");
+  text = text.replace(/<\/p>|<\/div>|<\/li>/gi, " ");
+  
+  // Strip all remaining HTML tags
+  text = text.replace(/<[^>]*>?/gm, " ");
+  
+  // Collapse multiple spaces into one
+  text = text.replace(/\s+/g, " ").trim();
+  
+  // Convert Block Math to Inline Math so it doesn't break the single-line row layout
+  text = text.replace(/\$\$/g, "$");
+  text = text.replace(/\\\[/g, "\\(");
+  text = text.replace(/\\\]/g, "\\)");
+  
   return text;
+};
+
+// Helper for Session Dropdown formatting
+const formatSession = (sess: string) => {
+  if (!sess) return "";
+  const parts = sess.replace(/_/g, " ").split(" ");
+  return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(" ");
 };
 
 export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
@@ -138,7 +160,44 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 🔥 FIX 2: Advanced Chronological Sorting
   const sortedBaseQuestions = [...baseQuestions].sort((a, b) => {
+    // 1. Sort by Year (Descending: 2026 -> 2025)
+    const yearA = a.papers?.year || 0;
+    const yearB = b.papers?.year || 0;
+    if (yearA !== yearB) return yearB - yearA;
+
+    // 2. Sort by Session (Ascending: Session 1 -> Session 2)
+    const sessionA = a.papers?.session || "";
+    const sessionB = b.papers?.session || "";
+    if (sessionA !== sessionB) return sessionA.localeCompare(sessionB);
+
+    // 3. Sort by Month (Chronological)
+    const months: Record<string, number> = {
+      january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+      july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
+    };
+    const monthA = months[(a.papers?.month || "").toLowerCase()] || 99;
+    const monthB = months[(b.papers?.month || "").toLowerCase()] || 99;
+    if (monthA !== monthB) return monthA - monthB;
+
+    // 4. Sort by Date (Numerical Ascending)
+    const dateA = parseInt(a.papers?.date || "0");
+    const dateB = parseInt(b.papers?.date || "0");
+    if (dateA !== dateB) return dateA - dateB;
+
+    // 5. Sort by Shift (Morning before Evening)
+    const shiftA = a.papers?.shift?.toLowerCase() || "";
+    const shiftB = b.papers?.shift?.toLowerCase() || "";
+    if (shiftA !== shiftB) {
+      const isMorningA = shiftA.includes("morning") || shiftA.includes("1");
+      const isMorningB = shiftB.includes("morning") || shiftB.includes("1");
+      if (isMorningA && !isMorningB) return -1;
+      if (!isMorningA && isMorningB) return 1;
+      return shiftA.localeCompare(shiftB);
+    }
+
+    // 6. Fallback to Question Number
     const numA = a.questionNumber || 0;
     const numB = b.questionNumber || 0;
     return numA - numB;
@@ -462,11 +521,12 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                             role="button"
                             aria-expanded={openDropdown === "session"}
                           >
+                            {/* 🔥 FIX 3: Proper Title Case format for Display */}
                             <span className={Styles.lcSelectedText}>
                               {selectedSessions.length === 0
                                 ? "Select session..."
                                 : selectedSessions.length === 1
-                                ? selectedSessions[0].replace(/_/g, " ")
+                                ? formatSession(selectedSessions[0])
                                 : `${selectedSessions.length} selected`}
                             </span>
                             <ChevronDown
@@ -491,7 +551,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                       )
                                     }
                                   />
-                                  <span>{sess.replace(/_/g, " ")}</span>
+                                  <span>{formatSession(sess)}</span>
                                 </label>
                               ))}
                             </div>
