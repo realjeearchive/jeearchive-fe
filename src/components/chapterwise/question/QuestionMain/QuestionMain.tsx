@@ -11,14 +11,14 @@ interface QuestionMainProps {
 
 export const QuestionMain = ({ children, status }: QuestionMainProps) => {
   return (
-    <div className={styles.container}>
+    <article className={styles.container} aria-label="Question content">
       {status === "unattempted" && (
-        <div className={styles.banner}>
-          <FiAlertCircle size={16} />
+        <div className={styles.banner} role="alert">
+          <FiAlertCircle size={16} aria-hidden="true" />
           You did not attempt this question
         </div>
       )}
       {children}
-    </div>
+    </article>
   );
 };

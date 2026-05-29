@@ -9,18 +9,28 @@ interface QuestionStatsProps {
   isVisible: boolean;
 }
 
-export const QuestionStats = ({ userTime, avgTime, accuracy, isVisible }: QuestionStatsProps) => {
+export const QuestionStats = ({
+  userTime,
+  avgTime,
+  accuracy,
+  isVisible,
+}: QuestionStatsProps) => {
   if (!isVisible) return null;
 
   let colorClass = styles.bgOrange;
   let textClass = styles.textOrange;
-  if (accuracy >= 70) { colorClass = styles.bgGreen; textClass = styles.textGreen; }
-  else if (accuracy < 40) { colorClass = styles.bgRed; textClass = styles.textRed; }
+  if (accuracy >= 70) {
+    colorClass = styles.bgGreen;
+    textClass = styles.textGreen;
+  } else if (accuracy < 40) {
+    colorClass = styles.bgRed;
+    textClass = styles.textRed;
+  }
 
   return (
-    <div className={styles.container}>
+    <section className={styles.container} aria-label="Question statistics">
       <div className={styles.statBlock}>
-        <div className={`${styles.iconWrapper} ${styles.iconTime}`}>
+        <div className={`${styles.iconWrapper} ${styles.iconTime}`} aria-hidden="true">
           <FiClock size={18} />
         </div>
         <div className={styles.content}>
@@ -29,26 +39,36 @@ export const QuestionStats = ({ userTime, avgTime, accuracy, isVisible }: Questi
             <div className={styles.mainValue}>{userTime}</div>
           </div>
           <div className={styles.subValue}>
-            <span>Avg Time: </span>{avgTime}
+            <span>Avg Time: </span>
+            {avgTime}
           </div>
         </div>
       </div>
 
-      <div className={styles.divider} />
+      <div className={styles.divider} aria-hidden="true" />
 
       <div className={styles.statBlock}>
-        <div className={`${styles.iconWrapper} ${styles.iconAcc}`}>
+        <div className={`${styles.iconWrapper} ${styles.iconAcc}`} aria-hidden="true">
           <FiTarget size={18} />
         </div>
         <div className={styles.content}>
           <div className={styles.label}>Global Accuracy</div>
           <div className={styles.barTrack}>
-            <div className={`${styles.barFill} ${colorClass}`} style={{ width: `${accuracy}%` }} />
+            <div
+              className={`${styles.barFill} ${colorClass}`}
+              style={{ width: `${accuracy}%` }}
+              role="progressbar"
+              aria-valuenow={accuracy}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${accuracy}% accuracy`}
+            />
           </div>
-          <span className={`${styles.smallText} ${textClass}`}>{accuracy}% got this right</span>
+          <span className={`${styles.smallText} ${textClass}`}>
+            {accuracy}% got this right
+          </span>
         </div>
       </div>
-
-    </div>
+    </section>
   );
 };

@@ -2,9 +2,17 @@
 
 import React from "react";
 import styles from "./SolutionHeader.module.css";
-import { FiArrowLeft, FiSettings, FiMenu, FiPlayCircle, FiPauseCircle, FiBookmark, FiAlertTriangle } from "react-icons/fi";
-import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb"; 
-import { FileText } from "lucide-react"; 
+import {
+  FiArrowLeft,
+  FiSettings,
+  FiMenu,
+  FiPlayCircle,
+  FiPauseCircle,
+  FiBookmark,
+  FiAlertTriangle,
+} from "react-icons/fi";
+import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb";
+import { FileText } from "lucide-react";
 
 interface SolutionHeaderProps {
   testName: string;
@@ -16,7 +24,7 @@ interface SolutionHeaderProps {
   mode?: "solution" | "practice";
   activeTab: "question" | "solution";
   onTabChange: (tab: "question" | "solution") => void;
-  isCurrentQuestionSubmitted: boolean; 
+  isCurrentQuestionSubmitted: boolean;
   timer?: string;
   isTimerRunning?: boolean;
   onToggleTimer?: () => void;
@@ -28,10 +36,10 @@ interface SolutionHeaderProps {
   showTimerPrompt?: boolean;
 }
 
-export const SolutionHeader = ({ 
-  testName, 
-  activeSubject, 
-  onSubjectChange, 
+export const SolutionHeader = ({
+  testName,
+  activeSubject,
+  onSubjectChange,
   onBack,
   isSidebarOpen,
   onToggleSidebar,
@@ -47,70 +55,88 @@ export const SolutionHeader = ({
   showTools,
   isBookmarked,
   onBookmark,
-  showTimerPrompt
+  showTimerPrompt,
 }: SolutionHeaderProps) => {
-
   const getTabsRowClass = () => {
-    if (activeTab === "solution") return `${styles.tabsRow} ${styles.tabsRowSolution}`;
-    switch(activeSubject) {
-      case "Mathematics": return `${styles.tabsRow} ${styles.tabsRowMath}`;
-      case "Physics": return `${styles.tabsRow} ${styles.tabsRowPhy}`;
-      case "Chemistry": return `${styles.tabsRow} ${styles.tabsRowChem}`;
-      default: return styles.tabsRow;
+    if (activeTab === "solution")
+      return `${styles.tabsRow} ${styles.tabsRowSolution}`;
+    switch (activeSubject) {
+      case "Mathematics":
+        return `${styles.tabsRow} ${styles.tabsRowMath}`;
+      case "Physics":
+        return `${styles.tabsRow} ${styles.tabsRowPhy}`;
+      case "Chemistry":
+        return `${styles.tabsRow} ${styles.tabsRowChem}`;
+      default:
+        return styles.tabsRow;
     }
   };
 
-  const renderSubjectTab = (subject: "Physics" | "Chemistry" | "Mathematics", Icon: React.ElementType) => {
+  const renderSubjectTab = (
+    subject: "Physics" | "Chemistry" | "Mathematics",
+    Icon: React.ElementType
+  ) => {
     const isSubjectActive = activeSubject === subject;
     if (mode === "practice" && !isSubjectActive) return null;
 
     return (
-      <button 
+      <button
         key={subject}
-        className={`${styles.tab} ${subject === "Mathematics" ? styles.tabMath : subject === "Physics" ? styles.tabPhy : styles.tabChem} ${activeTab === 'question' ? styles.active : ""}`}
-        onClick={() => onTabChange("question")} 
+        className={`${styles.tab} ${subject === "Mathematics" ? styles.tabMath : subject === "Physics" ? styles.tabPhy : styles.tabChem} ${activeTab === "question" ? styles.active : ""}`}
+        onClick={() => onTabChange("question")}
+        aria-pressed={activeTab === "question" && isSubjectActive}
       >
-        <Icon className={styles.tabIcon} />
+        <Icon className={styles.tabIcon} aria-hidden="true" />
         <span>{subject}</span>
       </button>
     );
   };
 
   return (
-    <div className={styles.container}>
+    <header className={styles.container} role="banner">
       <div className={styles.topRow}>
         <div className={styles.leftSection}>
-          <button onClick={onBack} className={styles.backBtn}>
-            <FiArrowLeft size={20} />
+          <button onClick={onBack} className={styles.backBtn} aria-label="Go back">
+            <FiArrowLeft size={20} aria-hidden="true" />
           </button>
           <div className={styles.titleBlock}>
-            <span className={styles.mainTitle}>
+            <h1 className={styles.mainTitle}>
               {mode === "practice" ? "Chapter Practice" : "Solutions"}
-            </span>
+            </h1>
             <span className={styles.subTitle}>{testName}</span>
           </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {!isSidebarOpen && (
-            <button className={styles.settingsBtn} onClick={onToggleSidebar}>
-              <FiMenu size={14} /> <span>Question Panel</span>
+            <button
+              className={styles.settingsBtn}
+              onClick={onToggleSidebar}
+              aria-label="Open question panel"
+            >
+              <FiMenu size={14} aria-hidden="true" /> <span>Question Panel</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className={getTabsRowClass()}>
+      <nav className={getTabsRowClass()} aria-label="Subject and solution tabs">
         {renderSubjectTab("Mathematics", TbMathFunction)}
         {renderSubjectTab("Physics", TbAtom)}
         {renderSubjectTab("Chemistry", TbFlask)}
 
         {isCurrentQuestionSubmitted && (
-          <button 
+          <button
             className={`${styles.tab} ${styles.tabSolution} ${activeTab === "solution" ? styles.active : ""}`}
             onClick={() => onTabChange("solution")}
+            aria-pressed={activeTab === "solution"}
           >
-            <FileText className={styles.tabIcon} size={16} strokeWidth={2} />
+            <FileText
+              className={styles.tabIcon}
+              size={16}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
             <span>Solutions</span>
           </button>
         )}
@@ -119,48 +145,64 @@ export const SolutionHeader = ({
           <div className={styles.toolsContainer}>
             {/* Timer with Prompt */}
             <div className={styles.timerWrapper}>
-              <button 
+              <button
                 onClick={onToggleTimer}
-                className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ''}`}
+                className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ""}`}
                 title={isTimerRunning ? "Pause Timer" : "Start Timer"}
+                aria-label={`${isTimerRunning ? "Pause" : "Start"} timer, current time ${timer || "00:00"}`}
               >
                 <span>{timer || "00:00"}</span>
-                {isTimerRunning ? <FiPauseCircle size={16} /> : <FiPlayCircle size={16} />}
+                {isTimerRunning ? (
+                  <FiPauseCircle size={16} aria-hidden="true" />
+                ) : (
+                  <FiPlayCircle size={16} aria-hidden="true" />
+                )}
               </button>
-              
-              {/* 🔥 Timer Prompt - Shows only when timer is NOT running */}
+
               {showTimerPrompt && !isTimerRunning && (
-                <div className={styles.timerPrompt}>
+                <div className={styles.timerPrompt} role="status">
                   Click to start timer
                 </div>
               )}
             </div>
 
-            <div className={styles.divider} />
+            <div className={styles.divider} aria-hidden="true" />
 
             <div className={styles.marksBlock}>
               <span className={styles.posMark}>+{marksPos}</span>
-              <span style={{ color: "var(--dashboard-secondary-text-color)" }}> / </span>
+              <span style={{ color: "var(--dashboard-secondary-text-color)" }}>
+                {" "}
+                /{" "}
+              </span>
               <span className={styles.negMark}>-{marksNeg}</span>
             </div>
-            
-            <button 
-              className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ''}`}
+
+            <button
+              className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ""}`}
               onClick={onBookmark}
+              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this question"}
+              aria-pressed={isBookmarked}
             >
-              <FiBookmark 
-                size={13} 
-                fill={isBookmarked ? "currentColor" : "none"} 
-              /> 
-              <span className={styles.btnText}>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
+              <FiBookmark
+                size={13}
+                fill={isBookmarked ? "currentColor" : "none"}
+                aria-hidden="true"
+              />
+              <span className={styles.btnText}>
+                {isBookmarked ? "Bookmarked" : "Bookmark"}
+              </span>
             </button>
-            
-            <button className={`${styles.actionBtn} ${styles.reportBtn}`}>
-              <FiAlertTriangle size={13} /> <span className={styles.btnText}>Report</span>
+
+            <button
+              className={`${styles.actionBtn} ${styles.reportBtn}`}
+              aria-label="Report this question"
+            >
+              <FiAlertTriangle size={13} aria-hidden="true" />{" "}
+              <span className={styles.btnText}>Report</span>
             </button>
           </div>
         )}
-      </div>
-    </div>
+      </nav>
+    </header>
   );
 };
