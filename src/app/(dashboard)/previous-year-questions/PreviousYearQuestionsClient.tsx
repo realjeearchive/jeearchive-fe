@@ -33,6 +33,9 @@ export function PreviousYearQuestionsClient() {
   const [selectedYear, setSelectedYear] = useState<string>("2026");
   const [papersWithStatus, setPapersWithStatus] = useState<PaperAttemptDetail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // 🔥 FIX: Progressive cache to store the test counts dynamically as they are fetched
+  const [yearCounts, setYearCounts] = useState<Record<string, number>>({});
 
   const isMains = examType === "MAIN";
   const apiExamType = isMains ? "JEE_MAIN" : "JEE_ADVANCED";
@@ -55,11 +58,15 @@ export function PreviousYearQuestionsClient() {
         const res = await fetchPaperAttemptsDetails(apiExamType, selectedYear);
         if (res.success && res.data) {
           setPapersWithStatus(res.data);
+          // Save the actual count to our dictionary state
+          setYearCounts(prev => ({ ...prev, [`${apiExamType}_${selectedYear}`]: res.data.length }));
         } else {
           if (!useRateLimitStore.getState().isRateLimited) {
             toast.error("Couldn't load papers. Try refreshing.");
           }
           setPapersWithStatus([]);
+          // Record 0 if the fetch succeeds but yields no data
+          setYearCounts(prev => ({ ...prev, [`${apiExamType}_${selectedYear}`]: 0 }));
         }
       } catch (e) {
         console.error("Fetch failed", e);
@@ -67,6 +74,7 @@ export function PreviousYearQuestionsClient() {
           toast.error("Network issue. Please check your connection.");
         }
         setPapersWithStatus([]);
+        setYearCounts(prev => ({ ...prev, [`${apiExamType}_${selectedYear}`]: 0 }));
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +83,6 @@ export function PreviousYearQuestionsClient() {
   }, [selectedYear, apiExamType]);
 
   const formattedItems: TestCardItem[] = React.useMemo(() => {
-    // 🔥 NEW: Multi-Level Custom Sorter
     const sortedPapers = [...papersWithStatus].sort((a, b) => {
       // 1. Sort by Session (e.g., Session_1 comes before Session_2)
       const sessionA = a.session || "";
@@ -117,7 +124,6 @@ export function PreviousYearQuestionsClient() {
 
       let title = "";
       
-      // Clean up session for UI (e.g. "Session_1" -> "Session 1")
       const sessionText = paper.session ? `${paper.session.replace('_', ' ')} - ` : "";
 
       if (isMains) {
@@ -268,19 +274,31 @@ export function PreviousYearQuestionsClient() {
             <nav className={Styles.yearsListContainer} aria-label="Select year">
               <span className={Styles.listLabel}>Select Year</span>
               <div className={Styles.yearsList}>
-                {currentYearOptions.map((year) => (
-                  <button
-                    key={year}
-                    onClick={() => setSelectedYear(year)}
-                    className={`${Styles.yearRowItem} ${selectedYear === year ? Styles.yearRowActive : ""}`}
-                    aria-current={selectedYear === year ? "true" : undefined}
-                  >
-                    <span className={Styles.yearNumberText}>{year}</span>
-                    <span className={Styles.yearCountMeta}>
-                      {isMains ? "20 Tests" : "2 Papers"}
-                    </span>
-                  </button>
-                ))}
+                {currentYearOptions.map((year) => {
+                  // 🔥 FIX: Check dictionary cache for dynamic counts
+                  const countKey = `${apiExamType}_${year}`;
+                  const count = yearCounts[countKey];
+                  const baseLabel = isMains ? "Tests" : "Papers";
+                  
+                  // Pluralization handling (e.g. 1 Test vs 2 Tests)
+                  const displayMeta = count !== undefined 
+                    ? `${count} ${count === 1 ? baseLabel.slice(0, -1) : baseLabel}` 
+                    : baseLabel;
+
+                  return (
+                    <button
+                      key={year}
+                      onClick={() => setSelectedYear(year)}
+                      className={`${Styles.yearRowItem} ${selectedYear === year ? Styles.yearRowActive : ""}`}
+                      aria-current={selectedYear === year ? "true" : undefined}
+                    >
+                      <span className={Styles.yearNumberText}>{year}</span>
+                      <span className={Styles.yearCountMeta}>
+                        {displayMeta}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </nav>
           </aside>
