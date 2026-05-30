@@ -22,50 +22,62 @@ export function QuestionBlock({
   const { fontSize } = useTestPlayerAccessibility();
   const isSelected = (optId: string) => questionState.selectedOptionIds.includes(optId);
 
+  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
+  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
+  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
+  const preprocessHtml = (html: string) => {
+    if (!html) return "";
 
-// Update the parserOptions to handle table tags correctly if they exist in htmlContent
-const parserOptions: HTMLReactParserOptions = {
-  replace: (domNode: DOMNode) => {
-    if (domNode.type === 'text') {
-       if (domNode.data && domNode.data.trim() !== '') {
-           return <Latex>{domNode.data}</Latex>;
-       }
-    }
-    
-    // Ensure tables from backend are allowed through the parser
-    if (domNode.type === 'tag') {
-      const element = domNode as Element;
-      
-      if (element.name === 'img') {
-        return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            {...element.attribs}
-            className={styles.questionImage} 
-            alt={element.attribs.alt || "Question related image"}
-          />
-        );
+    // Clean rogue HTML tags INSIDE math blocks safely.
+    // This regex strictly targets tags starting with letters (like <p>, <br>) so it NEVER hurts math like < or >.
+    const stripTags = (str: string) => str.replace(/<\/?\s*[a-zA-Z][^>]*>/g, '');
+
+    // Uses [\s\S]*? to safely match across multiple lines without causing the ES2018 compiler error
+    const processed = html
+      .replace(/\$\$([\s\S]*?)\$\$/g, (match) => stripTags(match))
+      .replace(/\\\[([\s\S]*?)\\\]/g, (match) => stripTags(match))
+      .replace(/\\\(([\s\S]*?)\\\)/g, (match) => stripTags(match));
+
+    return processed;
+  };
+
+  const parserOptions: HTMLReactParserOptions = {
+    replace: (domNode: DOMNode) => {
+      if (domNode.type === 'text') {
+         if (domNode.data && domNode.data.trim() !== '') {
+             return <Latex>{domNode.data}</Latex>;
+         }
       }
       
-      // If backend sends specific tags for List-I / List-II, you can intercept them here
-      // For now, we let standard HTML (table, tr, td) pass to be styled by CSS
+      if (domNode.type === 'tag') {
+        const element = domNode as Element;
+        if (element.name === 'img') {
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              {...element.attribs}
+              className={styles.questionImage} 
+              alt={element.attribs.alt || "Question related image"}
+            />
+          );
+        }
+      }
     }
-  }
-};
+  };
 
   const renderContent = (htmlContent: string) => {
     if (!htmlContent) return null;
-    return <div className={styles.htmlContent}>{parse(htmlContent, parserOptions)}</div>;
+    const safeHtml = preprocessHtml(htmlContent);
+    return <div className={styles.htmlContent}>{parse(safeHtml, parserOptions)}</div>;
   };
 
   const renderOptionText = (text: string) => {
       if (!text) return null;
-      return parse(text, parserOptions); 
+      const safeHtml = preprocessHtml(text);
+      return parse(safeHtml, parserOptions); 
   };
 
   const numericalInputId = `numerical-input-${question.id}`;
-  
-  // Logic: Checkbox for Multi-Correct, Radio for Single/Comprehension
   const isMulti = question.kind === "multi";
   const inputType = isMulti ? "checkbox" : "radio";
   const showOptions = question.kind !== "numerical";
@@ -73,7 +85,6 @@ const parserOptions: HTMLReactParserOptions = {
   return (
     <div className={styles.questionWrapper} data-font-size={fontSize}>
       
-      {/* 1. COMPREHENSION PASSAGE */}
       {question.comprehensionContent && (
         <div className={styles.comprehensionBox}>
            <div className={styles.sectionLabel}>Passage</div>
@@ -83,9 +94,7 @@ const parserOptions: HTMLReactParserOptions = {
         </div>
       )}
 
-      {/* 2. QUESTION HEADER */}
       <div className={styles.questionHeader}>
-        {/* Images First */}
         {question.images && question.images.length > 0 && (
           <div className={styles.imageGrid}>
             {question.images.map((imgUrl, idx) => (
@@ -94,14 +103,11 @@ const parserOptions: HTMLReactParserOptions = {
             ))}
           </div>
         )}
-
-        {/* Content Text */}
         <div className={styles.questionText}>
           {renderContent(question.contentText)}
         </div>
       </div>
 
-      {/* 3. OPTIONS */}
       {showOptions && (
         <div className={styles.optionsList}>
           {isMulti && <p className={styles.multiHint} role="note">* One or more options may be correct</p>}
@@ -119,7 +125,7 @@ const parserOptions: HTMLReactParserOptions = {
                     aria-label={`Select option ${opt.id}`}
                     checked={checked}
                     onChange={() => onSelectOption(opt.id)}
-                    className={styles.optionInput} // Unified class
+                    className={styles.optionInput} 
                   />
                 </div>
 
@@ -137,7 +143,6 @@ const parserOptions: HTMLReactParserOptions = {
         </div>
       )}
 
-      {/* 4. NUMERICAL INPUT */}
       {question.kind === "numerical" && (
         <div className={styles.numericalWrapper}>
           <div className={styles.mainAnswerArea}>

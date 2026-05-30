@@ -13,20 +13,49 @@
   .questionWrapper[data-font-size="large"] { --question-font-size: 16px; }
 }
 
-/* --- TEXT STYLES --- */
+/* ========================================= */
+/* --- QUESTION TEXT & HTML FLOW FIXES ---   */
+/* ========================================= */
+
 .questionText {
   margin: 12px 0 16px;
   font-size: var(--question-font-size);
   line-height: 1.6;
   color: var(--test-player-text-color);
+  display: block; /* Ensures natural text flow */
 }
 
-.optionText {
-  font-size: var(--question-font-size);
-  flex: 1;
+.htmlContent {
+  width: 100%;
+  word-break: break-word; /* 🔥 FIX: Allows text to wrap naturally */
+  /* 🔥 FIX: Removed overflow-x: auto to eliminate the annoying text scrollbars */
 }
 
-/* --- OPTION LIST LAYOUT --- */
+/* Keep paragraphs inline so sentences flow normally with math */
+.htmlContent p,
+.optionText p {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Add a space after inline paragraphs so words don't stick together */
+.htmlContent p::after,
+.optionText p::after {
+  content: " ";
+}
+
+/* Stop KaTeX from forcing line breaks and centering */
+:global(.katex-display) {
+  display: inline-block !important;
+  margin: 0 4px !important;
+  text-align: left !important;
+}
+
+/* ========================================= */
+/* --- OPTION LIST LAYOUT ---                */
+/* ========================================= */
+
 .optionsList {
   display: flex;
   flex-direction: column;
@@ -37,9 +66,23 @@
 
 .optionRow {
   display: flex;
-  align-items: center; /* Aligns checkbox to top of content */
-
+  align-items: flex-start; /* 🔥 FIX: Aligns radio button to the top of the text, not the center! */
   gap: 10px;
+  cursor: pointer;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 3px; /* Slightly drops the radio button to align with the first line of text */
+}
+
+.optionInput {
+  margin: 0;
   cursor: pointer;
 }
 
@@ -49,48 +92,57 @@
 }
 
 .optionContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start; /* 🔥 FIX: Forces option content to the left edge */
+  text-align: left;
 }
 
+.optionText {
+  font-size: var(--question-font-size);
+  flex: 1;
+  text-align: left; /* 🔥 FIX: Forces text alignment to the left */
+}
 
-/* --- IMAGE HANDLING (UNIFORM SIZES) --- */
+/* ========================================= */
+/* --- IMAGE HANDLING (UNIFORM SIZES) ---    */
+/* ========================================= */
 
 .inlineImageContainer {
   display: block;
   margin: 1rem 0;
   width: 100%;
-  text-align: center;
+  text-align: left;
 }
 
 /* 1. Main Question Images */
 .questionImage {
-  height: 180px;        /* Fixed uniform height */
-  width: 100%;          /* Full available width */
-  max-width: 600px;     /* Don't stretch too wide */
-  object-fit: contain;  /* Fits inside box without distortion */
+  height: 180px;        
+  width: 100%;          
+  max-width: 600px;     
+  object-fit: contain;  
+  object-position: left center; /* Align image to start of text */
+  margin: 12px 0;
+  display: block;
 }
 
 /* 2. Option Images */
 .optImage {
   display: block;
   margin-top: 8px;
-  height: 120px;       /* Smaller fixed height for options */
+  height: 120px;       
   width: 100%;
-  max-width: 350px;    /* Limit width for cleanliness */
-  object-fit: contain; /* Essential: keeps aspect ratio */
-  object-position: left center; /* Align image to start of text */
+  max-width: 350px;    
+  object-fit: contain; 
+  object-position: left center; 
 }
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {
-  .optionsList {
-    width: 100%;
-  }
-  .questionImage {
-    height: 150px;
-  }
-  .optImage {
-    height: 100px;
-  }
+  .optionsList { width: 100%; }
+  .questionImage { height: 150px; }
+  .optImage { height: 100px; }
 }
 
 /* Dark Mode Support */
@@ -101,15 +153,51 @@
   background-color: transparent;
 }
 
-/* KaTeX Formula Scroll */
-.katex-block {
-  display: block;
-  margin: 1rem 0;
-  text-align: center;
-  overflow-x: auto;
+
+/* ========================================= */
+/* --- TABLES (Match the Following) ---      */
+/* ========================================= */
+
+.htmlContent table {
+  width: 100%;
+  max-width: 700px;
+  border-collapse: collapse;
+  margin: 15px 0;
+  border: 1px solid var(--test-player-border-color, #ccc);
+  display: table !important; /* Protect from paragraph inline rules */
 }
 
-/* --- NUMERICAL INPUT AREA --- */
+.htmlContent td, .htmlContent th {
+  padding: 8px 12px;
+  border: 1px solid var(--test-player-border-color, #e0e0e0);
+  vertical-align: top;
+  text-align: left !important;
+  display: table-cell !important;
+}
+
+.htmlContent th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #111; /* Force dark text in light mode */
+}
+
+/* Dark Mode Fix For Tables */
+:global(.dark) .htmlContent table,
+:global(.dark) .htmlContent td,
+:global(.dark) .htmlContent th {
+  border-color: #444; 
+}
+
+:global(.dark) .htmlContent th {
+  background-color: #2a2a2a; 
+  color: #f4f4f5; 
+}
+
+
+/* ========================================= */
+/* --- NUMERICAL INPUT AREA ---              */
+/* ========================================= */
+
 .numericalWrapper {
   display: flex;
   flex-direction: column;
@@ -139,8 +227,8 @@
 }
 
 .comprehensionBox {
-  background: #f8f9fa; /* Light gray background */
-  border-left: 4px solid #3b82f6; /* Blue accent */
+  background: #f8f9fa; 
+  border-left: 4px solid #3b82f6; 
   padding: 1rem;
   margin-bottom: 1.5rem;
   border-radius: 4px;
@@ -156,12 +244,11 @@
 
 .multiHint {
   font-size: 0.85rem;
-  color: #ea580c; /* Orange hint */
+  color: #ea580c; 
   margin-bottom: 0.5rem;
   font-style: italic;
 }
 
-/* Dark Mode support (if you use global .dark class) */
 :global(.dark) .comprehensionBox {
   background: #27272a;
   border-left-color: #60a5fa;
@@ -181,7 +268,7 @@
   width: 13px;
   height: 13px;
   border: 1px solid #6b7280;
-  border-radius: 50%; /* Makes it circular */
+  border-radius: 50%; 
   display: grid;
   place-content: center;
   margin: 0;
@@ -189,7 +276,6 @@
   background-color: transparent;
 }
 
-/* The inner dot (initially hidden) */
 .optionRow input[type="checkbox"]::before {
   content: "";
   width: 8px;
@@ -197,85 +283,14 @@
   border-radius: 50%;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em #2563eb; /* Blue inner dot */
+  box-shadow: inset 1em 1em #2563eb; 
   background-color: #2563eb;
 }
 
-/* Selected State Border */
 .optionRow input[type="checkbox"]:checked {
   border-color: #2563eb;
 }
 
-/* Reveal Inner Dot on Select */
 .optionRow input[type="checkbox"]:checked::before {
   transform: scale(1);
-}
-
-
-/* src/components/testPlayer/QuestionBlock/QuestionBlock.module.css */
-
-.htmlContent {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* Force LIST-I and LIST-II into a two-column layout if they come as specific tags or tables */
-/* Styling for tables inside questions to look like standard JEE interface */
-.htmlContent table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 15px 0;
-  border: 1px solid var(--test-player-border-color, #ccc);
-}
-
-.htmlContent td, .htmlContent th {
-  padding: 8px 12px;
-  border: 1px solid var(--test-player-border-color, #e0e0e0);
-  vertical-align: top;
-}
-
-/* Light mode defaults */
-.htmlContent th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-  color: #111; /* Force dark text in light mode so it never washes out */
-  text-align: center;
-}
-
-/* 🔥 DARK MODE FIX FOR TABLES 🔥 */
-:global(.dark) .htmlContent table,
-:global(.dark) .htmlContent td,
-:global(.dark) .htmlContent th {
-  border-color: #444; /* Darker borders for dark mode */
-}
-
-:global(.dark) .htmlContent th {
-  background-color: #2a2a2a; /* Dark background for table header */
-  color: #f4f4f5; /* Light text for perfect visibility */
-}
-
-/* Handle Match the following lists (often delivered as <p> or <div> blocks) */
-.htmlContent p {
-  margin-bottom: 8px;
-  line-height: 1.6;
-}
-
-/* Custom CSS to detect "LIST-I" and "LIST-II" patterns and split them */
-/* If the backend sends raw strings, the parser handles them as <Latex> or text nodes */
-
-.questionText {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Styling for tables inside questions to look like standard JEE interface */
-.htmlContent table {
-  border: 1px solid #ccc;
-  margin: 10px 0;
-}
-
-.htmlContent th {
-  background-color: #f5f5f5;
-  font-weight: bold;
 }

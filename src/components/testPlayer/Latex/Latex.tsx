@@ -13,25 +13,17 @@ export default function Latex({ children }: LatexProps) {
 
   // --- 1. SANITIZATION LAYER FOR BACKEND FRAGMENTS ---
   const processed = children
-    // Clean up carriage returns or extra newlines that break inline arrays
     .replace(/\r?\n|\r/g, " ")
-    
-    // Fix escaped bracket groups from backend strings
     .replace(/\\\[/g, "[")
     .replace(/\\\]/g, "]")
     .replace(/\\left\\\[/g, "\\left[")
     .replace(/\\right\\\]/g, "\\right]")
     .replace(/\\left\\\(/g, "\\left(")
     .replace(/\\right\\\)/g, "\\right)")
-    
-    // Fix integral limits spacing string bugs
     .replace(/_\\limits/g, "\\limits_")
-    
-    // Clean loose text formatting artifacts from string parsers
     .replace(/\\_/g, "_");
 
   // --- 2. REGEX TO FIND ALL COMBINATIONS OF MATH BLOCKS ---
-  // Captures $$...$$, $...$, \[...\], and explicit MathJax container structures if passed
   const parts = processed.split(/(\$\$[\s\S]+?\$\$)|(\$[^\$]+\$)|(\\\[[\s\S]+?\\\])/g);
 
   return (
@@ -39,25 +31,16 @@ export default function Latex({ children }: LatexProps) {
       {parts.map((part, index) => {
         if (!part) return null;
 
-        // CASE A: Double Dollar Block Math $$...$$
         if (part.startsWith("$$") && part.endsWith("$$")) {
-          const math = part.slice(2, -2);
-          return <RenderMath key={index} math={math} block={true} />;
+          return <RenderMath key={index} math={part.slice(2, -2)} block={true} />;
         }
-
-        // CASE B: Alternative Slash Bracket Block Math \[...\]
         if (part.startsWith("\\[") && part.endsWith("\\]")) {
-          const math = part.slice(2, -2);
-          return <RenderMath key={index} math={math} block={true} />;
+          return <RenderMath key={index} math={part.slice(2, -2)} block={true} />;
         }
-
-        // CASE C: Single Dollar Inline Math $...$
         if (part.startsWith("$") && part.endsWith("$")) {
-          const math = part.slice(1, -1);
-          return <RenderMath key={index} math={math} block={false} />;
+          return <RenderMath key={index} math={part.slice(1, -1)} block={false} />;
         }
 
-        // CASE D: Clean string token (With custom helper to handle nested single macros)
         return <SmartText key={index} text={part} />;
       })}
     </span>
@@ -66,22 +49,34 @@ export default function Latex({ children }: LatexProps) {
 
 // --- SUB-COMPONENT: Safe KaTeX Compilation Engine ---
 function RenderMath({ math, block }: { math: string; block: boolean }) {
-  // Clean up any remaining <br> or element fragments left inside the math equation block
   const cleanedMath = math
     .replace(/<br\s*\/?>/gi, " ")
-    .replace(/<\/?[^>]+(>|$)/g, "")
+    // 🔥 THE FIX: Strictly strip ONLY valid HTML tags (starting with letters).
+    // The old regex ate "<0" thinking it was a broken HTML tag!
+    .replace(/<\/?\s*[a-zA-Z][^>]*>/g, "")
     .trim();
 
   if (!cleanedMath) return null;
+
+  // Demote fake block math to inline
+  let isDisplayMode = block;
+  if (isDisplayMode) {
+    const requiresBlock = cleanedMath.includes("\\begin") || 
+                          cleanedMath.includes("\\displaystyle") || 
+                          cleanedMath.includes("\\\\");
+    if (!requiresBlock) {
+      isDisplayMode = false;
+    }
+  }
 
   let html: string | null = null;
 
   try {
     html = katex.renderToString(cleanedMath, {
       throwOnError: false,
-      displayMode: block,
+      displayMode: isDisplayMode, // Uses our smart heuristic
       output: "html",
-      strict: false, // Prevents compilation termination errors on unrecognized symbols
+      strict: false,
     });
   } catch (e) {
     html = null;
@@ -89,17 +84,7 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
 
   if (!html) {
     return (
-      <code
-        role="alert"
-        style={{
-          color: "#ef4444",
-          backgroundColor: "rgba(239, 68, 68, 0.08)",
-          padding: "2px 6px",
-          borderRadius: "4px",
-          fontSize: "13px",
-          fontFamily: "monospace",
-        }}
-      >
+      <code role="alert" style={{ color: "#ef4444", padding: "2px 4px" }}>
         {cleanedMath}
       </code>
     );
@@ -108,21 +93,21 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
   return (
     <span
       dangerouslySetInnerHTML={{ __html: html }}
-      className={block ? "katex-block" : "katex-inline"}
-      style={block ? { display: "block", width: "100%", overflowX: "auto", margin: "8px 0" } : {}}
+      className={isDisplayMode ? "katex-block" : "katex-inline"}
+      style={
+        isDisplayMode 
+          ? { display: "block", width: "100%", overflowX: "auto", margin: "8px 0" } 
+          : { display: "inline-block", verticalAlign: "middle", margin: "0 2px" }
+      }
     />
   );
 }
 
-// --- SUB-COMPONENT: Inline standalone Macro Helper ---
 function SmartText({ text }: { text: string }) {
-  // Isolates floating LaTeX escape macros that missed wrapping delimiters (e.g. \alpha)
   const tokens = text.split(/(\\[a-zA-Z]+(?:\{[^}]*\})*)/g);
-
   return (
     <>
       {tokens.map((token, i) => {
-        // Strict boundary validation: Ensure macros have content and don't include plain spaces
         if (token.startsWith("\\") && token.length > 1 && !token.includes(" ")) {
           return <RenderMath key={i} math={token} block={false} />;
         }
