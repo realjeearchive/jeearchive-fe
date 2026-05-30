@@ -1,7 +1,7 @@
 .headerContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -13,9 +13,12 @@
 .triggerButton {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 🔥 FIX: Pushes the chevron arrow to the right edge */
   gap: 8px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
   color: var(--dashboard-primary-text-color);
   padding: 7px 12px;
   border-radius: 8px;
@@ -69,6 +72,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
+  white-space: nowrap;
 }
 
 .menuItem:hover {
@@ -85,4 +89,22 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🔥 FIX: Perfect 50/50 side-by-side layout for mobile */
+@media (max-width: 768px) {
+  .headerContainer {
+    width: 100%;
+    flex-wrap: nowrap; /* Forces them to stay on the same line */
+    gap: 10px;
+  }
+  .dropdownWrapper {
+    flex: 1; /* Forces both buttons to take exactly half the width */
+  }
+  .triggerButton {
+    width: 100%; /* Stretches the button to fill the wrapper */
+  }
+  .dropdownMenu {
+    width: 100%; /* Ensures the dropdown matches the new button width */
+  }
 }

@@ -37,8 +37,6 @@ export const SolutionContent = ({ solutionText, isVisible }: SolutionContentProp
     },
   };
 
-  console.log("Rendering SolutionContent with solutionText:", solutionText);
-
   return (
     <section className={styles.container} id="detailed-solution-section" aria-label="Detailed solution">
       <div className={styles.header}>

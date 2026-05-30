@@ -27,21 +27,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   background: transparent;
   border: 1px solid var(--dashboard-sidebar-border-color);
   box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
   color: var(--dashboard-primary-text-color);
-  padding: 8px 12px;
+  padding: 7px 12px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
   transition: border-color 0.2s ease;
+  white-space: nowrap; /* 🔥 FIX: Prevents text from breaking into 2 lines */
 }
 
 .trigger.active {
-  border-color: rgba(245, 158, 11, 0.4)
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 .icon, .chevron {
@@ -71,6 +72,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
+  white-space: nowrap; /* 🔥 FIX: Prevents dropdown options from breaking into 2 lines */
 }
 
 .menuItem:hover {
@@ -89,21 +91,27 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.dropdownActive {
+  z-index: 10;
+}
+
+/* 🔥 FIX: Perfect 50/50 side-by-side layout for mobile */
 @media (max-width: 768px) {
   .header {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
   .filters {
     width: 100%;
+    display: flex;
     flex-direction: row;
+    gap: 10px;
   }
-  .dropdownWrapper { width: 100%; }
-}
-
-.dropdownActive {
-  z-index: 10;
+  .dropdownWrapper { 
+    flex: 1; /* Forces both buttons to take exactly half the width */
+    width: auto; 
+  }
 }

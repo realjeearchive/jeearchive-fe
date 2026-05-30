@@ -47,7 +47,6 @@ const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
             className={`${styles.trigger} ${isExamOpen ? styles.active : ""}`}
             onClick={() => { setIsExamOpen(!isExamOpen); setIsTimeOpen(false); }}
           >
-            <FiFilter className={styles.icon} />
             <span>{selectedExam}</span>
             <FiChevronDown className={`${styles.chevron} ${isExamOpen ? styles.rotate : ""}`} />
           </button>
@@ -76,7 +75,6 @@ const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
             className={`${styles.trigger} ${isTimeOpen ? styles.active : ""}`}
             onClick={() => { setIsTimeOpen(!isTimeOpen); setIsExamOpen(false); }}
           >
-            <FiCalendar className={styles.icon} />
             <span>{selectedRange}</span>
             <FiChevronDown className={`${styles.chevron} ${isTimeOpen ? styles.rotate : ""}`} />
           </button>
