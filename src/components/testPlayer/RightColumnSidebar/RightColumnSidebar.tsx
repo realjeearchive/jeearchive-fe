@@ -50,40 +50,48 @@ export function Sidebar() {
   return (
     <aside className={styles.sidebar} aria-label="Test navigation sidebar">
       <div className={styles.sidebarInner}>
-        <div className={styles.studentProfile}>
-          <div className={styles.profile}>
-            <Image
-              className={styles.profileImage}
-              src={PlaceholderImage}
-              alt={`${userName}'s profile picture`}
-              width={40}
-              height={40}
-            />
+        
+        {/* Top Fixed Portion */}
+        <div className={styles.topSection}>
+          <div className={styles.studentProfile}>
+            <div className={styles.profile}>
+              <Image
+                className={styles.profileImage}
+                src={PlaceholderImage}
+                alt={`${userName}'s profile picture`}
+                width={40}
+                height={40}
+              />
+            </div>
+            <h2 className={styles.studentName}>
+              {userName}
+            </h2>
           </div>
-          <h2 className={styles.studentName}>
-            {userName}
-          </h2>
+
+          <div className={styles.statusIndicatorContainer}>
+            <StatusIndicator counts={counts} />
+          </div>
+
+          <h3 className={styles.sectionHeader}>
+            {currentSection.label}
+          </h3>
         </div>
 
-        <div className={styles.statusIndicatorContainer}>
-          <StatusIndicator counts={counts} />
+        {/* Scrollable Palette Portion */}
+        <div className={styles.paletteSection}>
+          <p className={styles.chooseQuestion} id="palette-instruction">
+            Choose a Question
+          </p>
+
+          <QuestionPalette
+            sectionId={currentSection.id}
+            questionCount={currentSection.questions.length}
+            currentQuestionNumber={currentQNum}
+            questionStates={paletteQuestions}
+            onQuestionSelect={(qId) => jumpToQuestion(qId)}
+          />
         </div>
 
-        <h3 className={styles.sectionHeader}>
-          {currentSection.label}
-        </h3>
-
-        <p className={styles.chooseQuestion} id="palette-instruction">
-          Choose a Question
-        </p>
-
-        <QuestionPalette
-          sectionId={currentSection.id}
-          questionCount={currentSection.questions.length}
-          currentQuestionNumber={currentQNum}
-          questionStates={paletteQuestions}
-          onQuestionSelect={(qId) => jumpToQuestion(qId)}
-        />
       </div>
     </aside>
   );

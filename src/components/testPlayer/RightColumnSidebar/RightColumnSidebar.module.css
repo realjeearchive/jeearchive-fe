@@ -1,12 +1,45 @@
-
 .sidebar {
   position: sticky;
   top: 0;
-  height: calc(100vh);
+  height: 100vh;
   border-left: 1px solid var(--test-player-border-color);
   background: var(--test-player-sidebar-bg-color);
   display: flex;
   flex-direction: column;
+}
+
+.sidebarInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden; /* Keeps the entire sidebar from growing past the screen height */
+}
+
+/* Fix the top area so it never shrinks or scrolls */
+.topSection {
+  flex-shrink: 0;
+}
+
+/* Allow the question palette to take remaining space and scroll vertically */
+.paletteSection {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 100px; /* Adds breathing room at the bottom of the list */
+}
+
+/* Optional: Clean, minimal scrollbar for the palette */
+.paletteSection::-webkit-scrollbar {
+  width: 6px;
+}
+.paletteSection::-webkit-scrollbar-track {
+  background: transparent;
+}
+.paletteSection::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+:global(.dark) .paletteSection::-webkit-scrollbar-thumb {
+  background: #4b5563;
 }
 
 .studentProfile {
@@ -41,7 +74,7 @@
   font-weight: 500;
   word-break: break-word; 
   padding-top: 8px; 
-  white-space: nowrap;
+  white-space: normal; /* Fixed from nowrap so long names don't force overflow */
   color: var(--test-player-text-color);
 }
 
@@ -56,5 +89,5 @@
 .chooseQuestion {
   font-size: 13px;
   color: var(--test-player-text-color);
-  padding: 6px 10px;
+  padding: 8px 10px 12px;
 }
