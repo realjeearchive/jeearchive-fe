@@ -1,10 +1,17 @@
-import React from 'react'
-import HelpSupportContent from '@/components/helpSupport/HelpSupportContent'
+import type { Metadata } from "next";
+import HelpSupportContent from "@/components/helpSupport/HelpSupportContent";
+
+export const metadata: Metadata = {
+  title: "Help & Support - JEE Archive",
+  description: "Get help with JEE Archive. Find FAQs, contact support, report bugs, and join our community.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const HelpAndSupport = () => {
-  return (
-    <HelpSupportContent />
-  )
-}
+  return <HelpSupportContent />;
+};
 
-export default HelpAndSupport
+export default HelpAndSupport;

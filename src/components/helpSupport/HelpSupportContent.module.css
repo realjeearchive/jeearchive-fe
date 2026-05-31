@@ -21,7 +21,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  width: 100%;
+}
+
+.faqHeader:hover {
+  border-color: var(--dashboard-core-color);
+  cursor: pointer;
 }
 
 .faqTitleGroup {
