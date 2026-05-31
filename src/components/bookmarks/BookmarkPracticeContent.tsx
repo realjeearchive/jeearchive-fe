@@ -11,7 +11,7 @@ import Styles from "./bookmarkPractice.module.css";
 export default function BookmarkPracticeContent() {
   const router = useRouter();
   const { bookmarks, isLoading, error, fetchBookmarks } = useBookmarkStore();
-  
+
   const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
@@ -20,10 +20,9 @@ export default function BookmarkPracticeContent() {
     }
   }, [bookmarks.length, fetchBookmarks, hasInitialized]);
 
-  // Map questions directly in the render snapshot cycle
   const sessionQuestions = React.useMemo(() => {
     if (isLoading || bookmarks.length === 0) return [];
-    
+
     return bookmarks.map((q, index) => {
       const options = [];
       if (q.options) {
@@ -45,20 +44,21 @@ export default function BookmarkPracticeContent() {
         section: sectionType as unknown as QuestionData["section"],
         comprehensionContent: q.comprehensionContent,
         text: q.content,
-        hasImage: false, 
+        hasImage: false,
         imageUrl: undefined,
         options,
-        correctAnswer: Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer].filter(Boolean),
-        // 🔥 FIXED: Explicit type assertion to match the strict StatusString definition
-        status: "unattempted" as unknown as QuestionData["status"], 
+        correctAnswer: Array.isArray(q.correctAnswer)
+          ? q.correctAnswer
+          : [q.correctAnswer].filter(Boolean),
+        status: "unattempted" as unknown as QuestionData["status"],
         userAnswer: null,
         isBookmarked: true,
         solution: q.solution?.text || "<p>No detailed solution available.</p>",
         stats: { userTime: "0s", avgTime: "--", accuracy: 0 },
-        meta: { 
-          difficulty: "Medium" as const, 
-          marksPos: q.positiveMarks || 4, 
-          marksNeg: q.negativeMarks || 1 
+        meta: {
+          difficulty: "Medium" as const,
+          marksPos: q.positiveMarks || 4,
+          marksNeg: q.negativeMarks || 1,
         },
         chapter: q.chapter || "Saved Bookmark",
         topic: "Revision",
@@ -73,52 +73,54 @@ export default function BookmarkPracticeContent() {
     }
   }, [isLoading, sessionQuestions.length]);
 
-  // --- RENDERING VIEWS CONTROLS ---
-
   if (isLoading || (!hasInitialized && bookmarks.length > 0)) {
     return (
-      <div className={Styles.fullScreenWrapper}>
+      <main className={Styles.fullScreenWrapper} aria-label="Loading bookmarks practice">
         <Loader label="Preparing practice arena..." />
-      </div>
+      </main>
     );
   }
 
   if (error) {
     return (
-      <div className={Styles.errorState}>
-        <p style={{ fontSize: '14px', fontWeight: 500 }}>{error}</p>
-        <button 
-          onClick={() => router.push('/bookmarks')} 
+      <main className={Styles.errorState} aria-label="Bookmarks practice error">
+        <p style={{ fontSize: "14px", fontWeight: 500 }} role="alert">
+          {error}
+        </p>
+        <button
+          onClick={() => router.push("/bookmarks")}
           className={Styles.errorBtn}
+          aria-label="Go back to bookmarks"
         >
           Go Back
         </button>
-      </div>
+      </main>
     );
   }
 
   if (hasInitialized && sessionQuestions.length === 0) {
     return (
-      <div className={Styles.emptyState}>
-        <FiBookmark size={32} color="#36312F" />
+      <main className={Styles.emptyState} aria-label="No bookmarks to practice">
+        <FiBookmark size={32} color="#36312F" aria-hidden="true" />
         <p className={Styles.emptyText}>No bookmarks found to practice.</p>
-        <button 
-          onClick={() => router.push('/dashboard')} 
+        <button
+          onClick={() => router.push("/dashboard")}
           className={Styles.dashboardReturnBtn}
+          aria-label="Return to dashboard"
         >
           Return to Dashboard
         </button>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className={Styles.fullScreenWrapper}>
+    <main className={Styles.fullScreenWrapper} aria-label="Bookmarks practice session">
       <ChapterWiseInterface
         questions={sessionQuestions}
         chapterName="My Bookmarks"
         subject="Mixed"
       />
-    </div>
+    </main>
   );
 }
