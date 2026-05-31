@@ -1,4 +1,3 @@
-
 .container {
   background: var(--dashboard-background-color);
   color: var(--dashboard-primary-text-color);
@@ -17,24 +16,26 @@
   display: grid;
   grid-template-columns: 180px 1fr;
   gap: 12px;
-  margin-bottom: 12px; 
+  margin-bottom: 12px;
 }
 
-.avatarCard, .infoCard, .actionCard {
+.avatarCard,
+.infoCard,
+.actionCard {
   background: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
   padding: 12px 14px;
 }
 
-.actionCard{
+.actionCard {
   display: flex;
   justify-content: center;
   align-items: center;
+}
 
-  button{
-    text-align: center;
-  }
+.actionCard button {
+  text-align: center;
 }
 
 .avatarCard {
@@ -42,7 +43,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  align-self: flex-start; 
+  align-self: flex-start;
 }
 
 .avatar {
@@ -66,7 +67,7 @@
 .infoWrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px; 
+  gap: 12px;
 }
 
 .rowHeader {
@@ -101,11 +102,10 @@
   opacity: 0.7;
 }
 
-
 .logoutBtn {
   background: transparent;
   border: none;
-  color: var(--dashboard-physics-color); 
+  color: var(--dashboard-physics-color);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -124,7 +124,7 @@
   }
 }
 
-
+/* ───────── DETAILS SECTION ───────── */
 
 .detailsSection {
   display: flex;
@@ -136,7 +136,7 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--dashboard-primary-text-color);
-  margin-left: 4px; 
+  margin-left: 4px;
 }
 
 .formGrid {
@@ -145,6 +145,7 @@
   gap: 12px;
 }
 
+/* ───────── CUSTOM DROPDOWN ───────── */
 
 .customSelectContainer {
   position: relative;
@@ -153,12 +154,18 @@
 }
 
 .customSelectTrigger {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   color: var(--dashboard-primary-text-color);
   font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
 }
 
 .triggerActive .chevron {
@@ -168,6 +175,7 @@
 .chevron {
   transition: transform 0.2s;
   color: var(--dashboard-icons-color);
+  flex-shrink: 0;
 }
 
 .selectedValue {
@@ -175,27 +183,24 @@
   align-items: center;
 }
 
-
 .dropdownMenu {
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
+  min-width: 100%;
+  width: max-content;
   margin-top: 8px;
   background-color: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 50;
   max-height: 200px;
   overflow-y: auto;
   padding: 4px;
-
-
   scrollbar-width: none;
-  -ms-overflow-style: none;  
+  -ms-overflow-style: none;
 }
-
 
 .dropdownMenu::-webkit-scrollbar {
   display: none;
@@ -210,15 +215,16 @@
   border-radius: 4px;
   transition: background 0.1s;
   color: var(--dashboard-secondary-text-color);
+  white-space: nowrap;
 }
 
 .dropdownItem:hover {
-  background-color: rgba(255,255,255,0.05);
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--dashboard-primary-text-color);
 }
 
 .itemSelected {
-  background-color: rgba(255,255,255,0.08);
+  background-color: rgba(255, 255, 255, 0.08);
   color: var(--dashboard-highlight-color, #fff);
   font-weight: 600;
 }
@@ -231,25 +237,30 @@
 
 .optionIcon {
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .checkIcon {
-  color: var(--dashboard-highlight-color, #22C55E);
+  color: var(--dashboard-highlight-color, #22c55e);
+  flex-shrink: 0;
+  margin-left: 8px;
 }
 
+/* ───────── MOBILE INPUT ───────── */
 
 .mobileInputGroup {
   display: flex;
   align-items: center;
-  gap: 0; 
+  gap: 0;
   width: 100%;
 }
 
 .countryDropdownWrapper {
-  min-width: 80px;
+  min-width: 100px;
   border-right: 1px solid var(--dashboard-sidebar-border-color);
   padding-right: 10px;
   margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .styledInput {
@@ -262,15 +273,16 @@
   outline: none;
   flex: 1;
   font-family: inherit;
+  min-width: 0;
 }
-
 
 .styledInput::-webkit-outer-spin-button,
 .styledInput::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-.styledInput[type=number] {
+
+.styledInput[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -279,6 +291,7 @@
   opacity: 0.5;
 }
 
+/* ───────── SAVE BUTTON ───────── */
 
 .saveActionRow {
   display: flex;
@@ -286,8 +299,8 @@
 }
 
 .saveBtn {
-  background-color: var(--dashboard-primary-text-color); 
-  color: #000; 
+  background-color: var(--dashboard-primary-text-color);
+  color: #000;
   border: none;
   padding: 10px 24px;
   border-radius: 8px;
