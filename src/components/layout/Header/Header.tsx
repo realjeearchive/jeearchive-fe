@@ -9,7 +9,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUserStore } from "@/store";
 import { useStreakStore } from "@/store/useStreakStore";
 
-// 🚨 NEW: Import the Store and the Popup
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { NotificationPopup } from "@/components/popups/NotificationPopup/NotificationPopup";
 
@@ -61,7 +60,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   
   const { streak, loadStreak } = useStreakStore();
 
-  // 🚨 NEW: Notification State
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { notifications, unreadCount, loadNotifications, markAsRead } = useNotificationStore();
 
@@ -70,7 +68,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   useEffect(() => {
     loadStreak();
-    // 🚨 NEW: Load notifications on mount
     loadNotifications();
   }, [loadStreak, loadNotifications]);
 
@@ -162,109 +159,114 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   }
 
   return (
-  <header className={styles.header}>
-    <div className={styles.leftSection}>
-      {!isSidebarOpen && (
-        <button
-          type="button"
-          className={styles.sidebarToggle}
-          onClick={toggleSidebar}
-          aria-label="Toggle sidebar"
-          data-title="Toggle sidebar"
-        >
-          <PiSidebar size={18} />
-        </button>
-      )}
+    <header className={styles.header}>
+      <div className={styles.leftSection}>
+        {!isSidebarOpen && (
+          <button
+            type="button"
+            className={styles.sidebarToggle}
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+            data-title="Toggle sidebar"
+          >
+            <PiSidebar size={18} />
+          </button>
+        )}
 
-      <div className={styles.navArrows}>
-        <button
-          type="button"
-          className={`${styles.iconButton} ${canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled}`}
-          onClick={handleBack}
-          disabled={!canGoBack}
-          data-title="Go back (Alt + ←)"
-        >
-          <IoChevronBack size={16} />
-        </button>
-        <button
-          type="button"
-          className={`${styles.iconButton} ${canGoForward ? styles.iconButtonActive : styles.iconButtonDisabled}`}
-          onClick={handleForward}
-          disabled={!canGoForward}
-          data-title="Go forward (Alt + →)"
-        >
-          <IoChevronForward size={16} />
-        </button>
+        <div className={styles.navArrows}>
+          <button
+            type="button"
+            className={`${styles.iconButton} ${canGoBack ? styles.iconButtonActive : styles.iconButtonDisabled}`}
+            onClick={handleBack}
+            disabled={!canGoBack}
+            data-title="Go back (Alt + ←)"
+          >
+            <IoChevronBack size={16} />
+          </button>
+          <button
+            type="button"
+            className={`${styles.iconButton} ${canGoForward ? styles.iconButtonActive : styles.iconButtonDisabled}`}
+            onClick={handleForward}
+            disabled={!canGoForward}
+            data-title="Go forward (Alt + →)"
+          >
+            <IoChevronForward size={16} />
+          </button>
+        </div>
+
+        {pageTitle && (
+          <div className={styles.pageTitle}>
+            <span>{pageTitle}</span>
+          </div>
+        )}
       </div>
 
-      {pageTitle && (
-        <div className={styles.pageTitle}>
-          <span>{pageTitle}</span>
-        </div>
-      )}
-    </div>
-
-    <div className={styles.rightSection}>
-      <button 
-        type="button" 
-        className={`${styles.streakItem} ${streakColorClass}`} 
-        data-title={`Max Streak: ${streak?.maxStreak || 0}`}
-      >
-        <span className={styles.streakText}>{currentStreak}</span>
-        <PiFire size={18} className={styles.streakIcon} />
-      </button>
-      
-      <a 
-        href="https://discord.com/invite/8Q9Nb2fATj" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className={styles.iconButton} 
-        data-title="Join Discord"
-      >
-        <PiDiscordLogo size={18} />
-      </a>
-
-      <button 
-        type="button" 
-        className={styles.iconButton} 
-        data-title="Timer App"
-      >
-        <IoTimeOutline size={18} />
-      </button>
-
-      <button 
-        type="button" 
-        className={styles.iconButton} 
-        data-title="Calendar App"
-      >
-        <IoCalendarOutline size={16} />
-      </button>
-
-      {/* NOTIFICATION BELL & POPUP */}
-      <div style={{ position: 'relative' }}>
+      <div className={styles.rightSection}>
         <button 
-          id="notification-bell-btn"
           type="button" 
-          className={styles.iconButton} 
-          data-title="Notifications"
-          onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+          className={`${styles.streakItem} ${streakColorClass}`} 
+          data-title={`Max Streak: ${streak?.maxStreak || 0}`}
         >
-          <FiBell size={16} />
-          {unreadCount > 0 && (
-            <span className={styles.unreadBadge}>{unreadCount}</span>
-          )}
+          <span className={styles.streakText}>{currentStreak}</span>
+          <PiFire size={18} className={styles.streakIcon} />
         </button>
         
-        <NotificationPopup 
-          isOpen={isNotificationOpen} 
-          onClose={() => setIsNotificationOpen(false)} 
-          notifications={notifications}
-          onMarkAsRead={markAsRead}
-        />
+        <a 
+          href="https://discord.com/invite/8Q9Nb2fATj" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className={styles.iconButton} 
+          data-title="Join Discord"
+        >
+          <PiDiscordLogo size={18} />
+        </a>
+
+        {/* 🔥 FIX: Changed to anchor tag for Timer link */}
+        <a 
+          href="https://timer.jeearchive.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.iconButton} 
+          data-title="Timer App"
+        >
+          <IoTimeOutline size={18} />
+        </a>
+
+        {/* 🔥 FIX: Disabled class for Calendar */}
+        <button 
+          type="button" 
+          className={`${styles.iconButton} ${styles.comingSoon}`} 
+          data-title="Calendar (Coming Soon)"
+          onClick={(e) => e.preventDefault()}
+        >
+          <IoCalendarOutline size={16} />
+        </button>
+
+        {/* NOTIFICATION BELL & POPUP */}
+        <div style={{ position: 'relative' }}>
+          <button 
+            id="notification-bell-btn"
+            type="button" 
+            className={styles.iconButton} 
+            data-title="Notifications"
+            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+          >
+            <FiBell size={16} />
+            {unreadCount > 0 && (
+              <span className={styles.unreadBadge}>{unreadCount}</span>
+            )}
+          </button>
+          
+          <NotificationPopup 
+            isOpen={isNotificationOpen} 
+            onClose={() => setIsNotificationOpen(false)} 
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+          />
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
 };
 
 export default Header;

@@ -286,3 +286,47 @@
   justify-content: center;
   border: 2px solid var(--dashboard-background-color); /* Creates a cutout effect */
 }
+
+/* --- Tooltip (After) --- */
+.iconButton::after {
+  content: attr(data-title);
+  position: absolute;
+  top: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  padding: 4px 8px;
+  background-color: var(--dashboard-sidebar-background-color);
+  border: 1px solid var(--dashboard-dividerline-color);
+  color: var(--dashboard-primary-text-color);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.15s ease;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔥 FIX: Special state for coming soon apps so they look disabled but still show tooltips */
+.comingSoon {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+.comingSoon:hover {
+  background: transparent !important;
+  color: var(--dashboard-icons-color) !important;
+  border-color: transparent !important;
+  transform: none !important;
+}
+
+/* Ensure the tooltip still pops up even if the button looks disabled */
+.comingSoon:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
