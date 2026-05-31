@@ -2,13 +2,13 @@ import React from "react";
 import styles from "./AnalyticsCard.module.css";
 
 interface AnalyticsCardProps {
-  title?: string; // Made optional so we can have clean chart-only cards
+  title?: string;
   subtitle?: string;
   children: React.ReactNode;
   headerAction?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-  transparent?: boolean; // NEW: Allows the card to blend into the background
+  transparent?: boolean;
 }
 
 export const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
@@ -21,9 +21,10 @@ export const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
   transparent = false,
 }) => {
   return (
-    <div 
-      className={`${styles.card} ${transparent ? styles.transparentCard : ''} ${className || ""}`} 
+    <section
+      className={`${styles.card} ${transparent ? styles.transparentCard : ""} ${className || ""}`}
       style={style}
+      aria-label={title || "Analytics card"}
     >
       {(title || headerAction) && (
         <div className={styles.header}>
@@ -31,10 +32,12 @@ export const AnalyticsCard: React.FC<AnalyticsCardProps> = ({
             {title && <h3 className={styles.title}>{title}</h3>}
             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
           </div>
-          {headerAction && <div className={styles.actionSlot}>{headerAction}</div>}
+          {headerAction && (
+            <div className={styles.actionSlot}>{headerAction}</div>
+          )}
         </div>
       )}
       <div className={styles.content}>{children}</div>
-    </div>
+    </section>
   );
 };

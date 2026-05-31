@@ -25,23 +25,26 @@ const subjectColors: Record<string, string> = {
   Mathematics: "#10B981",
 };
 
-const subjectGradients: Record<string, string> = {
-  Physics: "linear-gradient(135deg, #F59E0B, #D97706)",
-  Chemistry: "linear-gradient(135deg, #3B82F6, #2563EB)",
-  Mathematics: "linear-gradient(135deg, #10B981, #059669)",
-};
-
 export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) => {
   const isEmpty = !data || data.length === 0;
   const defaultSubjects = ["Physics", "Chemistry", "Mathematics"];
 
   const subjectsToRender = isEmpty
-    ? defaultSubjects.map((s) => ({ subject: s, avgScore: 0, accuracy: 0, negatives: 0, avgTime: 0 }))
+    ? defaultSubjects.map((s) => ({
+        subject: s,
+        avgScore: 0,
+        accuracy: 0,
+        negatives: 0,
+        avgTime: 0,
+      }))
     : data;
 
   return (
-    <AnalyticsCard title="Subject Breakdown" subtitle="Performance across Physics, Chemistry & Mathematics">
-      <div className={styles.container}>
+    <AnalyticsCard
+      title="Subject Breakdown"
+      subtitle="Performance across Physics, Chemistry & Mathematics"
+    >
+      <div className={styles.container} role="list" aria-label="Subject performance breakdown">
         {subjectsToRender.map((sub) => {
           const color = subjectColors[sub.subject] || "#F59E0B";
           const isPlaceholder = isEmpty;
@@ -53,7 +56,7 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
           ];
 
           return (
-            <div key={sub.subject} className={styles.subjectCard}>
+            <div key={sub.subject} className={styles.subjectCard} role="listitem" aria-label={`${sub.subject}: ${isPlaceholder ? "No data" : `${sub.accuracy}% accuracy`}`}>
               {/* Header */}
               <div className={styles.cardHeader}>
                 <h3 className={styles.subjectName}>{sub.subject}</h3>
@@ -63,8 +66,8 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
               <div className={styles.donutWrapper}>
                 <div className={styles.donutChart}>
                   {isPlaceholder ? (
-                    <div className={styles.emptyDonut}>
-                      <FiAlertCircle size={20} />
+                    <div className={styles.emptyDonut} aria-label="No data available">
+                      <FiAlertCircle size={20} aria-hidden="true" />
                     </div>
                   ) : (
                     <ResponsivePie
@@ -93,21 +96,21 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
               {/* Metrics */}
               <div className={styles.metricsRow}>
                 <div className={styles.metric}>
-                  <FiTarget size={13} />
+                  <FiTarget size={13} aria-hidden="true" />
                   <span className={styles.metricLabel}>Accuracy</span>
                   <span className={styles.metricValue} style={{ color }}>
                     {isPlaceholder ? "--" : `${sub.accuracy}%`}
                   </span>
                 </div>
                 <div className={styles.metric}>
-                  <FiMinusCircle size={13} />
+                  <FiMinusCircle size={13} aria-hidden="true" />
                   <span className={styles.metricLabel}>Negatives</span>
                   <span className={styles.metricValue} style={{ color: "#f87171" }}>
                     {isPlaceholder ? "--" : `-${sub.negatives}`}
                   </span>
                 </div>
                 <div className={styles.metric}>
-                  <FiClock size={13} />
+                  <FiClock size={13} aria-hidden="true" />
                   <span className={styles.metricLabel}>Avg Time</span>
                   <span className={styles.metricValue}>
                     {isPlaceholder ? "--" : `${sub.avgTime}m`}

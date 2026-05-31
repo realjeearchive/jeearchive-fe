@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ResponsivePie, PieCustomLayerProps } from "@nivo/pie"; 
+import { ResponsivePie, PieCustomLayerProps } from "@nivo/pie";
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../../Shared/chartTheme";
 import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransformer";
@@ -15,19 +15,33 @@ interface PieDatum {
 }
 
 interface Props {
-  meta: TransformedSingleTestUI['meta'];
-  subjects: TransformedSingleTestUI['subjects'];
+  meta: TransformedSingleTestUI["meta"];
+  subjects: TransformedSingleTestUI["subjects"];
 }
 
 export const ScoreDistribution = ({ meta, subjects }: Props) => {
-  // Only plot subjects with positive scores (Nivo Pie crashes/looks weird with negatives)
   const rawData: PieDatum[] = [
-    { id: "Physics", label: "Physics", value: Math.max(0, subjects.physics.score), color: "#22C55E" },
-    { id: "Chemistry", label: "Chemistry", value: Math.max(0, subjects.chemistry.score), color: "#F97316" },
-    { id: "Mathematics", label: "Maths", value: Math.max(0, subjects.maths.score), color: "#3B82F6" },
+    {
+      id: "Physics",
+      label: "Physics",
+      value: Math.max(0, subjects.physics.score),
+      color: "#22C55E",
+    },
+    {
+      id: "Chemistry",
+      label: "Chemistry",
+      value: Math.max(0, subjects.chemistry.score),
+      color: "#F97316",
+    },
+    {
+      id: "Mathematics",
+      label: "Maths",
+      value: Math.max(0, subjects.maths.score),
+      color: "#3B82F6",
+    },
   ];
 
-  const data = rawData.filter(d => d.value > 0);
+  const data = rawData.filter((d) => d.value > 0);
   const totalScore = meta.myScore;
 
   const CenteredMetric = ({ centerX, centerY }: PieCustomLayerProps<PieDatum>) => {
@@ -66,8 +80,8 @@ export const ScoreDistribution = ({ meta, subjects }: Props) => {
   };
 
   return (
-    <AnalyticsCard 
-      title="Score Distribution" 
+    <AnalyticsCard
+      title="Score Distribution"
       subtitle="Subject-wise Contribution"
       className={styles.cardOverride}
     >
@@ -86,42 +100,46 @@ export const ScoreDistribution = ({ meta, subjects }: Props) => {
             enableArcLabels={false}
             tooltip={({ datum }) => (
               <div className={styles.tooltip}>
-                <span 
-                  className={styles.tooltipDot} 
-                  style={{ backgroundColor: datum.color }} 
+                <span
+                  className={styles.tooltipDot}
+                  style={{ backgroundColor: datum.color }}
                 />
-                <span className={styles.tooltipLabel}>
-                  {datum.label}:
-                </span>
-                <span className={styles.tooltipValue}>
-                  {datum.value}
-                </span>
+                <span className={styles.tooltipLabel}>{datum.label}:</span>
+                <span className={styles.tooltipValue}>{datum.value}</span>
               </div>
             )}
-            layers={[
-              'arcs', 
-              CenteredMetric 
-            ]}
+            layers={["arcs", CenteredMetric]}
           />
         ) : (
-          <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF', fontSize: '14px' }}>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              height: "100%",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#9CA3AF",
+              fontSize: "14px",
+            }}
+            role="status"
+          >
             No positive scores to map
           </div>
         )}
       </div>
 
-      <div className={styles.legendFooter}>
+      <div className={styles.legendFooter} aria-label="Score legend">
         {rawData.map((item) => (
           <div key={item.id} className={styles.legendItem}>
-            <span 
-              className={styles.legendDot} 
-              style={{ backgroundColor: item.color }} 
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: item.color }}
+              aria-hidden="true"
             />
             <span className={styles.legendLabel}>{item.label}</span>
           </div>
         ))}
       </div>
-
     </AnalyticsCard>
   );
 };

@@ -28,7 +28,7 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
     return (
       <AnalyticsCard title="Recent Activity">
         <div className={styles.emptyState}>
-          <FiClock size={16} className={styles.emptyIcon} />
+          <FiClock size={16} className={styles.emptyIcon} aria-hidden="true" />
           <span>No recent tests</span>
         </div>
       </AnalyticsCard>
@@ -37,9 +37,9 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
 
   return (
     <AnalyticsCard title="Recent Activity">
-      <div className={styles.list}>
+      <div className={styles.list} role="list">
         {data.map((test, index) => (
-          <div key={`${test.id}-${index}`} className={styles.row}>
+          <div key={`${test.id}-${index}`} className={styles.row} role="listitem">
             <div className={styles.info}>
               <span className={styles.title}>{test.title}</span>
               <span className={styles.meta}>{test.date}</span>
@@ -54,16 +54,18 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
                 className={styles.btn}
                 onClick={() => router.push(`/analytics/tests/${test.id}`)}
                 title="View Analytics"
+                aria-label={`View analytics for ${test.title}`}
               >
-                <FiBarChart2 size={13} />
+                <FiBarChart2 size={13} aria-hidden="true" />
               </button>
 
               <button
                 className={styles.btn}
                 onClick={() => router.push(`/solutions/${test.id}`)}
                 title="View Solutions"
+                aria-label={`View solutions for ${test.title}`}
               >
-                <FiBookOpen size={13} />
+                <FiBookOpen size={13} aria-hidden="true" />
               </button>
             </div>
           </div>

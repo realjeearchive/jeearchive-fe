@@ -5,7 +5,7 @@ import { ScoreCard } from "../ScoreCard/ScoreCard";
 import { PercentileCard } from "../PercentileCard/PercentileCard";
 import { KeyStatsGrid } from "../KeyStatsGrid/KeyStatsGrid";
 import { SubjectSummaryTable } from "../SubjectSummaryTable/SubjectSummaryTable";
-import { ScoreDistribution } from "../ScoreDistribution/ScoreDistribution"; 
+import { ScoreDistribution } from "../ScoreDistribution/ScoreDistribution";
 import styles from "./OverviewTab.module.css";
 
 import { useSingleTestStore } from "@/store/useSingleTestStore";
@@ -15,22 +15,22 @@ export const OverviewTab = () => {
   const { data } = useSingleTestStore();
   const uiData = transformSingleTestData(data);
 
-  if (!uiData) return null; 
+  if (!uiData) return null;
 
   return (
     <div className={styles.container}>
-      
       <div className={styles.heroRow}>
         <div className={styles.heroRowScoreCol}>
           <ScoreCard meta={uiData.meta} subjects={uiData.subjects} />
         </div>
         <div className={styles.heroRowPercentileCol}>
-          {/* 🚨 Removed testName prop */}
           <PercentileCard myScore={uiData.meta.myScore} />
         </div>
       </div>
-      
-      <KeyStatsGrid meta={uiData.meta} stats={uiData.stats} />
+
+      <section aria-label="Key statistics">
+        <KeyStatsGrid meta={uiData.meta} stats={uiData.stats} />
+      </section>
 
       <div className={styles.detailsRow}>
         <div className={styles.detailsRowSubjectCol}>
@@ -40,7 +40,6 @@ export const OverviewTab = () => {
           <ScoreDistribution meta={uiData.meta} subjects={uiData.subjects} />
         </div>
       </div>
-
     </div>
   );
 };

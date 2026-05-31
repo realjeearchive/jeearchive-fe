@@ -6,17 +6,19 @@ import { FiList } from "react-icons/fi";
 
 export const QuestionWiseTab = () => {
   return (
-    <div className={styles.container}>
+    <main className={styles.container} aria-label="Question wise analysis">
       <div className={styles.placeholderCard}>
-        <div className={styles.iconWrapper}>
+        <div className={styles.iconWrapper} aria-hidden="true">
           <FiList size={32} />
         </div>
         <h3 className={styles.title}>Question Wise Analysis Coming Soon</h3>
         <p className={styles.subtitle}>
-          Granular question-level breakdown with filters for difficulty, subject, and status is being developed.
-          <br />Stay tuned!
+          Granular question-level breakdown with filters for difficulty, subject,
+          and status is being developed.
+          <br />
+          Stay tuned!
         </p>
       </div>
-    </div>
+    </main>
   );
 };

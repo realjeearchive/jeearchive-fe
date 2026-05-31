@@ -17,7 +17,6 @@ interface SubjectRadarProps {
   data: RadarDataPoint[];
 }
 
-// Extended theme for dashed circular grid lines
 const radarTheme = {
   ...analyticsChartTheme,
   grid: {
@@ -29,7 +28,6 @@ const radarTheme = {
   },
 };
 
-// Convert to Record format for Nivo compatibility
 const toRadarData = (items: RadarDataPoint[]): Record<string, unknown>[] => {
   return items.map((item) => ({
     subject: item.subject,
@@ -41,7 +39,6 @@ export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
   const hasData = data && data.length > 0 && data.some((item) => item.Accuracy > 0);
   const radarData = toRadarData(data);
 
-  // Find strongest and weakest
   let strongest: RadarDataPoint | null = null;
   let weakest: RadarDataPoint | null = null;
 
@@ -99,7 +96,7 @@ export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
           </>
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIconBox}>
+            <div className={styles.emptyIconBox} aria-hidden="true">
               <FiCrosshair size={22} />
             </div>
             <span className={styles.emptyTitle}>No subject data</span>

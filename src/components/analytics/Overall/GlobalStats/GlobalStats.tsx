@@ -10,7 +10,7 @@ interface StatItemProps {
   icon: React.ElementType;
   accent: string;
   subtitle: string;
-  ringPercent: number; // 0-100 for the ring fill
+  ringPercent: number;
 }
 
 const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: StatItemProps) => {
@@ -22,10 +22,10 @@ const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: S
     : ringCircumference - (clampedPercent / 100) * ringCircumference;
 
   return (
-    <div className={styles.statItem}>
+    <article className={styles.statItem} aria-label={`${label}: ${value}`}>
       {/* Top: icon + label */}
       <div className={styles.statTop}>
-        <div className={styles.iconBox} style={{ background: `${accent}18`, color: accent }}>
+        <div className={styles.iconBox} style={{ background: `${accent}18`, color: accent }} aria-hidden="true">
           <Icon size={14} />
         </div>
         <span className={styles.statLabel}>{label}</span>
@@ -42,7 +42,7 @@ const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: S
       </div>
 
       {/* Mini ring indicator */}
-      <div className={styles.ringWrap}>
+      <div className={styles.ringWrap} aria-hidden="true">
         <svg width="40" height="40" viewBox="0 0 40 40" className={styles.ring}>
           <circle
             cx="20"
@@ -69,7 +69,7 @@ const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: S
           )}
         </svg>
       </div>
-    </div>
+    </article>
   );
 };
 
@@ -85,11 +85,10 @@ interface GlobalStatsProps {
 export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
   const isZero = data.testsTaken === 0;
 
-  // Data-driven ring percentages
-  const testsRingPercent = Math.min(100, (data.testsTaken / 20) * 100); // 20 tests = full ring
-  const scoreRingPercent = isZero ? 0 : (data.avgScore / 300) * 100;     // 300 = full ring
-  const accuracyRingPercent = isZero ? 0 : data.accuracy;                  // 100% = full ring
-  const consistencyRingPercent = isZero ? 0 : data.consistency;            // 100 = full ring (assuming 0-100 scale)
+  const testsRingPercent = Math.min(100, (data.testsTaken / 20) * 100);
+  const scoreRingPercent = isZero ? 0 : (data.avgScore / 300) * 100;
+  const accuracyRingPercent = isZero ? 0 : data.accuracy;
+  const consistencyRingPercent = isZero ? 0 : data.consistency;
 
   const stats = [
     {
@@ -127,9 +126,11 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
   ];
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} role="list" aria-label="Global statistics">
       {stats.map((stat) => (
-        <StatItem key={stat.label} {...stat} />
+        <div key={stat.label} role="listitem">
+          <StatItem {...stat} />
+        </div>
       ))}
     </div>
   );

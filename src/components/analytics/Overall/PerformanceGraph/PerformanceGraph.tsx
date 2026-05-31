@@ -19,13 +19,16 @@ interface PerformanceGraphProps {
 export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
   const hasData = data && data.length > 0;
 
-  // Compute trend for subtitle
   const trend =
     hasData && data.length >= 2
       ? data[data.length - 1].y - data[0].y
       : 0;
   const trendLabel =
-    trend > 0 ? `↑ ${trend} pts improvement` : trend < 0 ? `↓ ${Math.abs(trend)} pts decline` : "Stable";
+    trend > 0
+      ? `↑ ${trend} pts improvement`
+      : trend < 0
+      ? `↓ ${Math.abs(trend)} pts decline`
+      : "Stable";
 
   const chartData = [
     {
@@ -116,7 +119,7 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyIconBox}>
+            <div className={styles.emptyIconBox} aria-hidden="true">
               <FiTrendingUp size={22} />
             </div>
             <span className={styles.emptyTitle}>No performance data</span>

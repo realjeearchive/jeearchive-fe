@@ -6,28 +6,39 @@ import { TransformedSingleTestUI } from "@/features/analytics/singleTestTransfor
 import styles from "./SubjectSummaryTable.module.css";
 
 interface Props {
-  subjects: TransformedSingleTestUI['subjects'];
+  subjects: TransformedSingleTestUI["subjects"];
 }
 
 export const SubjectSummaryTable = ({ subjects }: Props) => {
-  // Convert subjects object into an array for easy mapping
-  const subjectsArray = [
-    subjects.maths,
-    subjects.physics,
-    subjects.chemistry
-  ];
+  const subjectsArray = [subjects.maths, subjects.physics, subjects.chemistry];
 
   return (
     <AnalyticsCard title="Subject Performance" className={styles.cardContainer}>
       <div className={styles.tableWrapper}>
-        <table className={styles.table}>
+        <table className={styles.table} aria-label="Subject performance summary">
           <thead className={styles.tableHead}>
             <tr>
-              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellLeft}`}>Subject</th>
-              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight}`}>Score</th>
-              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight}`}>Attempts</th>
-              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight} ${styles.tableHeaderCellHiddenSm}`}>Accuracy</th>
-              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight} ${styles.tableHeaderCellHiddenSm} ${styles.tableHeaderCellRightPadding}`}>Time</th>
+              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellLeft}`} scope="col">
+                Subject
+              </th>
+              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight}`} scope="col">
+                Score
+              </th>
+              <th className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight}`} scope="col">
+                Attempts
+              </th>
+              <th
+                className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight} ${styles.tableHeaderCellHiddenSm}`}
+                scope="col"
+              >
+                Accuracy
+              </th>
+              <th
+                className={`${styles.tableHeaderCell} ${styles.tableHeaderCellRight} ${styles.tableHeaderCellHiddenSm} ${styles.tableHeaderCellRightPadding}`}
+                scope="col"
+              >
+                Time
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -46,6 +57,7 @@ export const SubjectSummaryTable = ({ subjects }: Props) => {
                       <div
                         className={styles.subjectIndicator}
                         style={{ backgroundColor: color }}
+                        aria-hidden="true"
                       ></div>
                       <span className={styles.subjectName}>{sub.name}</span>
                     </div>
@@ -56,9 +68,7 @@ export const SubjectSummaryTable = ({ subjects }: Props) => {
                   </td>
                   <td className={`${styles.tableCell} ${styles.tableCellRight}`}>
                     <div className={styles.attemptsCell}>
-                      <span className={styles.attemptsValue}>
-                        {sub.attempted}
-                      </span>
+                      <span className={styles.attemptsValue}>{sub.attempted}</span>
                       <span className={styles.attemptsLabel}>Questions</span>
                     </div>
                   </td>
@@ -67,9 +77,7 @@ export const SubjectSummaryTable = ({ subjects }: Props) => {
                   >
                     <span
                       className={
-                        sub.accuracy >= 80
-                          ? styles.accuracyHigh
-                          : styles.accuracyLow
+                        sub.accuracy >= 80 ? styles.accuracyHigh : styles.accuracyLow
                       }
                     >
                       {sub.accuracy}%

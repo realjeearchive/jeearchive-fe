@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  FiGrid, FiLayers, FiClock, FiList 
-} from "react-icons/fi";
+import { FiGrid, FiLayers, FiClock, FiList } from "react-icons/fi";
 import { OverviewTab } from "./Overview/OverviewTab/OverviewTab";
-import { PerformanceTab } from "./Performance/PerformanceTab/PerformanceTab"; 
-import { TimeAnalysisTab } from "./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab"; 
-import { QuestionWiseTab } from "./QuestionWise/QuestionWiseTab"; 
+import { PerformanceTab } from "./Performance/PerformanceTab/PerformanceTab";
+import { TimeAnalysisTab } from "./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab";
+import { QuestionWiseTab } from "./QuestionWise/QuestionWiseTab";
 import styles from "./AnalysisLayout.module.css";
 
 const MENU_ITEMS = [
@@ -18,13 +16,13 @@ const MENU_ITEMS = [
 ];
 
 export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => {
-  const [activeTab, setActiveTab] = useState("overview"); 
+  const [activeTab, setActiveTab] = useState("overview");
 
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
         return <OverviewTab />;
-      
+
       case "performance":
         return <PerformanceTab />;
 
@@ -41,25 +39,27 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
 
   return (
     <div className={styles.container}>
-      
       <div className={styles.navWrapper}>
-        <nav className={styles.nav}>
+        <nav className={styles.nav} role="tablist" aria-label="Analysis sections">
           {MENU_ITEMS.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
+                role="tab"
+                aria-selected={isActive}
                 className={`${styles.navButton} ${isActive ? styles.navButtonActive : styles.navButtonInactive}`}
               >
-                <item.icon 
-                  size={14} 
+                <item.icon
+                  size={14}
                   className={isActive ? styles.iconActive : styles.iconInactive}
+                  aria-hidden="true"
                 />
                 {item.label}
-                
+
                 {isActive && (
-                  <span className={styles.activeIndicator} />
+                  <span className={styles.activeIndicator} aria-hidden="true" />
                 )}
               </button>
             );
@@ -67,10 +67,7 @@ export const AnalysisLayout = ({ children }: { children?: React.ReactNode }) => 
         </nav>
       </div>
 
-      <main className={styles.content}>
-        {renderContent()} 
-      </main>
-
+      <main className={styles.content}>{renderContent()}</main>
     </div>
   );
 };

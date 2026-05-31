@@ -26,8 +26,8 @@ const getShortLabel = (type: string): string => {
   const map: Record<string, string> = {
     "Single Correct": "MCQ",
     "Multiple Correct": "Multi MCQ",
-    "Numerical": "Numerical",
-    "Integer": "Numerical",
+    Numerical: "Numerical",
+    Integer: "Numerical",
     "Comprehension SCQ": "Comp MCQ",
     "Comprehension MCQ": "Comp Multi",
     "Comprehension Num": "Comp Num",
@@ -38,13 +38,13 @@ const getShortLabel = (type: string): string => {
 export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
-  
+
   const isZero = useMemo(() => {
-    return data.questionTypes.every(qt => qt.accuracy === 0);
+    return data.questionTypes.every((qt) => qt.accuracy === 0);
   }, [data.questionTypes]);
 
   const activeTypes = useMemo(() => {
-    return data.questionTypes.filter(qt => qt.accuracy > 0);
+    return data.questionTypes.filter((qt) => qt.accuracy > 0);
   }, [data.questionTypes]);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
 
     chartInstance.current = echarts.init(chartRef.current);
 
-    const chartData = activeTypes.map(qt => ({
+    const chartData = activeTypes.map((qt) => ({
       value: qt.accuracy,
       name: getShortLabel(qt.type),
       itemStyle: {
@@ -141,11 +141,11 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
       <div className={styles.container}>
         {isZero || activeTypes.length === 0 ? (
           <div className={styles.emptyState}>
-            <FiZap size={20} className={styles.emptyIcon} />
+            <FiZap size={20} className={styles.emptyIcon} aria-hidden="true" />
             <span>Not enough data yet</span>
           </div>
         ) : (
-          <div ref={chartRef} className={styles.chartArea} />
+          <div ref={chartRef} className={styles.chartArea} role="img" aria-label="Pie chart showing accuracy by question type" />
         )}
       </div>
     </AnalyticsCard>

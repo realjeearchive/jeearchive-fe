@@ -7,14 +7,14 @@ import { SINGLE_TEST_DATA } from "@/features/analytics/dummyData";
 export const ScorePotentialCard = () => {
   const { myScore, totalMarks } = SINGLE_TEST_DATA.meta;
   const { negativeScore } = SINGLE_TEST_DATA.stats;
-  
-  const sillyMistakesLoss = 15; 
+
+  const sillyMistakesLoss = 15;
   const potentialScore = myScore + Math.abs(negativeScore) + sillyMistakesLoss;
-  
-  const maxDisplay = potentialScore * 1.1; 
-  
+
+  const maxDisplay = potentialScore * 1.1;
+
   return (
-    <div className={styles.cardContainer}>
+    <section className={styles.cardContainer} aria-label="Score potential analysis">
       <div className={styles.header}>
         <div>
           <h3 className={styles.title}>Score Potential Analysis</h3>
@@ -23,18 +23,37 @@ export const ScorePotentialCard = () => {
       </div>
 
       <div className={styles.visualContainer}>
-        <div className={styles.barWrapper}>
-          <div 
-            className={`${styles.segment} ${styles.segmentActual}`} 
-            style={{ width: `${(myScore / maxDisplay) * 100}%` }} 
+        <div className={styles.barWrapper} aria-label={`Score breakdown: Actual ${myScore}, Lost ${Math.abs(negativeScore)}, Easy Misses ${sillyMistakesLoss}`}>
+          <div
+            className={`${styles.segment} ${styles.segmentActual}`}
+            style={{ width: `${(myScore / maxDisplay) * 100}%` }}
+            role="progressbar"
+            aria-valuenow={myScore}
+            aria-valuemin={0}
+            aria-valuemax={Math.round(maxDisplay)}
+            aria-label={`Actual score: ${myScore}`}
           />
-          <div 
-            className={`${styles.segment} ${styles.segmentNegative}`} 
-            style={{ width: `${(Math.abs(negativeScore) / maxDisplay) * 100}%` }} 
+          <div
+            className={`${styles.segment} ${styles.segmentNegative}`}
+            style={{
+              width: `${(Math.abs(negativeScore) / maxDisplay) * 100}%`,
+            }}
+            role="progressbar"
+            aria-valuenow={Math.abs(negativeScore)}
+            aria-valuemin={0}
+            aria-valuemax={Math.round(maxDisplay)}
+            aria-label={`Lost to negatives: ${Math.abs(negativeScore)}`}
           />
-          <div 
-            className={`${styles.segment} ${styles.segmentMissed}`} 
-            style={{ width: `${(sillyMistakesLoss / maxDisplay) * 100}%` }} 
+          <div
+            className={`${styles.segment} ${styles.segmentMissed}`}
+            style={{
+              width: `${(sillyMistakesLoss / maxDisplay) * 100}%`,
+            }}
+            role="progressbar"
+            aria-valuenow={sillyMistakesLoss}
+            aria-valuemin={0}
+            aria-valuemax={Math.round(maxDisplay)}
+            aria-label={`Easy misses: ${sillyMistakesLoss}`}
           />
         </div>
       </div>
@@ -42,7 +61,11 @@ export const ScorePotentialCard = () => {
       <div className={styles.statsRow}>
         <div className={styles.statItem}>
           <span className={styles.statLabel}>
-            <span className={styles.dot} style={{ background: 'var(--dashboard-core-color)' }} />
+            <span
+              className={styles.dot}
+              style={{ background: "var(--dashboard-core-color)" }}
+              aria-hidden="true"
+            />
             Actual
           </span>
           <span className={styles.statValue}>{myScore}</span>
@@ -50,7 +73,11 @@ export const ScorePotentialCard = () => {
 
         <div className={styles.statItem}>
           <span className={styles.statLabel}>
-            <span className={styles.dot} style={{ background: '#EF4444' }} />
+            <span
+              className={styles.dot}
+              style={{ background: "#EF4444" }}
+              aria-hidden="true"
+            />
             Lost (Neg)
           </span>
           <span className={styles.statValue}>-{Math.abs(negativeScore)}</span>
@@ -58,7 +85,11 @@ export const ScorePotentialCard = () => {
 
         <div className={styles.statItem}>
           <span className={styles.statLabel}>
-            <span className={styles.dot} style={{ background: '#3f3f46' }} />
+            <span
+              className={styles.dot}
+              style={{ background: "#3f3f46" }}
+              aria-hidden="true"
+            />
             Easy Misses
           </span>
           <span className={styles.statValue}>{sillyMistakesLoss}</span>
@@ -67,9 +98,11 @@ export const ScorePotentialCard = () => {
       </div>
 
       <div className={styles.insight}>
-        You scored <strong>{myScore}</strong>, but your true potential was <strong className="text-white">{potentialScore}</strong>. 
-        Avoiding negatives and silly errors in easy questions would have boosted your rank by <span className={styles.insightHighlight}>~1,200</span>.
+        You scored <strong>{myScore}</strong>, but your true potential was{" "}
+        <strong className="text-white">{potentialScore}</strong>. Avoiding
+        negatives and silly errors in easy questions would have boosted your rank
+        by <span className={styles.insightHighlight}>~1,200</span>.
       </div>
-    </div>
+    </section>
   );
 };
