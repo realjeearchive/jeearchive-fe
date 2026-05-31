@@ -1,20 +1,20 @@
 "use client";
 
-import React from 'react';
-import { ResponsiveBar } from '@nivo/bar';
-import { dashboardNivoTheme } from '@/theme/nivoTheme';
-import styles from './QuestionsTypeBar.module.css';
-import { FiPieChart } from 'react-icons/fi';
+import React from "react";
+import { ResponsiveBar } from "@nivo/bar";
+import { dashboardNivoTheme } from "@/theme/nivoTheme";
+import styles from "./QuestionsTypeBar.module.css";
+import { FiPieChart } from "react-icons/fi";
 
 interface QuestionTypeBarProps {
   data: Array<{ type: string; accuracy: number }>;
 }
 
 const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
-  const hasData = data && data.some(item => item.accuracy !== 0);
+  const hasData = data && data.some((item) => item.accuracy !== 0);
 
   return (
-    <div className={styles.card}>
+    <section className={styles.card} aria-label="Question type accuracy chart">
       <div className={styles.header}>
         <h3 className={styles.title}>Question Type Accuracy</h3>
         <p className={styles.subtitle}>Performance by format.</p>
@@ -24,57 +24,63 @@ const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
         {hasData ? (
           <ResponsiveBar
             data={data}
-            keys={['accuracy']}
+            keys={["accuracy"]}
             indexBy="type"
             theme={dashboardNivoTheme}
-            // 🚨 PRO FIX 1: Massive bottom margin (65) to accommodate -35deg rotated text
             margin={{ top: 20, right: 15, bottom: 65, left: 45 }}
             padding={0.35}
             layout="vertical"
-            valueScale={{ type: 'linear', min: 'auto', max: 100 }} 
-            indexScale={{ type: 'band', round: true }}
-            
+            valueScale={{ type: "linear", min: "auto", max: 100 }}
+            indexScale={{ type: "band", round: true }}
+
             colors={({ data: d }) => {
-              if (d.accuracy > 0) return '#F59E0B'; // Amber
-              if (d.accuracy < 0) return '#ef4444'; // Red
-              return 'rgba(255,255,255,0.05)'; // Ghostly gray for 0%
+              if (d.accuracy > 0) return "#F59E0B";
+              if (d.accuracy < 0) return "#ef4444";
+              return "rgba(255,255,255,0.05)";
             }}
-            
+
             enableGridX={false}
             enableGridY={true}
-            gridYValues={5} // Keep grid clean
+            gridYValues={5}
             axisTop={null}
             axisRight={null}
-            axisLeft={{ 
-              tickSize: 0, 
+            axisLeft={{
+              tickSize: 0,
               tickPadding: 8,
-              tickValues: 5, // 🚨 PRO FIX 2: Limit vertical ticks to 5 to prevent Y-axis crowding
-              format: (val) => `${val}%`
+              tickValues: 5,
+              format: (val) => `${val}%`,
             }}
-            axisBottom={{ 
-              tickSize: 0, 
+            axisBottom={{
+              tickSize: 0,
               tickPadding: 12,
-              tickRotation: -35 // 🚨 PRO FIX 3: Steeper angle prevents overlap on small screens
+              tickRotation: -35,
             }}
-            
-            label={(d) => d.value !== 0 ? `${d.value}%` : ''}
+
+            label={(d) => (d.value !== 0 ? `${d.value}%` : "")}
             labelTextColor="#ffffff"
-            // 🚨 PRO FIX 4: If a bar is shorter than 24px, hide the label to prevent it from spilling out
-            labelSkipHeight={24} 
-            
+            labelSkipHeight={24}
+
             markers={[
               {
-                axis: 'y',
+                axis: "y",
                 value: 0,
-                lineStyle: { stroke: 'rgba(255, 255, 255, 0.4)', strokeWidth: 2 },
-              }
+                lineStyle: {
+                  stroke: "rgba(255, 255, 255, 0.4)",
+                  strokeWidth: 2,
+                },
+              },
             ]}
-            
+
             isInteractive={true}
             tooltip={({ id, value, indexValue }) => (
               <div className={styles.tooltip}>
-                <strong>{indexValue}</strong>: 
-                <span style={{ color: Number(value) < 0 ? '#ef4444' : '#F59E0B', marginLeft: '6px' }}>
+                <strong>{indexValue}</strong>:
+                <span
+                  style={{
+                    color: Number(value) < 0 ? "#ef4444" : "#F59E0B",
+                    marginLeft: "6px",
+                  }}
+                >
                   {value}%
                 </span>
               </div>
@@ -82,13 +88,13 @@ const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-             <div className={styles.emptyContent}>
-                <span className={styles.emptyText}>No subject data available</span>
-             </div>
+            <div className={styles.emptyContent}>
+              <span className={styles.emptyText}>No subject data available</span>
+            </div>
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

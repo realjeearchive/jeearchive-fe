@@ -36,7 +36,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const viewRef = useRef<HTMLDivElement>(null);
   const examRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (viewRef.current && !viewRef.current.contains(event.target as Node)) {
@@ -54,27 +53,43 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const viewOptions: ViewMode[] = ["test", "chapter"];
 
   return (
-    <div className={styles.headerContainer}>
+    <nav className={styles.headerContainer} aria-label="Dashboard filters">
       {/* Exam filter dropdown */}
       <div className={styles.dropdownWrapper} ref={examRef}>
         <button
           className={`${styles.triggerButton} ${examOpen ? styles.active : ""}`}
           onClick={() => setExamOpen(!examOpen)}
+          aria-expanded={examOpen}
+          aria-haspopup="listbox"
+          aria-label={`Exam filter: ${EXAM_LABELS[examFilter]}`}
         >
           <span className={styles.triggerText}>{EXAM_LABELS[examFilter]}</span>
-          <FiChevronDown className={`${styles.chevron} ${examOpen ? styles.rotate : ""}`} />
+          <FiChevronDown
+            className={`${styles.chevron} ${examOpen ? styles.rotate : ""}`}
+            aria-hidden="true"
+          />
         </button>
 
         {examOpen && (
-          <div className={styles.dropdownMenu}>
+          <div className={styles.dropdownMenu} role="listbox" aria-label="Select exam filter">
             {examOptions.map((option) => (
               <div
                 key={option}
                 className={`${styles.menuItem} ${examFilter === option ? styles.selected : ""}`}
+                role="option"
+                aria-selected={examFilter === option}
                 onClick={() => {
                   onExamFilterChange(option);
                   setExamOpen(false);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onExamFilterChange(option);
+                    setExamOpen(false);
+                  }
+                }}
+                tabIndex={0}
               >
                 {EXAM_LABELS[option]}
               </div>
@@ -88,21 +103,37 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         <button
           className={`${styles.triggerButton} ${viewOpen ? styles.active : ""}`}
           onClick={() => setViewOpen(!viewOpen)}
+          aria-expanded={viewOpen}
+          aria-haspopup="listbox"
+          aria-label={`View mode: ${VIEW_LABELS[currentView]}`}
         >
           <span className={styles.triggerText}>{VIEW_LABELS[currentView]}</span>
-          <FiChevronDown className={`${styles.chevron} ${viewOpen ? styles.rotate : ""}`} />
+          <FiChevronDown
+            className={`${styles.chevron} ${viewOpen ? styles.rotate : ""}`}
+            aria-hidden="true"
+          />
         </button>
 
         {viewOpen && (
-          <div className={styles.dropdownMenu}>
+          <div className={styles.dropdownMenu} role="listbox" aria-label="Select view mode">
             {viewOptions.map((option) => (
               <div
                 key={option}
                 className={`${styles.menuItem} ${currentView === option ? styles.selected : ""}`}
+                role="option"
+                aria-selected={currentView === option}
                 onClick={() => {
                   onViewChange(option);
                   setViewOpen(false);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onViewChange(option);
+                    setViewOpen(false);
+                  }
+                }}
+                tabIndex={0}
               >
                 {VIEW_LABELS[option]}
               </div>
@@ -110,7 +141,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </nav>
   );
 };
 

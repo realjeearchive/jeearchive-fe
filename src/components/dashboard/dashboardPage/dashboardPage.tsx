@@ -1,27 +1,30 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import styles from './dashboardPage.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./dashboardPage.module.css";
 
-import DashboardHeader, { ExamFilter } from '@/components/dashboard/DashboardHeader/DashboardHeader';
-import KpiCard from '@/components/dashboard/KpiCard/KpiCard';
+import DashboardHeader, {
+  ExamFilter,
+} from "@/components/dashboard/DashboardHeader/DashboardHeader";
+import KpiCard from "@/components/dashboard/KpiCard/KpiCard";
 import PyqProgressCard from "@/components/dashboard/PyqProgressCard/PyqProgressCard";
-import ScoreGrowthChart from '@/components/dashboard/ScoreGrowthChart/ScoreGrowthChart';
-import SubjectBalanceRadar from '@/components/dashboard/SubjectBalanceRadar/SubjectBalanceRadar';
-import QuestionTypeBar from '@/components/dashboard/QuestionTypeBar/QuestionsTypeBar';
-import TestListSection, { TestListItem } from "@/components/dashboard/TestListSection/TestListSection";
-import DetailedAnalysisSection from '@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection';
-import WelcomeBanner from '@/components/dashboard/WelcomeBanner/WelcomeBanner';
-import { Loader } from '@/components/ui/loader';
+import ScoreGrowthChart from "@/components/dashboard/ScoreGrowthChart/ScoreGrowthChart";
+import SubjectBalanceRadar from "@/components/dashboard/SubjectBalanceRadar/SubjectBalanceRadar";
+import QuestionTypeBar from "@/components/dashboard/QuestionTypeBar/QuestionsTypeBar";
+import TestListSection, {
+  TestListItem,
+} from "@/components/dashboard/TestListSection/TestListSection";
+import DetailedAnalysisSection from "@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection";
+import WelcomeBanner from "@/components/dashboard/WelcomeBanner/WelcomeBanner";
+import { Loader } from "@/components/ui/loader";
 
-// 🚨 NEW: Import the Modal, Store, and Icons for the fallback error state
-import { RateLimitModal } from '@/components/ui/RateLimitModal/RateLimitModal';
-import { useRateLimitStore } from '@/store/useRateLimitStore';
+import { RateLimitModal } from "@/components/ui/RateLimitModal/RateLimitModal";
+import { useRateLimitStore } from "@/store/useRateLimitStore";
 import { FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
 
-import { useDashboardStore } from '@/store/useDashboardStore';
-import { fetchDashboardData } from '@/features/dashboard/api';
-import { transformDashboardData } from '@/features/dashboard/dashboardTransformer';
+import { useDashboardStore } from "@/store/useDashboardStore";
+import { fetchDashboardData } from "@/features/dashboard/api";
+import { transformDashboardData } from "@/features/dashboard/dashboardTransformer";
 
 const pyqItems: TestListItem[] = [
   { id: "pyq-2025", title: "JEE Main 2025 PYQs", meta: "19 Papers", href: "/pyq/2025" },
@@ -36,10 +39,17 @@ export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
   const [examFilter, setExamFilter] = useState<ExamFilter>("overall");
 
-  const { rawReport, isLoading, error, setDashboardData, setLoading, setError, isNewUser } = useDashboardStore();
-  
-  // 🚨 NEW: Listen to global rate limit state
-  const { isRateLimited } = useRateLimitStore(); 
+  const {
+    rawReport,
+    isLoading,
+    error,
+    setDashboardData,
+    setLoading,
+    setError,
+    isNewUser,
+  } = useDashboardStore();
+
+  const { isRateLimited } = useRateLimitStore();
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -52,7 +62,6 @@ export default function DashboardPage() {
           setError("Metrics unavailable.");
         }
       } catch (err: unknown) {
-        // If it's a 429, the global store handles it. We just set a generic error to stop loading.
         setError("Connection drop. Please refresh.");
       }
     };
@@ -61,31 +70,58 @@ export default function DashboardPage() {
     else setLoading(false);
   }, [rawReport, setDashboardData, setLoading, setError]);
 
-  // 🚨 FIX: Only show the loader if we are NOT rate limited. 
-  // If we are rate limited, the modal will handle the UI.
   if (isLoading && !isRateLimited) {
     return (
-      <div className={styles.loaderContainer}>
+      <main className={styles.loaderContainer} aria-label="Loading dashboard">
         <Loader label="Analyzing your performance..." />
-      </div>
+      </main>
     );
   }
 
-  // 🚨 FIX: Upgraded generic error UI (Only visible if NOT rate limited)
   if (error && !isRateLimited) {
     return (
-      <div className={styles.errorContainer} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', gap: '16px' }}>
-        <FiAlertTriangle size={32} color="#ef4444" />
-        <div style={{ color: 'var(--dashboard-primary-text-color)', fontSize: '16px', fontWeight: 500 }}>
+      <main
+        className={styles.errorContainer}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "50vh",
+          gap: "16px",
+        }}
+        aria-label="Dashboard error"
+      >
+        <FiAlertTriangle size={32} color="#ef4444" aria-hidden="true" />
+        <div
+          style={{
+            color: "var(--dashboard-primary-text-color)",
+            fontSize: "16px",
+            fontWeight: 500,
+          }}
+          role="alert"
+        >
           {error}
         </div>
-        <button 
+        <button
           onClick={() => window.location.reload()}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--dashboard-core-color)', color: '#000', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "8px 16px",
+            background: "var(--dashboard-core-color)",
+            color: "#000",
+            borderRadius: "8px",
+            border: "none",
+            cursor: "pointer",
+            fontWeight: 600,
+          }}
+          aria-label="Refresh dashboard"
         >
-          <FiRefreshCw size={14} /> Try Again
+          <FiRefreshCw size={14} aria-hidden="true" /> Try Again
         </button>
-      </div>
+      </main>
     );
   }
 
@@ -94,12 +130,10 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* 🚨 THE RATE LIMIT MODAL - Mounts globally over everything if triggered */}
       <RateLimitModal />
 
-      {/* 🚨 Render the dashboard only if we have data or if the modal is currently covering the screen */}
       {uiData && (
-        <div className={styles.page}>
+        <main className={styles.page} aria-label="Dashboard">
           {!newUser && (
             <DashboardHeader
               currentView={viewMode}
@@ -110,44 +144,70 @@ export default function DashboardPage() {
           )}
 
           {newUser && (
-            <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: "8px" }}>
               <WelcomeBanner />
             </div>
           )}
 
-          <div className={styles.progressRow}>
-            <PyqProgressCard label="Physics" solved={uiData.progress.phy.solved} total={uiData.progress.phy.total} />
-            <PyqProgressCard label="Chemistry" solved={uiData.progress.chem.solved} total={uiData.progress.chem.total} />
-            <PyqProgressCard label="Mathematics" solved={uiData.progress.math.solved} total={uiData.progress.math.total} />
-          </div>
+          <section className={styles.progressRow} aria-label="Subject progress">
+            <PyqProgressCard
+              label="Physics"
+              solved={uiData.progress.phy.solved}
+              total={uiData.progress.phy.total}
+            />
+            <PyqProgressCard
+              label="Chemistry"
+              solved={uiData.progress.chem.solved}
+              total={uiData.progress.chem.total}
+            />
+            <PyqProgressCard
+              label="Mathematics"
+              solved={uiData.progress.math.solved}
+              total={uiData.progress.math.total}
+            />
+          </section>
 
-          <div className={styles.kpiRow}>
-            {viewMode === "test" ? uiData.testKpis.map((kpi, i) => (
-              <KpiCard key={i} label={kpi.label} value={kpi.value} subLabel={kpi.sub} icon={kpi.icon} />
-            )) : uiData.chapterKpis.map((kpi, i) => (
-              <KpiCard key={i} label={kpi.label} value={kpi.value} subLabel={kpi.sub} icon={kpi.icon} />
-            ))}
-          </div>
+          <section className={styles.kpiRow} aria-label="Key performance indicators">
+            {viewMode === "test"
+              ? uiData.testKpis.map((kpi, i) => (
+                  <KpiCard
+                    key={i}
+                    label={kpi.label}
+                    value={kpi.value}
+                    subLabel={kpi.sub}
+                    icon={kpi.icon}
+                  />
+                ))
+              : uiData.chapterKpis.map((kpi, i) => (
+                  <KpiCard
+                    key={i}
+                    label={kpi.label}
+                    value={kpi.value}
+                    subLabel={kpi.sub}
+                    icon={kpi.icon}
+                  />
+                ))}
+          </section>
 
           {!newUser && (
             <>
               {viewMode === "test" ? (
-                <div className={styles.growthSection}>
+                <section className={styles.growthSection} aria-label="Score growth chart">
                   <ScoreGrowthChart data={uiData.scoreData} />
-                </div>
+                </section>
               ) : (
-                <div className={styles.bottomRow}>
+                <section className={styles.bottomRow} aria-label="Subject and question type analysis">
                   <div className={styles.bottomItem}>
                     <SubjectBalanceRadar data={uiData.radarData} />
                   </div>
                   <div className={styles.bottomItem}>
                     <QuestionTypeBar data={uiData.typeData} />
                   </div>
-                </div>
+                </section>
               )}
             </>
           )}
-        </div>
+        </main>
       )}
     </>
   );
