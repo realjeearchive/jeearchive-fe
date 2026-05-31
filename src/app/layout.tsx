@@ -3,8 +3,9 @@ import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
 import RouteGuard from "@/components/auth/RouteGuard";
-import Script from "next/script";
 
+// Import Google Analytics from Next.js third-parties
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
   title: "JEE Mock Test Platform - jeearchive",
@@ -30,7 +31,10 @@ export default function RootLayout({
             style: { fontSize: 14 },
           }}
         />
-      </body>
+      </body> 
+      
+
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
     </html>
   );
 }
