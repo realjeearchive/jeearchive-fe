@@ -1,9 +1,7 @@
-// src/store/useNotificationStore.ts
-
 "use client";
 
 import { create } from "zustand";
-import { fetchMyNotifications, markNotificationAsReadApi } from "@/features/notification/api";
+import { fetchMyNotifications } from "@/features/notification/api";
 import { NotificationItem } from "@/components/popups/NotificationPopup/NotificationPopup";
 
 interface NotificationStore {
@@ -12,8 +10,33 @@ interface NotificationStore {
   isLoading: boolean;
   
   loadNotifications: () => Promise<void>;
-  markAsRead: (id: string) => Promise<void>;
+  markAsRead: (id: string) => void; // No longer a Promise since there is no API call
 }
+
+// --- Local Storage Helpers ---
+const STORAGE_KEY = "jeearchive_read_notifications";
+
+const getReadIds = (): Set<string> => {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  } catch {
+    return new Set();
+  }
+};
+
+const saveReadId = (id: string) => {
+  if (typeof window === "undefined") return;
+  try {
+    const readIds = getReadIds();
+    readIds.add(id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(readIds)));
+  } catch (error) {
+    console.error("Failed to save read notification to local storage", error);
+  }
+};
+// -----------------------------
 
 export const useNotificationStore = create<NotificationStore>((set, get) => ({
   notifications: [],
@@ -24,11 +47,24 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await fetchMyNotifications();
+      
       if (response?.success && response?.data) {
+        const readIds = getReadIds();
+
+        // Map the backend raw data to our frontend NotificationItem interface
+        const mappedNotifications: NotificationItem[] = response.data.map((raw) => ({
+          id: raw.id,
+          subject: raw.subject,
+          content: raw.content,
+          createdAt: raw.created_at, // Map backend created_at to frontend createdAt
+          isRead: readIds.has(raw.id), // Determine read status from local storage
+        }));
+
         // Sort newest first
-        const sorted = response.data.sort((a, b) => 
+        const sorted = mappedNotifications.sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+        
         const unread = sorted.filter(n => !n.isRead).length;
         
         set({ notifications: sorted, unreadCount: unread, isLoading: false });
@@ -41,22 +77,18 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     }
   },
 
-  markAsRead: async (id: string) => {
-    // Optimistic UI Update: Instantly clear the dot in the UI
+  markAsRead: (id: string) => {
+    // 1. Save to Local Storage permanently for this browser
+    saveReadId(id);
+
+    // 2. Update the Zustand state to instantly clear the dot in the UI
     const currentNotifications = get().notifications;
     const updated = currentNotifications.map(n => 
       n.id === id ? { ...n, isRead: true } : n
     );
+    
     const unread = updated.filter(n => !n.isRead).length;
     
     set({ notifications: updated, unreadCount: unread });
-
-    // Background API call to tell the server
-    try {
-      await markNotificationAsReadApi(id);
-    } catch (error) {
-      console.error("[Store: Notification] Failed to mark as read server-side", error);
-      // If you want, you could revert the optimistic update here on failure
-    }
   }
 }));

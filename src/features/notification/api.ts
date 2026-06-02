@@ -1,18 +1,28 @@
-// src/features/notification/api.ts
-
 import { authenticatedFetch, ApiError } from "@/features/auth/api";
 import { useRateLimitStore } from "@/store/useRateLimitStore";
-import { NotificationItem } from "@/components/popups/NotificationPopup/NotificationPopup";
+
+// The raw structure coming from your backend (as seen in Postman)
+export interface RawNotificationItem {
+  id: string;
+  subject: string;
+  content: string;
+  studentId: string;
+  created_at: string;
+  sendingMedium: string[];
+  from: string;
+  to: string;
+  type: string;
+}
 
 export interface NotificationListResponse {
   success: boolean;
-  data: NotificationItem[];
+  data: RawNotificationItem[];
   message?: string;
 }
 
 export const fetchMyNotifications = async (): Promise<NotificationListResponse> => {
-  // Replace '/notification/get' with your exact GET endpoint if different
-  const res = await authenticatedFetch(`/notification/get`, {
+  // Updated to match the endpoint in your Postman screenshot
+  const res = await authenticatedFetch(`/notification/getNotification`, {
     method: "GET",
   });
 
@@ -28,20 +38,4 @@ export const fetchMyNotifications = async (): Promise<NotificationListResponse> 
   }
 
   return data;
-};
-
-export const markNotificationAsReadApi = async (notificationId: string): Promise<void> => {
-  // Replace with your exact mark-as-read endpoint if different
-  const res = await authenticatedFetch(`/notification/mark-read/${notificationId}`, {
-    method: "PATCH",
-  });
-
-  if (res.status === 429) {
-    useRateLimitStore.getState().setRateLimited(true);
-    throw new ApiError("Too many requests. Please wait.", 429);
-  }
-
-  if (!res.ok) {
-    throw new ApiError("Failed to mark notification as read", res.status);
-  }
 };
