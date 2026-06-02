@@ -133,7 +133,6 @@ export const SolutionHeader = ({
               <span>Solutions</span>
             </button>
             
-            {/* 🔥 NEW: History Tab */}
             <button
               className={`${styles.tab} ${styles.tabSolution} ${activeTab === "history" ? styles.active : ""}`}
               onClick={() => onTabChange("history")}
@@ -178,9 +177,16 @@ export const SolutionHeader = ({
               <span className={styles.btnText}>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
             </button>
 
-            <button className={`${styles.actionBtn} ${styles.reportBtn}`} aria-label="Report this question">
+            {/* 🔥 FIX: Disabled Report Button with "Coming Soon" indicator */}
+            <button 
+              className={`${styles.actionBtn} ${styles.reportBtn}`} 
+              aria-label="Report this question (Coming Soon)"
+              title="Coming Soon"
+              disabled
+              style={{ opacity: 0.5, cursor: "not-allowed" }}
+            >
               <FiAlertTriangle size={13} aria-hidden="true" />{" "}
-              <span className={styles.btnText}>Report</span>
+              <span className={styles.btnText}>Report (Soon)</span>
             </button>
           </div>
         )}
