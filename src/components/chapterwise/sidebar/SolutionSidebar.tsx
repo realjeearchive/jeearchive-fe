@@ -7,7 +7,7 @@ import { FiMenu } from "react-icons/fi";
 export interface QuestionStatus {
   id: string;
   number: number;
-  status: "correct" | "incorrect" | "unattempted";
+  status: "correct" | "unattempted"; // 🔥 FIX: Removed 'incorrect'
   section: "Single Correct" | "Numerical" | "Multiple Correct";
 }
 
@@ -20,7 +20,7 @@ interface SolutionSidebarProps {
   mode?: "solution" | "practice";
 }
 
-type FilterType = "all" | "correct" | "incorrect" | "unattempted";
+type FilterType = "all" | "correct" | "unattempted"; // 🔥 FIX: Removed 'incorrect'
 
 export const SolutionSidebar = ({
   questions,
@@ -35,7 +35,6 @@ export const SolutionSidebar = ({
   const counts = {
     all: questions.length,
     correct: questions.filter((q) => q.status === "correct").length,
-    incorrect: questions.filter((q) => q.status === "incorrect").length,
     unattempted: questions.filter((q) => q.status === "unattempted").length,
   };
 
@@ -67,7 +66,6 @@ export const SolutionSidebar = ({
             let statusClass = styles.statusUnattempted;
 
             if (q.status === "correct") statusClass = styles.statusCorrect;
-            if (q.status === "incorrect") statusClass = styles.statusIncorrect;
 
             return (
               <button
@@ -92,8 +90,6 @@ export const SolutionSidebar = ({
         return `${styles.filterTabs} ${styles.filterTabsAll}`;
       case "correct":
         return `${styles.filterTabs} ${styles.filterTabsCorrect}`;
-      case "incorrect":
-        return `${styles.filterTabs} ${styles.filterTabsIncorrect}`;
       case "unattempted":
         return `${styles.filterTabs} ${styles.filterTabsUnattempted}`;
       default:
@@ -131,14 +127,7 @@ export const SolutionSidebar = ({
           <span className={styles.tabCount}>{counts.correct}</span>
         </button>
 
-        <button
-          className={`${styles.tab} ${styles.tabIncorrect} ${activeFilter === "incorrect" ? styles.active : ""}`}
-          onClick={() => setActiveFilter("incorrect")}
-          aria-pressed={activeFilter === "incorrect"}
-        >
-          <span className={styles.tabLabel}>Incorrect</span>
-          <span className={styles.tabCount}>{counts.incorrect}</span>
-        </button>
+        {/* 🔥 FIX: Incorrect Button removed completely */}
 
         <button
           className={`${styles.tab} ${styles.tabUnattempted} ${activeFilter === "unattempted" ? styles.active : ""}`}

@@ -3,7 +3,7 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useChapterPracticeStore } from "@/store/useChapterPracticeStore";
-import { fetchQuestionAttempts, ChapterAttempt } from "@/features/chapterWise/api";
+import { fetchQuestionAttempts, ChapterAttempt, QuestionAttemptsResponse } from "@/features/chapterWise/api";
 
 import { SolutionLayout } from "./layout/SolutionLayout";
 import { SolutionHeader } from "./layout/SolutionHeader";
@@ -107,13 +107,14 @@ export const ChapterWiseInterface = ({
   } = useChapterPracticeStore();
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
-  const [activeTab, setActiveTab] = useState<"question" | "solution">("question");
+  
+  const [activeTab, setActiveTab] = useState<"question" | "solution" | "history">("question");
   const [warningMsg, setWarningMsg] = useState("");
   const [scorePopup, setScorePopup] = useState<{ text: string; color: string } | null>(null);
   const [sessionSolved, setSessionSolved] = useState<Record<string, boolean>>({});
   const [showTimerPrompt, setShowTimerPrompt] = useState(false);
 
-  const [attemptData, setAttemptData] = useState<ChapterAttempt | null>(null);
+  const [historyData, setHistoryData] = useState<QuestionAttemptsResponse | null>(null);
   const [isLoadingAttempt, setIsLoadingAttempt] = useState(false);
 
   useEffect(() => {
@@ -147,12 +148,12 @@ export const ChapterWiseInterface = ({
 
   useEffect(() => {
     setActiveTab("question");
-    setAttemptData(null);
+    setHistoryData(null); 
     setWarningMsg("");
   }, [activeQuestionId]);
 
   useEffect(() => {
-    if (!activeQuestionId || activeTab === "solution" || !isTimerRunning) return;
+    if (!activeQuestionId || activeTab !== "question" || !isTimerRunning) return;
 
     const timerId = setInterval(() => incrementTime(activeQuestionId), 1000);
     return () => clearInterval(timerId);
@@ -173,7 +174,7 @@ export const ChapterWiseInterface = ({
 
   let mainStatus: StatusString | undefined = undefined;
 
-  if (activeTab === "solution") {
+  if (activeTab === "solution" || activeTab === "history") {
     if (sessionSolved[activeQuestionId] !== undefined) {
       mainStatus = sessionSolved[activeQuestionId] ? "correct" : "incorrect";
     } else if (!isSubmitted) {
@@ -189,19 +190,16 @@ export const ChapterWiseInterface = ({
 
   useEffect(() => {
     if (
-      activeTab === "solution" &&
+      (activeTab === "solution" || activeTab === "history") &&
       isSubmitted &&
-      !localUserAnswer &&
-      !attemptData &&
+      !historyData &&
       currentQuestion
     ) {
       const fetchAttempt = async () => {
         setIsLoadingAttempt(true);
         try {
           const res = await fetchQuestionAttempts(currentQuestion.id);
-          if (res.chapterAttempts && res.chapterAttempts.length > 0) {
-            setAttemptData(res.chapterAttempts[0]);
-          }
+          setHistoryData(res);
         } catch (error) {
           console.error("Failed to load historical attempt", error);
         } finally {
@@ -210,7 +208,7 @@ export const ChapterWiseInterface = ({
       };
       fetchAttempt();
     }
-  }, [activeTab, isSubmitted, localUserAnswer, attemptData, currentQuestion]);
+  }, [activeTab, isSubmitted, historyData, currentQuestion]);
 
   const formattedSubject =
     subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase();
@@ -223,15 +221,13 @@ export const ChapterWiseInterface = ({
   const sidebarQuestions = useMemo(() => {
     return questions.map((q) => {
       const qIsSubmitted = submissions[q.id];
-      let status: StatusString = "unattempted";
+      let status: "correct" | "unattempted" = "unattempted";
 
       if (sessionSolved[q.id] !== undefined) {
-        status = sessionSolved[q.id] ? "correct" : "incorrect";
+        status = sessionSolved[q.id] ? "correct" : "unattempted";
       } else if (qIsSubmitted) {
-        if (q.status === "correct" || q.status === "incorrect") {
-          status = q.status;
-        } else {
-          status = "incorrect";
+        if (q.status === "correct") {
+          status = "correct";
         }
       }
 
@@ -239,8 +235,8 @@ export const ChapterWiseInterface = ({
         id: q.id,
         number: q.number,
         status: status,
-        section: q.section,
-      } as SidebarItemStatus;
+        section: q.section as string, // 🔥 FIX: Explicitly cast to string
+      } as SidebarItemStatus; // 🔥 FIX: Properly cast the whole object
     });
   }, [questions, submissions, sessionSolved]);
 
@@ -294,42 +290,55 @@ export const ChapterWiseInterface = ({
 
     setWarningMsg("");
 
-    if (currentQuestion && actualCorrectAnswer) {
-      let isCorrect = false;
+    let isCorrect = false;
 
+    if (currentQuestion && actualCorrectAnswer) {
       if (isNumericalType) {
-        isCorrect =
-          parseFloat(localUserAnswer as string) ===
-          parseFloat(actualCorrectAnswer as string);
+        isCorrect = parseFloat(localUserAnswer as string) === parseFloat(actualCorrectAnswer as string);
       } else if (isMultiType) {
-        const u = Array.isArray(localUserAnswer)
-          ? localUserAnswer
-          : [localUserAnswer as string];
-        const c = Array.isArray(currentQuestion.correctAnswer)
-          ? currentQuestion.correctAnswer
-          : [currentQuestion.correctAnswer];
-        isCorrect =
-          u.length === c.length && u.every((val) => c.includes(val as string));
+        const u = Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer as string];
+        const c = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
+        isCorrect = u.length === c.length && u.every((val) => c.includes(val as string));
       } else {
         isCorrect = localUserAnswer === actualCorrectAnswer;
       }
 
       setSessionSolved((prev) => ({ ...prev, [activeQuestionId]: isCorrect }));
 
-      const marksText = isCorrect
-        ? `+${currentQuestion.meta.marksPos}`
-        : `-${currentQuestion.meta.marksNeg}`;
+      const marksText = isCorrect ? `+${currentQuestion.meta.marksPos}` : `-${currentQuestion.meta.marksNeg}`;
       const marksColor = isCorrect ? "#22C55E" : "#EF4444";
 
       setScorePopup({ text: marksText, color: marksColor });
       setTimeout(() => setScorePopup(null), 1500);
     }
 
+    if (historyData && currentQuestion) {
+      const newAttempt = {
+        id: `local-${Date.now()}`, 
+        questionId: activeQuestionId,
+        studentId: "local-user",
+        questionStatus: "answered",
+        isCorrect: isCorrect,
+        marksObtained: isCorrect ? currentQuestion.meta.marksPos : -currentQuestion.meta.marksNeg,
+        timeSpent: questionTimes[activeQuestionId] || 0,
+        userAnswer: Array.isArray(localUserAnswer) ? localUserAnswer : [localUserAnswer as string],
+        created_at: new Date().toISOString(),
+        isAnalyzed: false,
+        isPending: false
+      };
+
+      setHistoryData(prev => ({
+        ...prev!,
+        chapterAttempts: [newAttempt, ...(prev?.chapterAttempts || [])]
+      }));
+    }
+
     await submitAnswer(activeQuestionId);
     setActiveTab("solution");
   };
 
-  const displayUserAnswer = localUserAnswer || attemptData?.userAnswer?.[0];
+  const attemptDataFirst = historyData?.chapterAttempts?.[0];
+  const displayUserAnswer = localUserAnswer || attemptDataFirst?.userAnswer?.[0];
 
   const isDisplayCorrect = (() => {
     if (sessionSolved[activeQuestionId] !== undefined) {
@@ -337,7 +346,7 @@ export const ChapterWiseInterface = ({
     }
 
     if (!localUserAnswer) {
-      return attemptData?.isCorrect ?? (mainStatus === "correct");
+      return attemptDataFirst?.isCorrect ?? (mainStatus === "correct");
     }
 
     if (isNumericalType && actualCorrectAnswer) {
@@ -370,6 +379,50 @@ export const ChapterWiseInterface = ({
       ? sessionSolved[activeQuestionId]
       : currentQuestion?.status === "correct";
 
+  const renderHistoryList = () => {
+    if (isLoadingAttempt) {
+      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Loading your history...</div>;
+    }
+    if (!historyData) return null;
+
+// Combine and sort chapter and test attempts by date descending
+    const allAttempts = [
+      ...(historyData.chapterAttempts || []).map((a) => ({ ...a, source: 'Chapter Practice' })),
+      ...((historyData.testAttempts as ChapterAttempt[]) || []).map((a) => ({ ...a, source: 'Mock Test' }))
+    ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    if (allAttempts.length === 0) {
+      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>No previous attempts found for this question.</div>;
+    }
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        {allAttempts.map(attempt => (
+          <div key={attempt.id} style={{
+            padding: "16px", borderRadius: "8px", border: "1px solid var(--dashboard-dividerline-color)",
+            backgroundColor: "rgba(255,255,255,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <span style={{ fontSize: "12px", color: "var(--dashboard-secondary-text-color)" }}>
+                {new Date(attempt.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })} • {attempt.source}
+              </span>
+              <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "4px" }}>
+                <span style={{ fontWeight: 600, color: attempt.isCorrect ? "#22C55E" : "#EF4444" }}>
+                  {attempt.isCorrect ? "Correct" : "Incorrect"}
+                </span>
+                <span style={{ fontSize: "13px", color: "var(--dashboard-secondary-text-color)" }}>Marks: {attempt.marksObtained}</span>
+                <span style={{ fontSize: "13px", color: "var(--dashboard-secondary-text-color)" }}>Time: {formatTime(attempt.timeSpent)}</span>
+              </div>
+            </div>
+            <div style={{ fontSize: "14px", fontWeight: 600, padding: "6px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "6px", color: "var(--dashboard-primary-text-color)" }}>
+              Answer: {attempt.userAnswer?.join(", ") || "--"}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <SolutionLayout
       isSidebarOpen={isSidebarOpen}
@@ -382,7 +435,7 @@ export const ChapterWiseInterface = ({
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen(true)}
           mode="practice"
-          activeTab={activeTab}
+          activeTab={activeTab as "question" | "solution" | "history"}
           onTabChange={setActiveTab}
           isCurrentQuestionSubmitted={isSubmitted}
           timer={formatTime(currentTimeSpent)}
@@ -399,7 +452,7 @@ export const ChapterWiseInterface = ({
       sidebar={
         <SolutionSidebar
           subjectName={safeSubject}
-          questions={sidebarQuestions}
+          questions={sidebarQuestions} // 🔥 FIX: Removed "as any"
           activeQuestionId={activeQuestionId}
           onQuestionClick={setActiveQuestionId}
           onClose={() => setIsSidebarOpen(false)}
@@ -491,6 +544,43 @@ export const ChapterWiseInterface = ({
               />
             )}
           </div>
+        )}
+
+        {activeTab === "history" && (
+          <section
+            style={{
+              marginTop: "24px",
+              animation: "fadeIn 0.3s ease-out"
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                borderTop: "1px solid var(--dashboard-dividerline-color)",
+                padding: "24px",
+                backgroundColor: "rgba(255, 255, 255, 0.01)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span
+                  style={{
+                    fontSize: "13px",
+                    fontWeight: 700,
+                    color: "var(--dashboard-secondary-text-color)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Attempt History
+                </span>
+              </div>
+              <div style={{ color: "var(--dashboard-primary-text-color)" }}>
+                {renderHistoryList()}
+              </div>
+            </div>
+          </section>
         )}
 
         {activeTab === "solution" && (

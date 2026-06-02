@@ -10,6 +10,7 @@ import {
   FiPauseCircle,
   FiBookmark,
   FiAlertTriangle,
+  FiClock, // 🔥 NEW ICON for History
 } from "react-icons/fi";
 import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb";
 import { FileText } from "lucide-react";
@@ -22,8 +23,8 @@ interface SolutionHeaderProps {
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
   mode?: "solution" | "practice";
-  activeTab: "question" | "solution";
-  onTabChange: (tab: "question" | "solution") => void;
+  activeTab: "question" | "solution" | "history"; // 🔥 NEW: Support History tab
+  onTabChange: (tab: "question" | "solution" | "history") => void;
   isCurrentQuestionSubmitted: boolean;
   timer?: string;
   isTimerRunning?: boolean;
@@ -58,17 +59,13 @@ export const SolutionHeader = ({
   showTimerPrompt,
 }: SolutionHeaderProps) => {
   const getTabsRowClass = () => {
-    if (activeTab === "solution")
+    if (activeTab === "solution" || activeTab === "history")
       return `${styles.tabsRow} ${styles.tabsRowSolution}`;
     switch (activeSubject) {
-      case "Mathematics":
-        return `${styles.tabsRow} ${styles.tabsRowMath}`;
-      case "Physics":
-        return `${styles.tabsRow} ${styles.tabsRowPhy}`;
-      case "Chemistry":
-        return `${styles.tabsRow} ${styles.tabsRowChem}`;
-      default:
-        return styles.tabsRow;
+      case "Mathematics": return `${styles.tabsRow} ${styles.tabsRowMath}`;
+      case "Physics": return `${styles.tabsRow} ${styles.tabsRowPhy}`;
+      case "Chemistry": return `${styles.tabsRow} ${styles.tabsRowChem}`;
+      default: return styles.tabsRow;
     }
   };
 
@@ -126,43 +123,42 @@ export const SolutionHeader = ({
         {renderSubjectTab("Chemistry", TbFlask)}
 
         {isCurrentQuestionSubmitted && (
-          <button
-            className={`${styles.tab} ${styles.tabSolution} ${activeTab === "solution" ? styles.active : ""}`}
-            onClick={() => onTabChange("solution")}
-            aria-pressed={activeTab === "solution"}
-          >
-            <FileText
-              className={styles.tabIcon}
-              size={16}
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-            <span>Solutions</span>
-          </button>
+          <>
+            <button
+              className={`${styles.tab} ${styles.tabSolution} ${activeTab === "solution" ? styles.active : ""}`}
+              onClick={() => onTabChange("solution")}
+              aria-pressed={activeTab === "solution"}
+            >
+              <FileText className={styles.tabIcon} size={16} strokeWidth={2} aria-hidden="true" />
+              <span>Solutions</span>
+            </button>
+            
+            {/* 🔥 NEW: History Tab */}
+            <button
+              className={`${styles.tab} ${styles.tabSolution} ${activeTab === "history" ? styles.active : ""}`}
+              onClick={() => onTabChange("history")}
+              aria-pressed={activeTab === "history"}
+            >
+              <FiClock className={styles.tabIcon} size={16} strokeWidth={2} aria-hidden="true" />
+              <span>History</span>
+            </button>
+          </>
         )}
 
         {showTools && (
           <div className={styles.toolsContainer}>
-            {/* Timer with Prompt */}
             <div className={styles.timerWrapper}>
               <button
                 onClick={onToggleTimer}
                 className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ""}`}
                 title={isTimerRunning ? "Pause Timer" : "Start Timer"}
-                aria-label={`${isTimerRunning ? "Pause" : "Start"} timer, current time ${timer || "00:00"}`}
               >
                 <span>{timer || "00:00"}</span>
-                {isTimerRunning ? (
-                  <FiPauseCircle size={16} aria-hidden="true" />
-                ) : (
-                  <FiPlayCircle size={16} aria-hidden="true" />
-                )}
+                {isTimerRunning ? <FiPauseCircle size={16} aria-hidden="true" /> : <FiPlayCircle size={16} aria-hidden="true" />}
               </button>
 
               {showTimerPrompt && !isTimerRunning && (
-                <div className={styles.timerPrompt} role="status">
-                  Click to start timer
-                </div>
+                <div className={styles.timerPrompt} role="status">Click to start timer</div>
               )}
             </div>
 
@@ -170,33 +166,19 @@ export const SolutionHeader = ({
 
             <div className={styles.marksBlock}>
               <span className={styles.posMark}>+{marksPos}</span>
-              <span style={{ color: "var(--dashboard-secondary-text-color)" }}>
-                {" "}
-                /{" "}
-              </span>
+              <span style={{ color: "var(--dashboard-secondary-text-color)" }}> / </span>
               <span className={styles.negMark}>-{marksNeg}</span>
             </div>
 
             <button
               className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ""}`}
               onClick={onBookmark}
-              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this question"}
-              aria-pressed={isBookmarked}
             >
-              <FiBookmark
-                size={13}
-                fill={isBookmarked ? "currentColor" : "none"}
-                aria-hidden="true"
-              />
-              <span className={styles.btnText}>
-                {isBookmarked ? "Bookmarked" : "Bookmark"}
-              </span>
+              <FiBookmark size={13} fill={isBookmarked ? "currentColor" : "none"} aria-hidden="true" />
+              <span className={styles.btnText}>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
             </button>
 
-            <button
-              className={`${styles.actionBtn} ${styles.reportBtn}`}
-              aria-label="Report this question"
-            >
+            <button className={`${styles.actionBtn} ${styles.reportBtn}`} aria-label="Report this question">
               <FiAlertTriangle size={13} aria-hidden="true" />{" "}
               <span className={styles.btnText}>Report</span>
             </button>

@@ -1,3 +1,4 @@
+// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
 import type { Metadata } from "next";
 import { chapterConfig } from "@/features/chapterWise/config";
 import { ChapterDashboardPageClient } from "./ChapterDashboardPageClient";
