@@ -209,23 +209,12 @@
 .streakYellow .streakText {
   color: #FBBF24;
 }
-.streakYellow:hover {
-  background: rgba(251, 191, 36, 0.1);
-  border-color: rgba(251, 191, 36, 0.2);
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
-}
-
 /* 11-15 Streak (Orange) */
 .streakOrange {
   color: #F97316; 
 }
 .streakOrange .streakText {
   color: #F97316;
-}
-.streakOrange:hover {
-  background: rgba(249, 115, 22, 0.1);
-  border-color: rgba(249, 115, 22, 0.2);
-  text-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
 }
 
 /* 16+ Streak (Red/Hot) */
@@ -234,11 +223,6 @@
 }
 .streakRed .streakText {
   color: #EF4444;
-}
-.streakRed:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.2);
-  text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
 /* --- Tooltip Logic for Streak --- */
