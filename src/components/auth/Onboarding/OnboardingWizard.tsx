@@ -230,8 +230,8 @@ export default function OnboardingWizard() {
                 <div className={styles.stepContent}>
                   <div className={styles.titleGroup}>
                     <div className={styles.iconWrapper}><Target size={24} /></div>
-                    <h2 className={styles.title}>What is your target?</h2>
-                    <p className={styles.subtitle}>Help us personalize your mock test analytics.</p>
+<h2 className={styles.title}>Select Your Class</h2>
+<p className={styles.subtitle}>Help us customize your practice experience.</p>
                   </div>
 
                   <div className={styles.grid2}>
@@ -262,8 +262,8 @@ export default function OnboardingWizard() {
                 <div className={styles.stepContent}>
                   <div className={styles.titleGroup}>
                     <div className={styles.iconWrapper}><UserCircle size={24} /></div>
-                    <h2 className={styles.title}>Personal Details</h2>
-                    <p className={styles.subtitle}>Required for accurate percentile and cut-off predictions.</p>
+                    <h2 className={styles.title}>Category & Gender</h2>
+                    <p className={styles.subtitle}>We need this to predict your rank and percentile accurately.</p>
                   </div>
 
                   <div className={styles.formGroup}>
@@ -279,7 +279,7 @@ export default function OnboardingWizard() {
                           }`}
                         >
                           <span className={formData.category ? styles.textPrimary : styles.textPlaceholder}>
-                            {formData.category || "Choose your category..."}
+                            {formData.category || "Select Category"}
                           </span>
                           <ChevronDown
                             size={20}
@@ -350,8 +350,8 @@ export default function OnboardingWizard() {
                 <div className={styles.stepContent}>
                   <div className={styles.titleGroup}>
                     <div className={styles.iconWrapper}><Phone size={24} /></div>
-                    <h2 className={styles.title}>Almost there!</h2>
-                    <p className={styles.subtitle}>What is the best number to reach you on?</p>
+                    <h2 className={styles.title}>Mobile Number</h2>
+                    <p className={styles.subtitle}>Just one last step to complete your profile.</p>
                   </div>
 
                   <div className={styles.inputWrapper}>
@@ -359,7 +359,7 @@ export default function OnboardingWizard() {
                     <input
                       type="tel"
                       maxLength={10}
-                      placeholder="99999 99999"
+                      placeholder="Enter mobile number"
                       value={formData.mobile}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, "");
@@ -405,7 +405,7 @@ export default function OnboardingWizard() {
               disabled={isSubmitting}
               className={styles.submitButton}
             >
-              {isSubmitting ? "Finalizing..." : "Go to Dashboard"}
+              {isSubmitting ? "Saving..." : "Go to Dashboard"}
               {!isSubmitting && <ChevronRight size={18} />}
             </button>
           )}
