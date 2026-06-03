@@ -9,21 +9,30 @@ import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.png';
 import { verifyOtpRequest, passwordEmailVerificationRequest, type VerifyOtpResponse } from '@/features/auth/api';
-import { useAuthStore } from '@/store';
+
+// 🔥 FIX 1: Import useUserStore
+import { useAuthStore, useUserStore } from '@/store';
 import { toast } from 'sonner';
 
 export function VerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') ?? '';
-  const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
+  
+  // 🔥 FIX 2: Change the fallback from '/dashboard' to '/onboarding'
+  const redirectTo = searchParams.get('redirectTo') ?? '/onboarding';
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [error, setError] = useState('');
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  
+  // 🔥 FIX 3: Bring in setStageNumber and syncStageNumber
+  const setStageNumber = useUserStore((s) => s.setStageNumber);
+  const syncStageNumber = useUserStore((s) => s.syncStageNumber);
 
   useEffect(() => {
     if (!emailFromQuery) {
@@ -101,7 +110,15 @@ export function VerifyEmail() {
         otp: otpValue,
       });
 
+      // 🔥 FIX 4: Explicitly set stageNumber to 1 BEFORE setting the access token.
+      // This guarantees your app route guards know they belong in /onboarding.
+      setStageNumber(1);
+      
       setAccessToken(data.accessToken); 
+      
+      // Kick off a background sync to ensure the full profile gets hydrated
+      syncStageNumber();
+
       console.info(`[Auth: VerifyEmail] Verification successful for: ${emailFromQuery}`);
       toast.success('Email verified successfully.');
       
