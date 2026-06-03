@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./HelpSupportContent.module.css";
 import {
   FiMail,
@@ -33,6 +33,11 @@ const FAQ_LIST = [
 export default function HelpSupportContent() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [bugDescription, setBugDescription] = useState("");
+  
+  // 🔥 NEW: State for Dropdown
+  const [reportType, setReportType] = useState<"TechnicalGlitch" | "Review">("TechnicalGlitch");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const { isSubmitting, handleSubmitBugReport } = useHelpSupport();
 
@@ -49,11 +54,25 @@ export default function HelpSupportContent() {
   };
 
   const handleReportBug = async () => {
-    const success = await handleSubmitBugReport(bugDescription);
+    // 🔥 NEW: Pass reportType to the hook
+    const success = await handleSubmitBugReport(bugDescription, reportType);
     if (success) {
       setBugDescription("");
     }
   };
+
+  // 🔥 NEW: Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <main className={styles.container} aria-label="Help and support">
@@ -154,21 +173,60 @@ export default function HelpSupportContent() {
         </div>
       </section>
 
-      <section className={styles.detailsSection} aria-label="Report a technical bug">
-        <h2 className={styles.sectionHeading}>Report a Technical Bug</h2>
+      <section className={styles.detailsSection} aria-label="Report a technical bug or review">
+        <h2 className={styles.sectionHeading}>Submit Feedback or Report Bug</h2>
         <div className={styles.infoCard}>
-          <div className={styles.rowHeader}>
-            <span className={styles.label}>Bug Description</span>
-            <FiAlertCircle size={16} aria-hidden="true" />
+          
+          {/* 🔥 NEW: Custom Dropdown Integration */}
+          <div className={styles.inputGroup}>
+            <div className={styles.rowHeader}>
+              <span className={styles.label}>Select Type</span>
+            </div>
+            <div className={styles.dropdownWrapper} ref={dropdownRef}>
+               <button
+                 className={styles.dropdownToggle}
+                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+               >
+                 <span>{reportType === 'TechnicalGlitch' ? 'Technical Glitch' : 'Review / Feedback'}</span>
+                 <FiChevronDown className={`${styles.dropdownChevron} ${isDropdownOpen ? styles.chevronOpen : ''}`} />
+               </button>
+               {isDropdownOpen && (
+                 <div className={styles.dropdownMenu}>
+                   <div
+                     className={`${styles.dropdownItem} ${reportType === 'TechnicalGlitch' ? styles.dropdownItemActive : ''}`}
+                     onClick={() => { setReportType('TechnicalGlitch'); setIsDropdownOpen(false); }}
+                   >
+                     Technical Glitch
+                   </div>
+                   <div
+                     className={`${styles.dropdownItem} ${reportType === 'Review' ? styles.dropdownItemActive : ''}`}
+                     onClick={() => { setReportType('Review'); setIsDropdownOpen(false); }}
+                   >
+                     Review / Feedback
+                   </div>
+                 </div>
+               )}
+            </div>
           </div>
-          <textarea
-            className={styles.bugTextArea}
-            placeholder="Describe the issue in detail... (e.g., my percentile is not coming correctly)"
-            value={bugDescription}
-            onChange={(e) => setBugDescription(e.target.value)}
-            disabled={isSubmitting}
-            aria-label="Bug description"
-          />
+
+          <div className={styles.divider} aria-hidden="true" />
+
+          {/* Text Area */}
+          <div className={styles.inputGroup}>
+            <div className={styles.rowHeader}>
+              <span className={styles.label}>Description</span>
+              <FiAlertCircle size={16} aria-hidden="true" />
+            </div>
+            <textarea
+              className={styles.bugTextArea}
+              placeholder={reportType === 'TechnicalGlitch' ? "Describe the technical issue... (e.g., my percentile is not coming correctly)" : "Share your thoughts, suggestions, or review of the platform..."}
+              value={bugDescription}
+              onChange={(e) => setBugDescription(e.target.value)}
+              disabled={isSubmitting}
+              aria-label="Bug description or review"
+            />
+          </div>
+
         </div>
         <div className={styles.saveActionRow}>
           <button
@@ -176,11 +234,11 @@ export default function HelpSupportContent() {
             onClick={handleReportBug}
             disabled={isSubmitting || !bugDescription.trim()}
             aria-label={
-              isSubmitting ? "Submitting bug report" : "Submit bug report"
+              isSubmitting ? "Submitting report" : "Submit report"
             }
           >
             <FiSend size={14} style={{ marginRight: "8px" }} aria-hidden="true" />
-            {isSubmitting ? "Submitting..." : "Submit Bug Report"}
+            {isSubmitting ? "Submitting..." : "Submit Report"}
           </button>
         </div>
       </section>

@@ -9,7 +9,7 @@ interface HelpSupportState {
   error: string | null;
   
   // Actions
-  submitBugReport: (description: string) => Promise<boolean>;
+  submitBugReport: (description: string, type: "TechnicalGlitch" | "Review") => Promise<boolean>;
   clearError: () => void;
 }
 
@@ -19,7 +19,7 @@ export const useHelpSupportStore = create<HelpSupportState>((set, get) => ({
   error: null,
   
   // Submit bug report
-  submitBugReport: async (description: string) => {
+  submitBugReport: async (description: string, type: "TechnicalGlitch" | "Review") => {
     if (!description.trim()) {
       set({ error: 'Please describe the issue before submitting.' });
       return false;
@@ -28,9 +28,10 @@ export const useHelpSupportStore = create<HelpSupportState>((set, get) => ({
     set({ isSubmitting: true, error: null });
     
     try {
-      // Create payload with content field
+      // 🔥 NEW: Pass both content and type in the payload
       const payload = { 
-        content: description.trim() 
+        content: description.trim(),
+        type: type 
       };
       
       console.log("[Store] Sending payload:", payload);

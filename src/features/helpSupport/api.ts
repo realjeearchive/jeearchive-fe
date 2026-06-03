@@ -4,6 +4,7 @@ import { authenticatedFetch, ApiError } from "@/features/auth/api";
 
 interface SupportEmailPayload {
   content: string;
+  type: "TechnicalGlitch" | "Review"; // 🔥 NEW: Added type based on Postman
 }
 
 interface SupportEmailResponse {

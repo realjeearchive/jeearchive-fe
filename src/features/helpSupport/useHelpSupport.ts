@@ -10,13 +10,14 @@ export const useHelpSupport = () => {
   const submitBugReport = useHelpSupportStore((state) => state.submitBugReport);
   const clearError = useHelpSupportStore((state) => state.clearError);
 
-  const handleSubmitBugReport = useCallback(async (description: string) => {
-    const success = await submitBugReport(description);
+  const handleSubmitBugReport = useCallback(async (description: string, type: "TechnicalGlitch" | "Review") => {
+    // 🔥 NEW: Passing type to the store action
+    const success = await submitBugReport(description, type);
     
     if (success) {
-      toast.success('Bug report submitted successfully!');
+      toast.success(type === "Review" ? 'Review submitted successfully!' : 'Bug report submitted successfully!');
     } else {
-      toast.error('Failed to submit report. Please try again.');
+      toast.error('Failed to submit. Please try again.');
     }
     
     return success;
