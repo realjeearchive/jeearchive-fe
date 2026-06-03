@@ -17,8 +17,7 @@ export default function PyqProgressCard({ label, solved, total }: Props) {
 
   const isZero = solved === 0;
 
-  const subjectSlug = label === "Mathematics" ? "maths" : label.toLowerCase();
-  const targetHref = `/chapter-wise-questions/${subjectSlug}`;
+  const targetHref = `/chapter-wise-questions`;
 
   return (
     <article
