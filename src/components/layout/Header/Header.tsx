@@ -150,11 +150,11 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const currentStreak = streak?.currentStreak || 0;
   let streakColorClass = styles.streakDefault;
   
-  if (currentStreak > 15) {
+  if (currentStreak >= 15) {
     streakColorClass = styles.streakRed;
-  } else if (currentStreak > 10) {
+  } else if (currentStreak >= 10) {
     streakColorClass = styles.streakOrange;
-  } else if (currentStreak > 5) {
+  } else if (currentStreak >= 5) {
     streakColorClass = styles.streakYellow;
   }
 
