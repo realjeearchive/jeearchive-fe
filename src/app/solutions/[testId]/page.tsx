@@ -266,11 +266,11 @@ if (isLoading) {
           solutionText={currentQuestion.solution}
         />
 
-        <QuestionStats 
+        {/* <QuestionStats 
           userTime={currentQuestion.stats.userTime}
           avgTime={currentQuestion.stats.avgTime}
           accuracy={currentQuestion.stats.accuracy}
-        />
+        /> */}
 
       </QuestionMain>
     </SolutionLayout>
