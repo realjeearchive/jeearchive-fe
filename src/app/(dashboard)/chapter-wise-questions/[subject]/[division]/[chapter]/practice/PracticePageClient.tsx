@@ -168,7 +168,7 @@ export function PracticePageClient({
   if (loading) {
     return (
       <main
-        className="flex h-screen items-center justify-center bg-[var(--dashboard-background-color)]"
+        className="flex h-screen items-center justify-center bg-(--dashboard-background-color)"
         aria-label="Loading practice questions"
       >
         <Loader label={`Preparing ${exactChapterName} practice...`} />
@@ -183,4 +183,4 @@ export function PracticePageClient({
       subject={getSubjectFromSlug(subject)}
     />
   );
-}
+}  
