@@ -63,55 +63,41 @@ export const PercentileCard = ({
 
   const isAdvanced = currentExamType === "ADVANCED";
 
-  useEffect(() => {
+useEffect(() => {
     const fetchPrediction = async () => {
       try {
         setIsLoading(true);
         setError("");
 
+        // 🔥 CRITICAL FIX: Route ALL requests through our internal Next.js proxy
+        const res = await fetch("/api/percentile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            score: myScore,
+            year: 2025,
+            category: userCategory,
+            examType: currentExamType, // Proxy will route based on this
+          }),
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch prediction");
+
+        const data = await res.json();
+
         if (isAdvanced) {
-          const res = await fetch("https://my.newtonschool.co/rank-predictor/api/predict-jee-advanced-rank/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              category: userCategory,
-              jee_advanced_score: myScore,
-            }),
-          });
-
-          if (!res.ok) throw new Error("Failed to fetch advanced rank prediction");
-
-          const data = await res.json();
-          
           const rank = data.estimated_rank ?? data.estimated_category_rank;
           
           if (rank) {
             setPredictionValue(rank.toLocaleString("en-IN"));
           } else if (data.start_rank && data.end_rank) {
-            // Formats it nicely as "25,001 - 25,946"
             setPredictionValue(`${data.start_rank.toLocaleString("en-IN")} - ${data.end_rank.toLocaleString("en-IN")}`);
           } else {
             setPredictionValue("N/A");
           }
         } else {
-          const res = await fetch("/api/percentile", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              score: myScore,
-              year: 2025,
-              category: userCategory,
-              examType: currentExamType,
-            }),
-          });
-
-          if (!res.ok) throw new Error("Failed to fetch percentile prediction");
-
-          const data = await res.json();
           const pct = data.estimated_percentile;
           
           if (pct && !isNaN(pct)) {
