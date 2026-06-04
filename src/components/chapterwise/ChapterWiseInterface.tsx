@@ -703,12 +703,6 @@ export const ChapterWiseInterface = ({
                 borderTop: "1px dashed rgba(255,255,255,0.1)",
               }}
             >
-              <QuestionStats
-                userTime={formatTime(currentTimeSpent)}
-                avgTime={currentQuestion.stats.avgTime}
-                accuracy={currentQuestion.stats.accuracy}
-                isVisible={true}
-              />
             </div>
           </section>
         )}
