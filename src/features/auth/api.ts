@@ -1,6 +1,9 @@
+// src/features/auth/api.ts
 import { useAuthStore } from "@/store/authStore";
 import type { SignupInput, LoginInput } from './schemas';
-import { toast } from "sonner"; // 🚨 NEW: For rate limit toasts
+import { toast } from "sonner";
+// 🚨 NEW: Import the decrypt utility
+import { decryptData } from "@/lib/decrypt"; 
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api';
 
@@ -14,9 +17,56 @@ export class ApiError extends Error {
 }
 
 let refreshPromise: Promise<string> | null = null;
-
-// 🚨 NEW: Global request cache to prevent React Strict Mode double-fetches
 const inFlightRequests = new Map<string, Promise<Response>>();
+
+// 🚨 NEW: Global Decryption Interceptor
+async function processEncryptedResponse(response: Response): Promise<Response> {
+  if (!response.ok) return response; // Let error handlers deal with non-200s
+
+  const clonedRes = response.clone();
+  const rawText = await clonedRes.text().catch(() => "");
+  
+  if (!rawText) return response;
+
+  let modifiedBody = rawText;
+  let wasEncrypted = false;
+
+  // Scenario 1: Raw encrypted string ("ivHex:cipherHex")
+  if (rawText.includes(':') && !rawText.trim().startsWith('{') && !rawText.trim().startsWith('[')) {
+    const decrypted = decryptData<unknown>(rawText);
+    if (decrypted !== null) {
+      modifiedBody = JSON.stringify(decrypted);
+      wasEncrypted = true;
+    }
+  } 
+  // Scenario 2: Wrapped encryption ({ "success": true, "data": "ivHex:cipherHex" })
+  else if (rawText.trim().startsWith('{')) {
+    try {
+      const parsed = JSON.parse(rawText);
+      if (parsed && typeof parsed === 'object' && typeof parsed.data === 'string' && parsed.data.includes(':')) {
+        const decryptedInner = decryptData<unknown>(parsed.data);
+        if (decryptedInner !== null) {
+          parsed.data = decryptedInner;
+          modifiedBody = JSON.stringify(parsed);
+          wasEncrypted = true;
+        }
+      }
+    } catch (e) {
+      // Ignore parsing errors, pass original response
+    }
+  }
+
+  // Re-package into a standard Response object so the rest of the app doesn't break
+  if (wasEncrypted) {
+    return new Response(modifiedBody, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+  }
+
+  return response;
+}
 
 export async function authenticatedFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const store = useAuthStore.getState();
@@ -34,7 +84,6 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
     credentials: 'include',
   };
 
-  // 🚨 NEW: Deduplication Logic
   const requestKey = `${options.method || 'GET'}:${endpoint}`;
 
   if (inFlightRequests.has(requestKey)) {
@@ -53,17 +102,19 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
           const newToken = await getRefreshToken();
           headers.set('Authorization', `Bearer ${newToken}`);
           console.info(`[API: Auth] Token refreshed successfully. Retrying ${endpoint}...`);
-          return fetch(`${API_BASE_URL}${endpoint}`, { ...config, headers });
+          
+          const retryRes = await fetch(`${API_BASE_URL}${endpoint}`, { ...config, headers });
+          return processEncryptedResponse(retryRes); // 🚨 Decrypt retried requests
         } catch (err) {
           console.error(`[API: Auth] Token refresh failed. Logging user out.`, err);
           store.logout();
           return response;
         }
       }
-      return response;
+      
+      return processEncryptedResponse(response); // 🚨 Decrypt normal requests
     })
     .finally(() => {
-      // Clear the cache shortly after the request resolves
       setTimeout(() => inFlightRequests.delete(requestKey), 300);
     });
 
@@ -89,7 +140,9 @@ async function getRefreshToken(): Promise<string> {
 
       if (!res.ok) throw new Error("Refresh failed");
 
-      const data = await res.json();
+      // We decrypt the refresh token response too, just in case!
+      const decryptedRes = await processEncryptedResponse(res);
+      const data = await decryptedRes.json();
       const newToken = data.data?.accessToken || data.accessToken;
 
       if (!newToken) throw new Error("No token returned");
@@ -107,7 +160,6 @@ async function getRefreshToken(): Promise<string> {
 }
 
 export async function handleJson<T>(res: Response): Promise<T> {
-  // 🚨 NEW: Global 429 Interceptor
   if (res.status === 429) {
     toast.error("You're moving too fast!", {
       description: "Network is busy. Please wait a few seconds and refresh.",
@@ -146,58 +198,64 @@ export interface VerifyPasswordOtpResponse { accessToken: string; message: strin
 export interface RefreshTokenResponse { accessToken: string; message: string; }
 
 // --- AUTH REQUESTS ---
+// 🚨 Notice how we pass all raw fetch calls through `processEncryptedResponse`
 export async function signupRequest(payload: SignupInput) {
-  const res = await fetch(`${API_BASE_URL}/auth/signup`, {
+  let res = await fetch(`${API_BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', 
     body: JSON.stringify(payload),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<SignupResponse>(res);
 }
 
 export async function verifyOtpRequest(params: { email: string; otp: string }) {
-  const res = await fetch(`${API_BASE_URL}/auth/verifySignUpOTP`, {
+  let res = await fetch(`${API_BASE_URL}/auth/verifySignUpOTP`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify(params),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<VerifyOtpResponse>(res);
 }
 
 export async function loginRequest(payload: LoginInput & { remberMe?: boolean }) {
-  const res = await fetch(`${API_BASE_URL}/auth/login`, {
+  let res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include', 
     body: JSON.stringify(payload),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<LoginResponse>(res);
 }
 
 export async function passwordEmailVerificationRequest(params: { email: string }) {
-  const res = await fetch(`${API_BASE_URL}/auth/passwordEmailVerification`, {
+  let res = await fetch(`${API_BASE_URL}/auth/passwordEmailVerification`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify(params),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<PasswordEmailVerificationResponse>(res);
 }
 
 export async function verifyPasswordOtpRequest(params: { email: string; otp: string }) {
-  const res = await fetch(`${API_BASE_URL}/auth/verifyPasswordOTP`, {
+  let res = await fetch(`${API_BASE_URL}/auth/verifyPasswordOTP`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify(params),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<VerifyPasswordOtpResponse>(res);
 }
 
 export async function passwordChangeRequest(params: { password: string; accessToken: string }) {
-  const res = await fetch(`${API_BASE_URL}/auth/passwordChange`, {
+  let res = await fetch(`${API_BASE_URL}/auth/passwordChange`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
@@ -208,6 +266,7 @@ export async function passwordChangeRequest(params: { password: string; accessTo
       password: params.password,
     }),
   });
+  res = await processEncryptedResponse(res);
   return handleJson<PasswordChangeResponse>(res);
 }
 

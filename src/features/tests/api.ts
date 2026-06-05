@@ -107,25 +107,23 @@ export async function fetchPaperAttemptsDetails(examName: string, year: string) 
 }
 
 export async function fetchTestContent(paperId: string): Promise<TestDefinition | null> {
-  console.info(`[API: Test] Fetching and decrypting questions for paper: ${paperId}`);
+  console.info(`[API: Test] Fetching questions for paper: ${paperId}`);
   const res = await authenticatedFetch(`/question/paperQuestions/${paperId}`, { method: 'GET' });
-  const json = await handleJson<{ data: string }>(res);
-  const decryptedData = decryptData<unknown>(json.data);
-
-  if (!decryptedData) {
-    console.error(`[API: Test] Decryption failed for paper: ${paperId}`);
-    throw new Error("Decryption failed");
-  }
+  
+  // 🚨 Because of our global interceptor, json.data is ALREADY fully decrypted and parsed as an array!
+  const json = await handleJson<{ data: unknown }>(res);
 
   let questionsArray: BackendQuestion[] = [];
-  if (Array.isArray(decryptedData)) {
-    questionsArray = decryptedData as BackendQuestion[];
-  } else if (typeof decryptedData === 'object' && decryptedData !== null && 'data' in decryptedData) {
-    const dataObj = decryptedData as { data: unknown };
+  
+  if (Array.isArray(json.data)) {
+    questionsArray = json.data as BackendQuestion[];
+  } else if (typeof json.data === 'object' && json.data !== null && 'data' in json.data) {
+    const dataObj = json.data as { data: unknown };
     if (Array.isArray(dataObj.data)) {
       questionsArray = dataObj.data as BackendQuestion[];
     }
   }
+
   return mapBackendDataToDefinition(paperId, questionsArray);
 }
 
