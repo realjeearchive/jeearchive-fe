@@ -437,7 +437,10 @@ export const ChapterWiseInterface = ({
           mode="practice"
           activeTab={activeTab as "question" | "solution" | "history"}
           onTabChange={setActiveTab}
-          isCurrentQuestionSubmitted={isSubmitted}
+          
+          // 🔥 UX FIX: Only unlock tabs if explicitly solved/updated in THIS active session
+          isCurrentQuestionSubmitted={sessionSolved[activeQuestionId] !== undefined}
+          
           timer={formatTime(currentTimeSpent)}
           isTimerRunning={isTimerRunning}
           onToggleTimer={toggleTimer}
