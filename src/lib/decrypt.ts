@@ -5,9 +5,6 @@ const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || '12345678901734
 
 export const decryptData = <T>(encryptedString: string): T | null => {
   // 1. Debug: Check if env var is loaded or falling back
-  console.log("[Debug] Key Source:", process.env.NEXT_PUBLIC_ENCRYPTION_KEY ? "Env Var" : "Fallback String");
-  console.log("[Debug] Key Used:", ENCRYPTION_KEY); // Verify this matches backend
-
   if (!encryptedString || typeof encryptedString !== 'string') {
     console.error("[Debug] Invalid input:", encryptedString);
     return null;
@@ -22,8 +19,6 @@ export const decryptData = <T>(encryptedString: string): T | null => {
   try {
     const [ivHex, encryptedHex] = encryptedString.split(':');
     
-    console.log("[Debug] IV Hex:", ivHex);
-    console.log("[Debug] Ciphertext Hex (first 20 chars):", encryptedHex.substring(0, 20));
 
     // 3. Parse components
     const iv = CryptoJS.enc.Hex.parse(ivHex);
@@ -49,7 +44,6 @@ export const decryptData = <T>(encryptedString: string): T | null => {
       return null;
     }
 
-    console.log("[Debug] Decryption Success! Length:", decryptedString.length);
     
     // 6. Parse JSON
     return JSON.parse(decryptedString) as T;
