@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px; /* Matches your navItem padding exactly */
+  
+  /* Premium, subtle dark mode styling */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  
+  cursor: default;
+  transition: all 0.2s ease;
+}
+
+.container:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.icon {
+  color: #f59e0b; /* Brand gold matching your JEE Archive logo */
+}
+
+.textBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.days {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color, #ffffff);
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dashboard-secondary-text-color, #a0a0a0);
+}

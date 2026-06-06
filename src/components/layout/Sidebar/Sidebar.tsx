@@ -24,6 +24,9 @@ import { useAuthStore, useUserStore } from "@/store";
 import { toast } from "sonner";
 import { LogoutConfirmModal } from "../LogoutConfirmPopup/LogoutConfirmModal";
 
+// 🔥 IMPORT THE COUNTDOWN COMPONENT
+import { JeeCountdown } from "@/components/shared/JeeCountdown/JeeCountdown";
+
 export interface SidebarProps {
   toggleSidebar: () => void;
 }
@@ -79,7 +82,6 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
 
   const secondaryLinks: NavItem[] = [
     { id: "profile", label: "Profile", href: "/profile", icon: <FiUser size={16} /> },
-    // { id: "settings", label: "Settings", href: "/settings", icon: <FiSettings size={16} /> },
     { id: "help", label: "Help & Support", href: "/help-&-support", icon: <FiHelpCircle size={16} /> },
   ];
 
@@ -194,24 +196,31 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
           </nav>
         </div>
 
-        {/* Footer */}
-        <div className={styles.footer}>
-          <div className={styles.footerProfile}>
-            <div className={styles.footerAvatar}>
-              <span>{initials}</span>
+        {/* 🔥 BOTTOM SECTION WRAPPER TO PUSH BOTH COUNTDOWN AND FOOTER DOWN */}
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
+          
+          {/* Perfectly full-width with the rest of the sidebar items */}
+          <JeeCountdown />
+
+          {/* Footer */}
+          <div className={styles.footer}>
+            <div className={styles.footerProfile}>
+              <div className={styles.footerAvatar}>
+                <span>{initials}</span>
+              </div>
+              <div className={styles.footerInfo}>
+                <span className={styles.footerName}>{displayName}</span>
+                <span className={styles.footerTag}>{displayEmail}</span>
+              </div>
             </div>
-            <div className={styles.footerInfo}>
-              <span className={styles.footerName}>{displayName}</span>
-              <span className={styles.footerTag}>{displayEmail}</span>
-            </div>
+            <button
+              className={styles.footerAction}
+              aria-label="Logout"
+              onClick={openLogoutModal}
+            >
+              <FiLogOut size={16} />
+            </button>
           </div>
-          <button
-            className={styles.footerAction}
-            aria-label="Logout"
-            onClick={openLogoutModal}
-          >
-            <FiLogOut size={16} />
-          </button>
         </div>
       </aside>
 
