@@ -4,7 +4,7 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import styles from "./header.module.css";
 import { PiSidebar, PiDiscordLogo, PiFire } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline, IoTimeOutline } from "react-icons/io5";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiTarget } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
 import { useUserStore } from "@/store";
 import { useStreakStore } from "@/store/useStreakStore";
@@ -13,6 +13,7 @@ import { useNotificationStore } from "@/store/useNotificationStore";
 import { NotificationPopup } from "@/components/popups/NotificationPopup/NotificationPopup";
 // 🔥 Import the Streak Popup
 import { StreakPopup } from "@/components/popups/StreakPopup/StreakPopup";
+import { DailyGoalPopup } from "@/components/popups/DailyGoalPopup/DailyGoalPopup";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -68,6 +69,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
 
   const [renderTick, setRenderTick] = useState(0);
   const previousPathnameRef = useRef(pathname);
+  const [isGoalOpen, setIsGoalOpen] = useState(false);
 
   // 🔥 NEW: The Bulletproof Global Watcher for the Streak Popup
   useEffect(() => {
@@ -231,6 +233,23 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           <span className={styles.streakText}>{currentStreak}</span>
           <PiFire size={18} className={styles.streakIcon} />
         </button>
+
+        <div style={{ position: 'relative' }}>
+          <button 
+            id="daily-goal-btn"
+            type="button" 
+            className={styles.iconButton} 
+            data-title="Daily Goals"
+            onClick={() => setIsGoalOpen(!isGoalOpen)}
+          >
+            <FiTarget size={16} />
+          </button>
+          
+          <DailyGoalPopup 
+            isOpen={isGoalOpen} 
+            onClose={() => setIsGoalOpen(false)} 
+          />
+        </div>
         
         <a 
           href="https://discord.com/invite/8Q9Nb2fATj" 
