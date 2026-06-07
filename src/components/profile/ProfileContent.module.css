@@ -15,30 +15,15 @@
 .topSection {
   display: grid;
   grid-template-columns: 180px 1fr;
-  gap: 12px;
+  gap: 16px; /* Slightly increased gap to account for floating labels */
   margin-bottom: 12px;
 }
 
-.avatarCard,
-.infoCard,
-.actionCard {
+.avatarCard {
   background: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 10px;
-  padding: 12px 14px;
-}
-
-.actionCard {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.actionCard button {
-  text-align: center;
-}
-
-.avatarCard {
+  padding: 14px 16px;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -55,7 +40,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 .avatarInitial {
@@ -67,29 +51,71 @@
 .infoWrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px; /* Spaced out so labels don't collide */
+  margin-top: 6px; 
 }
 
-.rowHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ───────── THE NEW SLEEK OUTLINED BOXES ───────── */
+
+.infoCard {
+  position: relative;
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: border-color 0.2s ease;
 }
 
-.label {
+.infoCardEditing {
+  border-color: var(--dashboard-highlight-color, #3b82f6);
+}
+
+.floatingLabel {
+  position: absolute;
+  top: -8px; /* Sits perfectly on the top border */
+  left: 12px;
+  background: var(--dashboard-background-color); /* Cutout effect */
+  padding: 0 4px;
   font-size: 11px;
   font-weight: 600;
   color: var(--dashboard-secondary-text-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  transition: color 0.2s ease;
+}
+
+.floatingLabelEditing {
+  color: var(--dashboard-highlight-color, #3b82f6);
+}
+
+.floatingEditBtn {
+  position: absolute;
+  right: 12px;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.floatingEditBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .editIcon {
   color: var(--dashboard-icons-color);
-  cursor: pointer;
+  font-size: 13px;
+  transition: color 0.2s;
 }
 
-.value {
+.floatingEditBtn:hover .editIcon {
+  color: var(--dashboard-primary-text-color);
+}
+
+.valueContainer {
   font-size: 14px;
   font-weight: 500;
   color: var(--dashboard-primary-text-color);
@@ -100,49 +126,81 @@
   color: var(--dashboard-icons-color);
   line-height: 1.5;
   opacity: 0.7;
+  margin-top: 4px;
 }
 
-.logoutBtn {
-  background: transparent;
-  border: none;
-  color: var(--dashboard-physics-color);
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
+/* ───────── EDIT MODE ADDITIONS ───────── */
+
+.editBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   width: 100%;
-  text-align: left;
-  padding: 0;
 }
 
-.actionCard {
-  margin-top: 0;
-}
-
-@media (max-width: 768px) {
-  .topSection {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ───────── DETAILS SECTION ───────── */
-
-.detailsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.sectionHeading {
-  font-size: 16px;
-  font-weight: 600;
+.editInput {
+  background: transparent;
+  border: none; /* No inner border, the box IS the border */
   color: var(--dashboard-primary-text-color);
-  margin-left: 4px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  outline: none;
+  font-family: inherit;
 }
 
-.formGrid {
+.editInput::placeholder {
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.6;
+}
+
+.editActions {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+
+.saveBtnPrimary {
+  background: var(--dashboard-primary-text-color);
+  color: #000;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.saveBtnPrimary:hover {
+  opacity: 0.9;
+}
+
+.saveBtnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  background: transparent;
+  color: var(--dashboard-secondary-text-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color);
+}
+
+.cancelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ───────── CUSTOM DROPDOWN ───────── */
@@ -153,18 +211,11 @@
   font-size: 14px;
 }
 
-.customSelectTrigger {
-  width: 100%;
+.selectTrigger {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  color: var(--dashboard-primary-text-color);
-  font-weight: 500;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
   text-align: left;
 }
 
@@ -186,10 +237,9 @@
 .dropdownMenu {
   position: absolute;
   top: 100%;
-  left: 0;
-  min-width: 100%;
-  width: max-content;
-  margin-top: 8px;
+  left: -16px; /* Pulls it flush with the outer box padding */
+  width: calc(100% + 32px); /* Expands to match outer box width */
+  margin-top: 14px;
   background-color: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 8px;
@@ -210,7 +260,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 8px 12px;
   cursor: pointer;
   border-radius: 4px;
   transition: background 0.1s;
@@ -223,98 +273,53 @@
   color: var(--dashboard-primary-text-color);
 }
 
-.itemSelected {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-highlight-color, #fff);
+/* ───────── MISC DETAILS ───────── */
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.sectionHeading {
+  font-size: 16px;
   font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  margin-left: 4px;
 }
 
-.optionContent {
+.formGrid {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 20px; /* Space for floating labels */
 }
 
-.optionIcon {
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.checkIcon {
-  color: var(--dashboard-highlight-color, #22c55e);
-  flex-shrink: 0;
-  margin-left: 8px;
-}
-
-/* ───────── MOBILE INPUT ───────── */
-
-.mobileInputGroup {
+.actionCard {
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 8px;
+  padding: 14px 16px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0;
-  width: 100%;
+  margin-top: 12px;
 }
 
-.countryDropdownWrapper {
-  min-width: 100px;
-  border-right: 1px solid var(--dashboard-sidebar-border-color);
-  padding-right: 10px;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.styledInput {
+.logoutBtn {
   background: transparent;
   border: none;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  padding: 0;
-  outline: none;
-  flex: 1;
-  font-family: inherit;
-  min-width: 0;
-}
-
-.styledInput::-webkit-outer-spin-button,
-.styledInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.styledInput[type="number"] {
-  -moz-appearance: textfield;
-}
-
-.styledInput::placeholder {
-  color: var(--dashboard-icons-color);
-  opacity: 0.5;
-}
-
-/* ───────── SAVE BUTTON ───────── */
-
-.saveActionRow {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.saveBtn {
-  background-color: var(--dashboard-primary-text-color);
-  color: #000;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 13px;
+  color: var(--dashboard-physics-color);
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  width: 100%;
+  text-align: center;
+  padding: 0;
 }
 
-.saveBtn:hover {
-  opacity: 0.9;
-}
-
-.saveBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+@media (max-width: 768px) {
+  .topSection {
+    grid-template-columns: 1fr;
+  }
 }
