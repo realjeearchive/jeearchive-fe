@@ -192,16 +192,18 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
                   </li>
                 ))}
               </ul>
+              
+              {/* 🔥 MOVED HERE: Just below the Account links */}
+              <div style={{ marginTop: "8px" }}>
+                <JeeCountdown />
+              </div>
+              
             </div>
           </nav>
         </div>
 
-        {/* 🔥 BOTTOM SECTION WRAPPER TO PUSH BOTH COUNTDOWN AND FOOTER DOWN */}
-        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
-          
-          {/* Perfectly full-width with the rest of the sidebar items */}
-          <JeeCountdown />
-
+        {/* BOTTOM FOOTER SECTION */}
+        <div style={{ marginTop: "auto" }}>
           {/* Footer */}
           <div className={styles.footer}>
             <div className={styles.footerProfile}>

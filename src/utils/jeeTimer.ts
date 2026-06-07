@@ -39,17 +39,17 @@ export function getJeeDaysLeft(userClass?: string) {
   if (nowMs < mains1Date) {
     return {
       days: Math.ceil((mains1Date - nowMs) / msPerDay),
-      label: `Mains (Jan '${shortYear})`
+      label: `JEE Mains`
     };
   } else if (nowMs < mains2Date) {
     return {
       days: Math.ceil((mains2Date - nowMs) / msPerDay),
-      label: `Mains (Apr '${shortYear})`
+      label: `JEE Mains`
     };
   } else if (nowMs < advDate) {
     return {
       days: Math.ceil((advDate - nowMs) / msPerDay),
-      label: `Advanced ('${shortYear})`
+      label: `JEE Advanced`
     };
   }
 
