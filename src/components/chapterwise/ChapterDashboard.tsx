@@ -28,35 +28,86 @@ interface ChapterDashboardProps {
   chapterName: string;
 }
 
-// 🔥 FIX 1: Smarter Preview Parser that respects Latex.tsx heuristics
+// ─── Subject Icons (matching ChapterWiseQuestionsClient) ───────────────────
+function PhysicsIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      <circle cx="16" cy="16" r="2.5" fill="#60C6FF" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.9" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.6"
+        transform="rotate(60 16 16)" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.35"
+        transform="rotate(-60 16 16)" />
+    </svg>
+  );
+}
+
+function ChemistryIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      <path
+        d="M12 4 L12 14 L6.5 24 Q5.5 26 7 27.5 Q8 28.5 10 28.5 L22 28.5 Q24 28.5 25 27.5 Q26.5 26 25.5 24 L20 14 L20 4 Z"
+        stroke="#4ADE80" strokeWidth="1.7" fill="none" strokeLinejoin="round"
+      />
+      <path
+        d="M9 22 Q10 20.5 16 21 Q22 21.5 23 22 L25.2 26 Q24.5 27.5 22 27.5 L10 27.5 Q7.5 27.5 6.8 26 Z"
+        fill="#4ADE80" opacity="0.3"
+      />
+      <circle cx="14" cy="24.5" r="1" fill="#4ADE80" opacity="0.7" />
+      <circle cx="18" cy="23" r="0.7" fill="#4ADE80" opacity="0.5" />
+      <line x1="12" y1="8" x2="20" y2="8" stroke="#4ADE80" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MathsIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      <path
+        d="M22 6 L10 6 L17.5 15.5 L10 25 L22 25"
+        stroke="#C084FC" strokeWidth="2" fill="none"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+      <line x1="10" y1="6" x2="22" y2="6" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
+      <line x1="10" y1="25" x2="22" y2="25" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
+      <line x1="25" y1="10" x2="25" y2="14" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+      <line x1="23" y1="12" x2="27" y2="12" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+    </svg>
+  );
+}
+
+function getSubjectIcon(subject: string) {
+  if (subject.toLowerCase().includes("physic")) return <PhysicsIcon />;
+  if (subject.toLowerCase().includes("chemis")) return <ChemistryIcon />;
+  return <MathsIcon />;
+}
+
+function getSubjectIconClass(subject: string) {
+  if (subject.toLowerCase().includes("physic")) return Styles.iconContainerPhysics;
+  if (subject.toLowerCase().includes("chemis")) return Styles.iconContainerChemistry;
+  return Styles.iconContainerMaths;
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────
 const prepareForPreview = (html: string) => {
   if (!html) return "";
-  
-  // Convert break/block tags to spaces so words don't merge (e.g. "Force<br>$$F$$" -> "Force $$F$$")
   let text = html.replace(/<br\s*\/?>/gi, " ");
   text = text.replace(/<\/p>|<\/div>|<\/li>/gi, " ");
-  
-  // Strip all remaining HTML tags
   text = text.replace(/<[^>]*>?/gm, " ");
-  
-  // Collapse multiple spaces into one
   text = text.replace(/\s+/g, " ").trim();
-  
-  // Convert Block Math to Inline Math so it doesn't break the single-line row layout
   text = text.replace(/\$\$/g, "$");
   text = text.replace(/\\\[/g, "\\(");
   text = text.replace(/\\\]/g, "\\)");
-  
   return text;
 };
 
-// Helper for Session Dropdown formatting
 const formatSession = (sess: string) => {
   if (!sess) return "";
   const parts = sess.replace(/_/g, " ").split(" ");
   return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(" ");
 };
 
+// ─── Component ─────────────────────────────────────────────────────────────
 export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   data,
   subject,
@@ -128,7 +179,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       const sMatch =
         selectedSessions.length === 0 ||
         (q.papers?.session !== undefined && selectedSessions.includes(q.papers.session));
-
       const dateStr =
         q.papers?.date && q.papers?.month
           ? `${q.papers.date} ${q.papers.month}`
@@ -136,7 +186,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       const dMatch =
         selectedDates.length === 0 ||
         (dateStr !== null && selectedDates.includes(dateStr));
-
       return yMatch && sMatch && dMatch;
     });
     return Array.from(
@@ -147,7 +196,6 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-
       if (filterRef.current && !filterRef.current.contains(target)) {
         setIsFilterOpen(false);
         setOpenDropdown(null);
@@ -155,38 +203,31 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
         setOpenDropdown(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🔥 FIX 2: Advanced Chronological Sorting
   const sortedBaseQuestions = [...baseQuestions].sort((a, b) => {
-    // 1. Sort by Year (Descending: 2026 -> 2025)
     const yearA = a.papers?.year || 0;
     const yearB = b.papers?.year || 0;
     if (yearA !== yearB) return yearB - yearA;
 
-    // 2. Sort by Session (Ascending: Session 1 -> Session 2)
     const sessionA = a.papers?.session || "";
     const sessionB = b.papers?.session || "";
     if (sessionA !== sessionB) return sessionA.localeCompare(sessionB);
 
-    // 3. Sort by Month (Chronological)
     const months: Record<string, number> = {
       january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
-      july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
+      july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
     };
     const monthA = months[(a.papers?.month || "").toLowerCase()] || 99;
     const monthB = months[(b.papers?.month || "").toLowerCase()] || 99;
     if (monthA !== monthB) return monthA - monthB;
 
-    // 4. Sort by Date (Numerical Ascending)
     const dateA = parseInt(a.papers?.date || "0");
     const dateB = parseInt(b.papers?.date || "0");
     if (dateA !== dateB) return dateA - dateB;
 
-    // 5. Sort by Shift (Morning before Evening)
     const shiftA = a.papers?.shift?.toLowerCase() || "";
     const shiftB = b.papers?.shift?.toLowerCase() || "";
     if (shiftA !== shiftB) {
@@ -197,10 +238,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       return shiftA.localeCompare(shiftB);
     }
 
-    // 6. Fallback to Question Number
-    const numA = a.questionNumber || 0;
-    const numB = b.questionNumber || 0;
-    return numA - numB;
+    return (a.questionNumber || 0) - (b.questionNumber || 0);
   });
 
   const activeQuestions = sortedBaseQuestions.filter((q, index) => {
@@ -216,20 +254,14 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     const p = q.papers;
     if (selectedYears.length > 0 && (!p?.year || !selectedYears.includes(p.year)))
       return false;
-    if (
-      selectedSessions.length > 0 &&
-      (!p?.session || !selectedSessions.includes(p.session))
-    )
+    if (selectedSessions.length > 0 && (!p?.session || !selectedSessions.includes(p.session)))
       return false;
 
     const dateStr = p?.date && p?.month ? `${p.date} ${p.month}` : null;
     if (selectedDates.length > 0 && (!dateStr || !selectedDates.includes(dateStr)))
       return false;
 
-    if (
-      selectedShifts.length > 0 &&
-      (!p?.shift || !selectedShifts.includes(p.shift))
-    )
+    if (selectedShifts.length > 0 && (!p?.shift || !selectedShifts.includes(p.shift)))
       return false;
 
     return true;
@@ -244,7 +276,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
     setOpenDropdown(null);
   };
 
-  const radius = 64;
+  const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const progressPercentage =
     stats.totalQuestions > 0
@@ -269,47 +301,33 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   const practiceUrl = useMemo(() => {
     const params = new URLSearchParams();
     params.set("type", activeFilter.toLowerCase());
-
     if (selectedYears.length > 0) params.set("years", selectedYears.join(","));
-    if (selectedSessions.length > 0)
-      params.set("sessions", selectedSessions.join(","));
+    if (selectedSessions.length > 0) params.set("sessions", selectedSessions.join(","));
     if (selectedDates.length > 0) params.set("dates", selectedDates.join(","));
     if (selectedShifts.length > 0) params.set("shifts", selectedShifts.join(","));
-
     return `/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?${params.toString()}`;
-  }, [
-    activeFilter,
-    selectedYears,
-    selectedSessions,
-    selectedDates,
-    selectedShifts,
-    subject,
-    divisionSlug,
-    chapterSlug,
-  ]);
+  }, [activeFilter, selectedYears, selectedSessions, selectedDates, selectedShifts, subject, divisionSlug, chapterSlug]);
 
   const getQuestionUrl = (questionId: string) => {
     const params = new URLSearchParams();
     params.set("type", activeFilter.toLowerCase());
     params.set("q", questionId);
-
     if (selectedYears.length > 0) params.set("years", selectedYears.join(","));
-    if (selectedSessions.length > 0)
-      params.set("sessions", selectedSessions.join(","));
+    if (selectedSessions.length > 0) params.set("sessions", selectedSessions.join(","));
     if (selectedDates.length > 0) params.set("dates", selectedDates.join(","));
     if (selectedShifts.length > 0) params.set("shifts", selectedShifts.join(","));
-
     return `/chapter-wise-questions/${subject}/${divisionSlug}/${chapterSlug}/practice?${params.toString()}`;
   };
 
   return (
     <div className={Styles.container}>
+      {/* ─── SIDEBAR ───────────────────────────────────────────────────── */}
       <aside className={Styles.sidebar} aria-label="Chapter information and progress">
         <div className={Styles.card}>
-          <div className={Styles.iconBox} aria-hidden="true">
-            <span className={Styles.iconLetter} style={{ color: subjectColor }}>
-              {subject.charAt(0).toUpperCase()}
-            </span>
+
+          {/* Subject Icon — matches ChapterWiseQuestionsClient style */}
+          <div className={`${Styles.graphicIconContainer} ${getSubjectIconClass(subject)}`} aria-hidden="true">
+            {getSubjectIcon(subject)}
           </div>
 
           <h1 className={Styles.title}>{chapterName}</h1>
@@ -320,10 +338,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
           {chapterData && (
             <div className={Styles.syllabusWrapper}>
               {!chapterData.isJeeMain && !chapterData.isJeeAdvanced ? (
-                <span
-                  className={Styles.badgeExcluded}
-                  style={{ width: "fit-content" }}
-                >
+                <span className={Styles.badgeExcluded} style={{ width: "fit-content" }}>
                   <Minus size={12} strokeWidth={3} aria-hidden="true" /> Excluded Chapter
                 </span>
               ) : (
@@ -355,6 +370,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
             Practice {activeFilter}
           </Link>
 
+          {/* Search */}
           <div className={Styles.sidebarSearchWrapper}>
             <span className={Styles.sectionLabel}>SEARCH</span>
             <div className={Styles.searchContainer}>
@@ -370,18 +386,22 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
             </div>
           </div>
 
+          {/* Progress */}
           <div className={Styles.progressContainer}>
             <div className={Styles.progressHeader}>
               <span>Progress</span>
             </div>
             <div className={Styles.progressContent}>
-              <div className={Styles.chartWrapper} aria-label={`Progress: ${stats.totalUniqueSolved} of ${stats.totalQuestions} solved`}>
-                <svg className={Styles.svgRing} viewBox="0 0 140 140" aria-hidden="true">
-                  <circle className={Styles.ringBg} cx="70" cy="70" r={radius} />
+              <div
+                className={Styles.chartWrapper}
+                aria-label={`Progress: ${stats.totalUniqueSolved} of ${stats.totalQuestions} solved`}
+              >
+                <svg className={Styles.svgRing} viewBox="0 0 120 120" aria-hidden="true">
+                  <circle className={Styles.ringBg} cx="60" cy="60" r={radius} />
                   <circle
                     className={Styles.ringFill}
-                    cx="70"
-                    cy="70"
+                    cx="60"
+                    cy="60"
                     r={radius}
                     style={{
                       strokeDasharray: circumference,
@@ -392,18 +412,15 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                 </svg>
                 <div className={Styles.chartText}>
                   <div className={Styles.scoreLine}>
-                    <span className={Styles.solvedBig}>
-                      {stats.totalUniqueSolved}
-                    </span>
-                    <span className={Styles.totalSmall}>
-                      /{stats.totalQuestions}
-                    </span>
+                    <span className={Styles.solvedBig}>{stats.totalUniqueSolved}</span>
+                    <span className={Styles.totalSmall}>/{stats.totalQuestions}</span>
                   </div>
                   <div className={Styles.solvedLabel}>
-                    <Check size={12} strokeWidth={4} aria-hidden="true" /> Solved
+                    <Check size={11} strokeWidth={4} aria-hidden="true" /> Solved
                   </div>
                 </div>
               </div>
+
               <div className={Styles.statColumn}>
                 <div className={Styles.statBox}>
                   <span className={Styles.mainsLabel}>Mains</span>
@@ -414,8 +431,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                 <div className={Styles.statBox}>
                   <span className={Styles.advancedLabel}>Advanced</span>
                   <span className={Styles.statValue}>
-                    {stats.uniqueSolvedAdvancedQuestions}/
-                    {stats.totalAdvancedQuestions}
+                    {stats.uniqueSolvedAdvancedQuestions}/{stats.totalAdvancedQuestions}
                   </span>
                 </div>
               </div>
@@ -424,10 +440,12 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
         </div>
       </aside>
 
+      {/* ─── MAIN CONTENT ──────────────────────────────────────────────── */}
       <main className={Styles.content} aria-label="Questions list">
         <div className={Styles.listHeader}>
           <div className={Styles.headerControls}>
-            {/* FILTER BUTTON */}
+
+            {/* Filter button */}
             <div className={Styles.lcFilterContainer} ref={filterRef}>
               <button
                 className={`${Styles.lcFilterToggle} ${activeFilterCount > 0 ? Styles.lcFilterActive : ""}`}
@@ -436,15 +454,14 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                 aria-expanded={isFilterOpen}
               >
                 <Filter size={16} strokeWidth={2} aria-hidden="true" />
-                {activeFilterCount > 0 && (
-                  <span className={Styles.lcFilterDot} />
-                )}
+                {activeFilterCount > 0 && <span className={Styles.lcFilterDot} />}
               </button>
 
               {isFilterOpen && (
                 <div className={Styles.lcPopover} role="dialog" aria-label="Filter questions">
                   <div className={Styles.lcRowsContainer}>
-                    {/* 1. YEAR ROW */}
+
+                    {/* Year */}
                     {availableYears.length > 0 && (
                       <div className={Styles.lcRow}>
                         <div className={Styles.lcLabel}>
@@ -453,9 +470,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                         <div className={Styles.lcValueWrapper} data-dropdown>
                           <div
                             className={Styles.lcValueBox}
-                            onClick={() =>
-                              setOpenDropdown(openDropdown === "year" ? null : "year")
-                            }
+                            onClick={() => setOpenDropdown(openDropdown === "year" ? null : "year")}
                             role="button"
                             aria-expanded={openDropdown === "year"}
                           >
@@ -466,11 +481,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedYears[0]
                                 : `${selectedYears.length} selected`}
                             </span>
-                            <ChevronDown
-                              size={14}
-                              color="var(--dashboard-secondary-text-color)"
-                              aria-hidden="true"
-                            />
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
                           </div>
                           {openDropdown === "year" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select years">
@@ -482,9 +493,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                     checked={selectedYears.includes(yr)}
                                     onChange={() =>
                                       setSelectedYears((prev) =>
-                                        prev.includes(yr)
-                                          ? prev.filter((y) => y !== yr)
-                                          : [...prev, yr]
+                                        prev.includes(yr) ? prev.filter((y) => y !== yr) : [...prev, yr]
                                       )
                                     }
                                   />
@@ -494,17 +503,13 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                             </div>
                           )}
                         </div>
-                        <button
-                          className={Styles.lcRemoveIcon}
-                          onClick={() => setSelectedYears([])}
-                          aria-label="Clear year filter"
-                        >
+                        <button className={Styles.lcRemoveIcon} onClick={() => setSelectedYears([])} aria-label="Clear year filter">
                           <Minus size={16} aria-hidden="true" />
                         </button>
                       </div>
                     )}
 
-                    {/* 2. SESSION ROW */}
+                    {/* Session */}
                     {selectedYears.length > 0 && availableSessions.length > 0 && (
                       <div className={Styles.lcRow}>
                         <div className={Styles.lcLabel}>
@@ -513,15 +518,10 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                         <div className={Styles.lcValueWrapper} data-dropdown>
                           <div
                             className={Styles.lcValueBox}
-                            onClick={() =>
-                              setOpenDropdown(
-                                openDropdown === "session" ? null : "session"
-                              )
-                            }
+                            onClick={() => setOpenDropdown(openDropdown === "session" ? null : "session")}
                             role="button"
                             aria-expanded={openDropdown === "session"}
                           >
-                            {/* 🔥 FIX 3: Proper Title Case format for Display */}
                             <span className={Styles.lcSelectedText}>
                               {selectedSessions.length === 0
                                 ? "Select session..."
@@ -529,11 +529,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? formatSession(selectedSessions[0])
                                 : `${selectedSessions.length} selected`}
                             </span>
-                            <ChevronDown
-                              size={14}
-                              color="var(--dashboard-secondary-text-color)"
-                              aria-hidden="true"
-                            />
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
                           </div>
                           {openDropdown === "session" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select sessions">
@@ -545,9 +541,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                     checked={selectedSessions.includes(sess)}
                                     onChange={() =>
                                       setSelectedSessions((prev) =>
-                                        prev.includes(sess)
-                                          ? prev.filter((s) => s !== sess)
-                                          : [...prev, sess]
+                                        prev.includes(sess) ? prev.filter((s) => s !== sess) : [...prev, sess]
                                       )
                                     }
                                   />
@@ -557,17 +551,13 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                             </div>
                           )}
                         </div>
-                        <button
-                          className={Styles.lcRemoveIcon}
-                          onClick={() => setSelectedSessions([])}
-                          aria-label="Clear session filter"
-                        >
+                        <button className={Styles.lcRemoveIcon} onClick={() => setSelectedSessions([])} aria-label="Clear session filter">
                           <Minus size={16} aria-hidden="true" />
                         </button>
                       </div>
                     )}
 
-                    {/* 3. DATE ROW */}
+                    {/* Date */}
                     {selectedSessions.length > 0 && availableDates.length > 0 && (
                       <div className={Styles.lcRow}>
                         <div className={Styles.lcLabel}>
@@ -576,9 +566,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                         <div className={Styles.lcValueWrapper} data-dropdown>
                           <div
                             className={Styles.lcValueBox}
-                            onClick={() =>
-                              setOpenDropdown(openDropdown === "date" ? null : "date")
-                            }
+                            onClick={() => setOpenDropdown(openDropdown === "date" ? null : "date")}
                             role="button"
                             aria-expanded={openDropdown === "date"}
                           >
@@ -589,11 +577,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedDates[0]
                                 : `${selectedDates.length} selected`}
                             </span>
-                            <ChevronDown
-                              size={14}
-                              color="var(--dashboard-secondary-text-color)"
-                              aria-hidden="true"
-                            />
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
                           </div>
                           {openDropdown === "date" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select dates">
@@ -605,9 +589,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                     checked={selectedDates.includes(dateStr)}
                                     onChange={() =>
                                       setSelectedDates((prev) =>
-                                        prev.includes(dateStr)
-                                          ? prev.filter((d) => d !== dateStr)
-                                          : [...prev, dateStr]
+                                        prev.includes(dateStr) ? prev.filter((d) => d !== dateStr) : [...prev, dateStr]
                                       )
                                     }
                                   />
@@ -617,17 +599,13 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                             </div>
                           )}
                         </div>
-                        <button
-                          className={Styles.lcRemoveIcon}
-                          onClick={() => setSelectedDates([])}
-                          aria-label="Clear date filter"
-                        >
+                        <button className={Styles.lcRemoveIcon} onClick={() => setSelectedDates([])} aria-label="Clear date filter">
                           <Minus size={16} aria-hidden="true" />
                         </button>
                       </div>
                     )}
 
-                    {/* 4. SHIFT ROW */}
+                    {/* Shift */}
                     {selectedDates.length > 0 && availableShifts.length > 0 && (
                       <div className={Styles.lcRow}>
                         <div className={Styles.lcLabel}>
@@ -636,11 +614,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                         <div className={Styles.lcValueWrapper} data-dropdown>
                           <div
                             className={Styles.lcValueBox}
-                            onClick={() =>
-                              setOpenDropdown(
-                                openDropdown === "shift" ? null : "shift"
-                              )
-                            }
+                            onClick={() => setOpenDropdown(openDropdown === "shift" ? null : "shift")}
                             role="button"
                             aria-expanded={openDropdown === "shift"}
                           >
@@ -651,11 +625,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedShifts[0]
                                 : `${selectedShifts.length} selected`}
                             </span>
-                            <ChevronDown
-                              size={14}
-                              color="var(--dashboard-secondary-text-color)"
-                              aria-hidden="true"
-                            />
+                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
                           </div>
                           {openDropdown === "shift" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select shifts">
@@ -667,9 +637,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                     checked={selectedShifts.includes(shift)}
                                     onChange={() =>
                                       setSelectedShifts((prev) =>
-                                        prev.includes(shift)
-                                          ? prev.filter((s) => s !== shift)
-                                          : [...prev, shift]
+                                        prev.includes(shift) ? prev.filter((s) => s !== shift) : [...prev, shift]
                                       )
                                     }
                                   />
@@ -679,11 +647,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                             </div>
                           )}
                         </div>
-                        <button
-                          className={Styles.lcRemoveIcon}
-                          onClick={() => setSelectedShifts([])}
-                          aria-label="Clear shift filter"
-                        >
+                        <button className={Styles.lcRemoveIcon} onClick={() => setSelectedShifts([])} aria-label="Clear shift filter">
                           <Minus size={16} aria-hidden="true" />
                         </button>
                       </div>
@@ -699,26 +663,18 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
               )}
             </div>
 
-            {/* TABS */}
+            {/* Tabs */}
             <nav className={Styles.filterTabs} aria-label="Exam type filter">
               <button
                 className={`${Styles.filterBtn} ${activeFilter === "Main" ? Styles.activeFilter : ""}`}
-                onClick={() => {
-                  setActiveFilter("Main");
-                  clearFilters();
-                  setSearchQuery("");
-                }}
+                onClick={() => { setActiveFilter("Main"); clearFilters(); setSearchQuery(""); }}
                 aria-pressed={activeFilter === "Main"}
               >
                 JEE Main
               </button>
               <button
                 className={`${Styles.filterBtn} ${activeFilter === "Advanced" ? Styles.activeFilter : ""}`}
-                onClick={() => {
-                  setActiveFilter("Advanced");
-                  clearFilters();
-                  setSearchQuery("");
-                }}
+                onClick={() => { setActiveFilter("Advanced"); clearFilters(); setSearchQuery(""); }}
                 aria-pressed={activeFilter === "Advanced"}
               >
                 JEE Advanced
@@ -743,11 +699,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                   <div className={Styles.rowLeft}>
                     <div className={Styles.statusIcon} aria-hidden="true">
                       {isSuccess ? (
-                        <Check
-                          size={16}
-                          strokeWidth={3}
-                          className={Styles.iconSuccess}
-                        />
+                        <Check size={16} strokeWidth={3} className={Styles.iconSuccess} />
                       ) : (
                         <span className={Styles.iconEmpty}></span>
                       )}
@@ -755,18 +707,14 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                     <span className={Styles.qText}>
                       {index + 1}.{" "}
                       {plainTextContent.length === 0 ? (
-                        <span className="italic text-gray-500">
-                          Image Based Question
-                        </span>
+                        <span className="italic text-gray-500">Image Based Question</span>
                       ) : (
                         <Latex>{plainTextContent}</Latex>
                       )}
                     </span>
                   </div>
                   <div className={Styles.rowRight}>
-                    {q.papers && (
-                      <span className={Styles.yearTag}>{q.papers.year}</span>
-                    )}
+                    {q.papers && <span className={Styles.yearTag}>{q.papers.year}</span>}
                     <span className={Styles.tag}>
                       {q.type === "SingleCorrect" ? "Single Choice" : "Numerical"}
                     </span>

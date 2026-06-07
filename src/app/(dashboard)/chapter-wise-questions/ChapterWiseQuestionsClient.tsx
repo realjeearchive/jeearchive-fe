@@ -161,6 +161,89 @@ const SUBJECT_LABELS: Record<string, string> = {
   maths: "Mathematics",
 };
 
+// --- SUBJECT META (total chapters + divisions count) ---
+const SUBJECT_META: Record<string, string> = {
+  physics: "5 Divisions · 30 Chapters",
+  chemistry: "3 Divisions · 31 Chapters",
+  maths: "5 Divisions · 35 Chapters",
+};
+
+// --- Dynamic Subject Icon SVGs ---
+// Physics: atom / orbital rings — blue-teal
+// Chemistry: flask / beaker — green
+// Maths: sigma / function — purple
+
+function PhysicsIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      {/* Nucleus dot */}
+      <circle cx="16" cy="16" r="2.5" fill="#60C6FF" />
+      {/* Orbital ring 1 — horizontal ellipse */}
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.9" />
+      {/* Orbital ring 2 — rotated 60deg */}
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.6"
+        transform="rotate(60 16 16)" />
+      {/* Orbital ring 3 — rotated -60deg */}
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.35"
+        transform="rotate(-60 16 16)" />
+    </svg>
+  );
+}
+
+function ChemistryIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      {/* Flask body */}
+      <path
+        d="M12 4 L12 14 L6.5 24 Q5.5 26 7 27.5 Q8 28.5 10 28.5 L22 28.5 Q24 28.5 25 27.5 Q26.5 26 25.5 24 L20 14 L20 4 Z"
+        stroke="#4ADE80" strokeWidth="1.7" fill="none" strokeLinejoin="round"
+      />
+      {/* Liquid inside flask */}
+      <path
+        d="M9 22 Q10 20.5 16 21 Q22 21.5 23 22 L25.2 26 Q24.5 27.5 22 27.5 L10 27.5 Q7.5 27.5 6.8 26 Z"
+        fill="#4ADE80" opacity="0.3"
+      />
+      {/* Bubbles */}
+      <circle cx="14" cy="24.5" r="1" fill="#4ADE80" opacity="0.7" />
+      <circle cx="18" cy="23" r="0.7" fill="#4ADE80" opacity="0.5" />
+      {/* Flask neck lines */}
+      <line x1="12" y1="8" x2="20" y2="8" stroke="#4ADE80" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MathsIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      {/* Sigma / Summation symbol */}
+      <path
+        d="M22 6 L10 6 L17.5 15.5 L10 25 L22 25"
+        stroke="#C084FC" strokeWidth="2" fill="none"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+      {/* Top bar tick */}
+      <line x1="10" y1="6" x2="22" y2="6" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
+      {/* Bottom bar tick */}
+      <line x1="10" y1="25" x2="22" y2="25" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
+      {/* Small decorative plus in corner */}
+      <line x1="25" y1="10" x2="25" y2="14" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+      <line x1="23" y1="12" x2="27" y2="12" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+    </svg>
+  );
+}
+
+const SUBJECT_ICONS: Record<string, React.ReactNode> = {
+  physics: <PhysicsIcon />,
+  chemistry: <ChemistryIcon />,
+  maths: <MathsIcon />,
+};
+
+const SUBJECT_ICON_CLASS: Record<string, string> = {
+  physics: "iconContainerPhysics",
+  chemistry: "iconContainerChemistry",
+  maths: "iconContainerMaths",
+};
+
 export function ChapterWiseQuestionsClient() {
   const router = useRouter();
 
@@ -189,10 +272,12 @@ export function ChapterWiseQuestionsClient() {
     currentDivisions.find((d) => d.id === activeDivision)?.title || "Chapters";
 
   const subjectLabel = SUBJECT_LABELS[activeSubject] || activeSubject;
+  const subjectMeta = SUBJECT_META[activeSubject] || "";
+  const iconContainerClass = SUBJECT_ICON_CLASS[activeSubject] || "iconContainerPhysics";
+  const totalDivisions = currentDivisions.length;
 
   return (
     <>
-      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -223,7 +308,6 @@ export function ChapterWiseQuestionsClient() {
         }}
       />
 
-      {/* ItemList Schema for chapters */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -250,33 +334,46 @@ export function ChapterWiseQuestionsClient() {
 
       <main className={Styles.pageContainer} aria-label="Chapter-wise JEE practice questions">
         <div className={Styles.splitLayout}>
-          {/* LEFT SIDEBAR */}
+
+          {/* ─── LEFT SIDEBAR ─────────────────────────────────────────── */}
           <aside className={Styles.leftSidebar} aria-label="Subject and division filter">
-            <div className={Styles.cardHeader}>
-              <div className={Styles.iconSquare} aria-hidden="true">
-                C
+
+            {/* HEADER BLOCK — mirrors PYQ exactly */}
+            <div className={Styles.headerBlock}>
+
+              {/* Dynamic subject icon container */}
+              <div className={`${Styles.graphicIconContainer} ${Styles[iconContainerClass]}`}>
+                {SUBJECT_ICONS[activeSubject]}
               </div>
-              <div>
-                <h1 className={Styles.cardTitle}>Chapter-wise</h1>
-                <p className={Styles.cardSubtitle}>JEE Archive • Syllabus</p>
+
+              {/* Title + meta */}
+              <div className={Styles.headerTextGroup}>
+                <h1 className={Styles.cardTitle}>{subjectLabel}</h1>
+                <div className={Styles.metaInfoRow}>
+                  <span>JEE Archive</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>{totalDivisions} Divisions</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>Chapter-wise</span>
+                </div>
               </div>
             </div>
 
-            {/* Subject Tabs */}
-            <nav className={Styles.subjectTabs} aria-label="Select subject">
+            {/* SUBJECT SEGMENTED CONTROL */}
+            <nav className={Styles.segmentedControl} aria-label="Select subject">
               {(["physics", "chemistry", "maths"] as const).map((sub) => (
                 <button
                   key={sub}
                   onClick={() => handleSubjectChange(sub)}
-                  className={`${Styles.subjectBtn} ${activeSubject === sub ? Styles.subjectBtnActive : ""}`}
+                  className={`${Styles.segmentBtn} ${activeSubject === sub ? Styles.segmentActive : ""}`}
                   aria-pressed={activeSubject === sub}
                 >
-                  {sub === "maths" ? "Math" : sub}
+                  {sub === "maths" ? "Math" : sub.charAt(0).toUpperCase() + sub.slice(1)}
                 </button>
               ))}
             </nav>
 
-            {/* Divisions List */}
+            {/* DIVISIONS LIST */}
             <nav className={Styles.divisionsListContainer} aria-label="Select division">
               <span className={Styles.listLabel}>Divisions</span>
               <div className={Styles.divisionsList}>
@@ -295,7 +392,7 @@ export function ChapterWiseQuestionsClient() {
             </nav>
           </aside>
 
-          {/* RIGHT CONTENT */}
+          {/* ─── RIGHT CONTENT ─────────────────────────────────────────── */}
           <section className={Styles.rightContent} aria-label={`${activeDivisionTitle} chapters`}>
             <div className={Styles.scrollContentWrapper}>
               <TestListSection

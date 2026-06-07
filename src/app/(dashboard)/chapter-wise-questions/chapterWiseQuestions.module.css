@@ -1,10 +1,13 @@
+/* =========================================
+   PAGE CONTAINER — identical to PYQ
+   ========================================= */
 .pageContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  height: calc(100vh - 48px - 20px); 
+  height: calc(100vh - 48px - 20px);
   overflow: hidden;
   padding: 20px 0;
   animation: fadeIn 0.3s ease-out forwards;
@@ -12,111 +15,167 @@
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* =========================================
+   SPLIT LAYOUT — identical to PYQ
+   ========================================= */
 .splitLayout {
   display: flex;
   width: 100%;
   height: 100%;
-  gap: 20px;
+  gap: 16px;
   align-items: stretch;
 }
 
-/* --- LEFT SIDEBAR PANEL --- */
+/* =========================================
+   LEFT SIDEBAR — identical width/spacing to PYQ
+   ========================================= */
 .leftSidebar {
-  width: 300px;
+  width: 270px;
   background-color: var(--dashboard-sidebar-background-color, #1A1817);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 12px;
-  padding: 20px;
+  padding: 24px 20px 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   flex-shrink: 0;
   box-sizing: border-box;
-  height: 100%; 
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
-.cardHeader {
+/* =========================================
+   HEADER BLOCK — matches PYQ's leetcodeHeaderBlock
+   ========================================= */
+.headerBlock {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
-.iconSquare {
-  width: 42px;
-  height: 42px;
-  background-color: rgba(245, 158, 11, 0.1);
-  color: var(--dashboard-core-color, #F59E0B);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 10px;
+/* ── Icon Container (base) ── */
+.graphicIconContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 800;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+/* Physics — blue tint */
+.iconContainerPhysics {
+  background-color: rgba(96, 198, 255, 0.12);
+
+}
+
+/* Chemistry — green tint */
+.iconContainerChemistry {
+  background-color: rgba(74, 222, 128, 0.1);
+
+}
+
+/* Maths — purple tint */
+.iconContainerMaths {
+  background-color: rgba(192, 132, 252, 0.1);
+
+}
+
+/* The SVG inside the container */
+.subjectIconSvg {
+  width: 30px;
+  height: 30px;
+}
+
+/* ── Header Text Group ── */
+.headerTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .cardTitle {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 600;
   color: var(--dashboard-primary-text-color, #F4F4F4);
   margin: 0;
   letter-spacing: -0.01em;
 }
 
-.cardSubtitle {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color, #B5B4B4);
-  margin: 2px 0 0 0;
-}
-
-/* Subject Tabs */
-.subjectTabs {
+.metaInfoRow {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.03);
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: 400;
 }
 
-.subjectBtn {
+.metaDivider {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* =========================================
+   SEGMENTED CONTROL — identical to PYQ
+   ========================================= */
+.segmentedControl {
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.segmentBtn {
   flex: 1;
   background: transparent;
   border: none;
-  color: var(--dashboard-secondary-text-color, #B5B4B4);
-  padding: 8px 0;
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 6px;
+  color: #8c8c8c;
+  padding: 6px 4px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+  border-radius: 6px;
   transition: all 0.2s ease;
-  text-transform: uppercase;
+  text-align: center;
 }
 
-.subjectBtn:hover {
+.segmentBtn:hover {
   color: var(--dashboard-primary-text-color, #F4F4F4);
 }
 
-.subjectBtnActive {
+.segmentActive {
   background-color: rgba(255, 255, 255, 0.08);
   color: var(--dashboard-primary-text-color, #F4F4F4);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Divisions List */
+/* =========================================
+   DIVISIONS LIST
+   ========================================= */
 .divisionsListContainer {
   display: flex;
   flex-direction: column;
   gap: 10px;
   flex: 1;
-  min-height: 0; 
+  min-height: 0;
+  margin-top: 4px;
 }
 
 .listLabel {
   font-size: 11px;
   font-weight: 600;
-  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  color: #8c8c8c;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-left: 4px;
@@ -139,9 +198,10 @@
   background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
 }
-.divisionsList:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
-.divisionsList::-webkit-scrollbar-thumb:hover { background: var(--dashboard-core-color, #F59E0B); }
+.divisionsList:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+.divisionsList::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
 
+/* Division row item */
 .divisionRowItem {
   display: flex;
   flex-direction: column;
@@ -149,11 +209,11 @@
   width: 100%;
   padding: 10px 14px;
   background-color: transparent;
-  border: 1px solid transparent;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
   box-sizing: border-box;
+  border: none;
   text-align: left;
 }
 
@@ -162,33 +222,34 @@
 }
 
 .divisionRowActive {
-  background-color: rgba(245, 158, 11, 0.06);
-  border-color: rgba(245, 158, 11, 0.15);
+  background-color: rgba(255, 255, 255, 0.07);
 }
 
 .divisionNameText {
   font-size: 13px;
   font-weight: 500;
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: #8c8c8c;
   transition: color 0.15s ease;
 }
 
 .divisionRowActive .divisionNameText {
-  color: var(--dashboard-core-color, #F59E0B);
+  color: var(--dashboard-primary-text-color, #F4F4F4);
   font-weight: 600;
 }
 
 .divisionMetaText {
   font-size: 11px;
-  color: var(--dashboard-secondary-text-color, #B5B4B4);
+  color: #666;
   margin-top: 2px;
 }
 
-/* --- RIGHT CONTENT (Test List) --- */
+/* =========================================
+   RIGHT CONTENT — identical to PYQ
+   ========================================= */
 .rightContent {
   flex: 1;
   height: 100%;
-  overflow-y: auto; 
+  overflow-y: auto;
   min-width: 0;
   scrollbar-width: none;
   padding: 25px;
@@ -208,11 +269,32 @@
   padding-bottom: 24px;
 }
 
-/* --- RESPONSIVE --- */
+/* =========================================
+   RESPONSIVE
+   ========================================= */
 @media (max-width: 1024px) {
-  .pageContainer { height: auto; overflow: visible; }
-  .splitLayout { flex-direction: column; height: auto; }
-  .leftSidebar { width: 100%; height: auto; }
-  .divisionsList { max-height: 250px; }
-  .rightContent { overflow-y: visible; height: auto; }
+  .pageContainer {
+    height: auto;
+    overflow: visible;
+    padding: 20px 0;
+  }
+  .splitLayout {
+    flex-direction: column;
+    height: auto;
+  }
+  .leftSidebar {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .divisionsListContainer {
+    flex: none;
+  }
+  .divisionsList {
+    max-height: 250px;
+  }
+  .rightContent {
+    overflow-y: visible;
+    height: auto;
+  }
 }
