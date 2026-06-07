@@ -1,0 +1,121 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlayVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  position: relative;
+  background-color: var(--dashboard-sidebar-background-color, #1A1817);
+  border: 1px solid var(--dashboard-sidebar-border-color, rgba(255,255,255,0.06));
+  border-radius: 16px;
+  padding: 32px 40px;
+  width: 90%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modalVisible {
+  transform: scale(1) translateY(0);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-icons-color, #B5B4B4);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color, #FFF);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.iconRing {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Gives it that nice subtle glow */
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); 
+}
+
+.fireIcon {
+  font-size: 32px;
+  color: var(--dashboard-core-color, #F59E0B);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color, #FFF);
+  margin: 0;
+}
+
+.streakBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.streakLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dashboard-secondary-text-color, #B5B4B4);
+}
+
+.streakValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dashboard-core-color, #F59E0B);
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--dashboard-icons-color, #888);
+  margin: 0;
+}

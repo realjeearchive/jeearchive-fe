@@ -11,6 +11,8 @@ import { useStreakStore } from "@/store/useStreakStore";
 
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { NotificationPopup } from "@/components/popups/NotificationPopup/NotificationPopup";
+// 🔥 Import the Streak Popup
+import { StreakPopup } from "@/components/popups/StreakPopup/StreakPopup";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -58,13 +60,32 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
   const profile = useUserStore((s) => s.profile);
   
-  const { streak, loadStreak } = useStreakStore();
+  // 🔥 Updated destructuring to include isPopupOpen and setPopupOpen
+  const { streak, loadStreak, isPopupOpen, setPopupOpen } = useStreakStore();
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { notifications, unreadCount, loadNotifications, markAsRead } = useNotificationStore();
 
   const [renderTick, setRenderTick] = useState(0);
   const previousPathnameRef = useRef(pathname);
+
+  // 🔥 NEW: The Bulletproof Global Watcher for the Streak Popup
+  useEffect(() => {
+    if (streak && streak.questionsToday > 0) {
+      const d = new Date();
+      const todayStr = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      
+      // Use the specific profile ID so logging into a new account resets the check!
+      const userId = profile?.id || "guest";
+      const storageKey = `streakNotified_${userId}`;
+      const lastNotifiedDate = localStorage.getItem(storageKey);
+
+      if (lastNotifiedDate !== todayStr) {
+        localStorage.setItem(storageKey, todayStr);
+        setPopupOpen(true);
+      }
+    }
+  }, [streak, profile?.id, setPopupOpen]);
 
   useEffect(() => {
     loadStreak();
@@ -221,7 +242,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           <PiDiscordLogo size={18} />
         </a>
 
-        {/* 🔥 FIX: Changed to anchor tag for Timer link */}
         <a 
           href="https://timer.jeearchive.com"
           target="_blank"
@@ -232,7 +252,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           <IoTimeOutline size={18} />
         </a>
 
-        {/* 🔥 FIX: Disabled class for Calendar */}
         <button 
           type="button" 
           className={`${styles.iconButton} ${styles.comingSoon}`} 
@@ -242,7 +261,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           <IoCalendarOutline size={16} />
         </button>
 
-        {/* NOTIFICATION BELL & POPUP */}
         <div style={{ position: 'relative' }}>
           <button 
             id="notification-bell-btn"
@@ -265,6 +283,14 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           />
         </div>
       </div>
+
+      {/* 🔥 Render the Streak Popup */}
+      <StreakPopup 
+        isOpen={isPopupOpen} 
+        onClose={() => setPopupOpen(false)} 
+        streakCount={currentStreak} 
+      />
+
     </header>
   );
 };
