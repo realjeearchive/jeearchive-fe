@@ -20,8 +20,9 @@ interface TestListSectionProps {
   onStart: (paperId: string) => void;
   onResume: (paperId: string, sessionId: string) => void;
   onRestart: (paperId: string) => void;
-  onViewAnalytics: (paperId: string) => void;
-  onViewSolutions: (paperId: string) => void;
+  // 🔥 FIX: Change these from paperId to sessionId
+  onViewAnalytics: (sessionId: string) => void;
+  onViewSolutions: (sessionId: string) => void;
 }
 
 const STATUS_LABELS: Record<TestCardItem["status"], string> = {
@@ -64,7 +65,6 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
     setRestartModal({ isOpen: false, testId: null });
   };
 
-  // Handle Escape key for modal
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && restartModal.isOpen) {
@@ -81,7 +81,8 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
         <div className={styles.actionsRow}>
           <button
             className={`${styles.btn} ${styles.btnPrimary}`}
-            onClick={() => onViewAnalytics(item.id)}
+            // 🔥 FIX: Pass sessionId instead of paperId
+            onClick={() => item.sessionId && onViewAnalytics(item.sessionId)}
             aria-label={`View analytics for ${item.title}`}
           >
             <FiBarChart2 size={14} aria-hidden="true" />
@@ -89,7 +90,8 @@ const TestListSection2: React.FC<TestListSectionProps> = ({
           </button>
           <button
             className={`${styles.btn} ${styles.btnSecondary}`}
-            onClick={() => onViewSolutions(item.id)}
+            // 🔥 FIX: Pass sessionId instead of paperId
+            onClick={() => item.sessionId && onViewSolutions(item.sessionId)}
             aria-label={`View solutions for ${item.title}`}
           >
             <FiBookOpen size={14} aria-hidden="true" />

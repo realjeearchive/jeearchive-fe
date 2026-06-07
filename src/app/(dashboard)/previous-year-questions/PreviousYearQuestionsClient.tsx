@@ -170,12 +170,14 @@ export function PreviousYearQuestionsClient() {
     );
   };
 
-  const handleAnalytics = (paperId: string) => {
-    router.push(`/analytics/tests/${paperId}`);
+  // 🔥 FIX: Receive sessionId instead of paperId
+  const handleAnalytics = (sessionId: string) => {
+    router.push(`/analytics/tests/${sessionId}`);
   };
 
-  const handleSolutions = (paperId: string) => {
-    router.push(`/solutions/${paperId}`);
+  // 🔥 FIX: Receive sessionId instead of paperId
+  const handleSolutions = (sessionId: string) => {
+    router.push(`/solutions/${sessionId}`);
   };
 
   return (
