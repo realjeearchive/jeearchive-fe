@@ -1,167 +1,352 @@
+/* =========================================
+   SECTION WRAPPER
+   ========================================= */
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  width: 100%;
 }
 
 .sectionHeader {
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 .heading {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
   margin: 0;
 }
 
-/* --- GRID & CARD --- */
+/* =========================================
+   CARD GRID
+   ========================================= */
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px; /* Tighter gap for a denser, sleeker look */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
 }
 
+/* =========================================
+   CARD BASE
+   ========================================= */
 .card {
-  background: rgba(255, 255, 255, 0.015);
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease;
-  overflow: hidden;
+  padding: 18px;
+  gap: 0;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  overflow: hidden; /* clips the accent bar */
 }
 
 .card:hover {
-  border-color: rgba(245, 158, 11, 0.3); /* Core brand glow on hover */
-  background: rgba(255, 255, 255, 0.03);
+  background-color: rgba(255, 255, 255, 0.038);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 }
 
-/* --- CARD CONTENT --- */
-.cardContent {
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+/* Active / In-Progress card */
+.cardActive {
+  background-color: rgba(232, 124, 30, 0.03);
+  border-color: rgba(232, 124, 30, 0.25);
 }
 
-.headerRow {
+.cardActive:hover {
+  border-color: rgba(232, 124, 30, 0.4);
+  box-shadow: 0 4px 24px rgba(232, 124, 30, 0.1);
+}
+
+/* Completed card — slightly dimmer */
+.cardCompleted {
+  background-color: rgba(255, 255, 255, 0.018);
+}
+
+/* Top accent stripe for in-progress cards */
+.cardAccentBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--dashboard-core-color, #e87c1e) 40%,
+    var(--dashboard-core-color, #e87c1e) 60%,
+    transparent 100%
+  );
+  border-radius: 14px 14px 0 0;
+}
+
+/* =========================================
+   CARD HEADER  (icon left, badge right)
+   ========================================= */
+.cardHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.title {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  line-height: 1.3;
-  margin: 0;
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-/* Status Colors */
-.dotCompleted { background-color: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
-.dotActive { background-color: var(--dashboard-core-color); box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
-.dotNone { background-color: rgba(255, 255, 255, 0.2); }
-
-.meta {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* --- FOOTER & BUTTONS --- */
-.cardFooter {
-  padding: 12px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
-  background: rgba(0, 0, 0, 0.1); /* Slight contrast for the footer */
-  margin-top: auto;
-}
-
-.actionsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.btn {
+/* Slot icon circle */
+.slotIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex: 1; /* Makes buttons share space evenly */
+  flex-shrink: 0;
+}
+
+.slotIconMorning {
+  background-color: rgba(232, 124, 30, 0.12);
+  color: var(--dashboard-core-color, #e87c1e);
+  border: 1px solid rgba(232, 124, 30, 0.18);
+}
+
+.slotIconEvening {
+  background-color: rgba(120, 100, 200, 0.1);
+  color: #a48ee8;
+  border: 1px solid rgba(120, 100, 200, 0.18);
+}
+
+.slotIconNeutral {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Status badge (pill top-right) */
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 4px 9px;
+  border-radius: 20px;
   white-space: nowrap;
 }
 
-/* Primary Action (Analytics / Take Test / Resume) */
-.btnPrimary {
-  background-color: rgba(245, 158, 11, 0.1); 
-  color: var(--dashboard-core-color);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+.statusDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.btnPrimary:hover {
-  background-color: var(--dashboard-core-color); 
-  color: #1e1d1b; 
-  border-color: var(--dashboard-core-color);
+.badgeActive {
+  background-color: rgba(232, 124, 30, 0.1);
+  color: var(--dashboard-core-color, #e87c1e);
+  border: 1px solid rgba(232, 124, 30, 0.2);
 }
 
-/* Secondary Action (Solutions) */
-.btnSecondary {
-  background-color: transparent;
-  color: var(--dashboard-primary-text-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.badgeActive .statusDot {
+  background-color: var(--dashboard-core-color, #e87c1e);
+  box-shadow: 0 0 6px rgba(232, 124, 30, 0.7);
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.btnSecondary:hover {
+.badgeCompleted {
   background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Tertiary/Ghost Action (Restart) */
+.badgeCompleted .statusDot {
+  background-color: var(--dashboard-secondary-text-color, #8c8c8c);
+}
+
+.badgeNone {
+  display: none; /* hide badge for NOT_ATTEMPTED — cleaner */
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* =========================================
+   CARD BODY  (title, slot pill, meta)
+   ========================================= */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  line-height: 1.4;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Morning / Evening pill under the title */
+.slotPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.slotPillMorning {
+  background-color: rgba(232, 124, 30, 0.08);
+  color: rgba(232, 124, 30, 0.9);
+}
+
+.slotPillEvening {
+  background-color: rgba(120, 100, 200, 0.08);
+  color: #a48ee8;
+}
+
+/* Meta row (clock icon + text) */
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
+}
+
+/* =========================================
+   DIVIDER
+   ========================================= */
+.divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 16px;
+}
+
+/* =========================================
+   ACTION AREA  (buttons)
+   ========================================= */
+.actionArea {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* --- Base button --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: none;
+  white-space: nowrap;
+  width: 100%;
+  letter-spacing: 0.01em;
+}
+
+/* Take Test — brand soft fill */
+.btnStart {
+  background-color: rgba(232, 124, 30, 0.1);
+  color: var(--dashboard-core-color, #e87c1e);
+  border: 1px solid rgba(232, 124, 30, 0.2);
+}
+
+.btnStart:hover {
+  background-color: rgba(232, 124, 30, 0.18);
+  border-color: rgba(232, 124, 30, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(232, 124, 30, 0.15);
+}
+
+/* Resume Test — solid brand */
+.btnResume {
+  background-color: var(--dashboard-core-color, #e87c1e);
+  color: #1a1817;
+  box-shadow: 0 2px 8px rgba(232, 124, 30, 0.25);
+}
+
+.btnResume:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(232, 124, 30, 0.35);
+}
+
+/* Analytics — neutral filled */
+.btnAnalytics {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.btnAnalytics:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--dashboard-core-color, #e87c1e);
+}
+
+/* Solutions — neutral filled */
+.btnSolutions {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.btnSolutions:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--dashboard-core-color, #e87c1e);
+}
+
+/* Restart / Ghost */
 .btnGhost {
   background-color: transparent;
-  color: var(--dashboard-secondary-text-color);
-  border: 1px dashed rgba(255, 255, 255, 0.1); /* Dashed border for lesser priority */
-  flex: 1 1 100%; /* Forces restart to drop to its own line if space is tight */
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px;
+  letter-spacing: 0.02em;
 }
 
 .btnGhost:hover {
-  color: var(--dashboard-primary-text-color);
-  border-style: solid;
-  border-color: rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
-
 /* =========================================
-   🔥 CUSTOM CONFIRMATION MODAL (Minimal)
+   MODAL
    ========================================= */
-
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -171,70 +356,72 @@
 }
 
 .modalContent {
-  background-color: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px; /* Reduced padding */
+  background-color: var(--dashboard-sidebar-background-color, #1a1817);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 28px 24px 24px;
   width: 100%;
-  max-width: 300px; /* Shrunk from 400px to 300px */
+  max-width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
   animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modalIconWrapper {
-  width: 36px; /* Smaller icon circle */
-  height: 36px;
-  background-color: rgba(239, 68, 68, 0.1);
+  width: 48px;
+  height: 48px;
+  background-color: rgba(232, 124, 30, 0.1);
+  border: 1px solid rgba(232, 124, 30, 0.2);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .modalIcon {
-  color: #EF4444; 
+  color: var(--dashboard-core-color, #e87c1e);
 }
 
 .modalTitle {
-  font-size: 15px; /* Scaled down */
+  font-size: 16px;
   font-weight: 600;
-  color: var(--dashboard-primary-text-color, #fff);
-  margin: 0 0 6px 0;
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  margin: 0 0 8px;
 }
 
 .modalDesc {
-  font-size: 13px; /* Scaled down */
-  color: var(--dashboard-secondary-text-color, #a1a1aa);
-  margin: 0 0 20px 0;
-  line-height: 1.4;
+  font-size: 13px;
+  color: var(--dashboard-secondary-text-color, #8c8c8c);
+  margin: 0 0 24px;
+  line-height: 1.5;
 }
 
 .modalActions {
   display: flex;
-  gap: 8px; /* Tighter gap between buttons */
+  gap: 10px;
   width: 100%;
 }
 
-.modalBtnCancel, .modalBtnConfirm {
+.modalBtnCancel,
+.modalBtnConfirm {
   flex: 1;
-  padding: 8px 0; /* Thinner buttons */
-  border-radius: 6px;
+  padding: 10px 0;
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
   border: none;
 }
 
 .modalBtnCancel {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-primary-text-color, #fff);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--dashboard-primary-text-color, #f4f4f4);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .modalBtnCancel:hover {
@@ -242,20 +429,21 @@
 }
 
 .modalBtnConfirm {
-  background-color: #EF4444;
-  color: #fff;
+  background-color: var(--dashboard-core-color, #e87c1e);
+  color: #1a1817;
+  box-shadow: 0 2px 8px rgba(232, 124, 30, 0.25);
 }
 
 .modalBtnConfirm:hover {
-  background-color: #DC2626;
+  filter: brightness(1.08);
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }

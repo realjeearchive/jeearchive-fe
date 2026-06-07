@@ -34,7 +34,6 @@ export function PreviousYearQuestionsClient() {
   const [papersWithStatus, setPapersWithStatus] = useState<PaperAttemptDetail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // 🔥 FIX: Progressive cache to store the test counts dynamically as they are fetched
   const [yearCounts, setYearCounts] = useState<Record<string, number>>({});
 
   const isMains = examType === "MAIN";
@@ -58,14 +57,12 @@ export function PreviousYearQuestionsClient() {
         const res = await fetchPaperAttemptsDetails(apiExamType, selectedYear);
         if (res.success && res.data) {
           setPapersWithStatus(res.data);
-          // Save the actual count to our dictionary state
           setYearCounts(prev => ({ ...prev, [`${apiExamType}_${selectedYear}`]: res.data.length }));
         } else {
           if (!useRateLimitStore.getState().isRateLimited) {
             toast.error("Couldn't load papers. Try refreshing.");
           }
           setPapersWithStatus([]);
-          // Record 0 if the fetch succeeds but yields no data
           setYearCounts(prev => ({ ...prev, [`${apiExamType}_${selectedYear}`]: 0 }));
         }
       } catch (e) {
@@ -84,12 +81,10 @@ export function PreviousYearQuestionsClient() {
 
   const formattedItems: TestCardItem[] = React.useMemo(() => {
     const sortedPapers = [...papersWithStatus].sort((a, b) => {
-      // 1. Sort by Session (e.g., Session_1 comes before Session_2)
       const sessionA = a.session || "";
       const sessionB = b.session || "";
       if (sessionA !== sessionB) return sessionA.localeCompare(sessionB);
 
-      // 2. Sort by Month (January -> December)
       const months: Record<string, number> = {
         january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
         july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
@@ -98,12 +93,10 @@ export function PreviousYearQuestionsClient() {
       const monthB = months[b.month?.toLowerCase()] || 99;
       if (monthA !== monthB) return monthA - monthB;
 
-      // 3. Sort by Date numerically
       const dateA = parseInt(a.date) || 0;
       const dateB = parseInt(b.date) || 0;
       if (dateA !== dateB) return dateA - dateB;
 
-      // 4. Sort by Shift (Morning / Shift 1 comes before Evening / Shift 2)
       const shiftA = a.shift?.toLowerCase() || "";
       const shiftB = b.shift?.toLowerCase() || "";
       if (shiftA !== shiftB) {
@@ -114,7 +107,7 @@ export function PreviousYearQuestionsClient() {
         return shiftA.localeCompare(shiftB);
       }
 
-      return 0; // Exactly the same
+      return 0;
     });
 
     return sortedPapers.map((paper) => {
@@ -123,7 +116,6 @@ export function PreviousYearQuestionsClient() {
       else if (paper.attemptStatus === "completed") status = "COMPLETED";
 
       let title = "";
-      
       const sessionText = paper.session ? `${paper.session.replace('_', ' ')} - ` : "";
 
       if (isMains) {
@@ -170,12 +162,10 @@ export function PreviousYearQuestionsClient() {
     );
   };
 
-  // 🔥 FIX: Receive sessionId instead of paperId
   const handleAnalytics = (sessionId: string) => {
     router.push(`/analytics/tests/${sessionId}`);
   };
 
-  // 🔥 FIX: Receive sessionId instead of paperId
   const handleSolutions = (sessionId: string) => {
     router.push(`/solutions/${sessionId}`);
   };
@@ -185,7 +175,6 @@ export function PreviousYearQuestionsClient() {
       <RateLimitModal />
 
       <main className={Styles.pageContainer} aria-label="Previous year JEE question papers">
-        {/* Breadcrumb Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -216,45 +205,41 @@ export function PreviousYearQuestionsClient() {
           }}
         />
 
-        {/* ItemList Structured Data for the listing */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              itemListElement: formattedItems.map((item, index) => ({
-                "@type": "ListItem",
-                position: index + 1,
-                item: {
-                  "@type": "LearningResource",
-                  name: item.title,
-                  url: `https://jeearchive.com/previous-year-questions/${examPath}/${selectedYear}/tests/${item.id}`,
-                  educationalLevel: "Higher Secondary",
-                  about: {
-                    "@type": "Thing",
-                    name: `${displayTitle} PYQ`,
-                  },
-                },
-              })),
-            }),
-          }}
-        />
-
         <div className={Styles.splitLayout}>
-          {/* LEFT SIDEBAR PANEL */}
           <aside className={Styles.leftSidebar} aria-label="Year and exam type filter">
-            <div className={Styles.cardHeader}>
-              <div className={Styles.iconSquare} aria-hidden="true">
-                P
+            
+            {/* EXACT LEETCODE STRUCTURE HEADER BLOCK */}
+            <div className={Styles.leetcodeHeaderBlock}>
+              <div className={Styles.graphicIconContainer}>
+                {/* Meaningful Icon: An Archive/Past Paper Stack */}
+                <svg 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  className={Styles.premiumIconSvg}
+                >
+                  <path d="M4 6h16" opacity="0.3" strokeWidth="2.5"/>
+                  <path d="M4 10h16" opacity="0.6" strokeWidth="2.5"/>
+                  <path d="M5 14h14a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1z" fill="currentColor" stroke="none"/>
+                  <path d="M9 17.5h6" stroke="#1A1817" strokeWidth="1.5"/>
+                </svg>
               </div>
-              <div>
+              
+              <div className={Styles.headerTextGroup}>
                 <h1 className={Styles.cardTitle}>Past Papers</h1>
-                <p className={Styles.cardSubtitle}>JEE Archive • Navigation</p>
+                <div className={Styles.metaInfoRow}>
+                  <span>JEE Archive</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>{currentYearOptions.length} Years</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>Navigation</span>
+                </div>
               </div>
             </div>
 
-            {/* Exam Segment Switcher */}
             <nav className={Styles.segmentedControl} aria-label="Exam type selection">
               <button
                 onClick={() => setExamType("MAIN")}
@@ -272,32 +257,20 @@ export function PreviousYearQuestionsClient() {
               </button>
             </nav>
 
-            {/* Interactive Years List */}
             <nav className={Styles.yearsListContainer} aria-label="Select year">
               <span className={Styles.listLabel}>Select Year</span>
-              <div className={Styles.yearsList}>
+              
+              {/* NEW: TABS GRID DISPLAY FOR YEARS */}
+              <div className={Styles.yearsGrid}>
                 {currentYearOptions.map((year) => {
-                  // 🔥 FIX: Check dictionary cache for dynamic counts
-                  const countKey = `${apiExamType}_${year}`;
-                  const count = yearCounts[countKey];
-                  const baseLabel = isMains ? "Tests" : "Papers";
-                  
-                  // Pluralization handling (e.g. 1 Test vs 2 Tests)
-                  const displayMeta = count !== undefined 
-                    ? `${count} ${count === 1 ? baseLabel.slice(0, -1) : baseLabel}` 
-                    : baseLabel;
-
                   return (
                     <button
                       key={year}
                       onClick={() => setSelectedYear(year)}
-                      className={`${Styles.yearRowItem} ${selectedYear === year ? Styles.yearRowActive : ""}`}
+                      className={`${Styles.yearTabBtn} ${selectedYear === year ? Styles.yearTabActive : ""}`}
                       aria-current={selectedYear === year ? "true" : undefined}
                     >
-                      <span className={Styles.yearNumberText}>{year}</span>
-                      <span className={Styles.yearCountMeta}>
-                        {displayMeta}
-                      </span>
+                      {year}
                     </button>
                   );
                 })}
