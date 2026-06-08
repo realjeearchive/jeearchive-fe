@@ -7,9 +7,9 @@
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  height: calc(100vh - 48px - 20px);
+  height: calc(100vh - 48px - var(--space-lg));
   overflow: hidden;
-  padding: 20px 0;
+  padding: var(--space-lg) 0;
   animation: fadeIn 0.3s ease-out forwards;
 }
 
@@ -25,7 +25,7 @@
   display: flex;
   width: 100%;
   height: 100%;
-  gap: 16px;
+  gap: var(--space-md);
   align-items: stretch;
 }
 
@@ -34,13 +34,13 @@
    ========================================= */
 .leftSidebar {
   width: 270px;
-  background-color: var(--dashboard-sidebar-background-color, #1A1817);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 24px 20px 20px 20px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--shape-radius-md);
+  padding: var(--space-xl) var(--space-lg) var(--space-lg) var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
   flex-shrink: 0;
   box-sizing: border-box;
   height: 100%;
@@ -64,8 +64,8 @@
   justify-content: center;
   width: 60px;
   height: 60px;
-  border-radius: 12px;
-  margin-bottom: 16px;
+  border-radius: var(--shape-radius-md);
+  margin-bottom: var(--space-md);
 }
 
 .iconContainerPhysics { background-color: rgba(96, 198, 255, 0.12); }
@@ -81,13 +81,13 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-xs);
 }
 
 .cardTitle {
-  font-size: 24px;
+  font-size: var(--text-2xl);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -97,13 +97,13 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 12px;
-  color: #8c8c8c;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   font-weight: 400;
 }
 
 .metaDivider {
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--glass-border-strong);
 }
 
 /* =========================================
@@ -111,36 +111,36 @@
    ========================================= */
 .segmentedControl {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
+  background-color: var(--glass-bg-base);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--shape-radius-sm);
+  padding: var(--space-2xs);
+  gap: var(--space-2xs);
 }
 
 .segmentBtn {
   flex: 1;
   background: transparent;
   border: none;
-  color: #8c8c8c;
-  padding: 6px 4px;
-  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px var(--space-2xs);
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--shape-radius-xs);
   transition: all 0.2s ease;
   text-align: center;
 }
 
 .segmentBtn:hover {
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
 }
 
 .segmentActive {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  background-color: var(--glass-bg-hover);
+  color: var(--text-primary);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 /* =========================================
@@ -149,41 +149,39 @@
 .divisionsListContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
   min-height: 0;
-  margin-top: 4px;
+  margin-top: var(--space-2xs);
 }
 
 .listLabel {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-left: 4px;
 }
 
-/* 🔥 NEW: Stacked Grid Layout for Tabs */
 .divisionsGrid {
   display: grid;
-  grid-template-columns: 1fr; /* 1 column to safely fit long names like "Coordinate Geometry" */
-  gap: 8px;
+  grid-template-columns: 1fr; 
+  gap: var(--space-xs);
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: none;
-  padding-bottom: 12px;
+  padding-bottom: var(--space-sm);
 }
 
 .divisionsGrid::-webkit-scrollbar {
   display: none;
 }
 
-/* 🔥 NEW: Minimalist pill/tab style matching PYQ */
 .divisionTabBtn {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 10px 12px;
-  border-radius: 6px;
+  background-color: var(--glass-bg-base);
+  border: 1px solid var(--glass-bg-base);
+  padding: 10px var(--space-sm);
+  border-radius: var(--shape-radius-xs);
   cursor: pointer;
   transition: all 0.15s ease;
   display: flex;
@@ -195,34 +193,34 @@
 }
 
 .divisionTabBtn:hover {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--glass-bg-hover);
 }
 
 .divisionTabActive {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-border-strong);
+  border-color: var(--glass-border-strong);
 }
 
 .divisionNameText {
-  color: #8c8c8c;
-  font-size: 13px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   font-weight: 500;
   transition: color 0.15s ease;
 }
 
 .divisionTabActive .divisionNameText {
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .divisionMetaText {
-  font-size: 11px;
-  color: #666;
+  font-size: var(--text-2xs);
+  color: var(--icon-idle);
   transition: color 0.15s ease;
 }
 
 .divisionTabActive .divisionMetaText {
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 /* =========================================
@@ -248,35 +246,17 @@
 .scrollContentWrapper {
   width: 100%;
   box-sizing: border-box;
-  padding-bottom: 24px;
+  padding-bottom: var(--space-xl);
 }
 
 /* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
-  .pageContainer {
-    height: auto;
-    overflow: visible;
-  }
-  .splitLayout {
-    flex-direction: column;
-    height: auto;
-  }
-  .leftSidebar {
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-  .divisionsListContainer {
-    flex: none;
-  }
-  .divisionsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Switches to multi-column on tablet */
-    max-height: 250px;
-  }
-  .rightContent {
-    overflow-y: visible;
-    height: auto;
-  }
+  .pageContainer { height: auto; overflow: visible; }
+  .splitLayout { flex-direction: column; height: auto; }
+  .leftSidebar { width: 100%; height: auto; overflow: visible; }
+  .divisionsListContainer { flex: none; }
+  .divisionsGrid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); max-height: 250px; }
+  .rightContent { overflow-y: visible; height: auto; }
 }

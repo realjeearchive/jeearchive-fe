@@ -329,6 +329,12 @@ body {
     --color-success-main: #22c55e;
     --color-success-bg: rgba(34, 197, 94, 0.1);
     --color-success-border: rgba(34, 197, 94, 0.2);
+    --color-info-main: #0EA5E9; /* For Solution Tabs & Highlights */
+    --color-info-bg: rgba(14, 165, 233, 0.1);
+    --color-neutral-main: #9CA3AF; /* For Unattempted states */
+    --color-neutral-bg: rgba(156, 163, 175, 0.15);
+    --color-purple-main: #8B5CF6; /* For 'All' filters & Global Accents */
+    --color-purple-bg: rgba(139, 92, 246, 0.15);
 
     /* --- Global Shadows --- */
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);

@@ -32,11 +32,11 @@ interface ChapterDashboardProps {
 function PhysicsIcon() {
   return (
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
-      <circle cx="16" cy="16" r="2.5" fill="#60C6FF" />
-      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.9" />
-      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.6"
+      <circle cx="16" cy="16" r="2.5" fill="var(--subject-physics)" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="var(--subject-physics)" strokeWidth="1.6" fill="none" opacity="0.9" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="var(--subject-physics)" strokeWidth="1.6" fill="none" opacity="0.6"
         transform="rotate(60 16 16)" />
-      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.35"
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="var(--subject-physics)" strokeWidth="1.6" fill="none" opacity="0.35"
         transform="rotate(-60 16 16)" />
     </svg>
   );
@@ -47,15 +47,15 @@ function ChemistryIcon() {
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
       <path
         d="M12 4 L12 14 L6.5 24 Q5.5 26 7 27.5 Q8 28.5 10 28.5 L22 28.5 Q24 28.5 25 27.5 Q26.5 26 25.5 24 L20 14 L20 4 Z"
-        stroke="#4ADE80" strokeWidth="1.7" fill="none" strokeLinejoin="round"
+        stroke="var(--subject-chemistry)" strokeWidth="1.7" fill="none" strokeLinejoin="round"
       />
       <path
         d="M9 22 Q10 20.5 16 21 Q22 21.5 23 22 L25.2 26 Q24.5 27.5 22 27.5 L10 27.5 Q7.5 27.5 6.8 26 Z"
-        fill="#4ADE80" opacity="0.3"
+        fill="var(--subject-chemistry)" opacity="0.3"
       />
-      <circle cx="14" cy="24.5" r="1" fill="#4ADE80" opacity="0.7" />
-      <circle cx="18" cy="23" r="0.7" fill="#4ADE80" opacity="0.5" />
-      <line x1="12" y1="8" x2="20" y2="8" stroke="#4ADE80" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="14" cy="24.5" r="1" fill="var(--subject-chemistry)" opacity="0.7" />
+      <circle cx="18" cy="23" r="0.7" fill="var(--subject-chemistry)" opacity="0.5" />
+      <line x1="12" y1="8" x2="20" y2="8" stroke="var(--subject-chemistry)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -65,13 +65,13 @@ function MathsIcon() {
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
       <path
         d="M22 6 L10 6 L17.5 15.5 L10 25 L22 25"
-        stroke="#C084FC" strokeWidth="2" fill="none"
+        stroke="var(--subject-maths)" strokeWidth="2" fill="none"
         strokeLinecap="round" strokeLinejoin="round"
       />
-      <line x1="10" y1="6" x2="22" y2="6" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
-      <line x1="10" y1="25" x2="22" y2="25" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
-      <line x1="25" y1="10" x2="25" y2="14" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
-      <line x1="23" y1="12" x2="27" y2="12" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+      <line x1="10" y1="6" x2="22" y2="6" stroke="var(--subject-maths)" strokeWidth="2" strokeLinecap="round" />
+      <line x1="10" y1="25" x2="22" y2="25" stroke="var(--subject-maths)" strokeWidth="2" strokeLinecap="round" />
+      <line x1="25" y1="10" x2="25" y2="14" stroke="var(--subject-maths)" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
+      <line x1="23" y1="12" x2="27" y2="12" stroke="var(--subject-maths)" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
     </svg>
   );
 }
@@ -285,12 +285,12 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   const offset = circumference - (progressPercentage / 100) * circumference;
 
   const subjectColor = subject.toLowerCase().includes("physic")
-    ? "var(--dashboard-physics-color)"
+    ? "var(--subject-physics)"
     : subject.toLowerCase().includes("chemis")
-    ? "var(--dashboard-chemistry-color)"
+    ? "var(--subject-chemistry)"
     : subject.toLowerCase().includes("math")
-    ? "var(--dashboard-maths-color)"
-    : "var(--dashboard-core-color)";
+    ? "var(--subject-maths)"
+    : "var(--color-brand-primary)";
 
   const activeFilterCount =
     selectedYears.length +
@@ -481,7 +481,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedYears[0]
                                 : `${selectedYears.length} selected`}
                             </span>
-                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
+                            <ChevronDown size={14} color="var(--text-secondary)" aria-hidden="true" />
                           </div>
                           {openDropdown === "year" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select years">
@@ -529,7 +529,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? formatSession(selectedSessions[0])
                                 : `${selectedSessions.length} selected`}
                             </span>
-                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
+                            <ChevronDown size={14} color="var(--text-secondary)" aria-hidden="true" />
                           </div>
                           {openDropdown === "session" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select sessions">
@@ -577,7 +577,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedDates[0]
                                 : `${selectedDates.length} selected`}
                             </span>
-                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
+                            <ChevronDown size={14} color="var(--text-secondary)" aria-hidden="true" />
                           </div>
                           {openDropdown === "date" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select dates">
@@ -625,7 +625,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                                 ? selectedShifts[0]
                                 : `${selectedShifts.length} selected`}
                             </span>
-                            <ChevronDown size={14} color="var(--dashboard-secondary-text-color)" aria-hidden="true" />
+                            <ChevronDown size={14} color="var(--text-secondary)" aria-hidden="true" />
                           </div>
                           {openDropdown === "shift" && (
                             <div className={Styles.lcDropdownMenu} role="listbox" aria-label="Select shifts">

@@ -54,7 +54,7 @@ export function ChapterDashboardPageClient({
   if (loading && !isRateLimited) {
     return (
       <main
-        style={{ backgroundColor: "var(--dashboard-background-color)" }}
+        style={{ backgroundColor: "var(--bg-main)" }}
         className="flex min-h-screen w-full flex-1 items-center justify-center"
         aria-label="Loading chapter data"
       >
@@ -66,8 +66,8 @@ export function ChapterDashboardPageClient({
   if ((error || !data) && !isRateLimited) {
     return (
       <main
-        style={{ backgroundColor: "var(--dashboard-background-color)" }}
-        className="flex min-h-screen w-full flex-1 items-center justify-center text-[#B5B4B4]"
+        style={{ backgroundColor: "var(--bg-main)" }}
+        className="flex min-h-screen w-full flex-1 items-center justify-center text-[var(--text-secondary)]"
         aria-label="Error loading chapter"
       >
         <p role="alert">Failed to load chapter data. Please try again.</p>
@@ -82,7 +82,7 @@ export function ChapterDashboardPageClient({
       {data && (
         <main
           className="flex-1 w-full min-h-screen"
-          style={{ backgroundColor: "var(--dashboard-background-color)" }}
+          style={{ backgroundColor: "var(--bg-main)" }}
           aria-label={`${exactChapterName} practice dashboard`}
         >
           {/* BreadcrumbList Structured Data */}

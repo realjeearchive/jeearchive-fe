@@ -1,28 +1,28 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: var(--space-lg);
   background: transparent;
 }
 
 .label {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   font-weight: 700;
   letter-spacing: 0.05em;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-xs);
 }
 
 .content {
-  font-size: 14px;
-  color: var(--dashboard-primary-text-color);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .separator {
-  margin: 0 8px;
-  color: var(--dashboard-secondary-text-color);
+  margin: 0 var(--space-xs);
+  color: var(--text-secondary);
   opacity: 0.6;
 }
 

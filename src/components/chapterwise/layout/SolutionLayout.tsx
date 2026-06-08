@@ -6,7 +6,6 @@ interface SolutionLayoutProps {
   sidebar: React.ReactNode;
   footer?: React.ReactNode;
   children: React.ReactNode;
-
   isSidebarOpen: boolean;
   onCloseSidebar?: () => void;
 }

@@ -1,9 +1,9 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border-top: 1px solid var(--dashboard-dividerline-color);
-  padding: 24px;
+  gap: var(--space-md);
+  border-top: 1px solid var(--border-divider);
+  padding: var(--space-xl);
   background-color: rgba(255, 255, 255, 0.01);
   animation: fadeIn 0.3s ease-out;
 }
@@ -20,9 +20,9 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -30,22 +30,19 @@
 .body {
   font-size: 15px;
   line-height: 1.7;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
-.body p { margin-bottom: 12px; }
+.body p { margin-bottom: var(--space-sm); }
 .body strong { color: #fff; }
 
-/* 🔥 IMAGE FIXES FOR SOLUTIONS */
 .parsedImage {
   max-width: 100%;
-  max-height: 250px; /* Slightly larger for solution diagrams */
+  max-height: 250px; 
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 6px;
-  margin: 12px 0;
-  
-  /* Invert black to white for dark theme */
+  margin: var(--space-sm) 0;
   filter: invert(1) hue-rotate(180deg); 
 }

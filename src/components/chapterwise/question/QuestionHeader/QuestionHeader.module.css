@@ -1,46 +1,44 @@
 .header {
   display: flex;
   align-items: center;
-  /* 🔥 Changed from flex-start to space-between to push the badge to the right */
   justify-content: space-between; 
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--dashboard-dividerline-color);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-divider);
   background-color: rgba(255, 255, 255, 0.01); 
 }
 
 .leftSection {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .qBadge {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .metaPill {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-secondary-text-color);
+  background: var(--glass-bg-base);
+  color: var(--text-secondary);
 }
 
-/* 🔥 New LeetCode-style Badge Classes */
 .solvedBadge {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--dashboard-secondary-text-color); /* Muted grey text just like LC */
+  color: var(--text-secondary);
 }
 
 .solvedIcon {
-  color: #22C55E; /* Vibrant crisp green */
-  font-size: 16px;
+  color: var(--color-success-main);
+  font-size: var(--text-base);
 }

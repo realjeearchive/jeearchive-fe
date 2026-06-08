@@ -235,8 +235,8 @@ export const ChapterWiseInterface = ({
         id: q.id,
         number: q.number,
         status: status,
-        section: q.section as string, // 🔥 FIX: Explicitly cast to string
-      } as SidebarItemStatus; // 🔥 FIX: Properly cast the whole object
+        section: q.section as string,
+      } as SidebarItemStatus;
     });
   }, [questions, submissions, sessionSolved]);
 
@@ -306,7 +306,7 @@ export const ChapterWiseInterface = ({
       setSessionSolved((prev) => ({ ...prev, [activeQuestionId]: isCorrect }));
 
       const marksText = isCorrect ? `+${currentQuestion.meta.marksPos}` : `-${currentQuestion.meta.marksNeg}`;
-      const marksColor = isCorrect ? "#22C55E" : "#EF4444";
+      const marksColor = isCorrect ? "var(--color-success-main)" : "var(--color-error-main)";
 
       setScorePopup({ text: marksText, color: marksColor });
       setTimeout(() => setScorePopup(null), 1500);
@@ -381,40 +381,39 @@ export const ChapterWiseInterface = ({
 
   const renderHistoryList = () => {
     if (isLoadingAttempt) {
-      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>Loading your history...</div>;
+      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "var(--text-sm)" }}>Loading your history...</div>;
     }
     if (!historyData) return null;
 
-// Combine and sort chapter and test attempts by date descending
     const allAttempts = [
       ...(historyData.chapterAttempts || []).map((a) => ({ ...a, source: 'Chapter Practice' })),
       ...((historyData.testAttempts as ChapterAttempt[]) || []).map((a) => ({ ...a, source: 'Mock Test' }))
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     if (allAttempts.length === 0) {
-      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>No previous attempts found for this question.</div>;
+      return <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "var(--text-sm)" }}>No previous attempts found for this question.</div>;
     }
 
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
         {allAttempts.map(attempt => (
           <div key={attempt.id} style={{
-            padding: "16px", borderRadius: "8px", border: "1px solid var(--dashboard-dividerline-color)",
-            backgroundColor: "rgba(255,255,255,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center"
+            padding: "var(--space-md)", borderRadius: "var(--shape-radius-sm)", border: "1px solid var(--border-divider)",
+            backgroundColor: "var(--glass-bg-base)", display: "flex", justifyContent: "space-between", alignItems: "center"
           }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              <span style={{ fontSize: "12px", color: "var(--dashboard-secondary-text-color)" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xs)" }}>
+              <span style={{ fontSize: "var(--text-xs)", color: "var(--text-secondary)" }}>
                 {new Date(attempt.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })} • {attempt.source}
               </span>
-              <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "4px" }}>
-                <span style={{ fontWeight: 600, color: attempt.isCorrect ? "#22C55E" : "#EF4444" }}>
+              <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "center", marginTop: "var(--space-2xs)" }}>
+                <span style={{ fontWeight: 600, color: attempt.isCorrect ? "var(--color-success-main)" : "var(--color-error-main)" }}>
                   {attempt.isCorrect ? "Correct" : "Incorrect"}
                 </span>
-                <span style={{ fontSize: "13px", color: "var(--dashboard-secondary-text-color)" }}>Marks: {attempt.marksObtained}</span>
-                <span style={{ fontSize: "13px", color: "var(--dashboard-secondary-text-color)" }}>Time: {formatTime(attempt.timeSpent)}</span>
+                <span style={{ fontSize: "var(--text-sm)", color: "var(--text-secondary)" }}>Marks: {attempt.marksObtained}</span>
+                <span style={{ fontSize: "var(--text-sm)", color: "var(--text-secondary)" }}>Time: {formatTime(attempt.timeSpent)}</span>
               </div>
             </div>
-            <div style={{ fontSize: "14px", fontWeight: 600, padding: "6px 16px", background: "rgba(255,255,255,0.05)", borderRadius: "6px", color: "var(--dashboard-primary-text-color)" }}>
+            <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, padding: "var(--space-xs) var(--space-md)", background: "var(--glass-bg-hover)", borderRadius: "var(--shape-radius-sm)", color: "var(--text-primary)" }}>
               Answer: {attempt.userAnswer?.join(", ") || "--"}
             </div>
           </div>
@@ -437,10 +436,7 @@ export const ChapterWiseInterface = ({
           mode="practice"
           activeTab={activeTab as "question" | "solution" | "history"}
           onTabChange={setActiveTab}
-          
-          // 🔥 UX FIX: Only unlock tabs if explicitly solved/updated in THIS active session
           isCurrentQuestionSubmitted={sessionSolved[activeQuestionId] !== undefined}
-          
           timer={formatTime(currentTimeSpent)}
           isTimerRunning={isTimerRunning}
           onToggleTimer={toggleTimer}
@@ -455,7 +451,7 @@ export const ChapterWiseInterface = ({
       sidebar={
         <SolutionSidebar
           subjectName={safeSubject}
-          questions={sidebarQuestions} // 🔥 FIX: Removed "as any"
+          questions={sidebarQuestions}
           activeQuestionId={activeQuestionId}
           onQuestionClick={setActiveQuestionId}
           onClose={() => setIsSidebarOpen(false)}
@@ -497,21 +493,21 @@ export const ChapterWiseInterface = ({
         {currentQuestion.comprehensionContent && (
           <section
             style={{
-              background: "rgba(59, 130, 246, 0.05)",
-              borderLeft: "4px solid #3b82f6",
-              padding: "16px",
-              marginBottom: "20px",
-              borderRadius: "0 8px 8px 0",
+              background: "color-mix(in srgb, var(--color-focus-ring) 5%, transparent)",
+              borderLeft: "4px solid var(--color-focus-ring)",
+              padding: "var(--space-md)",
+              marginBottom: "var(--space-lg)",
+              borderRadius: "0 var(--shape-radius-sm) var(--shape-radius-sm) 0",
             }}
             aria-label="Comprehension passage"
           >
             <div
               style={{
-                fontSize: "12px",
+                fontSize: "var(--text-xs)",
                 fontWeight: "bold",
-                color: "#3b82f6",
+                color: "var(--color-focus-ring)",
                 textTransform: "uppercase",
-                marginBottom: "8px",
+                marginBottom: "var(--space-xs)",
               }}
             >
               Passage
@@ -552,7 +548,7 @@ export const ChapterWiseInterface = ({
         {activeTab === "history" && (
           <section
             style={{
-              marginTop: "24px",
+              marginTop: "var(--space-xl)",
               animation: "fadeIn 0.3s ease-out"
             }}
           >
@@ -560,18 +556,18 @@ export const ChapterWiseInterface = ({
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "16px",
-                borderTop: "1px solid var(--dashboard-dividerline-color)",
-                padding: "24px",
-                backgroundColor: "rgba(255, 255, 255, 0.01)",
+                gap: "var(--space-md)",
+                borderTop: "1px solid var(--border-divider)",
+                padding: "var(--space-xl)",
+                backgroundColor: "var(--glass-bg-base)",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span
                   style={{
-                    fontSize: "13px",
+                    fontSize: "var(--text-sm)",
                     fontWeight: 700,
-                    color: "var(--dashboard-secondary-text-color)",
+                    color: "var(--text-secondary)",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
                   }}
@@ -579,7 +575,7 @@ export const ChapterWiseInterface = ({
                   Attempt History
                 </span>
               </div>
-              <div style={{ color: "var(--dashboard-primary-text-color)" }}>
+              <div style={{ color: "var(--text-primary)" }}>
                 {renderHistoryList()}
               </div>
             </div>
@@ -591,18 +587,18 @@ export const ChapterWiseInterface = ({
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "16px",
-              paddingBottom: "40px",
+              gap: "var(--space-md)",
+              paddingBottom: "var(--space-3xl)",
             }}
             aria-label="Solution and explanation"
           >
             {isLoadingAttempt ? (
               <div
                 style={{
-                  margin: "0 20px",
-                  padding: "16px",
+                  margin: "0 var(--space-lg)",
+                  padding: "var(--space-md)",
                   color: "rgba(255,255,255,0.5)",
-                  fontSize: "14px",
+                  fontSize: "var(--text-sm)",
                 }}
                 role="status"
                 aria-live="polite"
@@ -612,20 +608,20 @@ export const ChapterWiseInterface = ({
             ) : displayUserAnswer ? (
               <div
                 style={{
-                  margin: "10px 20px 0",
+                  margin: "var(--space-sm) var(--space-lg) 0",
                   display: "flex",
                   flexWrap: "wrap",
-                  columnGap: "32px",
-                  rowGap: "12px",
+                  columnGap: "var(--space-2xl)",
+                  rowGap: "var(--space-sm)",
                   alignItems: "center",
-                  paddingBottom: "16px",
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                  paddingBottom: "var(--space-md)",
+                  borderBottom: "1px solid var(--glass-border-subtle)",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
                   <span
                     style={{
-                      fontSize: "13px",
+                      fontSize: "var(--text-sm)",
                       color: "rgba(255,255,255,0.5)",
                       fontWeight: 600,
                       textTransform: "uppercase",
@@ -638,17 +634,17 @@ export const ChapterWiseInterface = ({
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
+                      gap: "var(--space-xs)",
                       fontWeight: 700,
-                      fontSize: "16px",
+                      fontSize: "var(--text-base)",
                     }}
                   >
                     {isDisplayCorrect ? (
-                      <FiCheck size={18} strokeWidth={3} color="#22C55E" aria-hidden="true" />
+                      <FiCheck size={18} strokeWidth={3} color="var(--color-success-main)" aria-hidden="true" />
                     ) : (
-                      <FiX size={18} strokeWidth={3} color="#EF4444" aria-hidden="true" />
+                      <FiX size={18} strokeWidth={3} color="var(--color-error-main)" aria-hidden="true" />
                     )}
-                    <span style={{ color: "var(--dashboard-primary-text-color)" }}>
+                    <span style={{ color: "var(--text-primary)" }}>
                       {isNumericalType
                         ? displayUserAnswer
                         : Array.isArray(displayUserAnswer)
@@ -658,10 +654,10 @@ export const ChapterWiseInterface = ({
                   </div>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
                   <span
                     style={{
-                      fontSize: "13px",
+                      fontSize: "var(--text-sm)",
                       color: "rgba(255,255,255,0.5)",
                       fontWeight: 600,
                       textTransform: "uppercase",
@@ -674,13 +670,13 @@ export const ChapterWiseInterface = ({
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
+                      gap: "var(--space-xs)",
                       fontWeight: 700,
-                      fontSize: "16px",
+                      fontSize: "var(--text-base)",
                     }}
                   >
-                    <FiCheck size={18} strokeWidth={3} color="#22C55E" aria-hidden="true" />
-                    <span style={{ color: "var(--dashboard-primary-text-color)" }}>
+                    <FiCheck size={18} strokeWidth={3} color="var(--color-success-main)" aria-hidden="true" />
+                    <span style={{ color: "var(--text-primary)" }}>
                       {isNumericalType
                         ? actualCorrectAnswer
                         : Array.isArray(currentQuestion.correctAnswer)
@@ -701,9 +697,9 @@ export const ChapterWiseInterface = ({
 
             <div
               style={{
-                marginTop: "32px",
-                paddingTop: "24px",
-                borderTop: "1px dashed rgba(255,255,255,0.1)",
+                marginTop: "var(--space-2xl)",
+                paddingTop: "var(--space-xl)",
+                borderTop: "1px dashed var(--glass-border-strong)",
               }}
             >
             </div>

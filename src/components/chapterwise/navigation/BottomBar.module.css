@@ -3,17 +3,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 0 24px;
+  gap: var(--space-md);
+  padding: 0 var(--space-xl);
   width: 100%;
   box-sizing: border-box;
 }
 
-
 .navGroup {
   display: flex;
   align-items: center;
-  gap: 16px; 
+  gap: var(--space-md); 
   background: transparent;
   padding: 0;
   border: none;
@@ -21,24 +20,24 @@
 }
 
 .navButton {
-  padding: 10px 24px;
-  border-radius: 8px; 
-  font-size: 14px;
+  padding: 10px var(--space-xl);
+  border-radius: var(--shape-radius-sm); 
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--dashboard-secondary-text-color);
+  gap: var(--space-xs);
+  border: 1px solid var(--border-subtle);
+  background: var(--glass-bg-base);
+  color: var(--text-secondary);
   white-space: nowrap; 
 }
 
 .navButton:hover:not(:disabled) {
-  color: var(--dashboard-primary-text-color);
-  border-color: var(--dashboard-dividerline-color);
+  color: var(--text-primary);
+  border-color: var(--border-divider);
 }
 
 .navButton:disabled {
@@ -48,27 +47,19 @@
   background: transparent;
 }
 
-
 .mainAction {
-  background-color: var(--dashboard-primary-text-color);
+  background-color: var(--text-primary);
   color: #000 !important; 
   font-weight: 700;
   border: none;
-  padding: 12px 32px;
-  border-radius: 99px; 
-  
-
+  padding: var(--space-sm) var(--space-2xl);
+  border-radius: var(--shape-radius-full); 
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
 
-
 .mainAction:hover {
-
-
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-  
-
   opacity: 0.9; 
 }
 
@@ -77,47 +68,28 @@
   opacity: 0.8;
 }
 
-
-
-
 @media (max-width: 700px) {
   .container {
-    padding: 0 12px;
+    padding: 0 var(--space-sm);
     height: 64px;
   }
-
   .navGroup {
     width: 100%;
     justify-content: space-between; 
-    gap: 8px;
+    gap: var(--space-xs);
   }
-
   .navButton {
     padding: 10px 14px; 
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 }
 
 @media (max-width: 480px) {
-  
-  .btnText {
-    display: none;
-  }
-
-  .navButton {
-    padding: 10px; 
-    justify-content: center;
-  }
-
-  .mainAction {
-    flex: 1; 
-    justify-content: center;
-    padding: 10px 16px; 
-  }
+  .btnText { display: none; }
+  .navButton { padding: 10px; justify-content: center; }
+  .mainAction { flex: 1; justify-content: center; padding: 10px var(--space-md); }
 }
 
-
-/* Wrapper to anchor the absolute tooltip */
 .mainActionWrapper {
   position: relative;
   display: flex;
@@ -125,9 +97,8 @@
   justify-content: center;
 }
 
-/* 🔥 Custom CSS Disabled Class (Replaces the native :disabled behavior) */
 .mainActionDisabled {
-  background-color: var(--dashboard-primary-text-color) !important;
+  background-color: var(--text-primary) !important;
   color: #000 !important;
   opacity: 0.3 !important;
   box-shadow: none !important;
@@ -135,17 +106,16 @@
   cursor: not-allowed !important;
 }
 
-/* 🔥 The Warning Tooltip (Now a friendly Amber instead of aggressive Red) */
 .warningTooltip {
   position: absolute;
   bottom: calc(100% + 14px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: #F59E0B; /* Matches your active button color */
-  color: #000; /* Dark text for crisp contrast */
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12px;
+  background-color: var(--color-brand-primary); 
+  color: #000; 
+  padding: var(--space-xs) 14px;
+  border-radius: var(--shape-radius-sm);
+  font-size: var(--text-xs);
   font-weight: 700;
   white-space: nowrap;
   pointer-events: none;
@@ -156,7 +126,6 @@
   z-index: 100;
 }
 
-/* The little triangle arrow pointing down */
 .warningTooltip::after {
   content: '';
   position: absolute;
@@ -164,5 +133,5 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: #F59E0B; /* Matches the new background */
+  border-top-color: var(--color-brand-primary); 
 }
