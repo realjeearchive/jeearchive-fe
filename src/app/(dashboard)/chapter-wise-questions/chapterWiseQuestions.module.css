@@ -1,5 +1,5 @@
 /* =========================================
-   PAGE CONTAINER — identical to PYQ
+   PAGE CONTAINER 
    ========================================= */
 .pageContainer {
   display: flex;
@@ -19,7 +19,7 @@
 }
 
 /* =========================================
-   SPLIT LAYOUT — identical to PYQ
+   SPLIT LAYOUT
    ========================================= */
 .splitLayout {
   display: flex;
@@ -30,7 +30,7 @@
 }
 
 /* =========================================
-   LEFT SIDEBAR — identical width/spacing to PYQ
+   LEFT SIDEBAR 
    ========================================= */
 .leftSidebar {
   width: 270px;
@@ -49,7 +49,7 @@
 }
 
 /* =========================================
-   HEADER BLOCK — matches PYQ's leetcodeHeaderBlock
+   HEADER BLOCK
    ========================================= */
 .headerBlock {
   display: flex;
@@ -58,7 +58,6 @@
   width: 100%;
 }
 
-/* ── Icon Container (base) ── */
 .graphicIconContainer {
   display: flex;
   align-items: center;
@@ -69,31 +68,15 @@
   margin-bottom: 16px;
 }
 
-/* Physics — blue tint */
-.iconContainerPhysics {
-  background-color: rgba(96, 198, 255, 0.12);
+.iconContainerPhysics { background-color: rgba(96, 198, 255, 0.12); }
+.iconContainerChemistry { background-color: rgba(74, 222, 128, 0.1); }
+.iconContainerMaths { background-color: rgba(192, 132, 252, 0.1); }
 
-}
-
-/* Chemistry — green tint */
-.iconContainerChemistry {
-  background-color: rgba(74, 222, 128, 0.1);
-
-}
-
-/* Maths — purple tint */
-.iconContainerMaths {
-  background-color: rgba(192, 132, 252, 0.1);
-
-}
-
-/* The SVG inside the container */
 .subjectIconSvg {
   width: 30px;
   height: 30px;
 }
 
-/* ── Header Text Group ── */
 .headerTextGroup {
   display: flex;
   flex-direction: column;
@@ -124,7 +107,7 @@
 }
 
 /* =========================================
-   SEGMENTED CONTROL — identical to PYQ
+   SEGMENTED CONTROL 
    ========================================= */
 .segmentedControl {
   display: flex;
@@ -161,13 +144,12 @@
 }
 
 /* =========================================
-   DIVISIONS LIST
+   DIVISIONS TABS GRID COMPONENT 
    ========================================= */
 .divisionsListContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1;
+  gap: 12px;
   min-height: 0;
   margin-top: 4px;
 }
@@ -181,58 +163,54 @@
   padding-left: 4px;
 }
 
-.divisionsList {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
+/* 🔥 NEW: Stacked Grid Layout for Tabs */
+.divisionsGrid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 column to safely fit long names like "Coordinate Geometry" */
+  gap: 8px;
   overflow-y: auto;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  padding-right: 4px;
+  scrollbar-width: none;
+  padding-bottom: 12px;
 }
 
-.divisionsList::-webkit-scrollbar { width: 5px; }
-.divisionsList::-webkit-scrollbar-track { background: transparent; }
-.divisionsList::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+.divisionsGrid::-webkit-scrollbar {
+  display: none;
 }
-.divisionsList:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
-.divisionsList::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
 
-/* Division row item */
-.divisionRowItem {
+/* 🔥 NEW: Minimalist pill/tab style matching PYQ */
+.divisionTabBtn {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  padding: 10px 14px;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-  box-sizing: border-box;
-  border: none;
-  text-align: left;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
 }
 
-.divisionRowItem:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+.divisionTabBtn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
-.divisionRowActive {
-  background-color: rgba(255, 255, 255, 0.07);
+.divisionTabActive {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .divisionNameText {
+  color: #8c8c8c;
   font-size: 13px;
   font-weight: 500;
-  color: #8c8c8c;
   transition: color 0.15s ease;
 }
 
-.divisionRowActive .divisionNameText {
+.divisionTabActive .divisionNameText {
   color: var(--dashboard-primary-text-color, #F4F4F4);
   font-weight: 600;
 }
@@ -240,11 +218,15 @@
 .divisionMetaText {
   font-size: 11px;
   color: #666;
-  margin-top: 2px;
+  transition: color 0.15s ease;
+}
+
+.divisionTabActive .divisionMetaText {
+  color: #8c8c8c;
 }
 
 /* =========================================
-   RIGHT CONTENT — identical to PYQ
+   RIGHT CONTENT 
    ========================================= */
 .rightContent {
   flex: 1;
@@ -276,7 +258,6 @@
   .pageContainer {
     height: auto;
     overflow: visible;
-    padding: 20px 0;
   }
   .splitLayout {
     flex-direction: column;
@@ -290,7 +271,8 @@
   .divisionsListContainer {
     flex: none;
   }
-  .divisionsList {
+  .divisionsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* Switches to multi-column on tablet */
     max-height: 250px;
   }
   .rightContent {

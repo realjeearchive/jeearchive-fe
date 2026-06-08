@@ -1,52 +1,167 @@
+/* ============================================================
+   HelpSupportContent.module.css
+   Design language: mirrors the clean Profile page aesthetic —
+   generous spacing, clear hierarchy, single accent colour.
+   ============================================================ */
 
-
-.faqWrapper {
+/* ── Page Shell ─────────────────────────────────────────── */
+.container {
+  background: var(--dashboard-background-color);
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 28px;
 }
 
-.faqItem {
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+}
+
+/* ── Section wrapper ────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dashboard-primary-text-color);
+  margin: 0;
+}
+
+/* ── Shared Card ────────────────────────────────────────── */
+.card {
   background: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
   border-radius: 12px;
-  padding: 16px;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
   overflow: hidden;
 }
 
-
-.faqHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.faqHeader:hover {
-  border-color: var(--dashboard-core-color);
-  cursor: pointer;
-}
-
-.faqTitleGroup {
-  display: flex;
-  align-items: center;
+/* ── Contact Cards ──────────────────────────────────────── */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
-/* Question Indicator */
-.qBadge {
+.contactCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--dashboard-light-bg-color);
+  border: 1px solid var(--dashboard-sidebar-border-color);
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  width: 100%;
+}
+
+.contactCard:hover {
+  border-color: var(--dashboard-core-color);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.contactCard:focus-visible {
+  outline: 2px solid var(--dashboard-core-color);
+  outline-offset: 2px;
+}
+
+.contactIconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   background: rgba(245, 158, 11, 0.1);
   color: var(--dashboard-core-color);
-  font-size: 14px;
-  font-weight: 800;
-  width: 24px;
-  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.contactBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.contactLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.contactValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--dashboard-primary-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contactArrow {
+  color: var(--dashboard-secondary-text-color);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+/* ── FAQ ────────────────────────────────────────────────── */
+.faqRow {
+  overflow: hidden;
+}
+
+.faqRowBorder {
+  border-bottom: 1px solid var(--dashboard-sidebar-border-color);
+}
+
+.faqTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 16px;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.faqTrigger:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.faqLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.qBadge {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--dashboard-core-color);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -54,513 +169,133 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--dashboard-primary-text-color);
+  line-height: 1.45;
 }
 
-.faqChevron {
+/* Shared chevron */
+.chevron {
   color: var(--dashboard-secondary-text-color);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-}
-
-.faqActive .faqChevron {
-  transform: rotate(180deg);
-  color: var(--dashboard-core-color);
-}
-
-/* SMOOTH HEIGHT TRANSITION LOGIC */
-.faqBodyCollapse {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.faqActive .faqBodyCollapse {
-  grid-template-rows: 1fr;
-}
-
-.faqBodyContent {
-  overflow: hidden;
-}
-
-.faqAnswerRow {
-  display: flex;
-  gap: 12px;
-  padding-top: 16px;
-  margin-top: 14px;
-  border-top: 1px solid var(--dashboard-sidebar-border-color);
-}
-
-/* Answer Indicator */
-.aBadge {
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 14px;
-  font-weight: 800;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.faqAnswerText {
-  color: var(--dashboard-secondary-text-color);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* --- REMAINDER OF BASE STYLES --- */
-.container {
-  background: var(--dashboard-background-color);
-  padding : 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.pageTitle {
-  font-size: 24px;
-  font-weight: 700;
-}
-.infoCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 14px;
-}
-.label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.value {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  margin-top: 4px;
-}
-.helperText {
-  font-size: 11px;
-  color: var(--dashboard-icons-color);
-  line-height: 1.5;
-  opacity: 0.7;
-}
-.sectionHeading {
-  font-size: 16px;
-  font-weight: 600;
-}
-.rowHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.clickableCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.clickableCard:hover {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: var(--dashboard-core-color);
-}
-.topSectionFull {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.bugTextArea {
-  width: 100%;
-  min-height: 120px;
-  background: transparent;
-  border: none;
-  color: var(--dashboard-primary-text-color);
-  padding: 10px 0;
-  font-size: 14px;
-  resize: vertical;
-  outline: none;
-  font-family: inherit;
-}
-.bugTextArea::placeholder {
-  color: var(--dashboard-icons-color);
-  opacity: 0.5;
-}
-.saveActionRow {
-  display: flex;
-  justify-content: flex-start;
-}
-.saveBtn {
-  background-color: var(--dashboard-primary-text-color);
-  color: #000;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.2s;
-}
-.saveBtn:hover {
-  opacity: 0.9;
-}
-
-.actionCard {
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-}
-.versionLabel {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
-}
-.versionNumber {
-  color: var(--dashboard-core-color);
-}
-.detailsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-@media (max-width: 768px) {
-  .topSectionFull {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-@media (max-width: 600px) {
-    .infoCard{
-        padding: 12px 10px;
-    }
-    .faqItem{
-        padding: 12px 10px;
-    }
-    .clickableCard{
-        padding: 12px 10px;
-    }
-}
-
-/* HelpSupportContent.module.css */
-
-.faqWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.faqItem {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 12px;
-  padding: 16px;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-  overflow: hidden;
-}
-
-.faqHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.faqHeader:hover {
-  border-color: var(--dashboard-core-color);
-  cursor: pointer;
-}
-
-.faqTitleGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Question Indicator */
-.qBadge {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--dashboard-core-color);
-  font-size: 14px;
-  font-weight: 800;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.faqQuestion {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-}
-
-.faqChevron {
-  color: var(--dashboard-secondary-text-color);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
-}
-
-.faqActive .faqChevron {
-  transform: rotate(180deg);
-  color: var(--dashboard-core-color);
-}
-
-/* SMOOTH HEIGHT TRANSITION LOGIC */
-.faqBodyCollapse {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.faqActive .faqBodyCollapse {
-  grid-template-rows: 1fr;
-}
-
-.faqBodyContent {
-  overflow: hidden;
-}
-
-.faqAnswerRow {
-  display: flex;
-  gap: 12px;
-  padding-top: 16px;
-  margin-top: 14px;
-  border-top: 1px solid var(--dashboard-sidebar-border-color);
-}
-
-/* Answer Indicator */
-.aBadge {
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 14px;
-  font-weight: 800;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.faqAnswerText {
-  color: var(--dashboard-secondary-text-color);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* --- REMAINDER OF BASE STYLES --- */
-.container {
-  background: var(--dashboard-background-color);
-  padding : 20px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.pageTitle {
-  font-size: 24px;
-  font-weight: 700;
-}
-.infoCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 16px; /* 🔥 Slightly increased padding */
-  display: flex;
-  flex-direction: column;
-}
-.label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.value {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  margin-top: 4px;
-}
-.helperText {
-  font-size: 11px;
-  color: var(--dashboard-icons-color);
-  line-height: 1.5;
-  opacity: 0.7;
-}
-.sectionHeading {
-  font-size: 16px;
-  font-weight: 600;
-}
-.rowHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.clickableCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.clickableCard:hover {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: var(--dashboard-core-color);
-}
-.topSectionFull {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.bugTextArea {
-  width: 100%;
-  min-height: 100px; /* 🔥 Adjusted to accommodate the dropdown */
-  background: transparent;
-  border: none;
-  color: var(--dashboard-primary-text-color);
-  padding: 10px 0 0 0;
-  font-size: 14px;
-  resize: vertical;
-  outline: none;
-  font-family: inherit;
-}
-.bugTextArea::placeholder {
-  color: var(--dashboard-icons-color);
-  opacity: 0.5;
-}
-.saveActionRow {
-  display: flex;
-  justify-content: flex-start;
-}
-.saveBtn {
-  background-color: var(--dashboard-primary-text-color);
-  color: #000;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.2s;
-}
-.saveBtn:hover {
-  opacity: 0.9;
-}
-.saveBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.actionCard {
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-}
-.versionLabel {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
-}
-.versionNumber {
-  color: var(--dashboard-core-color);
-}
-.detailsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* 🔥 NEW: Styles for the Dropdown Form Group */
-.inputGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.divider {
-  height: 1px;
-  background-color: var(--dashboard-sidebar-border-color);
-  margin: 16px 0;
-  width: 100%;
-}
-
-.dropdownWrapper {
-  position: relative;
-  width: 100%;
-}
-
-.dropdownToggle {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  color: var(--dashboard-primary-text-color);
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dropdownToggle:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.dropdownChevron {
-  color: var(--dashboard-secondary-text-color);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s ease;
 }
 
 .chevronOpen {
   transform: rotate(180deg);
+  color: var(--dashboard-core-color);
+}
+
+/* Smooth collapse */
+.faqCollapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faqCollapseOpen {
+  grid-template-rows: 1fr;
+}
+
+.faqCollapseInner {
+  overflow: hidden;
+}
+
+.faqAnswer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0 20px 18px 20px;
+  margin-top: 4px;
+}
+
+.aBadge {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--dashboard-secondary-text-color);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.faqAnswerText {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--dashboard-secondary-text-color);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Feedback Form ──────────────────────────────────────── */
+.fieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+}
+
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dashboard-secondary-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rowDivider {
+  height: 1px;
+  background: var(--dashboard-sidebar-border-color);
+  margin: 0;
+}
+
+/* Dropdown */
+.dropdownWrapper {
+  position: relative;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-primary-text-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.dropdownToggle:focus-visible {
+  outline: none;
 }
 
 .dropdownMenu {
   position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  width: 100%;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
   background: var(--dashboard-light-bg-color);
   border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  z-index: 10;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 20;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
 .dropdownItem {
-  padding: 12px 14px;
-  font-size: 14px;
+  padding: 11px 14px;
+  font-size: 13px;
   color: var(--dashboard-secondary-text-color);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
 .dropdownItem:hover {
@@ -569,25 +304,91 @@
 }
 
 .dropdownItemActive {
-  background: rgba(255, 255, 255, 0.03);
   color: var(--dashboard-primary-text-color);
   font-weight: 500;
+  background: rgba(245, 158, 11, 0.06);
 }
 
-@media (max-width: 768px) {
-  .topSectionFull {
+/* Textarea */
+.textarea {
+  width: 100%;
+  min-height: 110px;
+  background: transparent;
+  border: none;
+  color: var(--dashboard-primary-text-color);
+  padding: 0 18px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.textarea::placeholder {
+  color: var(--dashboard-secondary-text-color);
+  opacity: 0.4;
+}
+
+.textarea:disabled {
+  opacity: 0.5;
+}
+
+/* ── Actions row ─────────────────────────────────────────── */
+.actions {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 2px;
+}
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--dashboard-primary-text-color);
+  color: #000;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.submitBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .contactGrid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 600px) {
-    .infoCard{
-        padding: 12px 10px;
-    }
-    .faqItem{
-        padding: 12px 10px;
-    }
-    .clickableCard{
-        padding: 12px 10px;
-    }
+  .contactCard {
+    padding: 14px 16px;
+  }
+
+  .faqTrigger {
+    padding: 14px 16px;
+  }
+
+  .faqAnswer {
+    padding: 0 16px 16px;
+  }
+
+  .fieldRow {
+    padding: 13px 14px;
+  }
+
+  .textarea {
+    padding: 0 14px 14px;
+  }
 }

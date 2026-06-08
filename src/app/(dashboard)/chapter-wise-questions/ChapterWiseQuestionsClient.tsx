@@ -169,23 +169,13 @@ const SUBJECT_META: Record<string, string> = {
 };
 
 // --- Dynamic Subject Icon SVGs ---
-// Physics: atom / orbital rings — blue-teal
-// Chemistry: flask / beaker — green
-// Maths: sigma / function — purple
-
 function PhysicsIcon() {
   return (
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
-      {/* Nucleus dot */}
       <circle cx="16" cy="16" r="2.5" fill="#60C6FF" />
-      {/* Orbital ring 1 — horizontal ellipse */}
       <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.9" />
-      {/* Orbital ring 2 — rotated 60deg */}
-      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.6"
-        transform="rotate(60 16 16)" />
-      {/* Orbital ring 3 — rotated -60deg */}
-      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.35"
-        transform="rotate(-60 16 16)" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.6" transform="rotate(60 16 16)" />
+      <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="#60C6FF" strokeWidth="1.6" fill="none" opacity="0.35" transform="rotate(-60 16 16)" />
     </svg>
   );
 }
@@ -193,20 +183,10 @@ function PhysicsIcon() {
 function ChemistryIcon() {
   return (
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
-      {/* Flask body */}
-      <path
-        d="M12 4 L12 14 L6.5 24 Q5.5 26 7 27.5 Q8 28.5 10 28.5 L22 28.5 Q24 28.5 25 27.5 Q26.5 26 25.5 24 L20 14 L20 4 Z"
-        stroke="#4ADE80" strokeWidth="1.7" fill="none" strokeLinejoin="round"
-      />
-      {/* Liquid inside flask */}
-      <path
-        d="M9 22 Q10 20.5 16 21 Q22 21.5 23 22 L25.2 26 Q24.5 27.5 22 27.5 L10 27.5 Q7.5 27.5 6.8 26 Z"
-        fill="#4ADE80" opacity="0.3"
-      />
-      {/* Bubbles */}
+      <path d="M12 4 L12 14 L6.5 24 Q5.5 26 7 27.5 Q8 28.5 10 28.5 L22 28.5 Q24 28.5 25 27.5 Q26.5 26 25.5 24 L20 14 L20 4 Z" stroke="#4ADE80" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
+      <path d="M9 22 Q10 20.5 16 21 Q22 21.5 23 22 L25.2 26 Q24.5 27.5 22 27.5 L10 27.5 Q7.5 27.5 6.8 26 Z" fill="#4ADE80" opacity="0.3" />
       <circle cx="14" cy="24.5" r="1" fill="#4ADE80" opacity="0.7" />
       <circle cx="18" cy="23" r="0.7" fill="#4ADE80" opacity="0.5" />
-      {/* Flask neck lines */}
       <line x1="12" y1="8" x2="20" y2="8" stroke="#4ADE80" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
@@ -215,17 +195,9 @@ function ChemistryIcon() {
 function MathsIcon() {
   return (
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
-      {/* Sigma / Summation symbol */}
-      <path
-        d="M22 6 L10 6 L17.5 15.5 L10 25 L22 25"
-        stroke="#C084FC" strokeWidth="2" fill="none"
-        strokeLinecap="round" strokeLinejoin="round"
-      />
-      {/* Top bar tick */}
+      <path d="M22 6 L10 6 L17.5 15.5 L10 25 L22 25" stroke="#C084FC" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       <line x1="10" y1="6" x2="22" y2="6" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
-      {/* Bottom bar tick */}
       <line x1="10" y1="25" x2="22" y2="25" stroke="#C084FC" strokeWidth="2" strokeLinecap="round" />
-      {/* Small decorative plus in corner */}
       <line x1="25" y1="10" x2="25" y2="14" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
       <line x1="23" y1="12" x2="27" y2="12" stroke="#C084FC" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
     </svg>
@@ -338,15 +310,11 @@ export function ChapterWiseQuestionsClient() {
           {/* ─── LEFT SIDEBAR ─────────────────────────────────────────── */}
           <aside className={Styles.leftSidebar} aria-label="Subject and division filter">
 
-            {/* HEADER BLOCK — mirrors PYQ exactly */}
             <div className={Styles.headerBlock}>
-
-              {/* Dynamic subject icon container */}
               <div className={`${Styles.graphicIconContainer} ${Styles[iconContainerClass]}`}>
                 {SUBJECT_ICONS[activeSubject]}
               </div>
 
-              {/* Title + meta */}
               <div className={Styles.headerTextGroup}>
                 <h1 className={Styles.cardTitle}>{subjectLabel}</h1>
                 <div className={Styles.metaInfoRow}>
@@ -359,7 +327,6 @@ export function ChapterWiseQuestionsClient() {
               </div>
             </div>
 
-            {/* SUBJECT SEGMENTED CONTROL */}
             <nav className={Styles.segmentedControl} aria-label="Select subject">
               {(["physics", "chemistry", "maths"] as const).map((sub) => (
                 <button
@@ -373,15 +340,16 @@ export function ChapterWiseQuestionsClient() {
               ))}
             </nav>
 
-            {/* DIVISIONS LIST */}
             <nav className={Styles.divisionsListContainer} aria-label="Select division">
               <span className={Styles.listLabel}>Divisions</span>
-              <div className={Styles.divisionsList}>
+              
+              {/* 🔥 NEW: TABS GRID DISPLAY FOR DIVISIONS */}
+              <div className={Styles.divisionsGrid}>
                 {currentDivisions.map((div) => (
                   <button
                     key={div.id}
                     onClick={() => setActiveDivision(div.id)}
-                    className={`${Styles.divisionRowItem} ${activeDivision === div.id ? Styles.divisionRowActive : ""}`}
+                    className={`${Styles.divisionTabBtn} ${activeDivision === div.id ? Styles.divisionTabActive : ""}`}
                     aria-current={activeDivision === div.id ? "true" : undefined}
                   >
                     <span className={Styles.divisionNameText}>{div.title}</span>

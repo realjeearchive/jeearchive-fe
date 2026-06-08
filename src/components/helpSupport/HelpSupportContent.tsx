@@ -6,8 +6,8 @@ import {
   FiMail,
   FiMessageCircle,
   FiChevronDown,
-  FiAlertCircle,
   FiSend,
+  FiExternalLink,
 } from "react-icons/fi";
 import { useHelpSupport } from "@/features/helpSupport/useHelpSupport";
 
@@ -33,8 +33,6 @@ const FAQ_LIST = [
 export default function HelpSupportContent() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [bugDescription, setBugDescription] = useState("");
-  
-  // 🔥 NEW: State for Dropdown
   const [reportType, setReportType] = useState<"TechnicalGlitch" | "Review">("TechnicalGlitch");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -54,14 +52,12 @@ export default function HelpSupportContent() {
   };
 
   const handleReportBug = async () => {
-    // 🔥 NEW: Pass reportType to the hook
     const success = await handleSubmitBugReport(bugDescription, reportType);
     if (success) {
       setBugDescription("");
     }
   };
 
-  // 🔥 NEW: Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -69,101 +65,83 @@ export default function HelpSupportContent() {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <main className={styles.container} aria-label="Help and support">
       <h1 className={styles.pageTitle}>Help & Support</h1>
 
-      <section className={styles.topSectionFull} aria-label="Contact options">
-        <div
-          className={styles.clickableCard}
-          onClick={handleEmailClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleEmailClick();
-            }
-          }}
-          aria-label="Send email to contactjeearchive@gmail.com"
-        >
-          <div className={styles.rowHeader}>
-            <span className={styles.label}>Official Support Email</span>
-            <FiMail size={16} aria-hidden="true" />
-          </div>
-          <div className={styles.value}>contactjeearchive@gmail.com</div>
-          <p className={styles.helperText}>
-            Click to send us an email via Gmail/Mail client.
-          </p>
-        </div>
+      {/* ── Contact ── */}
+      <section className={styles.section} aria-label="Contact options">
+        <div className={styles.contactGrid}>
+          <button
+            className={styles.contactCard}
+            onClick={handleEmailClick}
+            aria-label="Send email to contactjeearchive@gmail.com"
+          >
+            <div className={styles.contactIconWrap}>
+              <FiMail size={18} aria-hidden="true" />
+            </div>
+            <div className={styles.contactBody}>
+              <span className={styles.contactLabel}>Official Support Email</span>
+              <span className={styles.contactValue}>contactjeearchive@gmail.com</span>
+            </div>
+            <FiExternalLink size={14} className={styles.contactArrow} aria-hidden="true" />
+          </button>
 
-        <div
-          className={styles.clickableCard}
-          onClick={handleDiscordClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleDiscordClick();
-            }
-          }}
-          aria-label="Join Discord community"
-        >
-          <div className={styles.rowHeader}>
-            <span className={styles.label}>Community Support</span>
-            <FiMessageCircle size={16} aria-hidden="true" />
-          </div>
-          <div className={styles.value}>Discord Community</div>
-          <p className={styles.helperText}>
-            Join our server to chat with moderators.
-          </p>
+          <button
+            className={styles.contactCard}
+            onClick={handleDiscordClick}
+            aria-label="Join Discord community"
+          >
+            <div className={styles.contactIconWrap}>
+              <FiMessageCircle size={18} aria-hidden="true" />
+            </div>
+            <div className={styles.contactBody}>
+              <span className={styles.contactLabel}>Community Support</span>
+              <span className={styles.contactValue}>Discord Community</span>
+            </div>
+            <FiExternalLink size={14} className={styles.contactArrow} aria-hidden="true" />
+          </button>
         </div>
       </section>
 
-      <section className={styles.detailsSection} aria-label="Frequently asked questions">
-        <h2 className={styles.sectionHeading}>Frequently Asked Questions</h2>
-        <div className={styles.faqWrapper} role="list">
+      {/* ── FAQ ── */}
+      <section className={styles.section} aria-label="Frequently asked questions">
+        <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
+        <div className={styles.card} role="list">
           {FAQ_LIST.map((faq, index) => (
             <div
               key={index}
-              className={`${styles.faqItem} ${activeFaq === index ? styles.faqActive : ""}`}
+              className={`${styles.faqRow} ${index < FAQ_LIST.length - 1 ? styles.faqRowBorder : ""}`}
               role="listitem"
             >
               <button
-                className={styles.faqHeader}
+                className={styles.faqTrigger}
                 onClick={() => toggleFaq(index)}
                 aria-expanded={activeFaq === index}
                 aria-controls={`faq-answer-${index}`}
               >
-                <div className={styles.faqTitleGroup}>
-                  <span className={styles.qBadge} aria-hidden="true">
-                    Q
-                  </span>
+                <div className={styles.faqLeft}>
+                  <span className={styles.qBadge} aria-hidden="true">Q</span>
                   <span className={styles.faqQuestion}>{faq.q}</span>
                 </div>
                 <FiChevronDown
-                  className={styles.faqChevron}
+                  className={`${styles.chevron} ${activeFaq === index ? styles.chevronOpen : ""}`}
                   aria-hidden="true"
                 />
               </button>
 
               <div
                 id={`faq-answer-${index}`}
-                className={styles.faqBodyCollapse}
+                className={`${styles.faqCollapse} ${activeFaq === index ? styles.faqCollapseOpen : ""}`}
                 role="region"
                 aria-label={`Answer to: ${faq.q}`}
               >
-                <div className={styles.faqBodyContent}>
-                  <div className={styles.faqAnswerRow}>
-                    <span className={styles.aBadge} aria-hidden="true">
-                      A
-                    </span>
+                <div className={styles.faqCollapseInner}>
+                  <div className={styles.faqAnswer}>
+                    <span className={styles.aBadge} aria-hidden="true">A</span>
                     <p className={styles.faqAnswerText}>{faq.a}</p>
                   </div>
                 </div>
@@ -173,71 +151,78 @@ export default function HelpSupportContent() {
         </div>
       </section>
 
-      <section className={styles.detailsSection} aria-label="Report a technical bug or review">
-        <h2 className={styles.sectionHeading}>Submit Feedback or Report Bug</h2>
-        <div className={styles.infoCard}>
-          
-          {/* 🔥 NEW: Custom Dropdown Integration */}
-          <div className={styles.inputGroup}>
-            <div className={styles.rowHeader}>
-              <span className={styles.label}>Select Type</span>
-            </div>
+      {/* ── Feedback ── */}
+      <section className={styles.section} aria-label="Submit feedback or report bug">
+        <h2 className={styles.sectionTitle}>Submit Feedback or Report Bug</h2>
+        <div className={styles.card}>
+
+          {/* Type selector */}
+          <div className={styles.fieldRow}>
+            <span className={styles.fieldLabel}>Type</span>
             <div className={styles.dropdownWrapper} ref={dropdownRef}>
-               <button
-                 className={styles.dropdownToggle}
-                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-               >
-                 <span>{reportType === 'TechnicalGlitch' ? 'Technical Glitch' : 'Review / Feedback'}</span>
-                 <FiChevronDown className={`${styles.dropdownChevron} ${isDropdownOpen ? styles.chevronOpen : ''}`} />
-               </button>
-               {isDropdownOpen && (
-                 <div className={styles.dropdownMenu}>
-                   <div
-                     className={`${styles.dropdownItem} ${reportType === 'TechnicalGlitch' ? styles.dropdownItemActive : ''}`}
-                     onClick={() => { setReportType('TechnicalGlitch'); setIsDropdownOpen(false); }}
-                   >
-                     Technical Glitch
-                   </div>
-                   <div
-                     className={`${styles.dropdownItem} ${reportType === 'Review' ? styles.dropdownItemActive : ''}`}
-                     onClick={() => { setReportType('Review'); setIsDropdownOpen(false); }}
-                   >
-                     Review / Feedback
-                   </div>
-                 </div>
-               )}
+              <button
+                className={styles.dropdownToggle}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                aria-haspopup="listbox"
+                aria-expanded={isDropdownOpen}
+              >
+                <span>{reportType === "TechnicalGlitch" ? "Technical Glitch" : "Review / Feedback"}</span>
+                <FiChevronDown
+                  className={`${styles.chevron} ${isDropdownOpen ? styles.chevronOpen : ""}`}
+                  aria-hidden="true"
+                />
+              </button>
+              {isDropdownOpen && (
+                <div className={styles.dropdownMenu} role="listbox">
+                  <div
+                    className={`${styles.dropdownItem} ${reportType === "TechnicalGlitch" ? styles.dropdownItemActive : ""}`}
+                    role="option"
+                    aria-selected={reportType === "TechnicalGlitch"}
+                    onClick={() => { setReportType("TechnicalGlitch"); setIsDropdownOpen(false); }}
+                  >
+                    Technical Glitch
+                  </div>
+                  <div
+                    className={`${styles.dropdownItem} ${reportType === "Review" ? styles.dropdownItemActive : ""}`}
+                    role="option"
+                    aria-selected={reportType === "Review"}
+                    onClick={() => { setReportType("Review"); setIsDropdownOpen(false); }}
+                  >
+                    Review / Feedback
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className={styles.divider} aria-hidden="true" />
+          <div className={styles.rowDivider} aria-hidden="true" />
 
-          {/* Text Area */}
-          <div className={styles.inputGroup}>
-            <div className={styles.rowHeader}>
-              <span className={styles.label}>Description</span>
-              <FiAlertCircle size={16} aria-hidden="true" />
-            </div>
-            <textarea
-              className={styles.bugTextArea}
-              placeholder={reportType === 'TechnicalGlitch' ? "Describe the technical issue... (e.g., my percentile is not coming correctly)" : "Share your thoughts, suggestions, or review of the platform..."}
-              value={bugDescription}
-              onChange={(e) => setBugDescription(e.target.value)}
-              disabled={isSubmitting}
-              aria-label="Bug description or review"
-            />
+          {/* Description */}
+          <div className={styles.fieldRow}>
+            <span className={styles.fieldLabel}>Description</span>
           </div>
-
+          <textarea
+            className={styles.textarea}
+            placeholder={
+              reportType === "TechnicalGlitch"
+                ? "Describe the technical issue you encountered..."
+                : "Share your thoughts, suggestions, or review..."
+            }
+            value={bugDescription}
+            onChange={(e) => setBugDescription(e.target.value)}
+            disabled={isSubmitting}
+            aria-label="Description"
+          />
         </div>
-        <div className={styles.saveActionRow}>
+
+        <div className={styles.actions}>
           <button
-            className={styles.saveBtn}
+            className={styles.submitBtn}
             onClick={handleReportBug}
             disabled={isSubmitting || !bugDescription.trim()}
-            aria-label={
-              isSubmitting ? "Submitting report" : "Submit report"
-            }
+            aria-label={isSubmitting ? "Submitting report" : "Submit report"}
           >
-            <FiSend size={14} style={{ marginRight: "8px" }} aria-hidden="true" />
+            <FiSend size={13} aria-hidden="true" />
             {isSubmitting ? "Submitting..." : "Submit Report"}
           </button>
         </div>
