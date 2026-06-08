@@ -2,57 +2,49 @@ import React from "react";
 import styles from "./SolutionLayout.module.css";
 
 interface SolutionLayoutProps {
-  header: React.ReactNode; 
-  sidebar: React.ReactNode; 
+  header: React.ReactNode;
+  sidebar: React.ReactNode;
   footer?: React.ReactNode;
   children: React.ReactNode;
-  isSidebarOpen: boolean; 
-  onCloseSidebar?: () => void; 
+  isSidebarOpen: boolean;
+  onCloseSidebar?: () => void;
 }
 
-export const SolutionLayout = ({ 
-  header, 
-  sidebar, 
-  footer, 
+export const SolutionLayout = ({
+  header,
+  sidebar,
+  footer,
   children,
   isSidebarOpen,
-  onCloseSidebar
+  onCloseSidebar,
 }: SolutionLayoutProps) => {
-
   return (
     <div className={styles.container}>
-      
-      {/* Left Panel */}
       <div className={styles.leftPanel}>
         {header}
-        <main className={styles.contentScrollArea}>
+        <main className={styles.contentScrollArea} id="solution-main-content">
           {children}
         </main>
-        {footer && (
-          <div className={styles.footerArea}>
-            {footer}
-          </div>
-        )}
+        {footer && <footer className={styles.footerArea}>{footer}</footer>}
       </div>
 
-      {/* BACKDROP (Only visible on mobile when open) */}
-      <div 
-        className={`${styles.backdrop} ${isSidebarOpen ? styles.active : ''}`}
-        onClick={onCloseSidebar} 
+      <div
+        className={`${styles.backdrop} ${isSidebarOpen ? styles.active : ""}`}
+        onClick={onCloseSidebar}
+        role="presentation"
+        aria-hidden={!isSidebarOpen}
       />
 
-      {/* Right Panel (Sidebar) */}
-      <aside 
+      <aside
         className={`
           ${styles.rightPanel} 
           ${isSidebarOpen ? styles.mobileOpen : styles.closed}
         `}
+        aria-label="Question navigation panel"
+        aria-hidden={!isSidebarOpen}
       >
-        <div className={styles.sidebarInner}>
-          {sidebar}
-        </div>
+        <div className={styles.sidebarInner}>{sidebar}</div>
       </aside>
-
     </div>
   );
 };

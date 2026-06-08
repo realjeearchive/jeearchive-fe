@@ -3,24 +3,24 @@ import styles from "./QuestionHeader.module.css";
 import { FiBookmark, FiAlertTriangle } from "react-icons/fi";
 
 interface QuestionHeaderProps {
-  qNumber: number | string; // Adjusted to allow string in case we format it like "01"
-  type: string; 
+  qNumber: number | string;
+  type: string;
   marksPos: number;
   marksNeg: number;
 }
 
-export const QuestionHeader = ({ 
-  qNumber, 
-  type, 
-  marksPos, 
-  marksNeg 
+export const QuestionHeader = ({
+  qNumber,
+  type,
+  marksPos,
+  marksNeg,
 }: QuestionHeaderProps) => {
-  
   return (
     <div className={styles.header}>
       <div className={styles.leftSection}>
-        {/* We will pass the normalized 1-25 number into this prop later */}
-        <div className={styles.qBadge}>Q{qNumber}</div>
+        <div className={styles.qBadge} aria-label={`Question ${qNumber}`}>
+          Q{qNumber}
+        </div>
         <div className={styles.metaPill}>{type}</div>
       </div>
 
@@ -30,11 +30,14 @@ export const QuestionHeader = ({
           <span> / </span>
           <span className={styles.negMark}>-{marksNeg}</span>
         </div>
-        <button className={styles.actionBtn}>
-          <FiBookmark size={13} /> Bookmark
+        <button className={styles.actionBtn} aria-label="Bookmark this question">
+          <FiBookmark size={13} aria-hidden="true" /> Bookmark
         </button>
-        <button className={`${styles.actionBtn} ${styles.reportBtn}`}>
-          <FiAlertTriangle size={13} /> Report
+        <button
+          className={`${styles.actionBtn} ${styles.reportBtn}`}
+          aria-label="Report this question"
+        >
+          <FiAlertTriangle size={13} aria-hidden="true" /> Report
         </button>
       </div>
     </div>

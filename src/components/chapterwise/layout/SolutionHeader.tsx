@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./SolutionHeader.module.css";
 import {
   FiArrowLeft,
@@ -10,7 +10,9 @@ import {
   FiPauseCircle,
   FiBookmark,
   FiAlertTriangle,
-  FiClock, // 🔥 NEW ICON for History
+  FiClock,
+  FiMaximize2,
+  FiMinimize2,
 } from "react-icons/fi";
 import { TbMathFunction, TbAtom, TbFlask } from "react-icons/tb";
 import { FileText } from "lucide-react";
@@ -23,7 +25,7 @@ interface SolutionHeaderProps {
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
   mode?: "solution" | "practice";
-  activeTab: "question" | "solution" | "history"; // 🔥 NEW: Support History tab
+  activeTab: "question" | "solution" | "history";
   onTabChange: (tab: "question" | "solution" | "history") => void;
   isCurrentQuestionSubmitted: boolean;
   timer?: string;
@@ -58,6 +60,31 @@ export const SolutionHeader = ({
   onBookmark,
   showTimerPrompt,
 }: SolutionHeaderProps) => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Sync state if user exits fullscreen via Escape key
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (err) {
+      console.error("Fullscreen failed:", err);
+    }
+  };
+
   const getTabsRowClass = () => {
     if (activeTab === "solution" || activeTab === "history")
       return `${styles.tabsRow} ${styles.tabsRowSolution}`;
@@ -105,6 +132,20 @@ export const SolutionHeader = ({
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Fullscreen Toggle */}
+          <button
+            className={styles.settingsBtn}
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? (
+              <FiMinimize2 size={14} aria-hidden="true" />
+            ) : (
+              <FiMaximize2 size={14} aria-hidden="true" />
+            )}
+          </button>
+
           {!isSidebarOpen && (
             <button
               className={styles.settingsBtn}
@@ -132,7 +173,7 @@ export const SolutionHeader = ({
               <FileText className={styles.tabIcon} size={16} strokeWidth={2} aria-hidden="true" />
               <span>Solutions</span>
             </button>
-            
+
             <button
               className={`${styles.tab} ${styles.tabSolution} ${activeTab === "history" ? styles.active : ""}`}
               onClick={() => onTabChange("history")}
@@ -151,6 +192,7 @@ export const SolutionHeader = ({
                 onClick={onToggleTimer}
                 className={`${styles.timerBlock} ${!isTimerRunning ? styles.timerPaused : ""}`}
                 title={isTimerRunning ? "Pause Timer" : "Start Timer"}
+                aria-label={`${isTimerRunning ? "Pause" : "Start"} timer, current time ${timer || "00:00"}`}
               >
                 <span>{timer || "00:00"}</span>
                 {isTimerRunning ? <FiPauseCircle size={16} aria-hidden="true" /> : <FiPlayCircle size={16} aria-hidden="true" />}
@@ -172,14 +214,15 @@ export const SolutionHeader = ({
             <button
               className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ""}`}
               onClick={onBookmark}
+              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this question"}
+              aria-pressed={isBookmarked}
             >
               <FiBookmark size={13} fill={isBookmarked ? "currentColor" : "none"} aria-hidden="true" />
               <span className={styles.btnText}>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
             </button>
 
-            {/* 🔥 FIX: Disabled Report Button with "Coming Soon" indicator */}
-            <button 
-              className={`${styles.actionBtn} ${styles.reportBtn}`} 
+            <button
+              className={`${styles.actionBtn} ${styles.reportBtn}`}
               aria-label="Report this question (Coming Soon)"
               title="Coming Soon"
               disabled

@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./QuestionMeta.module.css";
-// Kept FiTarget in case you want to use it later, but removed unused warnings
 
 interface QuestionMetaProps {
   chapter: string;
@@ -9,16 +8,16 @@ interface QuestionMetaProps {
 
 export const QuestionMeta = ({ chapter, topic }: QuestionMetaProps) => {
   return (
-    <div className={styles.container}>
-      <div className={styles.label}>
-        Chapter & Topic
-      </div>
-      
+    <footer className={styles.container} aria-label="Question metadata">
+      <div className={styles.label}>Chapter & Topic</div>
+
       <div className={styles.content}>
-        {chapter} 
-        <span className={styles.separator}>•</span> 
+        {chapter}
+        <span className={styles.separator} aria-hidden="true">
+          •
+        </span>
         {topic}
       </div>
-    </div>
+    </footer>
   );
 };
