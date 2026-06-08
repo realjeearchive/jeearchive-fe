@@ -1,45 +1,41 @@
 .container {
   background: var(--test-player-bg-color);
-  padding: 16px;
+  padding: var(--space-md);
   font-family: Arial, sans-serif;
   color: var(--test-player-text-color);
   border-radius: 4px;
 }
 
-/* Status Grid Styles */
 .statusGrid {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-bottom: 16px;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-md);
 }
 
 .statusRow {
   display: grid;
   grid-template-columns: 0.75fr 1fr;
-  column-gap: 20px;
+  column-gap: var(--space-lg);
 }
 
-.fullRow {
-  width: 100%;
-}
+.fullRow { width: 100%; }
 
 .statusItem {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
-/* Text beside icons */
 .statusText {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   flex-wrap: wrap;
 }
 
 .statusLabel {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--test-player-text-color);
   white-space: nowrap;
 }

@@ -2,12 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-
+  gap: var(--space-lg);
   background: var(--test-player-top-strip-bg-color);
-  padding: 3px 20px;
+  padding: 3px var(--space-lg);
   color: var(--test-player-top-strip-text-color);
-
   position: fixed;
   top: 0;
   left: 0;
@@ -16,14 +14,14 @@
 }
 
 .banner {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 500;
   flex-shrink: 0;
 }
 
 .utilities {
   display: flex;
-  gap: 20px;
+  gap: var(--space-lg);
   flex-shrink: 0;
 }
 
@@ -31,18 +29,15 @@
   border: none;
   background: transparent;
   color: var(--test-player-white-text-color);
-  font-size: 14px;
+  font-size: var(--text-sm);
   padding: 2px 4px;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   gap: 5px;
-
   white-space: nowrap;
 }
 
-/* icons unchanged */
 .icon {
   display: flex;
   justify-content: center;
@@ -50,26 +45,14 @@
   padding: 2px;
   width: 20px;
   height: 20px;
-  border-radius: 50px;
+  border-radius: var(--shape-radius-full);
 }
 
-.accessibility {
-  background-color: var(--test-player-top-strip-accessibility-icon-bg-color);
-}
+.accessibility { background-color: var(--test-player-top-strip-accessibility-icon-bg-color); }
+.magnifier { background-color: var(--test-player-top-strip-magnifier-icon-bg-color); }
+.instructions { background-color: var(--test-player-i-icon-color); }
+.questionPaper { background-color: var(--test-player-top-strip-question-icon-bg-color); }
 
-.magnifier {
-  background-color: var(--test-player-top-strip-magnifier-icon-bg-color);
-}
-
-.instructions {
-  background-color: var(--test-player-i-icon-color);
-}
-
-.questionPaper {
-  background-color: var(--test-player-top-strip-question-icon-bg-color);
-}
-
-/* ================= MOBILE SCROLL ================= */
 @media (max-width: 615px) {
   .root {
     overflow-x: auto;
@@ -77,8 +60,5 @@
     padding-left: 10px;
     padding-right: 10px;
   }
-
-  .root::-webkit-scrollbar {
-    display: none;
-  }
+  .root::-webkit-scrollbar { display: none; }
 }

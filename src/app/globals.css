@@ -126,6 +126,9 @@ body {
     --instruction-page-primary-text-color: #212529;
     --instruction-page-button-bg-color: #3778BD;
     --instruction-page-red-text-color: #FF0000;
+    --instruction-page-bg-alt: #f2f4f7;
+    --instruction-text-dark: #1f2933;
+    --instruction-border: #d0d5dd;
 
 
     /* Test player screen color definitions */
@@ -156,6 +159,13 @@ body {
     --test-player-buttons-hover-color: #f5f5f5;
     --test-player-dark-border-color: #333333;
     --cursor-trail-color: rgb(0, 0, 0);
+    /* Test Player Specific Overlays */
+    --test-player-info-popup-bg: #e9f4fb;
+    --test-player-info-popup-border: #b7d7ee;
+    --test-player-acc-toggle-bg: #d1d1d1;
+    --test-player-acc-toggle-active: #4e8ec9;
+    --test-player-acc-border: #d9d9d9;
+    --test-player-bg-secondary: #f5f5f5;
 
     
     
@@ -205,6 +215,9 @@ body {
       --test-player-dark-border-color: #443d3b;
       --test-player-light-bg-color: #1E1D1B;
       --cursor-trail-color: white;
+      --test-player-info-popup-bg: #272320;
+      --test-player-info-popup-border: #3e3836;
+      --test-player-bg-secondary: #2a2a2a;
     }
 
 

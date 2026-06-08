@@ -3,7 +3,7 @@
   width: 360px;
   height: 140px;
   border: 2px solid #444;
-  border-radius: 8px;
+  border-radius: var(--shape-radius-sm);
   background: white;
   overflow: hidden;
   cursor: move;
@@ -18,7 +18,7 @@
   right: 6px;
   width: 22px;
   height: 22px;
-  border-radius: 50%;
+  border-radius: var(--shape-radius-full);
   border: none;
   background: rgba(0, 0, 0, 0.7);
   color: white;
@@ -37,10 +37,8 @@
   position: absolute;
   top: 0;
   left: 0;
-
   width: 100vw;
   height: 100vh;
-
   transform-origin: top left;
   pointer-events: none;
 }

@@ -13,25 +13,19 @@
   .questionWrapper[data-font-size="large"] { --question-font-size: 16px; }
 }
 
-/* ========================================= */
-/* --- QUESTION TEXT & HTML FLOW FIXES ---   */
-/* ========================================= */
-
 .questionText {
-  margin: 12px 0 16px;
+  margin: var(--space-sm) 0 var(--space-md);
   font-size: var(--question-font-size);
   line-height: 1.6;
   color: var(--test-player-text-color);
-  display: block; /* Ensures natural text flow */
+  display: block; 
 }
 
 .htmlContent {
   width: 100%;
-  word-break: break-word; /* 🔥 FIX: Allows text to wrap naturally */
-  /* 🔥 FIX: Removed overflow-x: auto to eliminate the annoying text scrollbars */
+  word-break: break-word; 
 }
 
-/* Keep paragraphs inline so sentences flow normally with math */
 .htmlContent p,
 .optionText p {
   display: inline;
@@ -39,35 +33,29 @@
   padding: 0;
 }
 
-/* Add a space after inline paragraphs so words don't stick together */
 .htmlContent p::after,
 .optionText p::after {
   content: " ";
 }
 
-/* Stop KaTeX from forcing line breaks and centering */
 :global(.katex-display) {
   display: inline-block !important;
   margin: 0 4px !important;
   text-align: left !important;
 }
 
-/* ========================================= */
-/* --- OPTION LIST LAYOUT ---                */
-/* ========================================= */
-
 .optionsList {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 80%; /* Matches NTA Interface style */
+  gap: var(--space-sm);
+  width: 80%; 
   color: var(--test-player-text-color);
 }
 
 .optionRow {
   display: flex;
-  align-items: flex-start; /* 🔥 FIX: Aligns radio button to the top of the text, not the center! */
-  gap: 10px;
+  align-items: flex-start; 
+  gap: var(--space-xs);
   cursor: pointer;
 }
 
@@ -78,7 +66,7 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  margin-top: 3px; /* Slightly drops the radio button to align with the first line of text */
+  margin-top: 3px; 
 }
 
 .optionInput {
@@ -95,19 +83,15 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-items: flex-start; /* 🔥 FIX: Forces option content to the left edge */
+  align-items: flex-start; 
   text-align: left;
 }
 
 .optionText {
   font-size: var(--question-font-size);
   flex: 1;
-  text-align: left; /* 🔥 FIX: Forces text alignment to the left */
+  text-align: left; 
 }
-
-/* ========================================= */
-/* --- IMAGE HANDLING (UNIFORM SIZES) ---    */
-/* ========================================= */
 
 .inlineImageContainer {
   display: block;
@@ -116,21 +100,19 @@
   text-align: left;
 }
 
-/* 1. Main Question Images */
 .questionImage {
   height: 180px;        
   width: 100%;          
   max-width: 600px;     
   object-fit: contain;  
-  object-position: left center; /* Align image to start of text */
-  margin: 12px 0;
+  object-position: left center; 
+  margin: var(--space-sm) 0;
   display: block;
 }
 
-/* 2. Option Images */
 .optImage {
   display: block;
-  margin-top: 8px;
+  margin-top: var(--space-xs);
   height: 120px;       
   width: 100%;
   max-width: 350px;    
@@ -138,14 +120,12 @@
   object-position: left center; 
 }
 
-/* Mobile Adjustments */
 @media (max-width: 600px) {
   .optionsList { width: 100%; }
   .questionImage { height: 150px; }
   .optImage { height: 100px; }
 }
 
-/* Dark Mode Support */
 :global(.dark) .questionImage,
 :global(.dark) .optImage {
   filter: invert(1) hue-rotate(180deg);
@@ -153,35 +133,29 @@
   background-color: transparent;
 }
 
-
-/* ========================================= */
-/* --- TABLES (Match the Following) ---      */
-/* ========================================= */
-
 .htmlContent table {
   width: 100%;
   max-width: 700px;
   border-collapse: collapse;
   margin: 15px 0;
-  border: 1px solid var(--test-player-border-color, #ccc);
-  display: table !important; /* Protect from paragraph inline rules */
+  border: 1px solid var(--test-player-border-color);
+  display: table !important; 
 }
 
 .htmlContent td, .htmlContent th {
-  padding: 8px 12px;
-  border: 1px solid var(--test-player-border-color, #e0e0e0);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--test-player-border-color);
   vertical-align: top;
   text-align: left !important;
   display: table-cell !important;
 }
 
 .htmlContent th {
-  background-color: #f5f5f5;
+  background-color: rgba(0,0,0,0.05);
   font-weight: bold;
-  color: #111; /* Force dark text in light mode */
+  color: var(--test-player-text-color); 
 }
 
-/* Dark Mode Fix For Tables */
 :global(.dark) .htmlContent table,
 :global(.dark) .htmlContent td,
 :global(.dark) .htmlContent th {
@@ -190,24 +164,18 @@
 
 :global(.dark) .htmlContent th {
   background-color: #2a2a2a; 
-  color: #f4f4f5; 
 }
-
-
-/* ========================================= */
-/* --- NUMERICAL INPUT AREA ---              */
-/* ========================================= */
 
 .numericalWrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .mainAnswerArea {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .numericalLabel {
@@ -217,50 +185,45 @@
 }
 
 .numericalInput {
-  padding: 6px 12px;
+  padding: 6px var(--space-sm);
   font-size: var(--question-font-size);
   border: 1px solid var(--test-player-border-color);
   color: var(--test-player-text-color);
-  background: var(--test-player-bg-secondary);
-  border-radius: 4px;
+  background: var(--test-player-bg-color);
+  border-radius: var(--shape-radius-xs);
   width: 180px;
 }
 
 .comprehensionBox {
-  background: #f8f9fa; 
-  border-left: 4px solid #3b82f6; 
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 4px;
+  background: var(--test-player-light-bg-color); 
+  border-left: 4px solid var(--color-focus-ring); 
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border-radius: var(--shape-radius-xs);
 }
 
 .sectionLabel {
   font-weight: 700;
-  color: #3b82f6;
+  color: var(--color-focus-ring);
   text-transform: uppercase;
-  font-size: 0.75rem;
-  margin-bottom: 0.5rem;
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-xs);
 }
 
 .multiHint {
-  font-size: 0.85rem;
+  font-size: 13px;
   color: #ea580c; 
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-xs);
   font-style: italic;
 }
 
 :global(.dark) .comprehensionBox {
-  background: #27272a;
-  border-left-color: #60a5fa;
+  background: var(--test-player-sidebar-bg-color);
 }
 
 :global(.dark) .comprehensionText {
-  color: #e5e7eb;
+  color: var(--test-player-text-color);
 }
-
-/* ========================================= */
-/* MULTI-CORRECT CIRCULAR CHECKBOX OVERRIDE  */
-/* ========================================= */
 
 .optionRow input[type="checkbox"] {
   appearance: none;
@@ -283,12 +246,12 @@
   border-radius: 50%;
   transform: scale(0);
   transition: 120ms transform ease-in-out;
-  box-shadow: inset 1em 1em #2563eb; 
-  background-color: #2563eb;
+  box-shadow: inset 1em 1em var(--test-player-blue-button-bg-color); 
+  background-color: var(--test-player-blue-button-bg-color);
 }
 
 .optionRow input[type="checkbox"]:checked {
-  border-color: #2563eb;
+  border-color: var(--test-player-blue-button-bg-color);
 }
 
 .optionRow input[type="checkbox"]:checked::before {

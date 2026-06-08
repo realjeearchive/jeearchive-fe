@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #f2f4f7;
+  background: var(--instruction-page-bg-alt);
 }
 
 /* TOP BAR: fixed */
@@ -13,20 +13,20 @@
   background: var(--instruction-topHeader-background-color);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 var(--space-lg);
   z-index: 20;
 }
 
 .topBarTitle {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 600;
-  color: #1f2933;
+  color: var(--instruction-text-dark);
   flex: 1;
 }
 
-/* small menu icon on right (mobile only via media query) */
+/* small menu icon on right */
 .menuIcon {
-  display: none;        /* hidden on desktop */
+  display: none;        
   width: 22px;
   height: 16px;
   position: relative;
@@ -41,24 +41,16 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #102a43;
+  background: var(--instruction-page-primary-text-color);
   border-radius: 2px;
 }
 
-.menuIconBar:nth-child(1) {
-  top: 0;
-}
-
-.menuIconBar:nth-child(2) {
-  top: 7px;
-}
-
-.menuIconBar:nth-child(3) {
-  top: 14px;
-}
+.menuIconBar:nth-child(1) { top: 0; }
+.menuIconBar:nth-child(2) { top: 7px; }
+.menuIconBar:nth-child(3) { top: 14px; }
 
 .legendImageBlock {
-  margin: 16px 0 20px;
+  margin: var(--space-md) 0 var(--space-lg);
   display: flex;
   justify-content: center;
 }
@@ -68,7 +60,7 @@
   height: auto;
 }
 
-/* MAIN: sits between fixed header and footer */
+/* MAIN */
 .main {
   display: grid;
   grid-template-columns: minmax(0, 4fr) 220px;
@@ -81,7 +73,7 @@
 
 /* LEFT panel scrolls */
 .instructionsPanel {
-  background: #ffffff;
+  background: var(--instruction-page-primary-bg-color);
   padding: 18px 22px;
   padding-left: 60px;
   overflow-y: auto;
@@ -90,10 +82,10 @@
 
 /* list 4–8 after image */
 .continuedList {
-  margin: 0 0 20px;
-  padding-left: 32px;
+  margin: 0 0 var(--space-lg);
+  padding-left: var(--space-2xl);
   list-style-type: decimal;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1.6;
 }
 
@@ -102,128 +94,77 @@
   font-weight: 500;
 }
 
-/* RIGHT panel: candidate info (desktop) */
+/* RIGHT panel */
 .candidatePanelWrapper {
   position: fixed;
   top: 0;
   right: 0;
   background: var(--instruction-page-primary-bg-color);
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--instruction-border);
   border-left: none;
   display: flex;
   justify-content: center;
   z-index: 21;
 }
 
-/* bottom consent bar */
 .bottomBar {
   z-index: 100;
 }
 
-/* ===== MOBILE (<= 900px) ===== */
+/* ===== MOBILE ===== */
 @media (max-width: 900px) {
   .main {
-    display: block;           /* single column */
+    display: block;           
     padding-right: 0;
   }
 
   .instructionsPanel {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .candidatePanelWrapper {
-    display: none;            /* hide right panel on mobile */
-  }
-
-  .menuIcon {
-    display: block;           /* show hamburger in topBar */
-  }
-}
-
-/* ===== MOBILE SLIDE-IN PANEL ===== */
-
-.mobileCandidatePanel {
-  position: fixed;
-  top: 52px; /* below topBar */
-  right: 0;
-  bottom: 0;
-  width: 260px;
-  background: #ffffff;
-  border-left: 1px solid #d0d5dd;
-  box-shadow: -4px 0 10px rgba(15, 23, 42, 0.15);
-  z-index: 40;
-  transform: translateX(100%);
-  transition: transform 0.25s ease-out;
-}
-
-.mobileCandidatePanelOpen {
-  transform: translateX(0);
-}
-
-.mobilePanelHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid #d0d5dd;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.mobilePanelCloseButton {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-}
-
-/* slide-in mobile panel */
-.mobileCandidatePanel {
-  position: fixed;
-  top: 52px; /* below topBar */
-  right: 0;
-  bottom: 0;
-  width: 260px;
-  background: #ffffff;
-  border-left: 1px solid #d0d5dd;
-  box-shadow: -4px 0 10px rgba(15, 23, 42, 0.15);
-  z-index: 40;
-  transform: translateX(100%);
-  transition: transform 0.25s ease-out;
-}
-
-.mobileCandidatePanelOpen {
-  transform: translateX(0);
-}
-
-.mobilePanelHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-bottom: 1px solid #d0d5dd;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.mobilePanelCloseButton {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
-}
-
-@media (max-width: 900px) {
-  .instructionsPanel {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
     padding-bottom: 180px;
-    padding-left: 10px;
-    padding-right: 10px;
   }
   .topBar{
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  .candidatePanelWrapper { display: none; }
+  .menuIcon { display: block; }
+}
+
+/* ===== MOBILE SLIDE-IN PANEL ===== */
+.mobileCandidatePanel {
+  position: fixed;
+  top: 52px; 
+  right: 0;
+  bottom: 0;
+  width: 260px;
+  background: var(--instruction-page-primary-bg-color);
+  border-left: 1px solid var(--instruction-border);
+  box-shadow: -4px 0 10px rgba(15, 23, 42, 0.15);
+  z-index: 40;
+  transform: translateX(100%);
+  transition: transform 0.25s ease-out;
+}
+
+.mobileCandidatePanelOpen {
+  transform: translateX(0);
+}
+
+.mobilePanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px var(--space-sm);
+  border-bottom: 1px solid var(--instruction-border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.mobilePanelCloseButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--text-lg);
+  line-height: 1;
 }

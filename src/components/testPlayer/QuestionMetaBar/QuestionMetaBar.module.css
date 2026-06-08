@@ -2,16 +2,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 20px;
+  padding: 6px var(--space-lg);
   background: var(--test-player-bg-color);
-
   border-bottom: 1px solid var(--test-player-border-color);
 }
 
 .left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-xs);
 }
 
 .questionNo {
@@ -21,72 +20,59 @@
 }
 
 .questionId {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: #6b7280;
 }
-
 
 .scrollBtn {
   width: 28px;
   height: 28px;
-
-  border-radius: 50%;
+  border-radius: var(--shape-radius-full);
   border: none;
-
   background-color: var(--test-player-blue-button-bg-color);
   color: var(--test-player-white-text-color);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
 }
 
 .scrollBtn svg {
-  font-size: 16px;
+  font-size: var(--text-base);
 }
 
-
-
 @media (max-width: 615px) {
-  .root{
+  .root {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 
-
-
-
-/* NEW STYLES */
 .bookmarkBtn {
   display: flex;
   align-items: center;
   gap: 6px;
   background: none;
   border: 1px solid var(--test-player-border-color);
-  border-radius: 16px;
-  padding: 4px 12px;
-  font-size: 12px;
+  border-radius: var(--shape-radius-lg);
+  padding: 4px var(--space-sm);
+  font-size: var(--text-xs);
   color: #6b7280;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .bookmarkBtn:hover {
-  background-color: #f3f4f6;
-  color: #111;
+  background-color: var(--test-player-buttons-hover-color);
+  color: var(--test-player-text-color);
 }
 
-/* Active State (Bookmarked) */
 .bookmarkBtn.active {
-  background-color: #eff6ff;
+  background-color: color-mix(in srgb, var(--test-player-blue-button-bg-color) 10%, transparent);
   border-color: var(--test-player-blue-button-bg-color);
   color: var(--test-player-blue-button-bg-color);
 }
 
 .bookmarkBtn svg {
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
-

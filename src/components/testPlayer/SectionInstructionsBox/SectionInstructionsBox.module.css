@@ -2,10 +2,9 @@
   border: 2px solid var(--test-player-dark-border-color);
   background: var(--test-player-light-bg-color);
   color: var(--test-player-text-color);
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
 
-/* HEADER */
 .header {
   width: 100%;
   text-align: center;
@@ -15,9 +14,9 @@
   background: var(--test-player-light-bg-color);
   cursor: pointer;
   border: none;
+  color: inherit;
 }
 
-/* ICON */
 .icon {
   position: absolute;
   right: 10px;
@@ -27,30 +26,20 @@
   justify-content: center;
 }
 
-/* SLIDE */
 .contentWrapper {
   overflow: hidden;
   transition: max-height 0.25s ease, opacity 0.2s ease;
 }
 
-.open {
-  max-height: 1000px;
-  opacity: 1;
-}
+.open { max-height: 1000px; opacity: 1; }
+.closed { max-height: 0; opacity: 0; }
 
-.closed {
-  max-height: 0;
-  opacity: 0;
-}
-
-/* CONTENT */
 .content {
-  padding: 12px 18px;
-  font-size: 14px;
+  padding: var(--space-sm) 18px;
+  font-size: var(--text-sm);
   line-height: 1.6;
 }
 
-/* MAIN BULLET LIST (NTA STYLE) */
 .mainList {
   list-style: none;
   padding-left: 0;
@@ -67,14 +56,13 @@
   position: absolute;
   left: 0;
   top: 0;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1;
 }
 
-/* SUB BULLETS (MARKING SCHEME) */
 .subList {
   list-style: none;
-  margin-top: 8px;
+  margin-top: var(--space-xs);
   padding-left: 0;
 }
 
@@ -89,6 +77,6 @@
   position: absolute;
   left: 0;
   top: 0;
-  font-size: 16px;
+  font-size: var(--text-base);
   line-height: 1;
 }

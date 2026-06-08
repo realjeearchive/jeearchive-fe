@@ -224,7 +224,7 @@ export function PreviousYearQuestionsClient() {
                   <path d="M4 6h16" opacity="0.3" strokeWidth="2.5"/>
                   <path d="M4 10h16" opacity="0.6" strokeWidth="2.5"/>
                   <path d="M5 14h14a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1z" fill="currentColor" stroke="none"/>
-                  <path d="M9 17.5h6" stroke="#1A1817" strokeWidth="1.5"/>
+                  <path d="M9 17.5h6" stroke="var(--bg-surface)" strokeWidth="1.5"/>
                 </svg>
               </div>
               

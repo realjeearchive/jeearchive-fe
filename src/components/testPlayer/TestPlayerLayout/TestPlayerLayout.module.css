@@ -1,19 +1,17 @@
-/* src/features/tests/testPlayerLayout/TestPlayerLayout.module.css */
-
 .page {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Changed to fixed height to stop window scroll */
+  height: 100vh; 
   background: var(--test-player-bg-color);
-  overflow: hidden; /* Prevent body scroll */
+  overflow: hidden; 
 }
 
 .mainGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   width: 100%;
-  flex: 1; /* Take remaining height */
-  overflow: hidden; /* Lock the grid */
+  flex: 1; 
+  overflow: hidden; 
 }
 
 .left {
@@ -21,29 +19,25 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden; /* Force children to handle overflow */
+  overflow: hidden; 
 }
 
 .questionArea {
   width: 82%;
-  padding: 3px 20px;
+  padding: 3px var(--space-lg);
 }
 
 @media (max-width: 900px){
   .questionArea {
     width: 100%;
-    padding: 3px 20px;
+    padding: 3px var(--space-lg);
   }
 }
 
 .bottomBar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
-  gap: 12px;
-  padding: 8px 16px;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-md);
   background-color: var(--test-player-bg-color);
   border-top: 1px solid var(--test-player-border-color);
   display: flex;
@@ -52,14 +46,9 @@
   z-index: 50;
 }
 
-.bottomBarLeft{
+.bottomBarLeft, .bottomBarRight {
   display: flex;
-  gap: 12px;
-}
-
- .bottomBarRight {
-  display: flex;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 @media (max-width: 615px) {
@@ -70,39 +59,30 @@
   }
 }
 
-.spacer {
-  flex: 1;
-}
-
-.loading {
-  padding: 32px;
-  text-align: center;
-}
+.spacer { flex: 1; }
+.loading { padding: var(--space-2xl); text-align: center; }
 
 /* --- SCROLL FIX START --- */
 .QuestionScrollArea {
   display: flex;
   flex-direction: column;
-  flex: 1;          /* Grow to fill .left */
-  overflow: hidden; /* Don't scroll this wrapper */
+  flex: 1;          
+  overflow: hidden; 
   padding-bottom: 0;
 }
 
-/* Target the <main> tag specifically for scrolling */
 .QuestionScrollArea main {
   flex: 1;
-  overflow-y: auto;   /* This enables the scrollbar here */
+  overflow-y: auto;   
   scroll-behavior: smooth;
-  padding-bottom: 120px; /* Space for the bottom bar */
-  
-  scrollbar-width: none; /* Hide scrollbar Firefox */
+  padding-bottom: 120px; 
+  scrollbar-width: none; 
 }
 
 .QuestionScrollArea main::-webkit-scrollbar {
-  display: none; /* Hide scrollbar Chrome/Safari */
+  display: none; 
 }
 /* --- SCROLL FIX END --- */
-
 
 /* ================= DESKTOP SIDEBAR ================= */
 .sidebar {
@@ -111,8 +91,6 @@
   height: 100vh;
   background: var(--test-player-sidebar-bg-color);
   border-left: 1px solid var(--test-player-border-color);
-  
-  /* CHANGE 1: Remove overflow-y: auto from here */
   overflow: visible; 
   display: flex;
   flex-direction: column;
@@ -120,9 +98,7 @@
 
 /* ================= MOBILE ONLY ================= */
 @media (max-width: 899px) {
-  .mainGrid {
-    grid-template-columns: 1fr;
-  }
+  .mainGrid { grid-template-columns: 1fr; }
 
   .sidebar {
     position: fixed;
@@ -135,19 +111,14 @@
     transition: transform 0.3s ease;
   }
 
-    .sidebarContent {
-      flex: 1;
-      overflow-y: auto; /* Scroll happens inside this wrapper */
-      height: 100%;
-    }
-
-  .sidebarOpen {
-    transform: translateX(0);
+  .sidebarContent {
+    flex: 1;
+    overflow-y: auto; 
+    height: 100%;
   }
 
-  .sidebarClosed {
-    transform: translateX(100%);
-  }
+  .sidebarOpen { transform: translateX(0); }
+  .sidebarClosed { transform: translateX(100%); }
 
   .openArrow {
     position: fixed;
@@ -186,18 +157,13 @@
     width: 20px;
     height: 60px;
     z-index: 99;
-
   }
 
-  .QuestionScrollArea main{
-    padding-bottom: 160px; 
-  }
+  .QuestionScrollArea main{ padding-bottom: 160px; }
 }
 
 @media (max-width: 615px) {
-  .questionArea{
-    padding: 3 10px;
-  }
+  .questionArea{ padding: 3px 10px; }
 }
 
 .loadingContainer {
@@ -206,7 +172,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  gap: 1rem;
+  gap: var(--space-md);
   color: #666;
 }
 
@@ -223,5 +189,3 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-

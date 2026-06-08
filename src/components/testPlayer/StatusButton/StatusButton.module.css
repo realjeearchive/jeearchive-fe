@@ -1,28 +1,19 @@
 .button {
   min-width: 140px;
   height: 54px;
-  padding: 0 16px;
-
-  font-size: 14px;
+  padding: 0 var(--space-md);
+  font-size: var(--text-sm);
   font-weight: 500;
-
   cursor: pointer;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  transition: background-color 0.2s ease,
-              color 0.2s ease,
-              border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 @media (max-width: 700px){
-  .button{
-    min-width: 100px;
-  }
+  .button{ min-width: 100px; }
 }
-
 
 .outline {
   background-color: var(--test-player-bg-color);
@@ -34,7 +25,6 @@
   background-color: var(--test-player-buttons-hover-color);
 }
 
-
 .primary {
   background-color: var(--test-player-blue-button-bg-color); 
   color: var(--test-player-white-text-color);
@@ -44,7 +34,6 @@
 .primary:hover:not(:disabled) {
   background-color: #166a9c;
 }
-
 
 .button:disabled {
   opacity: 0.6;

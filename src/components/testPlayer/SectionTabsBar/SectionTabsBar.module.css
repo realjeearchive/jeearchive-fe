@@ -1,81 +1,60 @@
-/* src/components/testPlayer/SectionTabsBar/SectionTabsBar.module.css */
-
 .root {
   background: var(--test-player-bg-color);
   border-bottom: 1px solid var(--test-player-border-color);
-  padding: 8px 20px;
-
-  /* --- FLEXBOX SCROLLING LOGIC --- */
-  display: flex;            /* Makes children sit in a row */
-  align-items: center;      /* Vertically centers them */
-  gap: 12px;                /* Adds the missing gap between tabs */
-  
-  overflow-x: auto;         /* Enables horizontal scrolling */
-  flex-wrap: nowrap;        /* CRITICAL: Forces items to stay on one line */
-  white-space: nowrap;      /* Prevents text inside from wrapping */
-
-  /* Hide Scrollbar (Clean Look) */
-  scrollbar-width: none;    /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  padding: var(--space-xs) var(--space-lg);
+  display: flex;            
+  align-items: center;      
+  gap: var(--space-sm);                
+  overflow-x: auto;         
+  flex-wrap: nowrap;        
+  white-space: nowrap;      
+  scrollbar-width: none;    
+  -ms-overflow-style: none; 
 }
 
-/* Hide scrollbar for Chrome/Safari/Opera */
-.root::-webkit-scrollbar {
-  display: none;
-}
+.root::-webkit-scrollbar { display: none; }
 
 .tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  
-  padding: 6px 16px;
-  font-size: 14px;
+  gap: var(--space-xs);
+  padding: 6px var(--space-md);
+  font-size: var(--text-sm);
   font-weight: 500;
-  border-radius: 4px; /* Slightly rounder for modern look */
+  border-radius: 4px; 
   border: 1px solid var(--test-player-border-color);
   background: var(--test-player-bg-color);
   color: var(--test-player-blue-button-bg-color);
   cursor: pointer;
-  
-  /* CRITICAL: Prevents the tab from getting squashed on small screens */
   flex-shrink: 0; 
-  
   transition: all 0.2s ease;
 }
 
 .active {
   background: var(--test-player-blue-button-bg-color);
   border-color: var(--test-player-blue-button-bg-color);
-  color: #fff; /* Force white text on active */
+  color: #fff; 
 }
 
-/* Wrapper for the (i) icon to make it easy to hover */
 .infoIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  
-  /* Make the icon slightly visible/styled if needed */
   opacity: 0.9;
   transition: opacity 0.2s;
-  color: inherit; /* Takes parent text color (Blue or White) */
+  color: inherit; 
 }
 
-.infoIcon:hover {
-  opacity: 1;
-}
+.infoIcon:hover { opacity: 1; }
 
-/* Mobile Adjustments */
 @media (max-width: 615px) {
   .root {
-    padding: 8px 10px; /* Reduce padding on mobile to save space */
-    gap: 8px; /* Slightly smaller gap on mobile */
+    padding: var(--space-xs) 10px; 
+    gap: var(--space-xs); 
   }
-  
   .tab {
-    padding: 5px 12px;
+    padding: 5px var(--space-sm);
     font-size: 13px;
   }
 }

@@ -2,35 +2,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-
-  padding: 6px 20px;
+  gap: var(--space-xl);
+  padding: 6px var(--space-lg);
   background: var(--test-player-bg-color);
-
   font-size: 13px;
   color: var(--test-player-text-color);
-
   border-bottom: 1px solid var(--test-player-border-color);
-
-  /* 🔑 REQUIRED FOR SCROLL */
   white-space: nowrap;
 }
 
 .left,
 .right {
   font-weight: 500;
-  flex-shrink: 0;   /* 🔑 prevent compression */
+  flex-shrink: 0;   
 }
 
 .positive {
-  color: #15803d;
+  color: var(--color-success-main);
 }
 
 .negative {
-  color: #b91c1c;
+  color: var(--color-error-main);
 }
 
-/* Small padding tweak only */
 @media (max-width: 615px) {
   .root {
     padding-left: 10px;
@@ -38,7 +32,6 @@
   }
 }
 
-/* 🔥 Horizontal scroll activation */
 @media (max-width: 520px) {
   .root {
     overflow-x: auto;

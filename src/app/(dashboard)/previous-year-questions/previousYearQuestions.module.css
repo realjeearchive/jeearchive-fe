@@ -5,7 +5,7 @@
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
-  height: calc(100vh - 48px - 20px); 
+  height: calc(100vh - 48px - var(--space-lg)); 
   overflow: hidden;
 }
 
@@ -13,27 +13,25 @@
   display: flex;
   width: 100%;
   height: 100%;
-  gap: 16px;
-  padding: 20px 0;
+  gap: var(--space-md);
+  padding: var(--space-lg) 0;
   align-items: stretch;
 }
 
 /* --- LEFT SIDEBAR PANEL --- */
 .leftSidebar {
   width: 270px;
-  background-color: var(--dashboard-sidebar-background-color, #1A1817);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 24px 20px 20px 20px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--shape-radius-md);
+  padding: var(--space-xl) var(--space-lg) var(--space-lg) var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
   flex-shrink: 0;
   box-sizing: border-box;
-  
-  /* 🔥 FIXED: Makes the sidebar only as tall as its content */
   height: 100%; 
-  max-height: 100%; /* Ensures it doesn't break out of the screen on tiny viewports */
+  max-height: 100%; 
 }
 
 /* 🌟 LEETCODE EXACT STRUCTURE HEADER BLOCK */
@@ -44,35 +42,34 @@
   width: 100%;
 }
 
-/* Flat, borderless, no-hover container matching LeetCode exactly */
 .graphicIconContainer {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 60px;
   height: 60px;
-  background-color: rgba(232, 124, 30, 0.15); /* Solid flat brand tint */
-  border-radius: 12px;
-  margin-bottom: 16px; 
+  background-color: color-mix(in srgb, var(--color-brand-primary) 15%, transparent); 
+  border-radius: var(--shape-radius-md);
+  margin-bottom: var(--space-md); 
 }
 
 .premiumIconSvg {
   width: 32px;
   height: 32px;
-  color: #E87C1E; /* Brand color */
+  color: var(--color-brand-primary); 
 }
 
 .headerTextGroup {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-xs);
 }
 
 .cardTitle {
-  font-size: 24px;
+  font-size: var(--text-2xl);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -82,8 +79,8 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
-  font-size: 12px;
-  color: #8c8c8c; /* Exact LeetCode Meta Text Gray */
+  font-size: var(--text-xs);
+  color: var(--text-secondary); 
   font-weight: 400;
 }
 
@@ -94,20 +91,20 @@
 /* --- PREMIUM PILL-BASED TAB CONTROLS --- */
 .segmentedControl {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
+  background-color: var(--glass-bg-base);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--shape-radius-sm);
+  padding: var(--space-2xs);
+  gap: var(--space-2xs);
 }
 
 .segmentBtn {
   flex: 1;
   background: transparent;
   border: none;
-  color: #8c8c8c;
-  padding: 6px 4px;
-  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px var(--space-2xs);
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   border-radius: 6px;
@@ -115,40 +112,38 @@
 }
 
 .segmentBtn:hover {
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
 }
 
 .segmentActive {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  background-color: var(--glass-bg-hover);
+  color: var(--text-primary);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 /* --- TABS GRID COMPONENT TRACK --- */
 .yearsListContainer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  /* 🔥 FIXED: Removed flex: 1 so it doesn't force the sidebar to stretch vertically */
+  gap: var(--space-sm);
   min-height: 0; 
   margin-top: 4px;
 }
 
 .listLabel {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding-left: 4px;
+  padding-left: var(--space-2xs);
 }
 
-/* Grid layout for tabs (3 in a line) */
 .yearsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: var(--space-xs);
   overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: none;
@@ -159,14 +154,13 @@
   display: none;
 }
 
-/* Minimalist pill/tab style for each year */
 .yearTabBtn {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  color: #8c8c8c;
-  font-size: 13px;
+  background-color: var(--glass-bg-base);
+  border: 1px solid var(--glass-border-subtle);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   font-weight: 500;
-  padding: 8px 0;
+  padding: var(--space-xs) 0;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -176,14 +170,14 @@
 }
 
 .yearTabBtn:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  background-color: var(--glass-bg-hover);
+  color: var(--text-primary);
 }
 
 .yearTabActive {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-primary-text-color, #F4F4F4);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -194,7 +188,7 @@
   overflow-y: auto; 
   min-width: 0;
   scrollbar-width: none;
-  padding: 25px;
+  padding: var(--space-xl);
 }
 
 @media (max-width: 768px) {
@@ -208,7 +202,7 @@
 .scrollContentWrapper {
   width: 100%;
   box-sizing: border-box;
-  padding-bottom: 24px;
+  padding-bottom: var(--space-xl);
 }
 
 .centerState {
@@ -220,8 +214,8 @@
 }
 
 .emptyText {
-  color: #8c8c8c;
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 

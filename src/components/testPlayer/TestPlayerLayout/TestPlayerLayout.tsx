@@ -149,6 +149,16 @@ export function TestPlayerLayout() {
               </section>
             </main>
           </div>
+          <footer className={styles.bottomBar}>
+        <div className={styles.bottomBarLeft}>
+          <StatusButton label="Mark for Review & Next" variant="outline" onClick={markForReview} />
+          <StatusButton label="Clear Response" variant="outline" onClick={clearResponse} />
+        </div>
+        <div className={styles.bottomBarRight}>
+          <StatusButton label="Save & Next" variant="primary" onClick={saveAndNext} />
+          <StatusButton label="Submit" variant="primary" onClick={handleSubmit} />
+        </div>
+      </footer>
         </div>
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && isSidebarOpen && (
@@ -162,16 +172,7 @@ export function TestPlayerLayout() {
       {isMobile && !isSidebarOpen && (
         <button className={styles.openArrow} onClick={() => setIsSidebarOpen(true)} aria-label="Open sidebar">‹</button>
       )}
-      <footer className={styles.bottomBar}>
-        <div className={styles.bottomBarLeft}>
-          <StatusButton label="Mark for Review & Next" variant="outline" onClick={markForReview} />
-          <StatusButton label="Clear Response" variant="outline" onClick={clearResponse} />
-        </div>
-        <div className={styles.bottomBarRight}>
-          <StatusButton label="Save & Next" variant="primary" onClick={saveAndNext} />
-          <StatusButton label="Submit" variant="primary" onClick={handleSubmit} />
-        </div>
-      </footer>
+      
       {cursorTrailEnabled && <CursorTrail />}
       <ScreenMagnifier />
     </div>

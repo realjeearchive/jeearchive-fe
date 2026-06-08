@@ -3,7 +3,7 @@
   background-color: var(--test-player-sidebar-bg-color);
   border: 1px solid var(--test-player-border-color);
   border-radius: 4px;
-  padding: 12px 14px;
+  padding: var(--space-sm) 14px;
   width: 320px;
   z-index: 9999;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -12,7 +12,7 @@
 .row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   margin-bottom: 10px;
 }
 
@@ -22,10 +22,11 @@
 
 .row span {
   font-size: 13px;
-  color: #000;
+  color: var(--test-player-text-color); /* Corrected from hardcoded black */
 }
 
 .row small {
   font-size: 11px;
-  color: #333;
+  color: var(--test-player-text-color);
+  opacity: 0.8;
 }
