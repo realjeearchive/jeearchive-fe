@@ -12,6 +12,7 @@ interface KpiCardProps {
   deltaLabel?: string;
 }
 
+
 const KpiCard: React.FC<KpiCardProps> = ({
   label,
   value,

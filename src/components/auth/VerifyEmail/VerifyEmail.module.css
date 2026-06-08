@@ -1,37 +1,35 @@
-/* Container */
 .verificationFormContainer {
   width: 80%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
-/* Header Section */
 .verificationHeader {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .logo {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-xs);
 }
 
 .verificationHeading {
-  font-size: 42px;
+  font-size: var(--text-4xl);
   font-weight: 700;
   text-align: center;
   width: 60%;
   line-height: 1;
-  color: var(--login-page-primary-text-color);
+  color: var(--auth-text-primary);
   letter-spacing: -1.2px;
 }
 
 .verificationSubtext {
-  font-size: 14px;
-  color: var(--login-page-secondary-text-color);
+  font-size: var(--text-sm);
+  color: var(--auth-text-secondary);
   text-align: center;
   width: 80%;
   line-height: 1.5;
@@ -42,66 +40,55 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
 .otpContainer {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin: 10px 0;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
 }
 
 .otpInput {
   width: 48px;
   height: 56px;
   text-align: center;
-  font-size: 24px;
+  font-size: var(--text-2xl);
   font-weight: 600;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--login-page-primary-text-color);
+  border: 1.5px solid var(--auth-otp-border);
+  border-radius: var(--shape-radius-sm);
+  background: var(--auth-otp-bg);
+  color: var(--auth-text-primary);
   transition: all 0.2s ease;
   outline: none;
 }
 
-@media (max-width: 600px) {
-    .verificationFormContainer{
-        width: 90%;
-    }
-    .verificationHeading{
-        width: 100%;
-        font-size: 38px;
-    }
-
-}
-
 .otpInput:focus {
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.08);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-focus-ring);
+  background: var(--auth-otp-focus-bg);
+  box-shadow: 0 0 0 3px var(--auth-otp-focus-shadow);
 }
 
 .otpInput:not(:placeholder-shown) {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--auth-otp-border-focus);
 }
 
 .resendSection {
   text-align: center;
-  margin-top: -8px;
+  margin-top: calc(var(--space-xs) * -1);
 }
 
 .resendText {
-  font-size: 14px;
-  color: var(--login-page-secondary-text-color);
+  font-size: var(--text-sm);
+  color: var(--auth-text-secondary);
   margin: 0;
 }
 
 .resendButton {
   background: none;
   border: none;
-  color: var(--login-page-primary-text-color);
+  color: var(--auth-text-primary);
   font-weight: 500;
   cursor: pointer;
   padding: 0;
@@ -114,14 +101,14 @@
 }
 
 .onboardingNavigationText {
-  color: var(--login-page-secondary-text-color);
+  color: var(--auth-text-secondary);
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-sm);
   margin: 0;
 }
 
 .onboardingNavigation {
-  color: var(--login-page-primary-text-color);
+  color: var(--auth-text-primary);
   text-decoration: none;
   transition: opacity 0.2s;
 }
@@ -130,40 +117,15 @@
   opacity: 0.8;
 }
 
-/* Responsive */
 @media (max-width: 640px) {
-  .verificationFormContainer {
-    width: 90%;
-  }
-
-  .verificationHeading {
-    font-size: 26px;
-    width: 80%;
-  }
-
-  .verificationSubtext {
-    width: 95%;
-  }
-
-  .otpContainer {
-    gap: 8px;
-  }
-
-  .otpInput {
-    width: 40px;
-    height: 48px;
-    font-size: 20px;
-  }
+  .verificationFormContainer { width: 90%; }
+  .verificationHeading { font-size: 26px; width: 80%; }
+  .verificationSubtext { width: 95%; }
+  .otpContainer { gap: var(--space-xs); }
+  .otpInput { width: 40px; height: 48px; font-size: 20px; }
 }
 
 @media (max-width: 480px) {
-  .otpContainer {
-    gap: 6px;
-  }
-
-  .otpInput {
-    width: 36px;
-    height: 44px;
-    font-size: 18px;
-  }
+  .otpContainer { gap: 6px; }
+  .otpInput { width: 36px; height: 44px; font-size: 18px; }
 }

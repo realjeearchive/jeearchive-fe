@@ -1,9 +1,9 @@
 .bannerCard {
   width: 100%;
-  background: #1e1d1b;
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 12px;
-  padding: 40px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-md);
+  padding: var(--space-3xl);
   overflow: hidden;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 30px;
@@ -16,7 +16,7 @@
   right: -50px;
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--color-brand-bg-10) 0%, transparent 70%);
   z-index: 1;
   pointer-events: none;
 }
@@ -25,7 +25,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 32px;
+  gap: var(--space-2xl);
   position: relative;
   z-index: 2;
 }
@@ -36,16 +36,16 @@
 }
 
 .title {
-  font-size: 28px;
+  font-size: var(--text-2xl);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   margin-bottom: 14px;
   letter-spacing: -0.02em;
 }
 
 .description {
   font-size: 15px;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 28px;
   opacity: 0.85;
@@ -58,15 +58,15 @@
 }
 
 .primaryBtn {
-  background-color: var(--dashboard-core-color);
+  background-color: var(--color-brand-primary);
   color: #1E1D1B;
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 14px;
+  padding: 14px var(--space-xl);
+  border-radius: var(--shape-radius-sm);
+  font-size: var(--text-sm);
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   text-decoration: none;
   transition: all 0.2s ease;
 }
@@ -76,23 +76,23 @@
 }
 
 .secondaryBtn {
-  background-color: rgba(255, 255, 255, 0.03);
-  color: var(--dashboard-primary-text-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 14px;
+  background-color: var(--glass-bg-base);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 14px var(--space-xl);
+  border-radius: var(--shape-radius-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .secondaryBtn:hover {
-  background-color: rgba(255, 255, 255, 0.07);
-  border-color: var(--dashboard-secondary-text-color);
+  background-color: var(--glass-bg-hover);
+  border-color: var(--text-secondary);
 }
 
 .imageSide {
@@ -111,8 +111,8 @@
 .abstractCircleOuter {
   width: 130px;
   height: 130px;
-  border-radius: 50%;
-  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: var(--shape-radius-full);
+  border: 1px solid var(--color-brand-bg-20);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -122,27 +122,27 @@
 .abstractCircleInner {
   width: 90px;
   height: 90px;
-  border-radius: 50%;
-  background: rgba(245, 158, 11, 0.04);
-  border: 1px solid rgba(245, 158, 11, 0.1);
+  border-radius: var(--shape-radius-full);
+  background: var(--color-brand-bg-10);
+  border: 1px solid var(--color-brand-bg-20);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .mainIcon {
-  color: var(--dashboard-core-color);
+  color: var(--color-brand-primary);
 }
 
 .floatingIcon {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: #1e1d1b;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  color: var(--dashboard-core-color);
+  background: var(--bg-surface);
+  padding: var(--space-xs);
+  border-radius: var(--shape-radius-sm);
+  border: 1px solid var(--color-brand-bg-20);
+  color: var(--color-brand-primary);
   display: flex;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
@@ -151,12 +151,8 @@
   .content {
     flex-direction: column;
     text-align: center;
-    padding: 10px;
+    padding: var(--space-sm);
   }
-  .imageSide {
-    display: none;
-  }
-  .ctaGroup {
-    justify-content: center;
-  }
+  .imageSide { display: none; }
+  .ctaGroup { justify-content: center; }
 }

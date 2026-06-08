@@ -1,9 +1,8 @@
-
-.onboardingButton{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--login-page-primary-text-color);
-    padding: 6px 18px;
-    border-radius: 50px;
+.onboardingButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--auth-text-primary);
+  padding: var(--space-xs) var(--space-lg);
+  border-radius: var(--shape-radius-full);
 }

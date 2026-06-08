@@ -1,13 +1,13 @@
 .sidebar {
   position: relative;
   min-width: 300px;
-  background: var(--dashboard-sidebar-background-color);
-  color: var(--dashboard-primary-text-color);
-  padding: 18px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  padding: var(--space-lg);
   box-sizing: border-box;
-  min-height: calc(100vh - 20px);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
+  min-height: calc(100vh - var(--space-lg));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-md);
   display: flex;
   flex-direction: column;
   z-index: 99;
@@ -17,36 +17,36 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: var(--space-2xl);
 }
 
 .sidebarIcon {
   position: absolute;
-  top: 10px;
-  right: 8px;
+  top: var(--space-sm);
+  right: var(--space-xs);
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--dashboard-icons-color);
-  padding: 4px;
-  border-radius: 8px;
+  color: var(--icon-idle);
+  padding: var(--space-2xs);
+  border-radius: var(--shape-radius-sm);
 }
 
 .sidebarIcon:hover {
-  background-color: var(--dashboard-link-hover-color);
-  color: var(--dashboard-active-icon-color);
+  background-color: var(--bg-surface-hover);
+  color: var(--icon-active);
   transition: all ease 0.3s;
 }
 
 .logoContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 24px;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
 }
 
 .logo {
-  border-radius: 6px;
+  border-radius: var(--shape-radius-xs);
 }
 
 .logoTextBlock {
@@ -56,47 +56,47 @@
 }
 
 .logoText {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .logoSubText {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   margin-top: -5px;
 }
 
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .sectionLabel {
-  font-size: 12px;
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
 }
 
 .sectionDivider {
   flex: 1;
   height: 1px;
-  background-color: var(--dashboard-sidebar-border-color);
-  border-radius: 999px;
+  background-color: var(--border-subtle);
+  border-radius: var(--shape-radius-full);
 }
 
 .nav ul {
@@ -105,38 +105,38 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-2xs);
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  color: var(--dashboard-secondary-text-color);
-  border-radius: 8px;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  color: var(--text-secondary);
+  border-radius: var(--shape-radius-sm);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
 }
 
-.navItem:hover {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-primary-text-color);
+.navItem:hover,
+.navItemActive {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
 }
 
 .navItem svg {
-  color: var(--dashboard-icons-color);
+  color: var(--icon-idle);
 }
 
-.navItemActive {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-primary-text-color);
+.navItemActive svg {
+  color: var(--icon-active);
 }
 
 .footer {
-  padding-top: 10px;
+  padding-top: var(--space-sm);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -145,20 +145,20 @@
 .footerProfile {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .footerAvatar {
   width: 32px;
   height: 32px;
-  border-radius: 999px;
-  background: var(--dashboard-link-hover-color);
+  border-radius: var(--shape-radius-full);
+  background: var(--bg-surface-hover);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .footerInfo {
@@ -168,14 +168,14 @@
 }
 
 .footerName {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .footerTag {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   margin-top: -5px;
 }
 
@@ -183,11 +183,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-  color: var(--dashboard-icons-color);
+  padding: var(--space-xs);
+  border-radius: var(--shape-radius-sm);
+  color: var(--icon-idle);
 }
 
 .footerAction:hover {
-  background-color: var(--dashboard-link-hover-color);
+  background-color: var(--bg-surface-hover);
+  color: var(--icon-active);
 }

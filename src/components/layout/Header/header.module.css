@@ -6,14 +6,14 @@
   position: sticky;
   top: -1px;
   z-index: 10;
-  background-color: var(--dashboard-background-color);
+  background-color: var(--bg-main);
 }
 
 .leftSection {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0; /* Prevent overflow */
+  gap: var(--space-sm);
+  min-width: 0; 
 }
 
 .sidebarToggle {
@@ -22,27 +22,26 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 8px;
+  border-radius: var(--shape-radius-sm);
   border: none;
   background: transparent;
-  color: var(--dashboard-icons-color); 
+  color: var(--icon-idle); 
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .sidebarToggle:hover {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-active-icon-color);
+  background: var(--bg-surface-hover);
+  color: var(--icon-active);
 }
 
 .navArrows {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-2xs);
   flex-shrink: 0;
 }
 
-/* --- Unified Icon Button Style --- */
 .iconButton {
   position: relative;
   display: flex;
@@ -50,8 +49,8 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 8px;
-  color: var(--dashboard-icons-color);
+  border-radius: var(--shape-radius-sm);
+  color: var(--icon-idle);
   cursor: pointer;
   border: 1px solid transparent;
   background: transparent;
@@ -59,14 +58,14 @@
 }
 
 .iconButton:hover:not(:disabled) {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-active-icon-color);
-  border-color: var(--dashboard-dividerline-color);
+  background: var(--bg-surface-hover);
+  color: var(--icon-active);
+  border-color: var(--border-divider);
   transform: translateY(-0.5px);
 }
 
 .iconButtonActive {
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .iconButtonDisabled {
@@ -75,20 +74,19 @@
   pointer-events: none;
 }
 
-/* --- Tooltip (After) --- */
 .iconButton::after {
   content: attr(data-title);
   position: absolute;
   top: 130%;
   left: 50%;
   transform: translateX(-50%) scale(0.9);
-  padding: 4px 8px;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-dividerline-color);
-  color: var(--dashboard-primary-text-color);
-  font-size: 11px;
+  padding: var(--space-2xs) var(--space-xs);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-divider);
+  color: var(--text-primary);
+  font-size: var(--text-2xs);
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: var(--shape-radius-xs);
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
@@ -104,14 +102,13 @@
   transform: translateX(-50%) scale(1);
 }
 
-/* --- Page Title Style --- */
 .pageTitle {
   display: flex;
   align-items: center;
-  padding-left: 8px;
+  padding-left: var(--space-xs);
   font-size: 13px;
   font-weight: 500;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
@@ -121,21 +118,14 @@
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
-/* --- Responsive Design --- */
-
-/* Hide page title on tablets and below */
 @media (max-width: 1024px) {
-  .pageTitle {
-    display: none;
-  }
+  .pageTitle { display: none; }
 }
 
-/* Mobile specific styles */
 @media (max-width: 768px) {
-  /* Hide specific icons on mobile */
   .rightSection .iconButton[data-title="Discord"],
   .rightSection .iconButton[data-title="Activity"],
   .rightSection .iconButton[data-title="Planner"] {
@@ -143,7 +133,6 @@
   }
 }
 
-/* --- Hide tooltips on touch devices --- */
 @media (hover: none) and (pointer: coarse) {
   .iconButton::after {
     display: none !important;
@@ -152,14 +141,13 @@
   }
 }
 
-/* --- Streak Base Layout --- */
 .streakItem {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 26px; 
-  border-radius: 8px;
+  border-radius: var(--shape-radius-sm);
   cursor: pointer;
   border: 1px solid transparent;
   background: transparent;
@@ -167,7 +155,7 @@
 }
 
 .streakText {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   transition: all 0.2s ease;
 }
@@ -181,64 +169,41 @@
 }
 
 .streakItem:hover .streakIcon {
-  transform: scale(1.1); /* Subtle pop on hover */
+  transform: scale(1.1); 
 }
 
-/* --- Dynamic Streak Colors --- */
+.streakDefault { color: var(--icon-idle); }
+.streakDefault .streakText { color: var(--text-secondary); }
 
-/* 0-5 Streak (Default) */
-.streakDefault {
-  color: var(--dashboard-icons-color);
-}
-.streakDefault .streakText {
-  color: var(--dashboard-secondary-text-color);
-}
 .streakDefault:hover {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-active-icon-color);
-  border-color: var(--dashboard-dividerline-color);
+  background: var(--bg-surface-hover);
+  color: var(--icon-active);
+  border-color: var(--border-divider);
 }
-.streakDefault:hover .streakText {
-  color: var(--dashboard-primary-text-color);
-}
+.streakDefault:hover .streakText { color: var(--text-primary); }
 
-/* 6-10 Streak (Yellow/Amber) */
-.streakYellow {
-  color: #FBBF24; 
-}
-.streakYellow .streakText {
-  color: #FBBF24;
-}
-/* 11-15 Streak (Orange) */
-.streakOrange {
-  color: #F97316; 
-}
-.streakOrange .streakText {
-  color: #F97316;
-}
+.streakYellow { color: var(--color-streak-yellow); }
+.streakYellow .streakText { color: var(--color-streak-yellow); }
 
-/* 16+ Streak (Red/Hot) */
-.streakRed {
-  color: #EF4444; 
-}
-.streakRed .streakText {
-  color: #EF4444;
-}
+.streakOrange { color: var(--color-streak-orange); }
+.streakOrange .streakText { color: var(--color-streak-orange); }
 
-/* --- Tooltip Logic for Streak --- */
+.streakRed { color: var(--color-streak-red); }
+.streakRed .streakText { color: var(--color-streak-red); }
+
 .streakItem::after {
   content: attr(data-title);
   position: absolute;
   top: 130%;
   left: 50%;
   transform: translateX(-50%) scale(0.9);
-  padding: 4px 8px;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-dividerline-color);
-  color: var(--dashboard-primary-text-color);
-  font-size: 11px;
+  padding: var(--space-2xs) var(--space-xs);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-divider);
+  color: var(--text-primary);
+  font-size: var(--text-2xs);
   font-weight: 500;
-  border-radius: 6px;
+  border-radius: var(--shape-radius-xs);
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
@@ -258,7 +223,7 @@
   position: absolute;
   top: -2px;
   right: 1px;
-  background-color: #EF4444; /* Standard Red */
+  background-color: var(--color-error-main);
   color: white;
   font-size: 8px;
   font-weight: 500;
@@ -268,33 +233,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--dashboard-background-color); /* Creates a cutout effect */
+  border: 2px solid var(--bg-main); 
 }
 
-/* --- Tooltip (After) --- */
-.iconButton::after {
-  content: attr(data-title);
-  position: absolute;
-  top: 130%;
-  left: 50%;
-  transform: translateX(-50%) scale(0.9);
-  padding: 4px 8px;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-dividerline-color);
-  color: var(--dashboard-primary-text-color);
-  font-size: 11px;
-  font-weight: 500;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.15s ease;
-  pointer-events: none;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* 🔥 FIX: Special state for coming soon apps so they look disabled but still show tooltips */
 .comingSoon {
   opacity: 0.4;
   cursor: not-allowed !important;
@@ -302,15 +243,13 @@
 
 .comingSoon:hover {
   background: transparent !important;
-  color: var(--dashboard-icons-color) !important;
+  color: var(--icon-idle) !important;
   border-color: transparent !important;
   transform: none !important;
 }
 
-/* Ensure the tooltip still pops up even if the button looks disabled */
 .comingSoon:hover::after {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) scale(1);
 }
-

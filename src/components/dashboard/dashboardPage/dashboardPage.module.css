@@ -1,30 +1,18 @@
 .page {
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  gap: 16px;
+  padding: var(--space-lg) 0;
+  gap: var(--space-md);
 }
 
-.kpiRow {
+.kpiRow, .progressRow, .bottomRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-}
-
-.progressRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .growthSection {
   width: 100%;
-}
-
-.bottomRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 
 .bottomItem {
@@ -33,23 +21,23 @@
 }
 
 .listSectionWrapper {
-  margin-top: 24px;
+  margin-top: var(--space-xl);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-xl);
 }
 
 .detailedAnalysisWrapper {
-  margin-top: 12px;
-  margin-bottom: 40px;
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-3xl);
 }
 
 @media (max-width: 600px) {
   .kpiRow {
-    gap: 10px;
+    gap: var(--space-sm);
   }
   .page {
-    padding: 20px 0;
+    padding: var(--space-lg) 0;
   }
 }
 
@@ -59,16 +47,18 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: var(--dashboard-secondary-text-color);
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
+
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(245, 158, 11, 0.2);
-  border-top-color: var(--dashboard-core-color);
+  border: 3px solid var(--color-brand-bg-20);
+  border-top-color: var(--color-brand-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  margin-bottom: var(--space-md);
 }
+
 @keyframes spin { 100% { transform: rotate(360deg); } }

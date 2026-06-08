@@ -157,19 +157,7 @@ body {
     --test-player-dark-border-color: #333333;
     --cursor-trail-color: rgb(0, 0, 0);
 
-.dark {
-
-  --test-player-white-text-color: white;
-  --test-player-text-color: white;
-  --test-player-bg-color: #272320;
-  --test-player-buttons-hover-color: #1E1D1B;
-  --test-player-sidebar-bg-color: #1E1D1B;
-  --test-player-border-color: #3e3836;
-  --test-player-dark-border-color: #443d3b;
-  --test-player-light-bg-color: #1E1D1B;
-  --cursor-trail-color: white;
-}
-
+    
     
     --radius: 0.625rem;
     --background: oklch(1 0 0);
@@ -203,6 +191,158 @@ body {
     --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
     --sidebar-border: oklch(0.929 0.013 255.508);
     --sidebar-ring: oklch(0.704 0.04 256.788);
+
+    
+    
+    .dark {
+    
+      --test-player-white-text-color: white;
+      --test-player-text-color: white;
+      --test-player-bg-color: #272320;
+      --test-player-buttons-hover-color: #1E1D1B;
+      --test-player-sidebar-bg-color: #1E1D1B;
+      --test-player-border-color: #3e3836;
+      --test-player-dark-border-color: #443d3b;
+      --test-player-light-bg-color: #1E1D1B;
+      --cursor-trail-color: white;
+    }
+
+
+
+  /* ========================================================= */
+    /* NEW GLOBAL SEMANTIC DESIGN SYSTEM (V2)                    */
+    /* ========================================================= */
+    
+    /* --- Shared Primitives (Spacing & Shapes) --- */
+    --space-2xs: 4px;
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 20px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --space-3xl: 40px;
+
+    --shape-radius-xs: 4px;
+    --shape-radius-sm: 8px;
+    --shape-radius-md: 12px;
+    --shape-radius-lg: 16px;
+    --shape-radius-xl: 24px;
+    --shape-radius-full: 9999px;
+
+    /* --- Typography Scale (Base) --- */
+    --text-sm: 14px;
+    --text-base: 16px;
+    --text-lg: 18px;
+    --text-xs: 12px;
+    --text-2xs: 11px;
+    --text-2xl: 24px;
+    --text-3xl: 32px;
+    --text-4xl: 42px;
+
+    /* --- AUTHENTICATION CONTEXT (Isolated Colors & Layout) --- */
+    --auth-bg-form-desktop: rgba(30, 43, 62, 0.973);
+    --auth-bg-form-mobile: rgba(25, 36, 52, 0.98);
+    --auth-bg-backdrop: rgba(0, 0, 0, 0.5);
+    
+    --auth-toggle-bg: rgba(40, 56, 82, 0.95);
+    --auth-toggle-hover: rgba(50, 66, 92, 0.98);
+    --auth-toggle-border: rgba(255, 255, 255, 0.08);
+    
+    /* Auth-Specific Glassmorphism Gradients */
+    --auth-glow-1-desktop: rgba(249, 79, 57, 0.24);
+    --auth-glow-1-mobile: rgba(249, 79, 57, 0.14);
+    --auth-glow-2-desktop: rgba(30, 124, 211, 0.34);
+    --auth-glow-2-mobile: rgba(30, 124, 211, 0.14);
+    --auth-glow-3-desktop: rgba(107, 102, 218, 0.34);
+    --auth-glow-3-mobile: rgba(107, 102, 218, 0.14);
+
+    --auth-shadow-desktop: -40px 0 80px rgba(0, 0, 0, 0.75);
+    --auth-shadow-mobile: 0 -20px 60px rgba(0, 0, 0, 0.5);
+
+    --auth-scrollbar-track: rgba(255, 255, 255, 0.05);
+
+    --auth-text-primary: #FAFAFC;
+    --auth-text-secondary: #8B8AA0;
+    
+    --auth-input-bg: #7976a439;
+    --auth-input-border: #595F81;
+    --auth-input-border-hover: #4b5563;
+
+    --auth-otp-bg: rgba(255, 255, 255, 0.05);
+    --auth-otp-border: rgba(255, 255, 255, 0.15);
+    --auth-otp-border-focus: rgba(255, 255, 255, 0.3);
+    --auth-otp-focus-bg: rgba(59, 130, 246, 0.08);
+    --auth-otp-focus-shadow: rgba(59, 130, 246, 0.1);
+
+    /* Animation & Layout Defaults */
+    --auth-transition-speed: 0.35s;
+    --auth-transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
+    --auth-mobile-collapsed-h: 64px;
+    --auth-mobile-expanded-h: 75vh;
+
+
+    /* --- GLOBAL SEMANTIC FEEDBACK (Errors/Success) --- */
+    --color-error-main: #ef4444;
+    --color-error-light: #f97373;
+    --color-error-text: #fca5a5;
+    --color-error-bg: rgba(239, 68, 68, 0.08);
+    --color-error-border: rgba(239, 68, 68, 0.2);
+    --color-focus-ring: #3b82f6;
+
+
+    /* --- GLOBAL WORKSPACE CONTEXT (Applies to everything post-login) --- */
+    --bg-main: #272320;
+    --bg-surface: #1E1D1B;
+    --bg-surface-light: #2D2926; /* For elevated cards in Profile & Help */
+    --bg-surface-hover: #272625;
+    
+    --border-subtle: #36312F;
+    --border-divider: #272625;
+    
+    --text-primary: #F4F4F4;
+    --text-secondary: #B5B4B4;
+    
+    --icon-idle: #656160;
+    --icon-active: #F4F4F4;
+
+    /* Global Subject Colors */
+    --subject-physics: #60A5FA;
+    --subject-chemistry: #22C55E;
+    --subject-maths: #FB7185;
+
+    /* Global Streak & Gamification Colors */
+    --color-streak-yellow: #FBBF24;
+    --color-streak-orange: #F97316;
+    --color-streak-red: #EF4444;
+
+
+    /* --- Brand & Core Accents --- */
+    --color-brand-primary: #F59E0B; 
+    --color-brand-bg-10: rgba(245, 158, 11, 0.1);
+    --color-brand-bg-20: rgba(245, 158, 11, 0.2);
+    --color-brand-border-40: rgba(245, 158, 11, 0.4);
+    --color-avatar-bg: #512DA8;
+    --color-avatar-border: #6C4DB6;
+
+    /* --- Feedback Extensions --- */
+    --color-success-main: #22c55e;
+    --color-success-bg: rgba(34, 197, 94, 0.1);
+    --color-success-border: rgba(34, 197, 94, 0.2);
+
+    /* --- Global Shadows --- */
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.3);
+    
+    /* --- Elevated Surfaces & Glassmorphism --- */
+    --bg-elevated: #18181b; 
+    --glass-bg-base: rgba(255, 255, 255, 0.03);
+    --glass-bg-hover: rgba(255, 255, 255, 0.04);
+    --glass-border-subtle: rgba(255, 255, 255, 0.05);
+    --glass-border-strong: rgba(255, 255, 255, 0.12);
+
+
 }
 
 @theme inline {
@@ -349,6 +489,3 @@ body, html {
   overflow-x: hidden; /* This is your immediate defense */
   width: 100%;
 }
-
-
-/* Going for complete Design system making */

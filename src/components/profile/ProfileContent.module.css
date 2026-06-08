@@ -1,29 +1,29 @@
 .container {
-  background: var(--dashboard-background-color);
-  color: var(--dashboard-primary-text-color);
-  padding: 20px 0;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  padding: var(--space-lg) 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .pageTitle {
-  font-size: 24px;
+  font-size: var(--text-2xl);
   font-weight: 700;
 }
 
 .topSection {
   display: grid;
   grid-template-columns: 180px 1fr;
-  gap: 16px; /* Slightly increased gap to account for floating labels */
-  margin-bottom: 12px;
+  gap: var(--space-md); 
+  margin-bottom: var(--space-sm);
 }
 
 .avatarCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 14px 16px;
+  background: var(--bg-surface-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-md);
+  padding: var(--space-sm) var(--space-md);
   height: 100%;
   display: flex;
   justify-content: center;
@@ -34,16 +34,16 @@
 .avatar {
   width: 110px;
   height: 110px;
-  border-radius: 50%;
-  background: var(--dashboard-header-avatar-background-color);
-  border: 3px solid var(--dashboard-header-avatar-border-color);
+  border-radius: var(--shape-radius-full);
+  background: var(--color-avatar-bg);
+  border: 3px solid var(--color-avatar-border);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .avatarInitial {
-  font-size: 48px;
+  font-size: var(--text-4xl);
   font-weight: 600;
   color: white;
 }
@@ -51,49 +51,47 @@
 .infoWrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Spaced out so labels don't collide */
+  gap: var(--space-lg); 
   margin-top: 6px; 
 }
 
-/* ───────── THE NEW SLEEK OUTLINED BOXES ───────── */
-
 .infoCard {
   position: relative;
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 8px;
-  padding: 14px 16px;
+  background: var(--bg-surface-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-sm);
+  padding: var(--space-sm) var(--space-md);
   transition: border-color 0.2s ease;
 }
 
 .infoCardEditing {
-  border-color: var(--dashboard-highlight-color, #3b82f6);
+  border-color: var(--color-focus-ring);
 }
 
 .floatingLabel {
   position: absolute;
-  top: -8px; /* Sits perfectly on the top border */
+  top: -8px; 
   left: 12px;
-  background: var(--dashboard-background-color); /* Cutout effect */
+  background: var(--bg-main); 
   padding: 0 4px;
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: color 0.2s ease;
 }
 
 .floatingLabelEditing {
-  color: var(--dashboard-highlight-color, #3b82f6);
+  color: var(--color-focus-ring);
 }
 
 .floatingEditBtn {
   position: absolute;
   right: 12px;
   border: none;
-  padding: 4px 6px;
-  border-radius: 6px;
+  padding: var(--space-2xs) 6px;
+  border-radius: var(--shape-radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -102,48 +100,46 @@
 }
 
 .floatingEditBtn:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-base);
 }
 
 .editIcon {
-  color: var(--dashboard-icons-color);
-  font-size: 13px;
+  color: var(--icon-idle);
+  font-size: var(--text-sm);
   transition: color 0.2s;
 }
 
 .floatingEditBtn:hover .editIcon {
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .valueContainer {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .helperText {
-  font-size: 11px;
-  color: var(--dashboard-icons-color);
+  font-size: var(--text-2xs);
+  color: var(--icon-idle);
   line-height: 1.5;
   opacity: 0.7;
   margin-top: 4px;
 }
 
-/* ───────── EDIT MODE ADDITIONS ───────── */
-
 .editBlock {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
   width: 100%;
 }
 
 .editInput {
   background: transparent;
-  border: none; /* No inner border, the box IS the border */
-  color: var(--dashboard-primary-text-color);
+  border: none; 
+  color: var(--text-primary);
   padding: 0;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   width: 100%;
   outline: none;
@@ -151,22 +147,22 @@
 }
 
 .editInput::placeholder {
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   opacity: 0.6;
 }
 
 .editActions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .saveBtnPrimary {
-  background: var(--dashboard-primary-text-color);
+  background: var(--text-primary);
   color: #000;
   border: none;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 6px var(--space-md);
+  border-radius: var(--shape-radius-xs);
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -183,19 +179,19 @@
 
 .cancelBtn {
   background: transparent;
-  color: var(--dashboard-secondary-text-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 12px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 6px var(--space-md);
+  border-radius: var(--shape-radius-xs);
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cancelBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-primary-text-color);
+  background: var(--glass-bg-base);
+  color: var(--text-primary);
 }
 
 .cancelBtn:disabled {
@@ -203,12 +199,10 @@
   cursor: not-allowed;
 }
 
-/* ───────── CUSTOM DROPDOWN ───────── */
-
 .customSelectContainer {
   position: relative;
   width: 100%;
-  font-size: 14px;
+  font-size: var(--text-sm);
 }
 
 .selectTrigger {
@@ -225,7 +219,7 @@
 
 .chevron {
   transition: transform 0.2s;
-  color: var(--dashboard-icons-color);
+  color: var(--icon-idle);
   flex-shrink: 0;
 }
 
@@ -237,13 +231,13 @@
 .dropdownMenu {
   position: absolute;
   top: 100%;
-  left: -16px; /* Pulls it flush with the outer box padding */
-  width: calc(100% + 32px); /* Expands to match outer box width */
+  left: -16px; 
+  width: calc(100% + 32px); 
   margin-top: 14px;
-  background-color: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-surface-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-sm);
+  box-shadow: var(--shadow-lg);
   z-index: 50;
   max-height: 200px;
   overflow-y: auto;
@@ -260,58 +254,56 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: var(--space-xs) var(--space-sm);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--shape-radius-2xs);
   transition: background 0.1s;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .dropdownItem:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-primary-text-color);
+  background-color: var(--glass-bg-base);
+  color: var(--text-primary);
 }
-
-/* ───────── MISC DETAILS ───────── */
 
 .detailsSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
   margin-top: 10px;
 }
 
 .sectionHeading {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   margin-left: 4px;
 }
 
 .formGrid {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Space for floating labels */
+  gap: var(--space-lg); 
 }
 
 .actionCard {
-  background: var(--dashboard-light-bg-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 8px;
-  padding: 14px 16px;
+  background: var(--bg-surface-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-sm);
+  padding: var(--space-sm) var(--space-md);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 12px;
+  margin-top: var(--space-sm);
 }
 
 .logoutBtn {
   background: transparent;
   border: none;
-  color: var(--dashboard-physics-color);
+  color: var(--color-error-main);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--text-sm);
   cursor: pointer;
   width: 100%;
   text-align: center;

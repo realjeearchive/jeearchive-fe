@@ -1,25 +1,25 @@
 .card {
   flex: 1;
   min-width: 145px;
-  padding: 18px 20px;
-  border-radius: 10px;
-  background: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  padding: var(--space-lg) var(--space-lg);
+  border-radius: var(--shape-radius-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-md);
   transition: all 0.3s ease;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
-  border-color: rgba(245, 158, 11, 0.4); 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-brand-border-40); 
+  box-shadow: var(--shadow-md);
 }
 
 .card_mint, .card_peach, .card_purple, .card_blue, .card_teal, .card_amber, .card_slate, .card_olive {
-  background: var(--dashboard-sidebar-background-color); 
+  background: var(--bg-surface); 
 }
 
 .headerRow {
@@ -31,85 +31,79 @@
 .iconBox {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  
-  background: rgba(255, 255, 255, 0.03); 
-  
-  color: var(--dashboard-secondary-text-color);
-  
+  border-radius: var(--shape-radius-sm);
+  background: var(--glass-bg-base); 
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  
   border: none;
-  
   transition: all 0.3s ease;
 }
 
 .card:hover .iconBox {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--dashboard-primary-text-color);
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
 }
 
 .iconPlaceholder {
   width: 16px;
   height: 16px;
-  border-radius: 4px;
-  background: var(--dashboard-background-color);
+  border-radius: var(--shape-radius-xs);
+  background: var(--bg-main);
 }
-
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-2xs);
 }
 
 .label {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .value {
-  font-size: 28px;
+  font-size: var(--text-3xl);
   font-weight: 700;
   line-height: 1.1;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .subLabel {
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   opacity: 0.8;
 }
 
 .deltaPositive {
-  background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
-  border-color: rgba(34, 197, 94, 0.2);
+  background: var(--color-success-bg);
+  color: var(--color-success-main);
+  border-color: var(--color-success-border);
 }
 
-.deltaPill{
-  border-radius: 50px;
-  padding: 4px 8px;
-  font-size: 11px;
+.deltaPill {
+  border-radius: var(--shape-radius-full);
+  padding: var(--space-2xs) var(--space-xs);
+  font-size: var(--text-2xs);
 }
 
 .deltaNegative {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.2);
+  background: var(--color-error-bg);
+  color: var(--color-error-main);
+  border-color: var(--color-error-border);
 }
 
 @media (max-width: 600px) {
-  .card { padding: 14px 16px; }
-  .value { font-size: 24px; }
+  .card { padding: 14px var(--space-md); }
+  .value { font-size: var(--text-2xl); }
   .iconBox { width: 28px; height: 28px; }
 }
 
 .subLabelEmpty {
-  font-size: 11px;
+  font-size: var(--text-2xs);
 }
