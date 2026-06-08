@@ -266,3 +266,17 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* =============================================
+   MOBILE RESPONSIVENESS
+   ============================================= */
+@media (max-width: 480px) {
+  .popupContainer {
+    position: fixed;   /* Detaches from the button to align with the screen */
+    top: 60px;         /* Sits safely just below your 48px header */
+    left: 16px;        /* 16px margin on the left */
+    right: 16px;       /* 16px margin on the right */
+    width: auto;       /* Allows left/right margins to determine the width */
+    max-height: 80vh;  /* Prevents it from overflowing the bottom of the screen */
+  }
+}
