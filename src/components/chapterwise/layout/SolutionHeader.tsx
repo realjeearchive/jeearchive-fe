@@ -207,7 +207,7 @@ export const SolutionHeader = ({
 
             <div className={styles.marksBlock}>
               <span className={styles.posMark}>+{marksPos}</span>
-              <span style={{ color: "var(--dashboard-secondary-text-color)" }}> / </span>
+              <span style={{ color: "var(--text-secondary)" }}> / </span>
               <span className={styles.negMark}>-{marksNeg}</span>
             </div>
 

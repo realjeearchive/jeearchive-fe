@@ -63,7 +63,7 @@ export const ScorePotentialCard = () => {
           <span className={styles.statLabel}>
             <span
               className={styles.dot}
-              style={{ background: "var(--dashboard-core-color)" }}
+              style={{ background: "var(--color-brand-primary)" }}
               aria-hidden="true"
             />
             Actual
@@ -75,7 +75,7 @@ export const ScorePotentialCard = () => {
           <span className={styles.statLabel}>
             <span
               className={styles.dot}
-              style={{ background: "#EF4444" }}
+              style={{ background: "var(--color-error-main)" }}
               aria-hidden="true"
             />
             Lost (Neg)
@@ -87,7 +87,7 @@ export const ScorePotentialCard = () => {
           <span className={styles.statLabel}>
             <span
               className={styles.dot}
-              style={{ background: "#3f3f46" }}
+              style={{ background: "var(--border-subtle)" }}
               aria-hidden="true"
             />
             Easy Misses
@@ -98,8 +98,8 @@ export const ScorePotentialCard = () => {
       </div>
 
       <div className={styles.insight}>
-        You scored <strong>{myScore}</strong>, but your true potential was{" "}
-        <strong className="text-white">{potentialScore}</strong>. Avoiding
+        You scored <strong className={styles.insightBold}>{myScore}</strong>, but your true potential was{" "}
+        <strong className={styles.insightBold}>{potentialScore}</strong>. Avoiding
         negatives and silly errors in easy questions would have boosted your rank
         by <span className={styles.insightHighlight}>~1,200</span>.
       </div>

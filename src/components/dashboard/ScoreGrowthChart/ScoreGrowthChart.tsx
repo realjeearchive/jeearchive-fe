@@ -31,7 +31,7 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
           <ResponsiveLine
             data={data}
             theme={dashboardNivoTheme}
-            colors={["#F59E0B"]}
+            colors={["var(--color-brand-primary)"]}
             margin={{ top: 20, right: 30, bottom: 40, left: 40 }}
             xScale={{ type: "point" }}
             yScale={{ type: "linear", min: 0, max: "auto", stacked: false }}
@@ -41,9 +41,9 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
             lineWidth={2}
             enablePoints={true}
             pointSize={8}
-            pointColor="#1E1D1B"
+            pointColor="var(--bg-surface)"
             pointBorderWidth={2}
-            pointBorderColor="#F59E0B"
+            pointBorderColor="var(--color-brand-primary)"
             enableGridX={false}
             enableGridY={true}
             gridYValues={5}
@@ -55,8 +55,8 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
                 id: "gradientC",
                 type: "linearGradient",
                 colors: [
-                  { offset: 0, color: "#F59E0B", opacity: 0.4 },
-                  { offset: 100, color: "#F59E0B", opacity: 0 },
+                  { offset: 0, color: "var(--color-brand-primary)", opacity: 0.4 },
+                  { offset: 100, color: "var(--color-brand-primary)", opacity: 0 },
                 ],
               },
             ]}
@@ -89,7 +89,7 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
               <path
                 d="M0 35 Q 25 35, 50 35 T 100 35"
                 fill="none"
-                stroke="var(--dashboard-sidebar-border-color)"
+                stroke="var(--border-divider)"
                 strokeWidth="2"
                 strokeDasharray="4 4"
               />

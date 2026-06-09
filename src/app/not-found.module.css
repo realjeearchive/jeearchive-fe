@@ -5,10 +5,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--dashboard-background-color);
+  background-color: var(--bg-main);
   position: relative;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: var(--space-xl);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -18,7 +18,7 @@
   /* Scales perfectly on mobile vs desktop */
   font-size: clamp(10rem, 25vw, 20rem);
   font-weight: 800;
-  color: var(--dashboard-core-color);
+  color: var(--color-brand-primary);
   opacity: 0.03; /* Keeps it very subtle so it doesn't distract */
   user-select: none;
   pointer-events: none;
@@ -32,7 +32,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.5rem;
+  gap: var(--space-xl);
   max-width: 420px;
 }
 
@@ -41,9 +41,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
-  /* Adds a very subtle amber glow behind your logo */
-  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.2));
+  margin-bottom: var(--space-sm);
+  /* Subtly dynamic glow using color-mix */
+  filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand-primary) 20%, transparent));
   animation: float 4s ease-in-out infinite;
 }
 
@@ -60,36 +60,36 @@
 
 /* --- Typography --- */
 .title {
-  font-size: 2.25rem;
+  font-size: var(--text-3xl);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
 .subtitle {
-  font-size: 0.95rem;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }
 
 /* --- The Return Button --- */
 .button {
-  margin-top: 0.5rem;
-  padding: 0.75rem 2rem;
-  background-color: var(--dashboard-core-color);
-  /* Using the dark sidebar background color for the text creates perfect contrast on the amber button */
-  color: var(--dashboard-sidebar-background-color); 
+  margin-top: var(--space-sm);
+  padding: var(--space-md) var(--space-2xl);
+  background-color: var(--color-brand-primary);
+  color: #000; 
   font-weight: 700;
-  font-size: 0.95rem;
-  border-radius: 999px;
+  font-size: var(--text-sm);
+  border-radius: var(--shape-radius-full);
   text-decoration: none;
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
 }
 
 .button:hover {
   transform: translateY(-3px);
-  filter: brightness(1.1); /* Makes the core color slightly brighter on hover */
+  filter: brightness(1.1); 
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
 }

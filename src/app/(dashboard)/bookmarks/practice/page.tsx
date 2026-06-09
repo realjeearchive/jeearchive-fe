@@ -23,7 +23,7 @@ export default function BookmarkPracticePage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "var(--dashboard-background-color)",
+            backgroundColor: "var(--bg-main)",
           }}
           aria-label="Loading bookmarks practice"
           role="status"

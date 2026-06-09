@@ -95,7 +95,7 @@ export default function DashboardPage() {
         <FiAlertTriangle size={32} color="#ef4444" aria-hidden="true" />
         <div
           style={{
-            color: "var(--dashboard-primary-text-color)",
+            color: "var(--text-primary)",
             fontSize: "16px",
             fontWeight: 500,
           }}
@@ -110,7 +110,7 @@ export default function DashboardPage() {
             alignItems: "center",
             gap: "8px",
             padding: "8px 16px",
-            background: "var(--dashboard-core-color)",
+            background: "var(--color-brand-primary)",
             color: "#000",
             borderRadius: "8px",
             border: "none",

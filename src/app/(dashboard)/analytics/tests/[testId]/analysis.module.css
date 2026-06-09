@@ -4,8 +4,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  gap: 16px;
+  padding: var(--space-xl) 0;
+  gap: var(--space-md);
 }
 
 @media (max-width: 600px) {
@@ -18,9 +18,9 @@
 .headerWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-md);
   margin-bottom: 0;
-  margin-top: 8px;
+  margin-top: var(--space-sm);
 }
 
 .testInfo {
@@ -34,7 +34,7 @@
 .headerRow {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .contentLayout {
@@ -51,25 +51,25 @@
 
 /* Test Info (Left) */
 .title {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   line-height: 1.25;
 }
 
 .meta {
-  font-size: 0.75rem;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-xs);
 }
 
 .dot {
   width: 4px;
   height: 4px;
-  border-radius: 50%;
-  background-color: var(--dashboard-icons-color);
+  border-radius: var(--shape-radius-full);
+  background-color: var(--icon-idle);
 }
 
 /* Loader Container */
@@ -88,7 +88,7 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .errorContent {
@@ -96,25 +96,25 @@
 }
 
 .errorMessage {
-  color: #f87171;
-  font-size: 0.875rem;
+  color: var(--color-error-main);
+  font-size: var(--text-sm);
   font-weight: 500;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--space-2xs);
 }
 
 .errorSubtext {
-  font-size: 0.75rem;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
 }
 
 /* Back Button */
 .backButton {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  background-color: var(--dashboard-core-color);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--shape-radius-sm);
+  background-color: var(--color-brand-primary);
   color: #000;
   border: none;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -129,43 +129,44 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.75rem;
-  border-top: 1px solid var(--dashboard-dividerline-color);
+  gap: var(--space-sm);
+  border-top: 1px solid var(--border-divider);
+  padding-top: var(--space-md); /* Added padding to separate from line */
 }
 
 /* Common Button Styles */
 .btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-size: 0.8rem;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--shape-radius-sm);
+  font-size: var(--text-sm);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 /* Report Button */
 .reportBtn {
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  color: var(--dashboard-secondary-text-color);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   background: transparent;
   font-weight: 500;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: var(--shadow-sm);
 }
 
 .reportBtn:hover {
-  color: var(--dashboard-primary-text-color);
-  background-color: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  background-color: var(--glass-bg-hover);
 }
 
 /* Solutions Button */
 .solutionsBtn {
-  background-color: var(--dashboard-core-color);
-  color: black;
+  background-color: var(--color-brand-primary);
+  color: #000;
   font-weight: 700;
   border: none;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: var(--shadow-sm);
 }
 
 .solutionsBtn:hover {

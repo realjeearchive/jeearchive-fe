@@ -79,45 +79,6 @@ body {
     --login-close-icon-color: #8b8aa0d5; 
 
 
-    /* Dashboard color definitions */
-
-    --dashboard-background-color: #272320;
-    --dashboard-sidebar-background-color: #1E1D1B;
-    --dashboard-sidebar-border-color: #36312F;
-    --dashboard-primary-text-color: #F4F4F4;
-    --dashboard-secondary-text-color: #B5B4B4;
-    --dashboard-icons-color: #656160;
-    --dashboard-dividerline-color: #272625;
-    --dashboard-link-hover-color: #272625;
-    --dashboard-active-icon-color: #F4F4F4;
-    --dashboard-highlight-color: #85DBFB;
-    --dashboard-secondary-highlight-color: #283339;
-    --dashboard-header-avatar-background-color: #512DA8;
-    --dashboard-header-avatar-border-color: #6C4DB6;
-    --dashboard-positive-delta-color: #22C55E;
-    --dashboard-negative-delta-color: #EF4444;
-    --dashboard-positive-delta-bg-color: rgba(34, 197, 94, 0.12);
-    --dashboard-negative-delta-bg-color: rgba(239, 68, 68, 0.12);
-    --dashboard-positive-delta-border-color: rgba(34, 197, 94, 0.45);
-    --dashboard-negative-delta-border-color: rgba(239, 68, 68, 0.45);
-    --dashboard-light-bg-color: #2D2926;
-
-    --dashboard-physics-color: #60A5FA;   /* calm light blue */
-    --dashboard-chemistry-color: #22C55E; /* your existing green */
-    --dashboard-maths-color: #FB7185;     /* reddish orange / coral */
-    --dashboard-core-color: #F59E0B;
-
-    /* ========== Dashboard Typography Scale ========== */
-
---dashboard-font-xs: 11px;
---dashboard-font-sm: 12px; 
---dashboard-font-md: 14px;
---dashboard-font-lg: 15px;
---dashboard-font-xl: 28px;
---dashboard-font-lg-value: 24px;
---dashboard-font-progress: 22px;
---dashboard-font-progress-sm: 18px;
-
 
     /* Instruction page color definitions */
 

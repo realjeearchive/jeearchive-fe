@@ -85,7 +85,7 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   if (!initialized || isStageChecking) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[var(--dashboard-background-color,#0B0E14)]">
+      <div className="flex h-screen w-screen items-center justify-center bg-[var(--bg-main)]">
         {/* 🔥 Unified stealth loading state */}
         <Loader label="Authenticating..." size="h-6 w-6" />
       </div>
@@ -98,7 +98,7 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
 const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <Suspense fallback={
-      <div className="flex h-screen w-screen items-center justify-center bg-[var(--dashboard-background-color,#0B0E14)]">
+      <div className="flex h-screen w-screen items-center justify-center bg-[var(--bg-main)]">
         <Loader label="Loading..." size="h-6 w-6" />
       </div>
     }>

@@ -125,7 +125,7 @@ export function YearPageClient({ examType, year }: YearPageClientProps) {
     return (
       <main className={Styles.pageContainer} aria-label={`No papers available for ${displayTitle} ${year}`}>
         <div className={Styles.centerContent}>
-          <h1 style={{ color: "var(--dashboard-secondary-text-color)", fontSize: "15px" }}>
+          <h1 style={{ color: "var(--text-secondary)", fontSize: "15px" }}>
             Papers for {displayTitle} {year} are not available yet.
           </h1>
         </div>

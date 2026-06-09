@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--auth-bg-backdrop);
   backdrop-filter: blur(8px);
   z-index: 99999;
   display: flex;
@@ -14,62 +14,62 @@
 }
 
 .modal {
-  background: var(--dashboard-sidebar-background-color, #18181b);
-  border: 1px solid var(--dashboard-sidebar-border-color, #27272a);
-  padding: 24px;
-  border-radius: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-xl);
+  border-radius: var(--shape-radius-lg);
   max-width: 400px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg);
   animation: slideUp 0.3s ease-out forwards;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .iconWrapper {
   width: 36px;
   height: 36px;
-  background: rgba(245, 158, 11, 0.1);
-  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
+  border-radius: var(--shape-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  border: 1px solid color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
 }
 
 .icon {
-  color: var(--dashboard-core-color, #F59E0B);
+  color: var(--color-brand-primary);
 }
 
 .title {
-  color: var(--dashboard-primary-text-color, #ffffff);
-  font-size: 20px;
+  color: var(--text-primary);
+  font-size: var(--text-xl);
   font-weight: 600;
 }
 
 .description {
-  color: var(--dashboard-secondary-text-color, #a1a1aa);
-  font-size: 14px;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   line-height: 1.5;
 }
 
 .refreshBtn {
-  background: var(--dashboard-core-color, #F59E0B);
+  background: var(--color-brand-primary);
   color: #000;
   font-weight: 600;
-  font-size: 14px;
-  padding: 8px 16px;
-  border-radius: 8px;
+  font-size: var(--text-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--shape-radius-sm);
   border: none;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   cursor: pointer;
   transition: opacity 0.2s, transform 0.1s;
-  margin-top: 16px;
+  margin-top: var(--space-md);
 }
 
 .refreshBtn:hover {
