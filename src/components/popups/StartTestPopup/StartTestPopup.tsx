@@ -9,8 +9,6 @@ interface Props {
   testTitle: string;
   isResume: boolean; 
   onClose: () => void;
-  
-
   onStart: () => void;   
   onResume: () => void;  
   onRestart: () => void; 
@@ -25,8 +23,6 @@ export default function StartTestPopup({
   onResume,
   onRestart,
 }: Props) {
-  
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -43,8 +39,6 @@ export default function StartTestPopup({
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        
-
         <button 
           className={styles.closeIconBtn} 
           onClick={onClose}
@@ -52,7 +46,6 @@ export default function StartTestPopup({
         >
           <FiX />
         </button>
-
 
         <div className={`${styles.iconWrapper} ${isResume ? styles.resumeIcon : styles.startIcon}`}>
           {isResume ? <FiRefreshCw /> : <FiAlertCircle />}
@@ -71,31 +64,18 @@ export default function StartTestPopup({
           </p>
         </div>
 
-
         <div className={styles.actions}>
           {isResume ? (
-
             <>
-              <button 
-                onClick={onRestart} 
-                className={styles.restartBtn}
-              >
+              <button onClick={onRestart} className={styles.restartBtn}>
                 <FiRotateCcw className={styles.btnIcon} /> Restart
               </button>
-              
-              <button 
-                onClick={onResume} 
-                className={styles.resumeBtn}
-              >
+              <button onClick={onResume} className={styles.resumeBtn}>
                 <FiPlay className={styles.btnIcon} /> Resume
               </button>
             </>
           ) : (
-
-            <button 
-              onClick={onStart} 
-              className={styles.startBtn}
-            >
+            <button onClick={onStart} className={styles.startBtn}>
               <FiPlay className={styles.btnIcon} /> Start Test
             </button>
           )}

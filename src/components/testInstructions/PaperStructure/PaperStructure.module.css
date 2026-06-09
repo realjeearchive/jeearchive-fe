@@ -1,30 +1,19 @@
-.block {
-  margin-bottom: 20px;
-  color: var(--instruction-page-primary-text-color);
-}
+.block { margin-bottom: var(--space-lg); color: var(--instruction-page-primary-text-color); }
 
 .sectionTitle {
-  font-size: 18px;             /* same as other section titles */
+  font-size: var(--text-lg);
   font-weight: 700;
   text-transform: uppercase;
-  margin: 18px 0 10px;
+  margin: var(--space-md) 0 var(--space-sm);
 }
 
-/* 1., 2., 3., 4., 5. list */
 .numberList {
   margin: 0;
-  padding-left: 32px;          /* align with other numbered lists */
-  font-size: 18px;
+  padding-left: var(--space-2xl);
+  font-size: var(--text-lg);
   line-height: 1.6;
   list-style-type: decimal;
 }
 
-.numberList li {
-  margin-bottom: 10px;
-  font-weight: 500;
-}
-
-/* matches bold usage in the screenshot */
-.bold {
-  font-weight: 900;
-}
+.numberList li { margin-bottom: var(--space-sm); font-weight: 500; }
+.bold { font-weight: 900; }

@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--instruction-page-bg-alt);
+  background-color: var(--instruction-page-bg-alt);
 }
 
 /* TOP BAR: fixed */
@@ -13,7 +13,7 @@
   background: var(--instruction-topHeader-background-color);
   display: flex;
   align-items: center;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-xl);
   z-index: 20;
 }
 
@@ -24,7 +24,6 @@
   flex: 1;
 }
 
-/* small menu icon on right */
 .menuIcon {
   display: none;        
   width: 22px;
@@ -41,7 +40,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--instruction-page-primary-text-color);
+  background: var(--instruction-text-dark);
   border-radius: 2px;
 }
 
@@ -60,27 +59,24 @@
   height: auto;
 }
 
-/* MAIN */
 .main {
   display: grid;
   grid-template-columns: minmax(0, 4fr) 220px;
   padding-top: 50px;
-  padding-right: 25px;
+  padding-right: var(--space-xl);
   padding-bottom: 250px;
   min-height: 100vh;
   background-color: var(--instruction-page-primary-bg-color);
 }
 
-/* LEFT panel scrolls */
 .instructionsPanel {
   background: var(--instruction-page-primary-bg-color);
-  padding: 18px 22px;
+  padding: var(--space-md) var(--space-lg);
   padding-left: 60px;
   overflow-y: auto;
   z-index: 0;
 }
 
-/* list 4–8 after image */
 .continuedList {
   margin: 0 0 var(--space-lg);
   padding-left: var(--space-2xl);
@@ -90,56 +86,38 @@
 }
 
 .continuedList li {
-  margin-bottom: 10px;
+  margin-bottom: var(--space-xs);
   font-weight: 500;
 }
 
-/* RIGHT panel */
 .candidatePanelWrapper {
   position: fixed;
   top: 0;
   right: 0;
   background: var(--instruction-page-primary-bg-color);
-  border: 1px solid var(--instruction-border);
-  border-left: none;
+  border-left: 1px solid var(--instruction-border);
   display: flex;
   justify-content: center;
   z-index: 21;
 }
 
-.bottomBar {
-  z-index: 100;
-}
+.bottomBar { z-index: 100; }
 
-/* ===== MOBILE ===== */
 @media (max-width: 900px) {
-  .main {
-    display: block;           
-    padding-right: 0;
-  }
-
-  .instructionsPanel {
-    padding-left: var(--space-lg);
-    padding-right: var(--space-lg);
-    padding-bottom: 180px;
-  }
-  .topBar{
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
+  .main { display: block; padding-right: 0; }
+  .instructionsPanel { padding-left: var(--space-md); padding-right: var(--space-md); padding-bottom: 180px; }
+  .topBar{ padding-left: var(--space-sm); padding-right: var(--space-sm); }
   .candidatePanelWrapper { display: none; }
   .menuIcon { display: block; }
 }
 
-/* ===== MOBILE SLIDE-IN PANEL ===== */
 .mobileCandidatePanel {
   position: fixed;
   top: 52px; 
   right: 0;
   bottom: 0;
   width: 260px;
-  background: var(--instruction-page-primary-bg-color);
+  background: #ffffff;
   border-left: 1px solid var(--instruction-border);
   box-shadow: -4px 0 10px rgba(15, 23, 42, 0.15);
   z-index: 40;
@@ -147,9 +125,7 @@
   transition: transform 0.25s ease-out;
 }
 
-.mobileCandidatePanelOpen {
-  transform: translateX(0);
-}
+.mobileCandidatePanelOpen { transform: translateX(0); }
 
 .mobilePanelHeader {
   display: flex;

@@ -1,67 +1,34 @@
-.block {
-  margin-bottom: 20px;
-  color: var(--instruction-page-primary-text-color);
-}
+.block { margin-bottom: var(--space-lg); color: var(--instruction-page-primary-text-color); }
 
-/* section headings: NAVIGATING..., ANSWERING... */
 .sectionTitle {
-  font-size: 18px;             /* match GENERAL INSTRUCTIONS scale */
+  font-size: var(--text-lg);
   font-weight: 700;
   text-transform: uppercase;
-  margin: 18px 0 10px;
+  margin: var(--space-md) 0 var(--space-sm);
 }
 
-/* small explanatory paragraph */
-.paragraph {
-  margin: 0 0 8px;
-  font-size: 18px;
-  line-height: 1.6;
-  font-weight: 500;
-}
+.paragraph { margin: 0 0 var(--space-xs); font-size: var(--text-lg); line-height: 1.6; font-weight: 500; }
 
-/* main numbered lines: 1., 2., 3., 4. */
 .numberList {
   margin: 0;
-  padding-left: 32px;          /* align with header list */
-  font-size: 18px;
+  padding-left: var(--space-2xl);
+  font-size: var(--text-lg);
   line-height: 1.6;
   list-style-type: decimal;
 }
 
-.numberList li {
-  margin-bottom: 10px;
-  font-weight: 500;
-}
+.numberList li { margin-bottom: var(--space-sm); font-weight: 500; }
 
-/* a), b), c) sub‑lists */
 .alphaList {
-  margin: 0 0 12px;
-  padding-left: 42px;          /* a,b,c slightly indented more than numbers */
-  font-size: 18px;
+  margin: 0 0 var(--space-md);
+  padding-left: var(--space-3xl);
+  font-size: var(--text-lg);
   line-height: 1.6;
   list-style-type: lower-alpha;
 }
 
-.alphaList li {
-  margin-bottom: 8px;
-  font-weight: 500;
-}
+.alphaList li { margin-bottom: var(--space-xs); font-weight: 500; }
 
-/* bold text */
-.bold {
-  font-weight: 800;
-}
+.bold { font-weight: 800; }
 
-/* bold standalone lines (two‑line notes etc.) */
-.strongLine {
-  margin: 8px 0;
-  font-size: 18px;
-  line-height: 1.6;
-  font-weight: 700;
-}
-
-/* red inline sentence */
-.red {
-  color: var(--instruction-page-red-text-color);
-  font-weight: 600;
-}
+.red { color: var(--instruction-page-red-text-color); font-weight: 600; }

@@ -1,34 +1,25 @@
-.block {
-  margin-bottom: 20px;
-  color: var(--instruction-page-primary-text-color);
-}
+.block { margin-bottom: var(--space-lg); color: var(--instruction-page-primary-text-color); }
 
-/* "INSTRUCTIONS TO CANDIDATES" */
 .mainTitle {
-  font-size: 22px;
+  font-size: var(--text-2xl);
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
-  margin: 4px 0 20px;
+  margin: var(--space-xs) 0 var(--space-lg);
 }
 
-/* "GENERAL INSTRUCTIONS" */
 .sectionTitle {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 700;
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-sm);
 }
 
-/* numbered list 1,2,3 exactly like NTA */
 .list {
   margin: 0;
-  padding-left: 32px;          /* space for numbers */
+  padding-left: var(--space-2xl);
   list-style-type: decimal;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1.6;
 }
 
-.list li {
-  margin-bottom: 10px; 
-  font-weight: 500;        /* slightly increased gap */
-}
+.list li { margin-bottom: var(--space-xs); font-weight: 500; }

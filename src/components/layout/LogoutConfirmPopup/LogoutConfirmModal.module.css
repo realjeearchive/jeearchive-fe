@@ -13,64 +13,65 @@
 
 .modal {
   width: min(360px, 90vw);
-  background: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  border-radius: 16px;
-  padding: 20px 22px 18px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
-  color: var(--dashboard-primary-text-color);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--shape-radius-lg);
+  padding: var(--space-lg) var(--space-xl);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
 }
 
 .title {
-  margin: 0 0 6px;
-  font-size: 18px;
+  margin: 0 0 var(--space-xs);
+  font-size: var(--text-lg);
   font-weight: 600;
 }
 
 .message {
-  margin: 0 0 18px;
-  font-size: 14px;
-  color: var(--dashboard-secondary-text-color);
+  margin: 0 0 var(--space-lg);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .cancelButton,
 .logoutButton {
-  padding: 7px 14px;
-  border-radius: 999px;
-  font-size: 13px;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--shape-radius-full);
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background 0.15s ease, border-color 0.15s ease,
-    color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 /* subtle secondary button */
 .cancelButton {
-  background: var(--dashboard-sidebar-background-color);
-  color: var(--dashboard-secondary-text-color);
-  border-color: var(--dashboard-sidebar-border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
 }
 
 .cancelButton:hover {
-  background: var(--dashboard-link-hover-color);
-  color: var(--dashboard-primary-text-color);
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
 }
 
 /* primary destructive button */
 .logoutButton {
-  background: var(--dashboard-secondary-highlight-color);
-  color: var(--dashboard-primary-text-color);
-  border-color: var(--dashboard-secondary-highlight-color);
+  background: var(--color-error-bg);
+  color: var(--color-error-main);
+  border-color: var(--color-error-border);
 }
 
 .logoutButton:hover {
-  border-color: var(--dashboard-highlight-color);
+  background: var(--color-error-main);
+  color: #fff;
+  border-color: var(--color-error-main);
 }
