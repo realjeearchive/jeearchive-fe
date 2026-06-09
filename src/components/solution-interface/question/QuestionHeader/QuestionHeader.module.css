@@ -2,115 +2,82 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--dashboard-dividerline-color);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-divider);
   background-color: rgba(255, 255, 255, 0.01); 
-
-  /* --- SCROLL LOGIC --- */
-  overflow-x: auto;      /* Enable horizontal scroll */
-  white-space: nowrap;   /* Prevent wrapping */
-  
-  /* Hide Scrollbar (Clean UI) */
-  scrollbar-width: none;  /* Firefox */
-  -ms-overflow-style: none;  /* IE */
+  overflow-x: auto;      
+  white-space: nowrap;   
+  scrollbar-width: none;  
+  -ms-overflow-style: none;  
 }
 
-.header::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
+.header::-webkit-scrollbar { display: none; }
 
-.leftSection {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  
-  /* Prevent squishing */
-  flex-shrink: 0; 
-}
+.leftSection { display: flex; align-items: center; gap: var(--space-sm); flex-shrink: 0; }
 
-/* Q Badge */
 .qBadge {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Pills (Generic for Type) */
 .metaPill {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-secondary-text-color);
+  background: var(--glass-bg-base);
+  color: var(--text-secondary);
 }
 
-/* Right Section */
 .rightSection {
   display: flex;
   align-items: center;
-  gap: 16px;
-  
-  /* Prevent squishing & Ensure gap from left section */
+  gap: var(--space-md);
   flex-shrink: 0; 
-  margin-left: 16px; 
+  margin-left: var(--space-md); 
 }
 
 .marksBlock {
   font-size: 13px;
   font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
-  margin-right: 8px;
+  color: var(--text-secondary);
+  margin-right: var(--space-xs);
 }
-.posMark { color: #22C55E; }
-.negMark { color: #EF4444; }
+.posMark { color: var(--color-success-main); }
+.negMark { color: var(--color-error-main); }
 
 .actionBtn {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   background: transparent;
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  border: 1px solid var(--border-subtle);
   padding: 6px 14px;
-  border-radius: 99px;
+  border-radius: var(--shape-radius-full);
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 500;
-  
-  /* Ensure button text doesn't wrap awkwardly */
   white-space: nowrap; 
 }
 
 .actionBtn:hover {
-  border-color: var(--dashboard-dividerline-color);
-  color: var(--dashboard-primary-text-color);
-  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--border-divider);
+  color: var(--text-primary);
+  background: var(--glass-bg-base);
 }
 
-.reportBtn:hover {
-  color: #EF4444;
-  border-color: rgba(239, 68, 68, 0.3);
-}
+.reportBtn:hover { color: var(--color-error-main); border-color: color-mix(in srgb, var(--color-error-main) 30%, transparent); }
 
 @media (max-width: 700px) {
-  .header {
-    padding: 10px 10px; /* Less horizontal padding on mobile */
-  }
-  
-  .rightSection {
-    gap: 8px;
-    margin-left: 24px; /* Force a bit more space between groups before scroll starts */
-  }
-  
-  .actionBtn {
-    padding: 6px 10px; /* Slightly smaller touch targets */
-  }
+  .header { padding: 10px 10px; }
+  .rightSection { gap: var(--space-xs); margin-left: var(--space-xl); }
+  .actionBtn { padding: 6px 10px; }
 }

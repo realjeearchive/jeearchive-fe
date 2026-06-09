@@ -1,28 +1,24 @@
-/* CONTAINER */
 .container {
   display: flex;
   flex-direction: row;
   height: 100vh;
   width: 100vw;
-  background-color: var(--dashboard-background-color);
-  color: var(--dashboard-primary-text-color);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
   overflow: hidden;
-  position: relative; /* Essential for absolute positioning of backdrop/mobile sidebar */
+  position: relative; 
 }
 
-/* LEFT PANEL (Main Content) */
 .leftPanel {
-  flex: 1; /* Automatically fills available space */
+  flex: 1; 
   display: flex;
   flex-direction: column;
   height: 100%;
   min-width: 0;
   position: relative;
-  /* Smoothly resize when sidebar opens/closes on desktop */
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Scrollable Question Area */
 .contentScrollArea {
   flex: 1;
   overflow-y: auto;
@@ -31,112 +27,87 @@
   flex-direction: column;
   scrollbar-width: none; 
   -ms-overflow-style: none;
-  padding: 8px;
+  padding: var(--space-xs);
 }
 
 @media (max-width: 700px) {
-  .contentScrollArea {
-    padding: 0; /* Less padding on mobile */
-  }
+  .contentScrollArea { padding: 0; }
 }
 .contentScrollArea::-webkit-scrollbar { display: none; }
 
-/* Fixed Footer Area */
 .footerArea {
   flex-shrink: 0;
-  background-color: var(--dashboard-sidebar-background-color);
-  border-top: 1px solid var(--dashboard-sidebar-border-color);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-subtle);
   z-index: 10;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* --- RIGHT PANEL (SIDEBAR) --- */
 .rightPanel {
   width: 320px;
   height: 100%;
   flex-shrink: 0;
-  background-color: var(--dashboard-sidebar-background-color);
-  border-left: 1px solid var(--dashboard-sidebar-border-color);
-  z-index: 30; /* Higher than content so it sits on top if needed */
-  
-  /* Shared transitions for width (desktop) and transform (mobile) */
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-subtle);
+  z-index: 30; 
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), width 0.4s ease, opacity 0.3s ease;
   overflow: hidden;
   position: relative;
 }
 
-/* CLOSED STATE (Desktop Default) */
 .rightPanel.closed {
   width: 0px;
   border-left: 0px solid transparent;
   opacity: 0;
 }
 
-/* Inner wrapper to maintain content width while parent shrinks */
 .sidebarInner {
   width: 320px;
   height: 100%;
 }
 
-/* --- MOBILE / TABLET OVERLAY MODE (<= 1024px) --- */
 @media (max-width: 1024px) {
-  
   .rightPanel {
-    position: absolute; /* Float on top */
+    position: absolute; 
     top: 0;
     right: 0;
     bottom: 0;
-    width: 320px; /* Fixed width sidebar */
-    
-    /* Start hidden off-screen to the right */
+    width: 320px; 
     transform: translateX(100%); 
-    
-    /* Reset desktop "closed" styles so they don't conflict */
     opacity: 1; 
-    border-left: 1px solid var(--dashboard-sidebar-border-color);
-    box-shadow: -4px 0 24px rgba(0,0,0,0.5); /* Shadow for depth */
+    border-left: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-lg); 
   }
 
-  /* OPEN STATE (Mobile) */
-  .rightPanel.mobileOpen {
-    transform: translateX(0); /* Slide in from right */
-  }
+  .rightPanel.mobileOpen { transform: translateX(0); }
   
-  /* CLOSED STATE (Mobile) */
-  /* Re-override the desktop .closed class for mobile specific hiding */
   .rightPanel.closed {
-    width: 320px; /* Keep width, just move it off-screen */
+    width: 320px; 
     transform: translateX(100%);
     opacity: 1;
-    border-left: 1px solid var(--dashboard-sidebar-border-color); /* Restore border */
+    border-left: 1px solid var(--border-subtle); 
   }
 
-  /* BACKDROP (Dims the background content) */
   .backdrop {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 25; /* Below sidebar, above content */
+    background-color: var(--auth-bg-backdrop);
+    z-index: 25; 
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
   }
 
-  /* Active state for backdrop */
   .backdrop.active {
     opacity: 1;
-    pointer-events: auto; /* Clickable to close */
+    pointer-events: auto; 
   }
 }
 
 @media (max-width: 480px) {
-  .rightPanel {
-    width: 85vw; /* Almost full screen on phones */
-  }
-  .sidebarInner {
-    width: 100%;
-  }
+  .rightPanel { width: 85vw; }
+  .sidebarInner { width: 100%; }
 }

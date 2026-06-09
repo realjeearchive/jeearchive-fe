@@ -1,9 +1,9 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border-top: 1px solid var(--dashboard-dividerline-color);
-  padding: 20px;
+  gap: var(--space-md);
+  border-top: 1px solid var(--border-divider);
+  padding: var(--space-lg);
 }
 
 .header {
@@ -13,36 +13,34 @@
 }
 
 .title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 700;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .videoBadge {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   background: transparent;
-  color: var(--dashboard-highlight-color);
-  padding: 4px 12px;
-  border-radius: 99px;
+  color: var(--color-info-main);
+  padding: 4px var(--space-sm);
+  border-radius: var(--shape-radius-full);
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid var(--dashboard-highlight-color);
+  border: 1px solid var(--color-info-main);
   transition: all 0.2s;
 }
 
-.videoBadge:hover {
-  background: rgba(133, 219, 251, 0.1);
-}
+.videoBadge:hover { background: var(--color-info-bg); }
 
 .body {
   font-size: 15px;
   line-height: 1.7;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   background: transparent;
   border: none;
   padding: 0;
@@ -50,79 +48,52 @@
   overflow-x: auto; 
 }
 
-.body p {
-  margin-bottom: 12px;
-}
+.body p { margin-bottom: var(--space-sm); }
+.body p:last-child { margin-bottom: 0; }
 
-.body p:last-child {
-  margin-bottom: 0;
-}
-
-/* --- IMAGE FIXES FOR DARK THEME --- */
 .parsedImage {
   max-width: 100%;
-  max-height: 250px; /* Prevent massive images */
+  max-height: 250px; 
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 6px;
-  margin: 12px 0;
-  
-  /* Invert black to white */
+  margin: var(--space-sm) 0;
   filter: invert(1) hue-rotate(180deg);
 }
 
 .videoWrapper {
-  margin-top: 12px;
+  margin-top: var(--space-sm);
   position: relative;
   padding-bottom: 56.25%; 
   height: 0;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--shape-radius-md);
   background: #000;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-md);
 }
 
-.videoWrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
+.videoWrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
 @media (max-width: 700px) {
-  .container {
-    padding: 16px 10px; 
-    gap: 12px;
-  }
-  .title {
-    font-size: 13px;
-  }
-  .videoBadge {
-    padding: 3px 10px;
-    font-size: 10px;
-  }
-  .body {
-    font-size: 14px;
-  }
+  .container { padding: var(--space-md) 10px; gap: var(--space-sm); }
+  .title { font-size: 13px; }
+  .videoBadge { padding: 3px 10px; font-size: 10px; }
+  .body { font-size: var(--text-sm); }
 }
 
-/* --- TABLE STYLES (For Solutions) --- */
 .body table {
   width: 100%;
   max-width: 800px;
   border-collapse: collapse;
-  margin: 16px 0;
-  font-size: 14px;
-  background-color: var(--dashboard-card-background, rgba(255, 255, 255, 0.02));
+  margin: var(--space-md) 0;
+  font-size: var(--text-sm);
+  background-color: var(--glass-bg-base);
 }
 
-.body th,
-.body td {
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  padding: 12px 16px;
+.body th, .body td {
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-sm) var(--space-md);
   text-align: left;
   vertical-align: top;
   line-height: 1.5;
@@ -131,16 +102,11 @@
 .body th {
   background-color: rgba(255, 255, 255, 0.05);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
-.body td {
-  color: var(--dashboard-secondary-text-color);
-}
-
-.body tbody tr:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.01);
-}
+.body td { color: var(--text-secondary); }
+.body tbody tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.01); }

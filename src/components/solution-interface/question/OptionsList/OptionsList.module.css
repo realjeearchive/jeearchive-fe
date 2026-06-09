@@ -1,27 +1,23 @@
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-md);
   width: 100%;
   align-items: stretch;
-  padding: 20px; 
+  padding: var(--space-lg); 
 }
 
-@media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
 
 .optionCard {
   position: relative;
   display: flex;
-  align-items: center; /* Vertically centers the circle and content */
-  gap: 16px;
-  padding: 18px 24px;
-  border-radius: 12px;
-  
-  background-color: rgba(255, 255, 255, 0.03); 
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  
+  align-items: center; 
+  gap: var(--space-md);
+  padding: 18px var(--space-xl);
+  border-radius: var(--shape-radius-md);
+  background-color: var(--glass-bg-base); 
+  border: 1px solid var(--glass-border-subtle);
   cursor: default;
   transition: all 0.2s ease;
   height: 100%;
@@ -32,43 +28,41 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--dashboard-secondary-text-color);
+  background: var(--glass-bg-base);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border-subtle);
 }
 
 .contentWrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Ensures text block is centered */
+  justify-content: center; 
   gap: 4px;
-  padding-right: 10px; /* Prevent overlap with absolute label if text is long */
+  padding-right: 10px; 
 }
 
 .text {
   font-size: 15px;
   line-height: 1.5;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
-/* Stats (Percentage) stays in flow, below text */
 .statsText {
-  font-size: 11px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
   opacity: 0.6;
   font-weight: 500;
   margin-top: 2px;
 }
 
-/* ABSOLUTE POSITIONED "You marked this" */
 .userMarkedLabel {
   position: absolute;
   bottom: 8px;
@@ -80,55 +74,51 @@
   z-index: 2;
 }
 
-.textGreen { color: #22C55E; }
-.textRed { color: #EF4444; }
+.textGreen { color: var(--color-success-main); }
+.textRed { color: var(--color-error-main); }
 
-/* STATES */
+/* --- UPDATED OPTION STATES --- */
 .correct {
-  border-color: #22C55E;
-  background-color: rgba(34, 197, 94, 0.08); 
-  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1);
+  border-color: var(--color-success-main);
+  background-color: var(--color-success-bg); 
+  /* Removed box-shadow */
 }
 .correct .labelCircle {
-  background-color: #22C55E;
-  color: black;
-  border-color: #22C55E;
+  background-color: var(--color-success-main);
+  color: var(--bg-main); /* Dark text for contrast */
+  border-color: var(--color-success-main);
 }
 
 .wrong {
-  border-color: #EF4444;
-  background-color: rgba(239, 68, 68, 0.08); 
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.1);
+  border-color: var(--color-error-main);
+  background-color: var(--color-error-bg); 
+  /* Removed box-shadow */
 }
 .wrong .labelCircle {
-  background-color: #EF4444;
-  color: white;
-  border-color: #EF4444;
+  background-color: var(--color-error-main);
+  color: var(--bg-main); /* Dark text for contrast */
+  border-color: var(--color-error-main);
 }
 
-/* Fix backend images inside options */
 .parsedImage {
   max-width: 100%;
-  max-height: 120px; /* Keep option images very small */
+  max-height: 120px; 
   object-fit: contain;
   filter: invert(1) hue-rotate(180deg);
   border-radius: 6px;
-  margin-top: 8px;
+  margin-top: var(--space-xs);
 }
 
 .correctBadge {
   position: absolute;
   top: -12px;
   right: 16px;
-  
-  /* Changed background to dark/transparent so the green circle pops */
-  background: #1E1D1B; /* Or use your sidebar bg variable */
-  color: #22C55E;       /* Green Text */
-  border: 1px solid #22C55E;
-  
+  background: var(--bg-surface); 
+  color: var(--color-success-main);       
+  border: 1px solid var(--color-success-main);
   font-size: 10px;
   font-weight: 700;
-  padding: 3px 4px 3px 10px; /* Adjusted padding for the circle */
+  padding: 3px 4px 3px 10px; 
   border-radius: 99px;
   display: flex;
   align-items: center;
@@ -136,42 +126,20 @@
   z-index: 5;
 }
 
-/* The Green Circular Tick */
 .tickCircle {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 16px;
   height: 16px;
-  background-color: #22C55E; /* Solid Green Background */
+  background-color: var(--color-success-main); 
   border-radius: 50%;
-  color: white; /* White Tick Icon */
-}
-
-/* --- RESPONSIVE UPDATES --- */
-@media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr; }
+  color: white; 
 }
 
 @media (max-width: 700px) {
-  .grid { 
-    padding: 10px; 
-    gap: 12px;
-  }
-  
-  .optionCard {
-    padding: 14px 16px; /* Compact padding */
-    gap: 12px;
-    min-height: 60px;
-  }
-  
-  .labelCircle {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
-  }
-  
-  .text {
-    font-size: 14px;
-  }
+  .grid { padding: 10px; gap: var(--space-sm); }
+  .optionCard { padding: 14px var(--space-md); gap: var(--space-sm); min-height: 60px; }
+  .labelCircle { width: 32px; height: 32px; font-size: 13px; }
+  .text { font-size: var(--text-sm); }
 }

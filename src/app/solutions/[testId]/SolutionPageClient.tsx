@@ -115,7 +115,7 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
   if (isLoading) {
     return (
       <main
-        className="flex flex-col items-center justify-center min-h-screen bg-[var(--dashboard-background-color)]"
+        className="flex flex-col items-center justify-center min-h-screen bg-[var(--bg-main)]"
         aria-label="Loading solutions"
       >
         <Loader label="Loading detailed solutions..." />
@@ -126,7 +126,7 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
   if (error || !TEST_DATA || !currentQuestion) {
     return (
       <main
-        className="flex flex-col items-center justify-center min-h-screen text-red-500 bg-[var(--dashboard-background-color)] gap-4"
+        className="flex flex-col items-center justify-center min-h-screen text-[var(--color-error-main)] bg-[var(--bg-main)] gap-4"
         aria-label="Solutions error"
       >
         <p className="text-sm font-medium" role="alert">
@@ -134,7 +134,7 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
         </p>
         <button
           onClick={() => router.back()}
-          className="px-5 py-2 border border-[#f59e0b] text-[#f59e0b] text-sm font-medium rounded-md hover:bg-[#f59e0b] hover:text-white transition-colors duration-200"
+          className="px-5 py-2 border border-[var(--color-brand-primary)] text-[var(--color-brand-primary)] text-sm font-medium rounded-md hover:bg-[var(--color-brand-primary)] hover:text-black transition-colors duration-200"
           aria-label="Go back"
         >
           Go Back
@@ -196,8 +196,8 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
         {currentQuestion.comprehensionContent && (
           <section
             style={{
-              background: "rgba(59, 130, 246, 0.05)",
-              borderLeft: "4px solid #3b82f6",
+              background: "color-mix(in srgb, var(--color-focus-ring) 5%, transparent)",
+              borderLeft: "4px solid var(--color-focus-ring)",
               padding: "16px",
               marginBottom: "20px",
               borderRadius: "0 8px 8px 0",
@@ -208,7 +208,7 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
               style={{
                 fontSize: "12px",
                 fontWeight: "bold",
-                color: "#3b82f6",
+                color: "var(--color-focus-ring)",
                 textTransform: "uppercase",
                 marginBottom: "8px",
               }}
@@ -232,33 +232,33 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
             userAnswer={currentQuestion.userAnswer}
           />
         ) : (
-          <div className="mb-6 p-5 rounded-lg border border-[var(--dashboard-dividerline-color)] bg-[var(--dashboard-card-background)]">
+          <div className="mb-6 p-5 rounded-lg border border-[var(--border-divider)] bg-[var(--glass-bg-base)]">
             <div className="flex flex-col gap-3">
               {currentQuestion.userAnswer &&
               currentQuestion.userAnswer.length > 0 ? (
                 <div className="flex items-center gap-3">
-                  <span className="text-[13px] text-[var(--dashboard-secondary-text-color)] font-medium uppercase tracking-wider">
+                  <span className="text-[13px] text-[var(--text-secondary)] font-medium uppercase tracking-wider">
                     Your Answer:
                   </span>
                   <span
-                    className={`text-lg font-bold ${currentQuestion.status === "correct" ? "text-green-500" : "text-red-500"}`}
+                    className={`text-lg font-bold ${currentQuestion.status === "correct" ? "text-[var(--color-success-main)]" : "text-[var(--color-error-main)]"}`}
                   >
                     {currentQuestion.userAnswer.join(", ")}
                   </span>
                 </div>
               ) : (
-                <div className="text-[13px] text-[var(--dashboard-secondary-text-color)] font-medium uppercase tracking-wider">
-                  Status: <span className="text-gray-500">Unattempted</span>
+                <div className="text-[13px] text-[var(--text-secondary)] font-medium uppercase tracking-wider">
+                  Status: <span className="opacity-60">Unattempted</span>
                 </div>
               )}
 
-              <div className="w-full h-[1px] bg-[var(--dashboard-dividerline-color)] my-1"></div>
+              <div className="w-full h-[1px] bg-[var(--border-divider)] my-1"></div>
 
               <div className="flex items-center gap-3">
-                <span className="text-[13px] text-[var(--dashboard-secondary-text-color)] font-medium uppercase tracking-wider">
+                <span className="text-[13px] text-[var(--text-secondary)] font-medium uppercase tracking-wider">
                   Correct Answer:
                 </span>
-                <span className="text-lg font-bold text-green-500">
+                <span className="text-lg font-bold text-[var(--color-success-main)]">
                   {currentQuestion.correctAnswer.join(", ")}
                 </span>
               </div>

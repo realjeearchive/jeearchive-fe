@@ -4,9 +4,9 @@
   width: 100%;
   padding: 0;
   gap: 0;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   flex-shrink: 0; 
 }
@@ -14,13 +14,13 @@
 .banner {
   display: inline-flex; 
   align-items: center;
-  gap: 8px;
-  margin: 20px; 
-  padding: 8px 12px; 
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--dashboard-secondary-text-color);
-  font-size: 11px;
+  gap: var(--space-xs);
+  margin: var(--space-lg); 
+  padding: var(--space-xs) var(--space-sm); 
+  background-color: var(--glass-bg-base);
+  border: 1px solid var(--glass-border-subtle);
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -28,18 +28,9 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    margin: 0;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid var(--dashboard-sidebar-border-color);
-  }
+  .container { margin: 0; border-radius: 0; border: none; border-bottom: 1px solid var(--border-subtle); }
 }
 
 @media (max-width: 700px) {
-  .banner {
-    margin: 10px 10px 0 10px;
-    padding: 6px 10px;
-    font-size: 10px;
-  }
+  .banner { margin: 10px 10px 0 10px; padding: 6px 10px; font-size: 10px; }
 }
