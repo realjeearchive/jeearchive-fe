@@ -5,21 +5,20 @@
   width: 100%;
 }
 
-/* --- Filter Pills --- */
 .filterRow {
   display: flex;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg-base);
   padding: 4px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--shape-radius-sm);
+  border: 1px solid var(--glass-border-subtle);
 }
 
 .filterBtn {
   background: transparent;
   border: none;
-  color: var(--dashboard-secondary-text-color);
-  font-size: 11px;
+  color: var(--text-secondary);
+  font-size: var(--text-2xs);
   font-weight: 500;
   padding: 4px 10px;
   border-radius: 6px;
@@ -28,58 +27,58 @@
 }
 
 .filterBtn:hover {
-  color: var(--dashboard-primary-text-color);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  background: var(--glass-bg-hover);
 }
 
 .activeFilter {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--dashboard-primary-text-color);
+  background: var(--glass-bg-hover);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-/* --- Chart Area --- */
 .chartWrapper {
-  height: 280px; /* Gives the scatter plot plenty of room to breathe */
+  height: 280px; 
   width: 100%;
 }
 
-/* Container for the tooltip */
 .tooltipRoot {
   pointer-events: none;
-  z-index: 10000; /* High z-index to stay above everything */
+  z-index: 10000; 
 }
 
 .tooltipContainer {
-  background: #18181b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 8px;
-  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--glass-border-strong);
+  padding: var(--space-xs);
+  border-radius: var(--shape-radius-md);
   min-width: 120px;
 }
 
 .tooltipHeader {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 8px;
+  border-bottom: 1px solid var(--glass-border-subtle);
+  padding-bottom: var(--space-xs);
 }
 
 .tooltipSubject {
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   font-weight: 700;
 }
 
 .tooltipChapter {
   font-size: 10px;
   font-weight: 500;
-  color: #fff;
+  color: var(--text-primary);
   line-height: 1.3;
 }
 
 .tooltipStats {
   display: flex;
-  gap: 12px;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
 }
 
 .statBox {
@@ -90,50 +89,47 @@
 .statValue {
   font-size: 10px;
   font-weight: 700;
-  color: var(--dashboard-core-color);
+  color: var(--color-brand-primary);
   font-family: monospace;
 }
 
 .statLabel {
-  font-size:8;
-  color: var(--dashboard-secondary-text-color);
+  font-size: 8px;
+  color: var(--text-secondary);
 }
 
 .statBad {
-  color: #ef4444; /* Highlights the bad accuracy */
+  color: var(--color-error-main); 
   font-family: monospace;
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
-/* --- Empty State --- */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 250px;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   opacity: 0.5;
 }
 
 .emptyIcon {
-  color: #10b981;
-  margin-bottom: 12px;
+  color: var(--color-success-main);
+  margin-bottom: var(--space-sm);
 }
 
 .emptyTitle {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .emptySub {
-  font-size: 12px;
+  font-size: var(--text-xs);
   margin-top: 4px;
 }
 
 @media (max-width: 768px) {
-  .filterRow {
-    display: none; /* Can hide on very small screens, or turn into a dropdown */
-  }
+  .filterRow { display: none; }
 }

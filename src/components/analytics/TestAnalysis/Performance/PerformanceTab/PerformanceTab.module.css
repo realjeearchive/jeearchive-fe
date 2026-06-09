@@ -16,35 +16,35 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #211f1c;
-  border: 1px dashed var(--dashboard-sidebar-border-color);
-  border-radius: 10px;
-  padding: 2rem;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--shape-radius-md);
+  padding: var(--space-2xl);
   text-align: center;
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .iconWrapper {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--glass-bg-base);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--dashboard-secondary-text-color);
-  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
 }
 
 .title {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
 .subtitle {
-  font-size: 0.875rem;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   max-width: 400px;
   line-height: 1.5;
 }

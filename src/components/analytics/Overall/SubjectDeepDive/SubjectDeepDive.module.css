@@ -5,16 +5,16 @@
   padding-top: 4px;
 }
 
-/* Subject Card */
 .subjectCard {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  padding: 18px 16px 16px;
-  border-radius: 12px;
+  gap: var(--space-xl);
+  padding: 18px var(--space-md) var(--space-md);
+  border-radius: var(--shape-radius-md);
+  background: var(--glass-bg-base);
+  border: 1px solid var(--glass-border-subtle);
 }
 
-/* Header */
 .cardHeader {
   display: flex;
   align-items: center;
@@ -22,9 +22,9 @@
 }
 
 .subjectName {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: 0.02em;
 }
@@ -38,7 +38,7 @@
 }
 
 .scoreValue {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 700;
   font-family: monospace;
 }
@@ -48,7 +48,6 @@
   opacity: 0.5;
 }
 
-/* Donut */
 .donutWrapper {
   position: relative;
   width: 100%;
@@ -84,7 +83,7 @@
 
 .donutLabel {
   font-size: 10px;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   opacity: 0.5;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -96,25 +95,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   opacity: 0.3;
 }
 
-/* Metrics */
 .metricsRow {
   display: flex;
   flex-direction: column;
   gap: 6px;
   padding-top: 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-top: 1px solid var(--glass-border-subtle);
 }
 
 .metric {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--dashboard-secondary-text-color);
+  gap: var(--space-xs);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
 }
 
 .metric svg {
@@ -130,31 +128,13 @@
 .metricValue {
   font-weight: 600;
   font-family: monospace;
-  color: var(--dashboard-primary-text-color);
+  color: var(--text-primary);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .subjectCard {
-    gap: 10px;
-    padding: 14px;
-  }
-
-  .donutWrapper {
-    height: 110px;
-  }
-
-  .donutChart {
-    width: 110px;
-    height: 110px;
-  }
-
-  .donutPercent {
-    font-size: 20px;
-  }
+  .container { grid-template-columns: 1fr; gap: 10px; }
+  .subjectCard { gap: 10px; padding: 14px; }
+  .donutWrapper { height: 110px; }
+  .donutChart { width: 110px; height: 110px; }
+  .donutPercent { font-size: 20px; }
 }

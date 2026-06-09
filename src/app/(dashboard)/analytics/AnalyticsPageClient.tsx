@@ -86,43 +86,14 @@ export function AnalyticsPageClient() {
 
   if (error && !isRateLimited) {
     return (
-      <main
-        className={styles.errorContainer}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "50vh",
-          gap: "16px",
-        }}
-        aria-label="Analytics error"
-      >
-        <FiAlertTriangle size={32} color="#ef4444" aria-hidden="true" />
-        <div
-          style={{
-            color: "var(--dashboard-primary-text-color)",
-            fontSize: "16px",
-            fontWeight: 500,
-          }}
-          role="alert"
-        >
+      <main className={styles.errorContainer} aria-label="Analytics error">
+        <FiAlertTriangle size={32} className={styles.errorIcon} aria-hidden="true" />
+        <div className={styles.errorMessage} role="alert">
           {error}
         </div>
         <button
           onClick={() => window.location.reload()}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "8px 16px",
-            background: "var(--dashboard-core-color)",
-            color: "#000",
-            borderRadius: "8px",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
+          className={styles.retryButton}
           aria-label="Refresh analytics"
         >
           <FiRefreshCw size={14} aria-hidden="true" /> Try Again

@@ -49,7 +49,7 @@ export const ComparativeOverview = () => {
     <AnalyticsCard
       title="Benchmarking"
       subtitle="Vs. Competition"
-      className="h-full bg-[#211f1c] border-[var(--dashboard-sidebar-border-color)]"
+      className={styles.cardOverride}
     >
       <div className={styles.mainContainer}>
         <ComparisonBar

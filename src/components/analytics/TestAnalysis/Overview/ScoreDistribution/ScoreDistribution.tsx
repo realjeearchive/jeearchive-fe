@@ -20,24 +20,25 @@ interface Props {
 }
 
 export const ScoreDistribution = ({ meta, subjects }: Props) => {
+  // Enforcing the global Semantic Subject variables
   const rawData: PieDatum[] = [
+    {
+      id: "Mathematics",
+      label: "Maths",
+      value: Math.max(0, subjects.maths.score),
+      color: "var(--subject-maths)",
+    },
     {
       id: "Physics",
       label: "Physics",
       value: Math.max(0, subjects.physics.score),
-      color: "#22C55E",
+      color: "var(--subject-physics)",
     },
     {
       id: "Chemistry",
       label: "Chemistry",
       value: Math.max(0, subjects.chemistry.score),
-      color: "#F97316",
-    },
-    {
-      id: "Mathematics",
-      label: "Maths",
-      value: Math.max(0, subjects.maths.score),
-      color: "#3B82F6",
+      color: "var(--subject-chemistry)",
     },
   ];
 
@@ -55,7 +56,7 @@ export const ScoreDistribution = ({ meta, subjects }: Props) => {
           style={{
             fontSize: "24px",
             fontWeight: 700,
-            fill: "#F3F4F6",
+            fill: "var(--text-primary)",
           }}
         >
           {totalScore}
@@ -67,7 +68,7 @@ export const ScoreDistribution = ({ meta, subjects }: Props) => {
           dominantBaseline="central"
           style={{
             fontSize: "10px",
-            fill: "#9CA3AF",
+            fill: "var(--text-secondary)",
             textTransform: "uppercase",
             letterSpacing: "1px",
             fontWeight: 600,
@@ -118,8 +119,8 @@ export const ScoreDistribution = ({ meta, subjects }: Props) => {
               height: "100%",
               alignItems: "center",
               justifyContent: "center",
-              color: "#9CA3AF",
-              fontSize: "14px",
+              color: "var(--text-secondary)",
+              fontSize: "var(--text-sm)",
             }}
             role="status"
           >

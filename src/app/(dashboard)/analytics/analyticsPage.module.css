@@ -1,10 +1,10 @@
 .pageContainer {
   margin: 0 auto;
   min-height: 100vh;
-  padding: 20px 0;
+  padding: var(--space-lg) 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .loaderContainer {
@@ -17,18 +17,45 @@
 
 .errorContainer {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: #ef4444; /* red-500 */
-  font-size: 0.875rem;
+  gap: var(--space-md);
+}
+
+.errorIcon {
+  color: var(--color-error-main);
+}
+
+.errorMessage {
+  color: var(--text-primary);
+  font-size: var(--text-base);
   font-weight: 500;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-brand-primary);
+  color: #000;
+  border-radius: var(--shape-radius-sm);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.retryButton:hover {
+  opacity: 0.9;
 }
 
 .gridChartRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 @media (min-width: 1024px) {
@@ -50,7 +77,7 @@
 .gridMetricRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px; 
+  gap: var(--space-xs); 
 }
 
 @media (min-width: 1024px) {

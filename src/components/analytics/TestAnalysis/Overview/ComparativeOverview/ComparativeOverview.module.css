@@ -1,74 +1,57 @@
+.cardOverride {
+  height: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
 .mainContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  gap: 0.5rem;
-  background-color: #211f1c;
+  gap: var(--space-sm);
 }
 
-.comparisonBar {
-  margin-bottom: 12px;
-}
-
-.comparisonBar:last-child {
-  margin-bottom: 0;
-}
+.comparisonBar { margin-bottom: var(--space-sm); }
+.comparisonBar:last-child { margin-bottom: 0; }
 
 .barHeader {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: var(--text-2xs);
   margin-bottom: 6px;
   font-weight: 500;
 }
 
-.barLabel {
-  color: var(--dashboard-secondary-text-color);
-}
-
-.barLabelYou {
-  color: var(--dashboard-primary-text-color);
-  font-weight: 600;
-}
-
-.barValue {
-  color: var(--dashboard-primary-text-color);
-  font-weight: 600;
-}
+.barLabel { color: var(--text-secondary); }
+.barLabelYou { color: var(--text-primary); font-weight: 600; }
+.barValue { color: var(--text-primary); font-weight: 600; }
 
 .progressBarContainer {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-base);
   height: 6px;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-full);
   overflow: hidden;
 }
 
 .progressBarFill {
   height: 100%;
-  border-radius: 999px;
+  border-radius: var(--shape-radius-full);
   transition: width 1s ease-out;
 }
 
 .insightFooter {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--dashboard-dividerline-color);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-divider);
 }
 
 .insightText {
-  font-size: 11px;
-  color: var(--dashboard-secondary-text-color);
+  font-size: var(--text-2xs);
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
-.insightBold {
-  color: var(--dashboard-primary-text-color);
-  font-weight: 600;
-}
-
-.insightNegative {
-  color: #ef4444;
-  font-weight: 600;
-}
+.insightBold { color: var(--text-primary); font-weight: 600; }
+.insightNegative { color: var(--color-error-main); font-weight: 600; }

@@ -43,12 +43,13 @@ export const SubjectSummaryTable = ({ subjects }: Props) => {
           </thead>
           <tbody>
             {subjectsArray.map((sub) => {
+              // 🔥 FIX: Mapped strictly to your Global Semantic Subject Colors
               const color =
                 sub.name === "Physics"
-                  ? "#60A5FA"
+                  ? "var(--subject-physics)"
                   : sub.name === "Chemistry"
-                  ? "#34D399"
-                  : "#FB7185";
+                  ? "var(--subject-chemistry)"
+                  : "var(--subject-maths)";
 
               return (
                 <tr key={sub.name} className={styles.tableRow}>

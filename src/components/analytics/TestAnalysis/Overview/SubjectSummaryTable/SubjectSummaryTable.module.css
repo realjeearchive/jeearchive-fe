@@ -1,160 +1,62 @@
 .cardContainer {
   height: 100%;
-  background-color: #211f1c;
+  background-color: var(--bg-surface);
   display: flex;
   flex-direction: column;
 }
 
-.tableWrapper {
-  overflow-x: auto;
-  width: 100%;
-}
-
-.table {
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-}
+.tableWrapper { overflow-x: auto; width: 100%; }
+.table { width: 100%; text-align: left; border-collapse: collapse; }
 
 .tableHead {
-  font-size: 10px;
+  font-size: var(--text-2xs);
   text-transform: uppercase;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   letter-spacing: 0.06em;
-  border-bottom: 1px solid var(--dashboard-dividerline-color);
+  border-bottom: 1px solid var(--border-divider);
 }
 
-.tableHeaderCell {
-  padding: 12px 8px;
-  font-weight: 600;
-}
+.tableHeaderCell { padding: var(--space-sm) var(--space-xs); font-weight: 600; }
+.tableHeaderCellLeft { padding-left: 4px; }
+.tableHeaderCellRight { text-align: right; }
+.tableHeaderCellHiddenSm { display: none; }
 
-.tableHeaderCellLeft {
-  padding-left: 4px;
-}
-
-.tableHeaderCellRight {
-  text-align: right;
-}
-
-.tableHeaderCellHiddenSm {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .tableHeaderCellHiddenSm {
-    display: table-cell;
-  }
-}
-
-.tableHeaderCellRightPadding {
-  padding-right: 4px;
-}
+@media (min-width: 640px) { .tableHeaderCellHiddenSm { display: table-cell; } }
+.tableHeaderCellRightPadding { padding-right: 4px; }
 
 .tableRow {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--glass-border-subtle);
   transition: background-color 0.15s;
 }
 
-.tableRow:last-child {
-  border-bottom: 0;
-}
+.tableRow:last-child { border-bottom: 0; }
+.tableRow:hover { background-color: var(--glass-bg-base); }
 
-.tableRow:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-}
+.tableCell { padding: var(--space-sm) var(--space-xs); vertical-align: middle; }
+.tableCellLeft { padding-left: 4px; }
+.tableCellRight { text-align: right; }
+.tableCellHiddenSm { display: none; }
 
-.tableCell {
-  padding: 12px 8px;
-  vertical-align: middle;
-}
+@media (min-width: 640px) { .tableCellHiddenSm { display: table-cell; } }
+.tableCellRightPadding { padding-right: 4px; }
 
-.tableCellLeft {
-  padding-left: 4px;
-}
+.subjectCell { display: flex; align-items: center; gap: 10px; }
+.subjectIndicator { width: 3px; height: 20px; border-radius: var(--shape-radius-full); opacity: 0.8; }
+.subjectName { font-weight: 500; color: var(--text-primary); font-size: var(--text-sm); }
 
-.tableCellRight {
-  text-align: right;
-}
+.scoreValue { font-weight: 700; font-size: var(--text-sm); color: var(--text-primary); }
+.scoreTotal { font-size: var(--text-2xs); color: var(--text-secondary); margin-left: 2px; }
 
-.tableCellHiddenSm {
-  display: none;
-}
+.attemptsCell { display: flex; flex-direction: column; align-items: flex-end; }
+.attemptsValue { font-size: var(--text-sm); color: var(--text-primary); font-weight: 500; }
+.attemptsLabel { font-size: 9px; color: var(--text-secondary); margin-top: 1px; }
 
-@media (min-width: 640px) {
-  .tableCellHiddenSm {
-    display: table-cell;
-  }
-}
-
-.tableCellRightPadding {
-  padding-right: 4px;
-}
-
-.subjectCell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.subjectIndicator {
-  width: 3px;
-  height: 20px;
-  border-radius: 99px;
-  opacity: 0.8;
-}
-
-.subjectName {
-  font-weight: 500;
-  color: var(--dashboard-primary-text-color);
-  font-size: 13px;
-}
-
-.scoreValue {
-  font-weight: 700;
-  font-size: 13px;
-  color: white;
-}
-
-.scoreTotal {
-  font-size: 10px;
-  color: var(--dashboard-secondary-text-color);
-  margin-left: 2px;
-}
-
-.attemptsCell {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.attemptsValue {
-  font-size: 13px;
-  color: var(--dashboard-primary-text-color);
-  font-weight: 500;
-}
-
-.attemptsLabel {
-  font-size: 9px;
-  color: var(--dashboard-secondary-text-color);
-  margin-top: 1px;
-}
-
-.accuracyHigh {
-  font-weight: 700;
-  font-size: 13px;
-  color: #22c55e;
-}
-
-.accuracyLow {
-  font-weight: 700;
-  font-size: 13px;
-  color: #f59e0b;
-}
+.accuracyHigh { font-weight: 700; font-size: var(--text-sm); color: var(--color-success-main); }
+.accuracyLow { font-weight: 700; font-size: var(--text-sm); color: var(--color-brand-primary); }
 
 .timeValue {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   font-family: monospace;
 }

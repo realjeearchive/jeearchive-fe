@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -13,54 +13,26 @@
 .heroRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem;
+  gap: var(--space-sm);
   min-height: 220px;
 }
 
 @media (min-width: 1024px) {
-  .heroRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .heroRow { grid-template-columns: repeat(3, 1fr); }
+  .heroRowScoreCol { grid-column: span 2; }
 }
 
-.heroRowScoreCol {
-  grid-column: span 1;
-}
-
-@media (min-width: 1024px) {
-  .heroRowScoreCol {
-    grid-column: span 2;
-  }
-}
-
-.heroRowPercentileCol {
-  grid-column: span 1;
-}
+.heroRowPercentileCol { grid-column: span 1; }
 
 .detailsRow {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 @media (min-width: 1024px) {
-  .detailsRow {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .detailsRow { grid-template-columns: repeat(3, 1fr); }
+  .detailsRowSubjectCol { grid-column: span 2; }
 }
 
-.detailsRowSubjectCol {
-  grid-column: span 1;
-  min-height: 300px;
-}
-
-@media (min-width: 1024px) {
-  .detailsRowSubjectCol {
-    grid-column: span 2;
-  }
-}
-
-.detailsRowBenchmarkCol {
-  grid-column: span 1;
-  min-height: 300px;
-}
+.detailsRowSubjectCol, .detailsRowBenchmarkCol { min-height: 300px; }

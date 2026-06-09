@@ -19,10 +19,11 @@ interface SubjectDeepDiveProps {
   data?: SubjectStats[];
 }
 
+// 🔥 FIX: Mapped strictly to your Global Semantic Subject Colors
 const subjectColors: Record<string, string> = {
-  Physics: "#F59E0B",
-  Chemistry: "#3B82F6",
-  Mathematics: "#10B981",
+  Physics: "var(--subject-physics)",
+  Chemistry: "var(--subject-chemistry)",
+  Mathematics: "var(--subject-maths)",
 };
 
 export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) => {
@@ -46,7 +47,8 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
     >
       <div className={styles.container} role="list" aria-label="Subject performance breakdown">
         {subjectsToRender.map((sub) => {
-          const color = subjectColors[sub.subject] || "#F59E0B";
+          // Fallback to text-primary if an unknown subject is passed
+          const color = subjectColors[sub.subject] || "var(--text-primary)";
           const isPlaceholder = isEmpty;
           const remaining = Math.max(0, 100 - sub.accuracy);
 
@@ -105,7 +107,7 @@ export const SubjectDeepDive: React.FC<SubjectDeepDiveProps> = ({ data = [] }) =
                 <div className={styles.metric}>
                   <FiMinusCircle size={13} aria-hidden="true" />
                   <span className={styles.metricLabel}>Negatives</span>
-                  <span className={styles.metricValue} style={{ color: "#f87171" }}>
+                  <span className={styles.metricValue} style={{ color: "var(--color-error-main)" }}>
                     {isPlaceholder ? "--" : `-${sub.negatives}`}
                   </span>
                 </div>

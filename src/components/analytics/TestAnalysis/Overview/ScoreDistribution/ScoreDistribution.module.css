@@ -1,8 +1,8 @@
 .cardOverride {
   height: 100%;
   min-height: 320px;
-  background-color: var(--dashboard-sidebar-background-color);
-  border: 1px solid var(--dashboard-sidebar-border-color);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
 }
@@ -15,63 +15,39 @@
 }
 
 .tooltip {
-  background: var(--dashboard-card-bg-color, #1E1D1B);
-  padding: 8px 12px;
-  border: 1px solid var(--dashboard-dividerline-color);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 12px;
+  background: var(--bg-surface);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-divider);
+  border-radius: var(--shape-radius-sm);
+  color: var(--text-primary);
+  font-size: var(--text-xs);
   display: flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-md);
 }
 
-.tooltipDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.tooltipLabel {
-  color: var(--dashboard-secondary-text-color);
-}
-
-.tooltipValue {
-  font-weight: 700;
-  color: var(--dashboard-primary-text-color);
-}
-
-.tooltipSub {
-  opacity: 0.6;
-  font-size: 11px;
-}
+.tooltipDot { width: 8px; height: 8px; border-radius: 50%; }
+.tooltipLabel { color: var(--text-secondary); }
+.tooltipValue { font-weight: 700; color: var(--text-primary); }
+.tooltipSub { opacity: 0.6; font-size: var(--text-2xs); }
 
 .legendFooter {
   display: flex;
   justify-content: center;
-  gap: 16px;
-  padding: 16px;
-  border-top: 1px solid var(--dashboard-dividerline-color);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-divider);
   margin-top: auto;
 }
 
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.legendDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-}
+.legendItem { display: flex; align-items: center; gap: 6px; }
+.legendDot { width: 8px; height: 8px; border-radius: 2px; }
 
 .legendLabel {
-  font-size: 11px;
+  font-size: var(--text-2xs);
   font-weight: 600;
-  color: var(--dashboard-secondary-text-color);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
