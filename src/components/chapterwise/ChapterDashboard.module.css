@@ -1,10 +1,13 @@
 /* =========================================
-   PAGE CONTAINER — matches chapterWiseQuestions layout
+   PAGE CONTAINER — strictly locked to viewport
    ========================================= */
 .container {
   display: flex;
   width: 100%;
-  height: calc(100vh - 48px - var(--space-lg));
+  /* 🔥 FIXED: Hard-locked height + border-box prevents the global page from scrolling */
+  box-sizing: border-box;
+  height: calc(100vh - 48px); 
+  max-height: calc(100vh - 48px);
   overflow: hidden;
   gap: var(--space-md);
   align-items: stretch;
@@ -18,6 +21,7 @@
   .container {
     flex-direction: column;
     height: auto;
+    max-height: none;
     overflow: visible;
     gap: var(--space-lg);
   }
@@ -53,7 +57,9 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden;
+  
+  /* 🔥 FIXED: Hard lock the card so the top elements never scroll */
+  overflow: hidden; 
 }
 
 @media (max-width: 1024px) {
@@ -64,7 +70,7 @@
 }
 
 /* =========================================
-   SUBJECT ICON — mirrors ChapterWiseQuestionsClient
+   SUBJECT ICON 
    ========================================= */
 .graphicIconContainer {
   display: flex;
@@ -74,23 +80,12 @@
   height: 60px;
   border-radius: var(--shape-radius-md);
   margin-bottom: var(--space-md);
-  flex-shrink: 0;
+  flex-shrink: 0; /* Ensures it never squishes */
 }
 
-/* Physics — blue tint inherited mathematically */
-.iconContainerPhysics {
-  background-color: color-mix(in srgb, var(--subject-physics) 12%, transparent);
-}
-
-/* Chemistry — green tint inherited mathematically */
-.iconContainerChemistry {
-  background-color: color-mix(in srgb, var(--subject-chemistry) 10%, transparent);
-}
-
-/* Maths — purple tint inherited mathematically */
-.iconContainerMaths {
-  background-color: color-mix(in srgb, var(--subject-maths) 10%, transparent);
-}
+.iconContainerPhysics { background-color: color-mix(in srgb, var(--subject-physics) 12%, transparent); }
+.iconContainerChemistry { background-color: color-mix(in srgb, var(--subject-chemistry) 10%, transparent); }
+.iconContainerMaths { background-color: color-mix(in srgb, var(--subject-maths) 10%, transparent); }
 
 .subjectIconSvg {
   width: 30px;
@@ -249,15 +244,25 @@
 }
 
 /* =========================================
-   PROGRESS — fills remaining space
+   PROGRESS — 🔥 ISOLATED SCROLL SECTION
    ========================================= */
 .progressContainer {
   flex: 1;
-  min-height: 0;
+  min-height: 0; /* Crucial: allows flex-child to scroll instead of pushing parent height */
   border-top: 1px solid var(--glass-border-subtle);
   padding-top: var(--space-lg);
   display: flex;
   flex-direction: column;
+  
+  /* 🔥 FIXED: Only this container scrolls */
+  overflow-y: auto;
+  overscroll-behavior: none; /* Stops Mac/iOS rubber-banding from moving the whole page */
+  scrollbar-width: none; /* Firefox */
+  padding-bottom: 20px; /* Safe area padding at the bottom */
+}
+
+.progressContainer::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .progressHeader {
@@ -275,7 +280,6 @@
   gap: var(--space-sm);
 }
 
-/* Scaled-down ring to fit 270px sidebar comfortably */
 .chartWrapper {
   position: relative;
   width: 120px;
@@ -388,9 +392,13 @@
   flex: 1;
   min-width: 0;
   height: 100%;
+  
+  /* 🔥 FIXED: Scrolling is completely isolated here */
   overflow-y: auto;
+  overscroll-behavior: none; /* Stops the Mac scroll-bounce from moving the parent viewport */
   scrollbar-width: none;
-  padding: 0 var(--space-xl);
+  
+  padding: 0 var(--space-xl) 40px var(--space-xl); /* Added bottom padding for a clean ending */
   box-sizing: border-box;
 }
 
