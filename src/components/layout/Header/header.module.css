@@ -172,6 +172,7 @@
   transform: scale(1.1); 
 }
 
+/* Streak = 0: hollow/white, no fill */
 .streakDefault { color: var(--icon-idle); }
 .streakDefault .streakText { color: var(--text-secondary); }
 
@@ -182,14 +183,10 @@
 }
 .streakDefault:hover .streakText { color: var(--text-primary); }
 
-.streakYellow { color: var(--color-streak-yellow); }
-.streakYellow .streakText { color: var(--color-streak-yellow); }
+/* Streak > 0: filled orange like LeetCode */
+.streakActive { color: #f97316; }
+.streakActive .streakText { color: #f97316; }
 
-.streakOrange { color: var(--color-streak-orange); }
-.streakOrange .streakText { color: var(--color-streak-orange); }
-
-.streakRed { color: var(--color-streak-red); }
-.streakRed .streakText { color: var(--color-streak-red); }
 
 .streakItem::after {
   content: attr(data-title);

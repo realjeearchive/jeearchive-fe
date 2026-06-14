@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import styles from "./header.module.css";
-import { PiSidebar, PiDiscordLogo, PiFire } from "react-icons/pi";
+import { PiSidebar, PiDiscordLogo, PiFireFill } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline, IoTimeOutline } from "react-icons/io5";
 import { FiBell, FiTarget } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
@@ -171,15 +171,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   }, [handleBack, handleForward]);
 
   const currentStreak = streak?.currentStreak || 0;
-  let streakColorClass = styles.streakDefault;
-  
-  if (currentStreak >= 15) {
-    streakColorClass = styles.streakRed;
-  } else if (currentStreak >= 10) {
-    streakColorClass = styles.streakOrange;
-  } else if (currentStreak >= 5) {
-    streakColorClass = styles.streakYellow;
-  }
+  const streakColorClass = currentStreak > 0 ? styles.streakActive : styles.streakDefault;
 
   return (
     <header className={styles.header}>
@@ -231,7 +223,7 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           data-title={`Max Streak: ${streak?.maxStreak || 0}`}
         >
           <span className={styles.streakText}>{currentStreak}</span>
-          <PiFire size={18} className={styles.streakIcon} />
+          <PiFireFill size={18} className={styles.streakIcon} />
         </button>
 
         <div style={{ position: 'relative' }}>
