@@ -20,7 +20,6 @@ import CursorTrail from "../CursorTrail/CursorTrail";
 import ScreenMagnifier from "../ScreenMagnifier/ScreenMagnifier";
 
 import styles from "./TestPlayerLayout.module.css";
-import { useRouter } from "next/navigation";
 
 export function TestPlayerLayout() {
   const {
@@ -44,7 +43,6 @@ export function TestPlayerLayout() {
   const { cursorTrailEnabled } = useTestPlayerAccessibility();
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const router = useRouter();
 
   // OPTIMIZED: 2 Minute Sync Interval
   useEffect(() => {
@@ -113,11 +111,6 @@ export function TestPlayerLayout() {
   const posMark = templateQuestion?.correctMarks || 4;
   const negMark = templateQuestion?.negativeMarks || 1;
 
-  const handleSubmit = () => {
-    const currentPath = window.location.pathname;
-    router.push(`${currentPath}/submit`);
-  };
-
   return (
     <div id="test-player-root" className={`${styles.page} ${theme === "dark" ? "dark" : ""}`}>
       <TopStrip />
@@ -150,15 +143,15 @@ export function TestPlayerLayout() {
             </main>
           </div>
           <footer className={styles.bottomBar}>
-        <div className={styles.bottomBarLeft}>
-          <StatusButton label="Mark for Review & Next" variant="outline" onClick={markForReview} />
-          <StatusButton label="Clear Response" variant="outline" onClick={clearResponse} />
-        </div>
-        <div className={styles.bottomBarRight}>
-          <StatusButton label="Save & Next" variant="primary" onClick={saveAndNext} />
-          <StatusButton label="Submit" variant="primary" onClick={handleSubmit} />
-        </div>
-      </footer>
+            <div className={styles.bottomBarLeft}>
+              <StatusButton label="Mark for Review & Next" variant="outline" onClick={markForReview} />
+              <StatusButton label="Clear Response" variant="outline" onClick={clearResponse} />
+            </div>
+            <div className={styles.bottomBarRight}>
+              {/* 🔥 FIXED: Now an outline variant to match the white button style */}
+              <StatusButton label="Save & Next" variant="outline" onClick={saveAndNext} />
+            </div>
+          </footer>
         </div>
         <aside className={`${styles.sidebar} ${isMobile ? (isSidebarOpen ? styles.sidebarOpen : styles.sidebarClosed) : ""}`}>
           {isMobile && isSidebarOpen && (

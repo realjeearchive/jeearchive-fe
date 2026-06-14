@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { useUserStore } from "@/store/userStore";
 import styles from "./RightColumnSidebar.module.css";
@@ -8,9 +9,11 @@ import PlaceholderImage from "@/assets/image/placeholder.png";
 
 import { StatusIndicator } from "../StatusIndicator/StatusIndicator";
 import QuestionPalette from "../QuestionPalette/QuestionPalette";
+import StatusButton from "../StatusButton/StatusButton"; // 🔥 Imported StatusButton
 
 export function Sidebar() {
   const user = useUserStore((s) => s.profile);
+  const router = useRouter(); 
   
   const activeSectionId = useTestEngineStore((s) => s.activeSectionId);
   const sections = useTestEngineStore((s) => s.sections);
@@ -21,7 +24,7 @@ export function Sidebar() {
   const currentSection = sections.find(s => s.id === activeSectionId);
   if (!currentSection) return null;
 
-  // FIX: Map localQuestionNumber so the Palette can see it
+  // Map localQuestionNumber so the Palette can see it
   const paletteQuestions = currentSection.questions.map(q => {
     const state = questionsById[q.id];
     return {
@@ -41,11 +44,16 @@ export function Sidebar() {
     answeredAndMarked: allStates.filter(q => q.status === 'answeredAndMarked').length,
   };
 
-  // FIX: Use localQuestionNumber for correct highlighting in JEE mode
+  // Use localQuestionNumber for correct highlighting in JEE mode
   const currentQState = questionsById[activeQuestionId || ""];
   const currentQNum = currentQState ? currentQState.localQuestionNumber : 0;
 
   const userName = user?.name || "Candidate";
+
+  const handleSubmit = () => {
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/submit`);
+  };
 
   return (
     <aside className={styles.sidebar} aria-label="Test navigation sidebar">
@@ -89,6 +97,15 @@ export function Sidebar() {
             currentQuestionNumber={currentQNum}
             questionStates={paletteQuestions}
             onQuestionSelect={(qId) => jumpToQuestion(qId)}
+          />
+        </div>
+
+        {/* 🔥 NEW: Reverted to using your native StatusButton so it matches perfectly */}
+        <div className={styles.submitSection}>
+          <StatusButton 
+            label="Submit" 
+            variant="primary" 
+            onClick={handleSubmit} 
           />
         </div>
 
