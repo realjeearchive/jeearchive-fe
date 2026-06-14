@@ -1,11 +1,22 @@
+/* 🔥 Controls the overall viewport */
+.rootWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;     
+  height: 100dvh;    /* Better support for mobile browser address bars */
+  width: 100vw;
+  overflow: hidden;  /* Strictly prevents global page bounce/scroll */
+  background: var(--bg-main);
+}
+
 .appWrap {
   display: flex;
-  min-height: 100vh;
-  height: 100vh;
+  flex: 1;           
+  min-height: 0;     
   padding: var(--space-sm);
-  overflow-x: hidden;
+  box-sizing: border-box; 
+  overflow: hidden;  /* Locks the layout boundaries */
   width: 100%;
-  background: var(--bg-main);
   color: var(--text-primary);
   font-family: Inter, sans-serif;
 }
@@ -13,7 +24,16 @@
 .sidebarContainer {
   width: 20%;
   min-width: 300px;
+  height: 100%;      /* 🔥 FIX: Force to exact height of available space */
+  overflow-y: auto;  /* 🔥 FIX: Allows sidebar to scroll independently so bottom is reachable */
+  overflow-x: hidden;
   transition: all 0.3s ease;
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
+
+/* Hides scrollbar in Chrome/Safari/Edge */
+.sidebarContainer::-webkit-scrollbar {
+  display: none; 
 }
 
 .hideSidebar {
@@ -26,19 +46,23 @@
 .dashboard {
   flex: 1;
   min-width: 0;
+  height: 100%;      /* 🔥 Ensures right side perfectly matches viewport height */
   padding: 0 var(--space-md);
+  
+  /* Right side scrolls independently */
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-width: none; 
+}
+
+.dashboard::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 600px) {
   .dashboard {
     padding: 0;
   }
-}
-
-.dashboard::-webkit-scrollbar {
-  display: none;
 }
 
 .sidebarOpenButton {
@@ -74,6 +98,10 @@
     transform: translateX(0);
     opacity: 1;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+    
+    /* Ensure mobile sidebar also scrolls internally */
+    height: calc(100% - calc(var(--space-sm) * 2)); 
+    overflow-y: auto;
   }
 
   .hideSidebar {

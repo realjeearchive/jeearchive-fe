@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
-import Sidebar from "@/components/layout/Sidebar/Sidebar"; // Update path if needed
-import Header from "@/components/layout/Header/Header";   // Update path if needed
+import Sidebar from "@/components/layout/Sidebar/Sidebar"; 
+import Header from "@/components/layout/Header/Header";   
+import AnnouncementBar from "@/components/layout/AnnouncementBar/AnnouncementBar"; // 🔥 Imported Announcement Bar
 import styles from "./layout.module.css";
 
 interface DashboardLayoutProps {
@@ -34,15 +35,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   // --- FULL SCREEN DETECTION LOGIC ---
-  // We check if the URL matches the deep structure of the test interface:
-  // Pattern: /chapter-wise-questions/[subject]/[division]/[chapter]
-  // This usually results in 5 parts when split by '/' (e.g., "", "chapter-wise...", "phy", "mech", "kinematics")
   const isChapterTestPage = 
     pathname?.includes("/chapter-wise-questions/") && 
     pathname.split("/").length >= 6;
 
   // 3. Early Returns (Loading / Auth / Full Screen)
-
   if (!initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -51,12 +48,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  // If unauthenticated, return null (or redirect logic if you have it elsewhere)
   if (!authed) {
     return null;
   }
 
-  // >> THE FIX: If it is the test page, return ONLY children (Full Screen) <<
+  // >> If it is the test page, return ONLY children (Full Screen, No Header, No Sidebar, No Announcement) <<
   if (isChapterTestPage) {
     return <>{children}</>;
   }
@@ -73,27 +69,33 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className={styles.appWrap}>
-      {isSidebarOpen && typeof window !== "undefined" && window.innerWidth <= 900 && (
+    // 🔥 NEW: rootWrapper ensures vertical stacking of the announcement bar and the app layout
+    <div className={styles.rootWrapper}>
+      
+      {/* 🔥 The Announcement Bar */}
+      <AnnouncementBar />
+
+      <div className={styles.appWrap}>
+        {isSidebarOpen && typeof window !== "undefined" && window.innerWidth <= 900 && (
+          <div
+            className={styles.mobileOverlay}
+            onClick={handleOverlayClick}
+          />
+        )}
+
         <div
-          className={styles.mobileOverlay}
-          onClick={handleOverlayClick}
-        />
-      )}
+          className={`${styles.sidebarContainer} ${
+            !isSidebarOpen ? styles.hideSidebar : ""
+          }`}
+        >
+          <Sidebar toggleSidebar={toggleSidebar} />
+        </div>
 
-      <div
-        className={`${styles.sidebarContainer} ${
-          !isSidebarOpen ? styles.hideSidebar : ""
-        }`}
-      >
-        {/* Pass props if your Sidebar needs them */}
-        <Sidebar toggleSidebar={toggleSidebar} />
+        <main className={styles.dashboard}>
+          <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          <div className={styles.dashboardRight}>{children}</div>
+        </main>
       </div>
-
-      <main className={styles.dashboard}>
-        <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className={styles.dashboardRight}>{children}</div>
-      </main>
     </div>
   );
 }
