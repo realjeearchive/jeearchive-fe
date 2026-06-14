@@ -186,8 +186,8 @@
   transition: all 0.15s ease;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: start;
+  align-items: start;
   text-align: center;
   gap: 2px;
 }

@@ -5,11 +5,26 @@ import Link from "next/link";
 import { useBookmarkStore } from "@/store/useBookmarkStore";
 import { Loader } from "@/components/ui/loader";
 import Latex from "@/components/testPlayer/Latex/Latex";
-import { Search, BookmarkMinus, Bookmark, Play } from "lucide-react";
+import { Search, BookmarkMinus, Play } from "lucide-react";
 import Styles from "./bookmarks.module.css";
 
 import { RateLimitModal } from "@/components/ui/RateLimitModal/RateLimitModal";
 import { useRateLimitStore } from "@/store/useRateLimitStore";
+
+// --- Dynamic Bookmark Icon SVG (Matches Chapter-wise aesthetic) ---
+function BookmarkIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
+      <path 
+        d="M10 6C10 4.89543 10.8954 4 12 4H20C21.1046 4 22 4.89543 22 6V26.5C22 27.3912 21.0371 27.9482 20.2785 27.493L16 24.925L11.7215 27.493C10.9629 27.9482 10 27.3912 10 26.5V6Z" 
+        fill="#F59E0B" fillOpacity="0.15" 
+        stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+      />
+      <line x1="13" y1="10" x2="19" y2="10" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="13" y1="14" x2="17" y2="14" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
 
 const prepareForPreview = (html: string) => {
   if (!html) return "";
@@ -19,8 +34,7 @@ const prepareForPreview = (html: string) => {
 };
 
 export default function BookmarksPage() {
-  const { bookmarks, isLoading, error, fetchBookmarks, removeBookmark } =
-    useBookmarkStore();
+  const { bookmarks, isLoading, error, fetchBookmarks, removeBookmark } = useBookmarkStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSubjectFilter, setActiveSubjectFilter] = useState<string>("All");
 
@@ -34,9 +48,7 @@ export default function BookmarksPage() {
     return bookmarks.filter((q) => {
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
-        const plainText = q.content
-          ? prepareForPreview(q.content).toLowerCase()
-          : "";
+        const plainText = q.content ? prepareForPreview(q.content).toLowerCase() : "";
         if (!plainText.includes(query)) return false;
       }
       if (activeSubjectFilter !== "All") {
@@ -49,12 +61,7 @@ export default function BookmarksPage() {
   if (isLoading && !isRateLimited) {
     return (
       <main
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "85vh",
-        }}
+        style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "85vh" }}
         aria-label="Loading bookmarks"
       >
         <Loader label="Loading your saved questions..." />
@@ -65,13 +72,7 @@ export default function BookmarksPage() {
   if (error && !isRateLimited) {
     return (
       <main
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "85vh",
-          color: "#EF4444",
-        }}
+        style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "85vh", color: "var(--color-error-main)" }}
         aria-label="Bookmarks error"
       >
         <p role="alert">{error}</p>
@@ -85,17 +86,25 @@ export default function BookmarksPage() {
 
       <div className={Styles.pageContainer}>
         <div className={Styles.splitLayout}>
-          {/* LEFT SIDEBAR */}
+          
+          {/* ─── LEFT SIDEBAR (Exactly matching Chapter-wise) ─────────────────────────── */}
           <aside className={Styles.leftSidebar} aria-label="Bookmarks filters">
-            <div className={Styles.cardHeader}>
-              <div className={Styles.iconSquare} aria-hidden="true">
-                <Bookmark size={20} />
+            
+            {/* Header Block */}
+            <div className={Styles.headerBlock}>
+              <div className={`${Styles.graphicIconContainer} ${Styles.iconContainerBookmark}`}>
+                <BookmarkIcon />
               </div>
-              <div>
+
+              <div className={Styles.headerTextGroup}>
                 <h1 className={Styles.cardTitle}>Bookmarks</h1>
-                <p className={Styles.cardSubtitle}>
-                  {bookmarks.length} Saved Questions
-                </p>
+                <div className={Styles.metaInfoRow}>
+                  <span>JEE Archive</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>{bookmarks.length} Saved</span>
+                  <span className={Styles.metaDivider}>•</span>
+                  <span>Questions</span>
+                </div>
               </div>
             </div>
 
@@ -106,19 +115,19 @@ export default function BookmarksPage() {
                 className={Styles.practiceBtn}
                 aria-label="Practice all bookmarked questions"
               >
-                <Play size={14} fill="currentColor" aria-hidden="true" />
+                <Play size={16} fill="currentColor" strokeWidth={1} aria-hidden="true" />
                 Practice All
               </Link>
             )}
 
             {/* Search */}
             <div className={Styles.searchWrapper}>
-              <span className={Styles.listLabel}>Search</span>
+              <span className={Styles.listLabel}>SEARCH</span>
               <div className={Styles.searchContainer}>
-                <Search size={15} className={Styles.searchIcon} aria-hidden="true" />
+                <Search size={16} className={Styles.searchIcon} aria-hidden="true" />
                 <input
                   type="text"
-                  placeholder="Search saved questions..."
+                  placeholder="Search questions..."
                   className={Styles.searchInput}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -127,20 +136,20 @@ export default function BookmarksPage() {
               </div>
             </div>
 
-            {/* Subject Filters */}
-            <nav className={Styles.filtersContainer} aria-label="Filter by subject">
-              <span className={Styles.listLabel}>Filter by Subject</span>
-              <div className={Styles.filterList}>
+            {/* Divisions Tabs Grid (Subject Filters) */}
+            <nav className={Styles.divisionsListContainer} aria-label="Filter by subject">
+              <span className={Styles.listLabel}>FILTER BY SUBJECT</span>
+              
+              <div className={Styles.divisionsGrid}>
                 {["All", "Physics", "Chemistry", "Mathematics"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveSubjectFilter(tab)}
-                    className={`${Styles.filterRowItem} ${activeSubjectFilter === tab ? Styles.filterRowActive : ""}`}
-                    aria-pressed={activeSubjectFilter === tab}
-                    aria-label={`${tab} - ${tab === "All" ? bookmarks.length : bookmarks.filter((q) => q.subject === tab).length} questions`}
+                    className={`${Styles.divisionTabBtn} ${activeSubjectFilter === tab ? Styles.divisionTabActive : ""}`}
+                    aria-current={activeSubjectFilter === tab ? "true" : undefined}
                   >
-                    <span className={Styles.filterNameText}>{tab}</span>
-                    <span className={Styles.filterMetaText}>
+                    <span className={Styles.divisionNameText}>{tab}</span>
+                    <span className={Styles.divisionMetaText}>
                       {tab === "All"
                         ? bookmarks.length
                         : bookmarks.filter((q) => q.subject === tab).length}{" "}
@@ -152,7 +161,7 @@ export default function BookmarksPage() {
             </nav>
           </aside>
 
-          {/* RIGHT CONTENT */}
+          {/* ─── RIGHT CONTENT ─────────────────────────────────────────────────── */}
           <main className={Styles.rightContent} aria-label="Bookmarked questions list">
             <div className={Styles.scrollContentWrapper}>
               <div className={Styles.listHeader}>
