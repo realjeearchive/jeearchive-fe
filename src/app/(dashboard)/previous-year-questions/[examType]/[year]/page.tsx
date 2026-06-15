@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+export const runtime = "edge";
 import { YearPageClient } from "./YearPageClient";
 
 interface YearPageProps {
