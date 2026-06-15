@@ -3,63 +3,47 @@
 import React, { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
 import styles from "./AnnouncementBar.module.css";
-
-export interface AnnouncementData {
-  id: string;
-  type: "MAINTENANCE" | "UPDATE" | "INFO";
-  message: string;
-  shortMessage?: string; // Mobile-friendly string
-  endTime: string | null;
-}
-
-const IS_FEATURE_ENABLED = false;
+import { useAnnouncementStore } from "@/store/useAnnouncementStore";
 
 export default function AnnouncementBar() {
+  const { banner, fetchBanner } = useAnnouncementStore();
   const [isVisible, setIsVisible] = useState(false);
-  const [announcement, setAnnouncement] = useState<AnnouncementData | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
+  // Fetch the data from the backend when the layout mounts
   useEffect(() => {
-    if (!IS_FEATURE_ENABLED) return;
-
-    let isMounted = true;
-
-    const fetchAnnouncement = async () => {
-      try {
-        // --- SIMULATED BACKEND RESPONSE ---
-        const data: AnnouncementData = {
-          id: "maintenance-pyq-2024",
-          type: "MAINTENANCE",
-          message: "We are actively adding new 2024–2025 PYQs. The site may experience slowdowns for the next",
-          shortMessage: "Maintenance in progress", 
-          endTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        };
-        // ----------------------------------
-
-        if (!isMounted) return;
-
-        const dismissed = localStorage.getItem(`announcement-${data.id}-dismissed`);
-
-        if (!dismissed) {
-          const timer = setTimeout(() => {
-            setAnnouncement(data);
-            setIsVisible(true);
-          }, 0);
-          return () => clearTimeout(timer);
-        }
-      } catch (error) {
-        console.error("Failed to fetch announcement data", error);
-      }
-    };
-
-    fetchAnnouncement();
-    return () => { isMounted = false; };
-  }, []);
+    fetchBanner();
+  }, [fetchBanner]);
 
   useEffect(() => {
-    if (!announcement?.endTime || (!isVisible && !IS_FEATURE_ENABLED)) return;
+    if (!banner) return;
 
-    const targetTime = new Date(announcement.endTime).getTime();
+    let timer: NodeJS.Timeout;
+
+    // 🔥 BACKEND KILL SWITCH: If isbanner is false, do not show it
+    if (!banner.isbanner) {
+      // Wrapped in setTimeout to prevent synchronous cascading render warning
+      timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
+    // Use backend ID to track dismissals
+    const dismissed = localStorage.getItem(`announcement-${banner.id}-dismissed`);
+
+    if (!dismissed) {
+      timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [banner]);
+
+  useEffect(() => {
+    if (!banner?.endTime || !isVisible) return;
+
+    const targetTime = new Date(banner.endTime).getTime();
 
     const updateTimer = () => {
       const diffSeconds = Math.max(0, Math.floor((targetTime - Date.now()) / 1000));
@@ -69,13 +53,14 @@ export default function AnnouncementBar() {
     updateTimer();
     const id = setInterval(updateTimer, 1000);
     return () => clearInterval(id);
-  }, [announcement, isVisible]);
+  }, [banner, isVisible]);
 
-  if (!IS_FEATURE_ENABLED || !isVisible || !announcement) return null;
+  // Return null if data hasn't loaded, or if backend turned it off, or if user dismissed it
+  if (!banner || !banner.isbanner || !isVisible) return null;
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem(`announcement-${announcement.id}-dismissed`, "true");
+    localStorage.setItem(`announcement-${banner.id}-dismissed`, "true");
   };
 
   const formatTime = (totalSeconds: number) => {
@@ -86,13 +71,19 @@ export default function AnnouncementBar() {
     return `${hStr}${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
   };
 
+  // Safely map backend "Maintenance" -> "MAINTENANCE"
+  const rawType = (banner.type || "INFO").toUpperCase();
+  const mappedType = ["MAINTENANCE", "UPDATE", "INFO"].includes(rawType)
+    ? (rawType as "MAINTENANCE" | "UPDATE" | "INFO")
+    : "INFO";
+
   const typeMap = {
     MAINTENANCE: { label: "Maintenance", mod: "warning" },
     UPDATE:      { label: "New",         mod: "info"    },
     INFO:        { label: "Info",        mod: "info"    },
   };
 
-  const { label, mod } = typeMap[announcement.type];
+  const { label, mod } = typeMap[mappedType];
 
   return (
     <div className={`${styles.bar} ${styles[`bar--${mod}`]}`}>
@@ -104,14 +95,14 @@ export default function AnnouncementBar() {
         <span className={styles.sep} />
         
         <p className={styles.message}>
-          {/* 🔥 Desktop full message */}
-          <span className={styles.desktopText} title={announcement.message}>
-            {announcement.message}
+          {/* Desktop full message */}
+          <span className={styles.desktopText} title={banner.reason}>
+            {banner.reason}
           </span>
           
-          {/* 🔥 Mobile short message fallback */}
-          <span className={styles.mobileText} title={announcement.shortMessage || announcement.message}>
-            {announcement.shortMessage || announcement.message}
+          {/* Mobile message */}
+          <span className={styles.mobileText} title={banner.reason}>
+            {banner.reason}
           </span>
 
           {timeLeft !== null && timeLeft > 0 && (

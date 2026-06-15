@@ -24,6 +24,18 @@ import {
   AlertTriangle, 
   Layers, 
   ArrowRightLeft,
+  Target,
+  Zap,
+  BarChart3,
+  ChevronRight,
+  Star,
+  Award,
+  Activity,
+  ArrowUp,
+  ArrowDown,
+  Filter,
+  BookMarked,
+  TrendingDown,
 } from "lucide-react"
 
 // --- Slide Data ---
@@ -111,9 +123,9 @@ function InnerAppCard({ slideId }: { slideId: number }) {
              opacity: 1 
             }}
            transition={{ delay: 0.5, type: "spring", stiffness: 60, damping: 15 }}
-           className="absolute w-full h-full bg-[#FFF0EB] rounded-3xl shadow-xl border border-orange-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-right"
+           className="absolute w-full h-full bg-orange-50 rounded-3xl shadow-xl border border-orange-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-right"
         >
-           <div className="p-5 border-b border-orange-100/50 flex items-center gap-3 bg-orange-50/50">
+           <div className="p-5 border-b border-orange-100/50 flex items-center gap-3 bg-orange-50">
               <BookOpen size={18} className="text-orange-400" />
               <span className="font-bold text-slate-600 text-sm">Chapter Wise</span>
            </div>
@@ -149,7 +161,7 @@ if (slideId === 2) {
            opacity: 1 
           }}
          transition={{ delay: 0.5, type: "spring", stiffness: 60, damping: 15 }}
-         className="absolute w-full h-full bg-indigo-50 rounded-3xl shadow-xl border border-indigo-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-left"
+         className="absolute w-full h-full bg-blue-50 rounded-3xl shadow-xl border border-blue-100 flex flex-col overflow-hidden z-0 scale-[0.95] origin-bottom-left"
       >
           <CardTwoBackHeatmap />
       </motion.div>
@@ -173,288 +185,415 @@ if (slideId === 2) {
     )
 }
 
+// ─── CARD 1: PYQ Topic Explorer (Light Mode, feature-driven) ───────────────
 function CardOnePYQ() {
   const topics = [
     {
       id: 1,
       subject: "Physics",
-      topic: "Rotational Motion",
-      questions: 142,
-      yearRange: "2019-2024",
+      topic: "Current Electricity",
+      questions: 238,
+      yearRange: "2018–2026",
+      solved: 2,
       icon: Atom,
-      color: "text-rose-500",
-      bg: "bg-rose-50",
-      border: "group-hover:border-rose-200"
+      accentColor: "#F94F39",
+      bgColor: "#FFF4F2",
+      badgeColor: "#FFEDE9",
+      badgeText: "#F94F39",
     },
     {
       id: 2,
       subject: "Maths",
       topic: "Vector 3D",
-      questions: 98,
-      yearRange: "2020-2024",
+      questions: 176,
+      yearRange: "2019–2026",
+      solved: 31,
       icon: Calculator,
-      color: "text-blue-500",
-      bg: "bg-blue-50",
-      border: "group-hover:border-blue-200"
+      accentColor: "#1E7CD3",
+      bgColor: "#EFF6FF",
+      badgeColor: "#DBEAFE",
+      badgeText: "#1E4EA1",
     },
     {
       id: 3,
       subject: "Chemistry",
       topic: "Electrochemistry",
-      questions: 115,
-      yearRange: "2018-2024",
+      questions: 193,
+      yearRange: "2018–2026",
+      solved: 58,
       icon: Beaker,
-      color: "text-violet-500",
-      bg: "bg-violet-50",
-      border: "group-hover:border-violet-200"
+      accentColor: "#7C3AED",
+      bgColor: "#F5F3FF",
+      badgeColor: "#EDE9FE",
+      badgeText: "#5B21B6",
     },
   ];
 
   return (
-    <div className="flex flex-col h-full font-sans bg-white relative overflow-hidden">
-      
-      <div className="p-6 pb-2 z-10 bg-white">
-        <div className="flex items-center justify-between mb-4">
-             <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
-                    <ListFilter size={14} />
-                </div>
-                <span className="font-bold text-slate-800 text-sm">Topic Explorer</span>
-             </div>
-             <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-50 border border-slate-100">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full bg-green-400 opacity-75 rounded-full"></span>
-                  <span className="relative inline-flex h-1.5 w-1.5 bg-green-500 rounded-full"></span>
-                </span>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Live</span>
-             </div>
+    <div className="flex flex-col h-full font-sans bg-[#FAFAFA] relative overflow-hidden">
+
+      {/* Header */}
+      <div className="px-5 pt-5 pb-3 bg-white border-b border-slate-100">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-xl bg-orange-50 flex items-center justify-center border border-orange-100">
+              <BookMarked size={14} className="text-orange-500" />
+            </div>
+            <div>
+              <p className="font-bold text-slate-800 text-[13px] leading-none">JEE Archive</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">13,407 questions · 2018–2026</p>
+            </div>
+          </div>
+          {/* Live badge */}
+          <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full bg-emerald-400 opacity-75 rounded-full" />
+              <span className="relative inline-flex h-1.5 w-1.5 bg-emerald-500 rounded-full" />
+            </span>
+            <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider">Updated</span>
+          </div>
         </div>
 
-        <div className="relative group">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search size={16} className="text-slate-400 group-hover:text-orange-500 transition-colors" />
-            </div>
-            <div className="w-full bg-slate-50 text-sm text-slate-800 rounded-xl py-3 pl-10 pr-4 border border-slate-100 shadow-sm font-medium">
-                <motion.span
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                >
-                    Weightage: High Yield...
-                </motion.span>
-                <motion.span
-                    animate={{ opacity: [0, 1, 0] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                    className="inline-block w-[1.5px] h-4 bg-orange-500 align-middle ml-0.5"
-                />
-            </div>
+        {/* Search bar */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+            <Search size={14} className="text-slate-400" />
+          </div>
+          <div className="w-full bg-slate-50 text-sm text-slate-500 rounded-xl py-2.5 pl-9 pr-4 border border-slate-200 text-[12px] font-medium flex items-center gap-1">
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-slate-600"
+            >
+              Weightage: High Yield
+            </motion.span>
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="inline-block w-[1.5px] h-3.5 bg-orange-500 align-middle ml-0.5"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 px-6 pt-2 pb-6 space-y-3 relative overflow-hidden">
-
-        <div className="absolute top-0 left-0 right-0 h-4 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
-
-        {topics.map((item, i) => (
-          <motion.div
-            key={item.id}
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 + (i * 0.15), type: "spring", stiffness: 100, damping: 20 }}
-            className={`group relative bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-lg transition-all duration-300 cursor-default ${item.border}`}
-          >
-            <div className="flex items-start gap-4">
-
-                <div className={`h-11 w-11 shrink-0 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center shadow-sm`}>
-                    <item.icon size={22} strokeWidth={2} />
+      {/* Topic Cards */}
+      <div className="flex-1 px-4 pt-3 pb-4 space-y-2.5 overflow-hidden">
+        {topics.map((item, i) => {
+          const solvedPercent = Math.round((item.solved / item.questions) * 100);
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ y: 18, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.35 + i * 0.13, type: "spring", stiffness: 100, damping: 22 }}
+              whileHover={{ scale: 1.015, y: -1 }}
+              className="group bg-white rounded-2xl px-4 py-3.5 border border-slate-100 shadow-[0_1px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-all duration-250 cursor-default"
+            >
+              <div className="flex items-center gap-3">
+                {/* Icon */}
+                <div
+                  className="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center"
+                  style={{ background: item.bgColor }}
+                >
+                  <item.icon size={19} style={{ color: item.accentColor }} strokeWidth={2} />
                 </div>
 
+                {/* Content */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                        <h4 className="font-bold text-slate-800 text-[15px] truncate pr-2">{item.topic}</h4>
-                        <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">
-                            {item.subject}
-                        </span>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="font-bold text-slate-800 text-[13px] truncate">{item.topic}</span>
+                    <span
+                      className="shrink-0 text-[9px] font-bold px-2 py-0.5 rounded-full border"
+                      style={{ background: item.badgeColor, color: item.badgeText, borderColor: item.badgeColor }}
+                    >
+                      {item.subject}
+                    </span>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${solvedPercent}%` }}
+                        transition={{ duration: 1, delay: 0.5 + i * 0.15, ease: "easeOut" }}
+                        className="h-full rounded-full"
+                        style={{ background: item.accentColor }}
+                      />
                     </div>
-                    
-                    <div className="flex items-center gap-3 mt-1.5">
-                        <div className="flex items-center gap-1 text-slate-500">
-                             <CheckCircle2 size={12} className="text-emerald-500" />
-                             <span className="text-xs font-medium">{item.questions} Qs</span>
-                        </div>
-                        <div className="h-3 w-px bg-slate-200" />
-                        <div className="flex items-center gap-1 text-slate-400">
-                             <Clock size={12} />
-                             <span className="text-[11px] font-medium">{item.yearRange}</span>
-                        </div>
+                    <span className="text-[10px] font-bold" style={{ color: item.accentColor }}>{solvedPercent}%</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <CheckCircle2 size={11} className="text-emerald-500" />
+                      <span className="text-[10px] font-medium text-slate-500">{item.solved}/{item.questions} solved</span>
                     </div>
+                    <div className="h-2.5 w-px bg-slate-200" />
+                    <div className="flex items-center gap-1">
+                      <Clock size={11} className="text-slate-400" />
+                      <span className="text-[10px] text-slate-400">{item.yearRange}</span>
+                    </div>
+                  </div>
                 </div>
-            </div>
-          </motion.div>
-        ))}
 
-        <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 1 }}
-            className="pt-2 flex justify-center items-center gap-2"
+                {/* Arrow */}
+                <ChevronRight size={14} className="text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {/* Bottom stat strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0, duration: 0.5 }}
+          className="flex items-center justify-between px-1 pt-1"
         >
-            <div className="h-1.5 w-1.5 rounded-full bg-slate-200 animate-bounce" style={{ animationDelay: "0s" }} />
-            <div className="h-1.5 w-1.5 rounded-full bg-slate-200 animate-bounce" style={{ animationDelay: "0.15s" }} />
-            <div className="h-1.5 w-1.5 rounded-full bg-slate-200 animate-bounce" style={{ animationDelay: "0.3s" }} />
+          <div className="flex items-center gap-1.5">
+            <div className="h-1.5 w-1.5 rounded-full bg-orange-400 animate-bounce" style={{ animationDelay: "0s" }} />
+            <div className="h-1.5 w-1.5 rounded-full bg-orange-300 animate-bounce" style={{ animationDelay: "0.15s" }} />
+            <div className="h-1.5 w-1.5 rounded-full bg-orange-200 animate-bounce" style={{ animationDelay: "0.3s" }} />
+          </div>
+          <span className="text-[10px] text-slate-400 font-medium">JEE Main · JEE Advanced</span>
         </motion.div>
-
       </div>
     </div>
-  )
+  );
 }
 
+// ─── CARD 2 BACK: Subject Heatmap (Light Mode) ─────────────────────────────
 function CardTwoBackHeatmap() {
-    const grid = [
-        0, 0, 1, 0, 2, 0,
-        0, 1, 2, 2, 0, 1,
-        0, 0, 0, 1, 2, 0,
-        1, 1, 0, 0, 0, 0,
-        2, 0, 1, 0, 0, 1
-    ];
+  // 0 = strong, 1 = medium, 2 = weak
+  const grid = [
+    0, 0, 1, 0, 2, 0,
+    0, 1, 2, 2, 0, 1,
+    0, 0, 0, 1, 2, 0,
+    1, 1, 0, 0, 0, 0,
+    2, 0, 1, 0, 0, 1
+  ];
 
-    return (
-        <div className="flex flex-col h-full w-full">
-            <div className="p-5 border-b border-indigo-100/50 flex items-center gap-3 bg-indigo-100/30">
-                <Layers size={18} className="text-indigo-500" />
-                <span className="font-bold text-slate-600 text-sm">Chapter Heatmap</span>
-            </div>
-            
-            <div className="p-5 flex-1">
-                <p className="text-xs text-slate-400 font-bold mb-4 uppercase tracking-wider">Weakness Detection</p>
-                <div className="grid grid-cols-6 gap-2">
-                    {grid.map((status, i) => {
-                        let color = "bg-emerald-200/50"; 
-                        if (status === 1) color = "bg-amber-200/50"; 
-                        if (status === 2) color = "bg-rose-300"; 
-
-                        return (
-                            <motion.div
-                                key={i}
-                                initial={{ scale: 0 }}
-                                whileInView={{ scale: 1 }}
-                                transition={{ delay: 0.6 + (i * 0.02) }}
-                                className={`aspect-square rounded-md ${color}`}
-                            />
-                        )
-                    })}
-                </div>
-                
-                <div className="mt-6 flex items-start gap-2 opacity-60">
-                    <div className="h-1.5 w-1.5 rounded-full bg-rose-400 mt-1.5 shrink-0" />
-                    <div className="space-y-1 w-full">
-                         <div className="h-1.5 bg-slate-300 rounded w-3/4" />
-                         <div className="h-1.5 bg-slate-300 rounded w-1/2" />
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="flex flex-col h-full w-full bg-blue-50">
+      <div className="p-5 border-b border-blue-100 flex items-center gap-3">
+        <Layers size={18} className="text-blue-500" />
+        <span className="font-bold text-slate-700 text-sm">Chapter Heatmap</span>
+      </div>
+      <div className="p-5 flex-1">
+        <p className="text-[10px] text-slate-500 font-bold mb-4 uppercase tracking-wider">Weakness Detection</p>
+        <div className="grid grid-cols-6 gap-2">
+          {grid.map((status, i) => {
+            let color = "bg-emerald-200";
+            if (status === 1) color = "bg-amber-200";
+            if (status === 2) color = "bg-rose-300";
+            return (
+              <motion.div
+                key={i}
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ delay: 0.6 + i * 0.02 }}
+                className={`aspect-square rounded-md ${color}`}
+              />
+            );
+          })}
         </div>
-    )
+        <div className="mt-4 flex gap-3 text-[10px] text-slate-500 font-medium">
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-emerald-300 inline-block" />Strong</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-amber-200 inline-block" />Review</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-rose-300 inline-block" />Weak</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
+// ─── CARD 2 FRONT: Performance Analytics (Light Mode, real data) ────────────
 function CardTwoFrontDNA() {
-    const subjects = [
-        { name: "Phy", timePercent: 30, marksPercent: 45, status: "High ROI", color: "text-emerald-500" },
-        { name: "Chem", timePercent: 20, marksPercent: 40, status: "Best", color: "text-emerald-500" },
-        { name: "Math", timePercent: 50, marksPercent: 15, status: "Inefficient", color: "text-rose-500" },
-    ];
+  // Mirrors the real analytics screen data
+  const metrics = [
+    { label: "Tests Taken", value: "4", sub: "+2 this month", icon: Activity, color: "#F94F39", bg: "#FFF4F2" },
+    { label: "Avg Score", value: "125", sub: "out of 300", icon: Target, color: "#1E7CD3", bg: "#EFF6FF" },
+    { label: "Accuracy", value: "72.7%", sub: "Above average", icon: CheckCircle2, color: "#059669", bg: "#F0FDF4" },
+    { label: "Consistency", value: "8.5", sub: "Score stability", icon: Zap, color: "#7C3AED", bg: "#F5F3FF" },
+  ];
 
-    return (
-        <div className="flex flex-col h-full font-sans bg-white relative">
-            <div className="p-6 pb-2">
-                <div className="flex justify-between items-center mb-1">
-                     <h3 className="font-bold text-slate-800 text-lg">Time Strategy</h3>
-                     <span className="text-[10px] font-bold bg-indigo-50 px-2 py-1 rounded text-indigo-600 border border-indigo-100 flex items-center gap-1">
-                        <ArrowRightLeft size={10} /> ROI Analysis
-                     </span>
-                </div>
-                <p className="text-xs text-slate-400 font-medium">Are you spending time wisely?</p>
-            </div>
+  // Sparkline for performance trend: T1=190, T2=5, T3=225, T4=70
+  const trendPoints = [
+    { x: 28, y: 24, label: "T1", score: 190 },
+    { x: 100, y: 152, label: "T2", score: 5 },
+    { x: 175, y: 12, label: "T3", score: 225 },
+    { x: 248, y: 118, label: "T4", score: 70 },
+  ];
 
-            <div className="flex-1 px-6 space-y-6 pt-2">
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        <span>Time Invested</span>
-                        <span>Marks Output</span>
-                    </div>
+  // Build SVG path
+  const svgPath = trendPoints
+    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
+    .join(" ");
 
-                    {subjects.map((sub, i) => (
-                        <div key={sub.name} className="relative grid grid-cols-[1fr_40px_1fr] items-center gap-2">
-                            <div className="flex justify-end items-center gap-2">
-                                <span className="text-[9px] font-bold text-slate-400">{sub.timePercent}%</span>
-                                <div className="h-1.5 w-full bg-slate-50 rounded-l-full flex justify-end overflow-hidden">
-                                    <motion.div 
-                                        initial={{ width: 0 }} 
-                                        whileInView={{ width: `${sub.timePercent}%` }} 
-                                        transition={{ duration: 0.8, delay: 0.2 + (i*0.1) }}
-                                        className={`h-full rounded-full ${sub.timePercent > 40 ? 'bg-rose-300' : 'bg-slate-300'}`} 
-                                    />
-                                </div>
-                            </div>
+  return (
+    <div className="flex flex-col h-full font-sans bg-white relative overflow-hidden">
 
-                            <div className="text-center">
-                                <span className="text-xs font-bold text-slate-700 block">{sub.name}</span>
-                                <span className={`text-[8px] font-bold block leading-none ${sub.color}`}>{sub.status}</span>
-                            </div>
-
-                            <div className="flex justify-start items-center gap-2">
-                                <div className="h-1.5 w-full bg-slate-50 rounded-r-full flex justify-start overflow-hidden">
-                                    <motion.div 
-                                        initial={{ width: 0 }} 
-                                        whileInView={{ width: `${sub.marksPercent}%` }} 
-                                        transition={{ duration: 0.8, delay: 0.2 + (i*0.1) }}
-                                        className="h-full bg-indigo-500 rounded-full" 
-                                    />
-                                </div>
-                                <span className="text-[9px] font-bold text-indigo-600">{sub.marksPercent}%</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-between group">
-                    <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 bg-white text-rose-500 rounded-lg flex items-center justify-center shadow-sm border border-rose-100">
-                            <AlertTriangle size={16} />
-                        </div>
-                        <div>
-                            <span className="block text-[10px] font-bold text-rose-400 uppercase tracking-wide">Score Leakage</span>
-                            <span className="block text-xs font-bold text-rose-900">-12 Marks Negative</span>
-                        </div>
-                    </div>
-
-                    <div className="relative flex h-2 w-2 mr-2">
-                       <span className="animate-ping absolute inline-flex h-full w-full bg-rose-400 opacity-75 rounded-full"></span>
-                       <span className="relative inline-flex h-2 w-2 bg-rose-500 rounded-full"></span>
-                    </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 border border-slate-100 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                    <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
-                            <Clock size={16} />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">Avg Speed</span>
-                            <span className="text-xs font-bold text-slate-700">1m 42s / Question</span>
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
-                            <TrendingUp size={12} /> Faster
-                        </span>
-                        <span className="text-[9px] text-slate-400">than peer avg</span>
-                    </div>
-                </div>
-
-            </div>
+      {/* Header */}
+      <div className="px-5 pt-5 pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-slate-800 text-[14px] leading-none">Performance</h3>
+            <p className="text-[10px] text-slate-400 mt-0.5">Last 5 Tests · Overall</p>
+          </div>
+          <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <BarChart3 size={12} className="text-slate-500" />
+            <span className="text-[10px] font-bold text-slate-600">Analytics</span>
+          </div>
         </div>
-    )
+      </div>
+
+      {/* 2×2 Metric Grid */}
+      <div className="grid grid-cols-2 gap-2 px-4 pt-3 pb-2">
+        {metrics.map((m, i) => (
+          <motion.div
+            key={m.label}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 + i * 0.1, type: "spring", stiffness: 120, damping: 20 }}
+            whileHover={{ scale: 1.03 }}
+            className="rounded-2xl p-3 border border-slate-100 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-200 cursor-default"
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="h-6 w-6 rounded-lg flex items-center justify-center" style={{ background: m.bg }}>
+                <m.icon size={13} style={{ color: m.color }} />
+              </div>
+              {/* Mini circular progress stand-in */}
+              <svg width="20" height="20" viewBox="0 0 20 20" className="opacity-40">
+                <circle cx="10" cy="10" r="7" fill="none" stroke="#e2e8f0" strokeWidth="2.5" />
+                <circle
+                  cx="10" cy="10" r="7"
+                  fill="none"
+                  stroke={m.color}
+                  strokeWidth="2.5"
+                  strokeDasharray={`${44 * (i === 0 ? 0.4 : i === 1 ? 0.42 : i === 2 ? 0.73 : 0.85)} 44`}
+                  strokeLinecap="round"
+                  transform="rotate(-90 10 10)"
+                />
+              </svg>
+            </div>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide leading-none">{m.label}</p>
+            <motion.p
+              className="text-[18px] font-bold leading-tight mt-0.5"
+              style={{ color: m.color }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
+            >
+              {m.value}
+            </motion.p>
+            <p className="text-[10px] text-slate-400 leading-none mt-0.5">{m.sub}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Performance Trend Chart */}
+      <div className="flex-1 px-4 pb-4">
+        <div className="bg-slate-50 rounded-2xl p-3 border border-slate-100 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Performance Trend</p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <TrendingDown size={10} className="text-rose-500" />
+                <span className="text-[10px] text-rose-500 font-medium">121 pts decline</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="h-2 w-2 rounded-full bg-orange-400" />
+              <span className="text-[9px] text-slate-400 font-medium">Score</span>
+            </div>
+          </div>
+
+          {/* SVG Trend Line */}
+          <div className="flex-1 relative">
+            <svg
+              viewBox="0 0 280 170"
+              className="w-full h-full"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {/* Y-axis labels */}
+              {[0, 50, 100, 150, 200].map((val) => {
+                const yPos = 155 - (val / 225) * 140;
+                return (
+                  <g key={val}>
+                    <line x1="22" y1={yPos} x2="255" y2={yPos} stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="3,3" />
+                    <text x="18" y={yPos + 3.5} fontSize="8" fill="#94a3b8" textAnchor="end">{val}</text>
+                  </g>
+                );
+              })}
+
+              {/* Area fill */}
+              <motion.path
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                d={`${svgPath} L 248 160 L 28 160 Z`}
+                fill="url(#trendGrad)"
+                opacity="0.3"
+              />
+              <defs>
+                <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#F94F39" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#F94F39" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+
+              {/* Trend line */}
+              <motion.path
+                d={svgPath}
+                fill="none"
+                stroke="#F94F39"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.2, delay: 0.5, ease: "easeInOut" }}
+              />
+
+              {/* Data points + labels */}
+              {trendPoints.map((p, i) => (
+                <g key={p.label}>
+                  <motion.circle
+                    cx={p.x}
+                    cy={p.y}
+                    r="4"
+                    fill="white"
+                    stroke="#F94F39"
+                    strokeWidth="2"
+                    initial={{ scale: 0, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.9 + i * 0.12, type: "spring" }}
+                  />
+                  <text x={p.x} y={165} fontSize="8.5" fill="#94a3b8" textAnchor="middle" fontWeight="600">{p.label}</text>
+                  {/* Score label above/below point */}
+                  <motion.text
+                    x={p.x}
+                    y={i === 1 ? p.y + 14 : p.y - 8}
+                    fontSize="8"
+                    fill="#F94F39"
+                    textAnchor="middle"
+                    fontWeight="700"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 1.1 + i * 0.12 }}
+                  >
+                    {p.score}
+                  </motion.text>
+                </g>
+              ))}
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function CardThreeExamImage() {
