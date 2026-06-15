@@ -46,7 +46,7 @@ const onboardingSlides = [
 
 export function OnboardingCarousel() {
   const plugin = React.useRef(
-    Autoplay({ delay: 8000, stopOnInteraction: false })
+    Autoplay({ delay: 5000, stopOnInteraction: false })
   )
 
   return (
@@ -282,14 +282,14 @@ function CardOnePYQ() {
           className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-3 flex items-center gap-3"
         >
           {/* Circular ring */}
-          <div className="relative shrink-0 w-[64px] h-[64px] flex items-center justify-center">
-            <svg width="64" height="64" viewBox="0 0 80 80" className="-rotate-90">
-              <circle cx="40" cy="40" r={r} fill="none" stroke="#F1F5F9" strokeWidth="7" />
+          <div className="relative shrink-0 flex items-center justify-center">
+            <svg width="72" height="72" viewBox="0 0 80 80" className="-rotate-90">
+              <circle cx="40" cy="40" r={r} fill="none" stroke="#F1F5F9" strokeWidth="4" />
               <motion.circle
                 cx="40" cy="40" r={r}
                 fill="none"
                 stroke="#1E7CD3"
-                strokeWidth="7"
+                strokeWidth="4"
                 strokeLinecap="round"
                 initial={{ strokeDasharray: `0 ${circ}` }}
                 whileInView={{ strokeDasharray: `${solvedDash} ${circ}` }}
