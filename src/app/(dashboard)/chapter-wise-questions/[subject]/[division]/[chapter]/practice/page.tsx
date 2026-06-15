@@ -1,5 +1,6 @@
 // src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/practice/page.tsx
 import type { Metadata } from "next";
+export const runtime = "edge";
 import { chapterConfig } from "@/features/chapterWise/config";
 import { PracticePageClient } from "./PracticePageClient";
 
