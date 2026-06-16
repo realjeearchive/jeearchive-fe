@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "functions": {
+    "/analytics/tests/[testId]": {},
+    "/api/percentile": {},
+    "/chapter-wise-questions": {},
+    "/chapter-wise-questions/[subject]/[division]/[chapter]": {},
+    "/chapter-wise-questions/[subject]/[division]/[chapter]/practice": {},
+    "/previous-year-questions": {},
+    "/previous-year-questions/[examType]": {},
+    "/previous-year-questions/[examType]/[year]": {},
+    "/previous-year-questions/[examType]/[year]/tests/[testId]": {},
+    "/previous-year-questions/[examType]/[year]/tests/[testId]/attempt": {},
+    "/previous-year-questions/[examType]/[year]/tests/[testId]/attempt/submit": {}
+  }
+}
