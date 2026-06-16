@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import styles from "./LogoutConfirmModal.module.css";
+import { authenticatedFetch } from "@/features/auth/api";
 
 interface LogoutConfirmModalProps {
   open: boolean;
@@ -14,9 +16,35 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
   onClose,
   onConfirm,
 }) => {
-  if (!open) return null;
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  // Ensure portal only renders on the client to prevent SSR hydration errors
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!open || !mounted) return null;
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      // Hit the backend logout API
+      await authenticatedFetch("/auth/logout", {
+        method: "POST",
+      });
+      onConfirm();
+    } catch (error) {
+      console.error("Logout API failed:", error);
+      onConfirm();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // 🔥 createPortal renders the modal at the root level (document.body)
+  return createPortal(
     <div className={styles.overlay} aria-modal="true" role="dialog">
       <div className={styles.modal}>
         <h2 className={styles.title}>Log out</h2>
@@ -29,18 +57,21 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
             type="button"
             className={styles.cancelButton}
             onClick={onClose}
+            disabled={isLoggingOut}
           >
             Cancel
           </button>
           <button
             type="button"
             className={styles.logoutButton}
-            onClick={onConfirm}
+            onClick={handleLogout}
+            disabled={isLoggingOut}
           >
-            Log out
+            {isLoggingOut ? "Logging out..." : "Log out"}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

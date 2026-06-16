@@ -92,7 +92,8 @@ export function LoginForm() {
 
         <div className={Styles.formExtras}>
           <div className={Styles.rememberMe}>
-            <input id="remember-me" name="remember-me" type="checkbox" className={Styles.checkbox} />
+            {/* Added defaultChecked to the input below */}
+            <input id="remember-me" name="remember-me" type="checkbox" defaultChecked className={Styles.checkbox} />
             <label htmlFor="remember-me" className={Styles.checkboxLabel}>Remember me</label>
           </div>
           <Link href="/forgot-password" className={Styles.forgotPassword}>Forgot password?</Link>
