@@ -1,6 +1,5 @@
 // src/features/chapterWise/api.ts
 import { authenticatedFetch, ApiError } from "../auth/api";
-// 🚨 NEW: Import the rate limit store
 import { useRateLimitStore } from "@/store/useRateLimitStore";
 
 export interface ChapterStats {
@@ -33,7 +32,6 @@ export interface QuestionSolution {
   image?: string[];
 }
 
-// 🔥 NEW: Paper interface to extract Year, Month, Session, and Shift for the filter
 export interface PaperInfo {
   id?: string;
   year?: number;
@@ -65,11 +63,10 @@ export interface QuestionListItem {
   options?: QuestionOption; 
   solution?: QuestionSolution; 
   papers?: PaperInfo; 
-  isBookmarked?: boolean; // 🔥 NEW: Added from backend
+  isBookmarked?: boolean;
   attemptStatus: "Successfully attempted" | "Not successfully done" | "Unattempted" | string;
 }
 
-// 🔥 NEW: Chapter Data interface to read the Syllabus boolean flags
 export interface ChapterData {
   id: string;
   name: string;
@@ -85,30 +82,59 @@ export interface ChapterInfoResponse {
   chapterId?: string;
   chapterName?: string;
   stats: ChapterStats;
-  chapterData?: ChapterData; // 🔥 Attached chapter data for syllabus tags
+  chapterData?: ChapterData; 
   jeeMain: QuestionListItem[];
   jeeAdvanced: QuestionListItem[];
 }
 
-export async function fetchChapterInfo(chapterName: string): Promise<ChapterInfoResponse> {
-  console.info(`[API: ChapterWise] Fetching data for chapter: ${chapterName}`);
-  const res = await authenticatedFetch(`/chapterWise/${encodeURIComponent(chapterName)}/info`, {
-    method: 'GET'
-  });
+export interface ChapterInfoAPIResponse {
+  message: string;
+  data: ChapterInfoResponse;
+}
 
-  // 🚨 NEW: 429 Interceptor
+// --- STRICT RESPONSE HANDLER ---
+async function handleJson<T>(res: Response): Promise<T> {
+  // Trigger the global modal for rate limiting
   if (res.status === 429) {
     useRateLimitStore.getState().setRateLimited(true);
     throw new ApiError("Too many requests. Please wait.", 429);
   }
 
+  const data: unknown = await res.json().catch(() => null);
+
   if (!res.ok) {
-    console.error(`[API: ChapterWise] Failed to fetch chapter info. Status: ${res.status}`);
-    throw new ApiError(`Failed to fetch: ${res.status}`, res.status);
+    let message = 'Something went wrong.';
+    if (data && typeof data === 'object' && 'message' in data) {
+      const errorData = data as Record<string, unknown>;
+      message = String(errorData.message);
+    }
+    throw new ApiError(message, res.status);
   }
 
-  const json = await res.json();
-  return json.data; 
+  if (data && typeof data === 'object' && 'data' in data) {
+    const wrapper = data as Record<string, unknown>;
+    if (wrapper.data && typeof wrapper.data === 'object' && !Array.isArray(wrapper.data)) {
+      return { ...wrapper, data: wrapper.data } as T;
+    }
+  }
+
+  return data as T;
+}
+
+// ==========================================
+// API CALLS
+// ==========================================
+
+// 🔥 CORRECTED: Takes the chapterSlug (e.g., "structure-of-atom") and calls the /info endpoint
+export async function fetchChapterInfo(chapterSlug: string): Promise<ChapterInfoResponse> {
+  console.info(`[API: ChapterWise] Fetching questions for chapter: ${chapterSlug}`);
+  
+  const res = await authenticatedFetch(`/chapterWise/${encodeURIComponent(chapterSlug)}/info`, {
+    method: 'GET'
+  });
+
+  const response = await handleJson<ChapterInfoAPIResponse>(res);
+  return response.data; 
 }
 
 export interface ChapterWiseAttemptPayload {
@@ -118,26 +144,15 @@ export interface ChapterWiseAttemptPayload {
   timeSpent: number; 
 }
 
-// (Optional: You can remove this if you strictly use the fetch call directly inside Zustand now)
 export async function submitChapterWiseAttempt(payload: ChapterWiseAttemptPayload) {
   console.info(`[API: ChapterWise] Submitting attempt for question: ${payload.questionId}`);
+  
   const res = await authenticatedFetch(`/chapterWise/attempt`, { 
     method: 'POST',
     body: JSON.stringify(payload),
   });
 
-  // 🚨 NEW: 429 Interceptor
-  if (res.status === 429) {
-    useRateLimitStore.getState().setRateLimited(true);
-    throw new ApiError("Too many requests. Please wait.", 429);
-  }
-
-  if (!res.ok) {
-    console.error(`[API: ChapterWise] Attempt submission failed. Status: ${res.status}`);
-    throw new ApiError(`Failed to submit attempt: ${res.status}`, res.status);
-  }
-
-  return await res.json();
+  return await handleJson<{ message: string; success?: boolean }>(res);
 }
 
 export interface ChapterAttempt {
@@ -159,23 +174,18 @@ export interface QuestionAttemptsResponse {
   testAttempts: unknown[]; 
 }
 
+export interface QuestionAttemptsAPIResponse {
+  message: string;
+  data: QuestionAttemptsResponse;
+}
+
 export async function fetchQuestionAttempts(questionId: string): Promise<QuestionAttemptsResponse> {
   console.info(`[API: ChapterWise] Fetching historical attempts for question: ${questionId}`);
+  
   const res = await authenticatedFetch(`/chapterWise/questions/${questionId}/attempts`, {
     method: 'GET'
   });
 
-  // 🚨 NEW: 429 Interceptor
-  if (res.status === 429) {
-    useRateLimitStore.getState().setRateLimited(true);
-    throw new ApiError("Too many requests. Please wait.", 429);
-  }
-
-  if (!res.ok) {
-    console.error(`[API: ChapterWise] Failed to fetch historical attempts. Status: ${res.status}`);
-    throw new ApiError(`Failed to fetch attempts: ${res.status}`, res.status);
-  }
-
-  const json = await res.json();
-  return json.data;
+  const response = await handleJson<QuestionAttemptsAPIResponse>(res);
+  return response.data;
 }

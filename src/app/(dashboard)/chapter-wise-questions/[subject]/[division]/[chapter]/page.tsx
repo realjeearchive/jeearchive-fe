@@ -1,4 +1,3 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/page.tsx
 import type { Metadata } from "next";
  
 import { chapterConfig } from "@/features/chapterWise/config";
@@ -8,11 +7,21 @@ interface ChapterPageProps {
   params: Promise<{ subject: string; division: string; chapter: string }>;
 }
 
+// 🔥 NEW: Utility to cleanly format slugs into Title Case
+const formatSlugToTitle = (slug: string) => {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 export async function generateMetadata({ params }: ChapterPageProps): Promise<Metadata> {
   const { subject, division, chapter } = await params;
 
   const divisionChapters = chapterConfig[division] || [];
-  const exactChapterName = divisionChapters.find((c) => c.id === chapter)?.title || chapter;
+  
+  // 🔥 FIX: Fallback to the formatted title if not found in config
+  const exactChapterName = divisionChapters.find((c) => c.id === chapter)?.title || formatSlugToTitle(chapter);
 
   const subjectLabel =
     subject === "maths" ? "Mathematics" : subject.charAt(0).toUpperCase() + subject.slice(1);

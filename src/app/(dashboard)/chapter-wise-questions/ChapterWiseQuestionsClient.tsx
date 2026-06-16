@@ -8,150 +8,153 @@ import TestListSection, {
 import Styles from "./chapterWiseQuestions.module.css";
 
 // --- CONFIGURATIONS ---
+// 🔥 UPDATED: Group/Division IDs exactly match the backend groups.
 const DIVISION_CONFIG: Record<string, { id: string; title: string; meta: string }[]> = {
   physics: [
-    { id: "mechanics", title: "Mechanics", meta: "13 Chapters" },
-    { id: "thermodynamics", title: "Thermodynamics", meta: "3 Chapters" },
-    { id: "electromagnetism", title: "Electromagnetism", meta: "8 Chapters" },
+    { id: "mechanics", title: "Mechanics", meta: "15 Chapters" },
+    { id: "electricity", title: "Electricity", meta: "9 Chapters" },
     { id: "optics", title: "Optics", meta: "2 Chapters" },
     { id: "modern-physics", title: "Modern Physics", meta: "4 Chapters" },
   ],
   chemistry: [
-    { id: "physical", title: "Physical Chemistry", meta: "11 Chapters" },
-    { id: "organic", title: "Organic Chemistry", meta: "11 Chapters" },
-    { id: "inorganic", title: "Inorganic Chemistry", meta: "9 Chapters" },
+    { id: "physical-chemistry", title: "Physical Chemistry", meta: "12 Chapters" },
+    { id: "organic-chemistry", title: "Organic Chemistry", meta: "10 Chapters" },
+    { id: "inorganic-chemistry", title: "Inorganic Chemistry", meta: "10 Chapters" },
   ],
   maths: [
-    { id: "algebra", title: "Algebra", meta: "12 Chapters" },
-    { id: "calculus", title: "Calculus", meta: "6 Chapters" },
-    { id: "coordinate-geometry", title: "Coordinate Geometry", meta: "9 Chapters" },
+    { id: "algebra", title: "Algebra", meta: "14 Chapters" },
+    { id: "calculus", title: "Calculus", meta: "8 Chapters" },
+    { id: "coordinate-geometry", title: "Coordinate Geometry", meta: "5 Chapters" },
     { id: "trigonometry", title: "Trigonometry", meta: "5 Chapters" },
-    { id: "statistics", title: "Statistics & Probability", meta: "3 Chapters" },
+    { id: "statistics", title: "Statistics & Probability", meta: "1 Chapter" },
   ],
 };
 
+// 🔥 UPDATED: Every `id` perfectly matches the backend `name` field from your JSON.
 const CHAPTER_CONFIG: Record<string, { id: string; title: string }[]> = {
+  // --- PHYSICS ---
   mechanics: [
-    { id: "physical-world", title: "Physical World" },
-    { id: "units-and-dimensions", title: "Units and Dimensions" },
+    { id: "units-and-measurements", title: "Units and Measurements" },
     { id: "motion-in-a-straight-line", title: "Motion in a Straight Line" },
+    { id: "motion", title: "Motion" },
+    { id: "circular-motion", title: "Circular Motion" },
     { id: "motion-in-a-plane", title: "Motion in a Plane" },
     { id: "laws-of-motion", title: "Laws of Motion" },
-    { id: "work-energy-and-power", title: "Work, Energy and Power" },
-    { id: "system-of-particles-and-rotational-motion", title: "System of Particles and Rotational Motion" },
-    { id: "gravitation", title: "Gravitation" },
-    { id: "mechanical-properties-of-solids", title: "Mechanical Properties of Solids" },
-    { id: "mechanical-properties-of-fluids", title: "Mechanical Properties of Fluids" },
-    { id: "oscillations", title: "Oscillations" },
-    { id: "waves", title: "Waves" },
-    { id: "experimental-physics", title: "Experimental Physics" },
+    { id: "impulse-and-momentum", title: "Impulse and Momentum" },
+    { id: "work-power-and-energy", title: "Work, Power and Energy" },
+    { id: "center-of-mass", title: "Center of Mass" },
+    { id: "rotational-motion", title: "Rotational Motion" },
+    { id: "Gravitation", title: "Gravitation" },
+    { id: "properties-of-matter", title: "Properties of Matter" },
+    { id: "heat-and-thermodynamics", title: "Heat and Thermodynamics" },
+    { id: "simple-harmonic-motion", title: "Simple Harmonic Motion" },
+    { id: "Waves", title: "Waves" },
   ],
-  thermodynamics: [
-    { id: "thermal-properties-of-matter", title: "Thermal Properties of Matter" },
-    { id: "thermodynamics-physics", title: "Thermodynamics (Physics)" },
-    { id: "kinetic-theory", title: "Kinetic Theory" },
-  ],
-  electromagnetism: [
-    { id: "electric-charges-and-fields", title: "Electric Charges and Fields" },
-    { id: "electrostatic-potential-and-capacitance", title: "Electrostatic Potential and Capacitance" },
+  electricity: [
+    { id: "electrostatics", title: "Electrostatics" },
+    { id: "capacitor", title: "Capacitor" },
     { id: "current-electricity", title: "Current Electricity" },
-    { id: "moving-charges-and-magnetism", title: "Moving Charges and Magnetism" },
-    { id: "magnetism-and-matter", title: "Magnetism and Matter" },
+    { id: "magnetics", title: "Magnetics" },
+    { id: "magnetism", title: "Magnetism" },
+    { id: "magnetic-properties-of-matter", title: "Magnetic Properties of Matter" },
     { id: "electromagnetic-induction", title: "Electromagnetic Induction" },
     { id: "alternating-current", title: "Alternating Current" },
     { id: "electromagnetic-waves", title: "Electromagnetic Waves" },
   ],
   optics: [
-    { id: "ray-optics-and-optical-instruments", title: "Ray Optics and Optical Instruments" },
+    { id: "geometrical-optics", title: "Geometrical Optics" },
     { id: "wave-optics", title: "Wave Optics" },
   ],
   "modern-physics": [
-    { id: "dual-nature-of-radiation-and-matter", title: "Dual Nature of Radiation and Matter" },
-    { id: "atoms", title: "Atoms" },
-    { id: "nuclei", title: "Nuclei" },
-    { id: "semiconductor-electronics", title: "Semiconductor Electronics" },
+    { id: "dual-nature-of-radiation", title: "Dual Nature of Radiation" },
+    { id: "atoms-and-nuclei", title: "Atoms and Nuclei" },
+    { id: "electronic-devices", title: "Electronic Devices" },
+    { id: "communication-systems", title: "Communication Systems" },
   ],
-  physical: [
-    { id: "the-solid-state", title: "The Solid State" },
-    { id: "some-basic-concepts-of-chemistry", title: "Some Basic Concepts of Chemistry" },
-    { id: "solutions", title: "Solutions" },
-    { id: "structure-of-atom", title: "Structure of Atom" },
-    { id: "electrochemistry", title: "Electrochemistry" },
-    { id: "chemical-kinetics", title: "Chemical Kinetics" },
-    { id: "states-of-matter", title: "States of Matter (Gases & Liquids)" },
+
+  // --- CHEMISTRY ---
+  "physical-chemistry": [
+    { id: "solid-state", title: "Solid State" },
+    { id: "gaseous-state", title: "Gaseous State" },
     { id: "surface-chemistry", title: "Surface Chemistry" },
-    { id: "thermodynamics", title: "Thermodynamics" },
-    { id: "equilibrium", title: "Equilibrium" },
+    { id: "Solutions", title: "Solutions" },
+    { id: "some-basic-concepts-of-chemistry", title: "Some Basic Concepts of Chemistry" },
+    { id: "structure-of-atom", title: "Structure of Atom" },
+    { id: "Electrochemistry", title: "Electrochemistry" },
+    { id: "chemical-kinetics-and-nuclear-chemistry", title: "Chemical Kinetics and Nuclear Chemistry" },
+    { id: "Thermodynamics", title: "Thermodynamics" },
+    { id: "chemical-equilibrium", title: "Chemical Equilibrium" },
+    { id: "ionic-equilibrium", title: "Ionic Equilibrium" },
     { id: "redox-reactions", title: "Redox Reactions" },
   ],
-  organic: [
+  "organic-chemistry": [
+    { id: "chemistry-in-everyday-life", title: "Chemistry in Everyday Life" },
+    { id: "Polymers", title: "Polymers" },
     { id: "practical-organic-chemistry", title: "Practical Organic Chemistry" },
     { id: "haloalkanes-and-haloarenes", title: "Haloalkanes and Haloarenes" },
     { id: "alcohols-phenols-and-ethers", title: "Alcohols, Phenols and Ethers" },
-    { id: "organic-chemistry-some-basic-principles", title: "Organic Chemistry - Some Basic Principles" },
     { id: "aldehydes-ketones-and-carboxylic-acids", title: "Aldehydes, Ketones and Carboxylic Acids" },
-    { id: "hydrocarbons", title: "Hydrocarbons" },
-    { id: "amines", title: "Amines" },
-    { id: "biomolecules", title: "Biomolecules" },
+    { id: "basics-of-organic-chemistry", title: "Basics of Organic Chemistry" },
+    { id: "Hydrocarbons", title: "Hydrocarbons" },
+    { id: "compounds-containing-nitrogen", title: "Compounds Containing Nitrogen" },
+    { id: "Biomolecules", title: "Biomolecules" },
+  ],
+  "inorganic-chemistry": [
+    { id: "salt-analysis", title: "Salt Analysis" },
     { id: "environmental-chemistry", title: "Environmental Chemistry" },
-    { id: "polymers", title: "Polymers" },
-    { id: "chemistry-in-everyday-life", title: "Chemistry in Everyday Life" },
-  ],
-  inorganic: [
-    { id: "classification-of-elements-and-periodicity", title: "Classification of Elements and Periodicity" },
+    { id: "p-block-elements", title: "P-Block Elements" },
+    { id: "isolation-of-elements", title: "Isolation of Elements" },
+    { id: "s-block-elements", title: "S-Block Elements" },
+    { id: "Hydrogen", title: "Hydrogen" },
+    { id: "periodic-table-and-periodicity", title: "Periodic Table and Periodicity" },
+    { id: "d-and-f-block-elements", title: "D and F-Block Elements" },
     { id: "chemical-bonding-and-molecular-structure", title: "Chemical Bonding and Molecular Structure" },
-    { id: "general-principles-metallurgy", title: "General Principles (Metallurgy)" },
-    { id: "the-p-block-elements-class-12", title: "The p-Block Elements (Class 12)" },
-    { id: "the-d-and-f-block-elements", title: "The d- and f- Block Elements" },
-    { id: "hydrogen", title: "Hydrogen" },
     { id: "coordination-compounds", title: "Coordination Compounds" },
-    { id: "the-s-block-elements", title: "The s-Block Elements" },
-    { id: "the-p-block-elements-class-11", title: "The p-Block Elements (Class 11)" },
   ],
+
+  // --- MATHEMATICS ---
   algebra: [
-    { id: "functions", title: "Functions" },
-    { id: "sets", title: "Sets" },
-    { id: "relations-and-functions", title: "Relations and Functions" },
-    { id: "matrices", title: "Matrices" },
-    { id: "principle-of-mathematical-induction", title: "Principle of Mathematical Induction" },
-    { id: "determinants", title: "Determinants" },
-    { id: "complex-numbers-and-quadratic-equations", title: "Complex Numbers and Quadratic Equations" },
-    { id: "linear-inequalities", title: "Linear Inequalities" },
+    { id: "logarithm", title: "Logarithm" },
+    { id: "Functions", title: "Functions" },
+    { id: "sets-and-relations", title: "Sets and Relations" },
+    { id: "matrices-and-determinants", title: "Matrices and Determinants" },
+    { id: "quadratic-equation-and-inequalities", title: "Quadratic Equation and Inequalities" },
+    { id: "complex-numbers", title: "Complex Numbers" },
     { id: "permutations-and-combinations", title: "Permutations and Combinations" },
     { id: "binomial-theorem", title: "Binomial Theorem" },
+    { id: "mathematical-induction-and-binomial-theorem", title: "Mathematical Induction and Binomial Theorem" },
     { id: "sequences-and-series", title: "Sequences and Series" },
+    { id: "vector-algebra", title: "Vector Algebra" },
+    { id: "3d-geometry", title: "3D Geometry" },
+    { id: "probability", title: "Probability" },
     { id: "mathematical-reasoning", title: "Mathematical Reasoning" },
   ],
   calculus: [
-    { id: "continuity-and-differentiability", title: "Continuity and Differentiability" },
+    { id: "differentiation", title: "Differentiation" },
+    { id: "limits-continuity-and-differentiability", title: "Limits, Continuity and Differentiability" },
     { id: "application-of-derivatives", title: "Application of Derivatives" },
-    { id: "integrals", title: "Integrals" },
-    { id: "application-of-integrals", title: "Application of Integrals" },
+    { id: "indefinite-integrals", title: "Indefinite Integrals" },
+    { id: "definite-integration", title: "Definite Integration" },
+    { id: "area-under-the-curves", title: "Area Under the Curves" },
+    { id: "application-of-integration", title: "Application of Integration" },
     { id: "differential-equations", title: "Differential Equations" },
-    { id: "limits-and-derivatives", title: "Limits and Derivatives" },
   ],
   "coordinate-geometry": [
-    { id: "vector-algebra", title: "Vector Algebra" },
-    { id: "straight-lines", title: "Straight Lines" },
-    { id: "three-dimensional-geometry", title: "Three Dimensional Geometry" },
-    { id: "conic-sections", title: "Conic Sections" },
-    { id: "circle", title: "Circle" },
-    { id: "introduction-to-three-dimensional-geometry", title: "Introduction to Three Dimensional Geometry" },
-    { id: "parabola", title: "Parabola" },
-    { id: "ellipse", title: "Ellipse" },
-    { id: "hyperbola", title: "Hyperbola" },
+    { id: "straight-lines-and-pair-of-straight-lines", title: "Straight Lines and Pair of Straight Lines" },
+    { id: "Hyperbola", title: "Hyperbola" },
+    { id: "Ellipse", title: "Ellipse" },
+    { id: "Parabola", title: "Parabola" },
+    { id: "Circle", title: "Circle" },
   ],
   trigonometry: [
-    { id: "trigonometric-equations", title: "Trigonometric Equations" },
     { id: "inverse-trigonometric-functions", title: "Inverse Trigonometric Functions" },
-    { id: "trigonometric-functions", title: "Trigonometric Functions" },
-    { id: "properties-of-triangles", title: "Properties of Triangles" },
-    { id: "heights-and-distances", title: "Heights and Distances" },
+    { id: "trigonometric-functions-and-equations", title: "Trigonometric Functions and Equations" },
+    { id: "properties-of-triangle", title: "Properties of Triangle" },
+    { id: "trigonometric-ratio-and-identites", title: "Trigonometric Ratios and Identities" },
+    { id: "height-and-distance", title: "Height and Distance" },
   ],
   statistics: [
-    { id: "probability-class-12", title: "Probability (Class 12)" },
-    { id: "statistics", title: "Statistics" },
-    { id: "probability-class-11", title: "Probability (Class 11)" },
+    { id: "Statistics", title: "Statistics" },
   ],
 };
 
@@ -163,9 +166,9 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 // --- SUBJECT META (total chapters + divisions count) ---
 const SUBJECT_META: Record<string, string> = {
-  physics: "5 Divisions · 30 Chapters",
-  chemistry: "3 Divisions · 31 Chapters",
-  maths: "5 Divisions · 35 Chapters",
+  physics: "4 Divisions · 30 Chapters",
+  chemistry: "3 Divisions · 32 Chapters",
+  maths: "5 Divisions · 33 Chapters",
 };
 
 // --- Dynamic Subject Icon SVGs ---
@@ -343,7 +346,6 @@ export function ChapterWiseQuestionsClient() {
             <nav className={Styles.divisionsListContainer} aria-label="Select division">
               <span className={Styles.listLabel}>Divisions</span>
               
-              {/* 🔥 NEW: TABS GRID DISPLAY FOR DIVISIONS */}
               <div className={Styles.divisionsGrid}>
                 {currentDivisions.map((div) => (
                   <button

@@ -1,4 +1,3 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/practice/PracticePageClient.tsx
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -26,6 +25,14 @@ const getSubjectFromSlug = (slug: string): Subject => {
   return "Physics";
 };
 
+// 🔥 NEW: Utility to cleanly format slugs into Title Case
+const formatSlugToTitle = (slug: string) => {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 export function PracticePageClient({
   subject,
   division,
@@ -40,8 +47,10 @@ export function PracticePageClient({
   const lastFetchParamsRef = useRef("");
 
   const divisionChapters = chapterConfig[division] || [];
+  
+  // 🔥 FIX: Apply the formatter as the fallback
   const exactChapterName =
-    divisionChapters.find((c) => c.id === chapter)?.title || chapter;
+    divisionChapters.find((c) => c.id === chapter)?.title || formatSlugToTitle(chapter);
 
   const examType = searchParams.get("type") || "main";
   const filterYears = searchParams.get("years")?.split(",").map(Number) || [];
@@ -51,7 +60,7 @@ export function PracticePageClient({
 
   useEffect(() => {
     const loadQuestions = async () => {
-      const fetchKey = `${exactChapterName}-${examType}-${filterYears.join(",")}-${filterSessions.join(",")}-${filterDates.join(",")}-${filterShifts.join(",")}`;
+      const fetchKey = `${chapter}-${examType}-${filterYears.join(",")}-${filterSessions.join(",")}-${filterDates.join(",")}-${filterShifts.join(",")}`;
 
       if (isFetchingRef.current && lastFetchParamsRef.current === fetchKey) {
         return;
@@ -66,7 +75,7 @@ export function PracticePageClient({
 
       try {
         setLoading(true);
-        const data = await fetchChapterInfo(exactChapterName);
+        const data = await fetchChapterInfo(chapter);
         const validSubject = getSubjectFromSlug(subject);
 
         let sourceQuestions = examType === "advanced" ? data.jeeAdvanced : data.jeeMain;
@@ -163,7 +172,7 @@ export function PracticePageClient({
 
     loadQuestions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exactChapterName, examType, filterYears.join(","), filterSessions.join(","), filterDates.join(","), filterShifts.join(",")]);
+  }, [chapter, examType, filterYears.join(","), filterSessions.join(","), filterDates.join(","), filterShifts.join(",")]);
 
   if (loading) {
     return (

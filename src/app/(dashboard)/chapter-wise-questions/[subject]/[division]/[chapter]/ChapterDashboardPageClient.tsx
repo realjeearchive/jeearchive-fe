@@ -1,7 +1,6 @@
-// src/app/(dashboard)/chapter-wise-questions/[subject]/[division]/[chapter]/ChapterDashboardPageClient.tsx|
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchChapterInfo, ChapterInfoResponse } from "@/features/chapterWise/api";
 import { chapterConfig } from "@/features/chapterWise/config";
 import { ChapterDashboard } from "@/components/chapterwise/ChapterDashboard";
@@ -15,6 +14,14 @@ interface ChapterPageClientProps {
   chapter: string;
 }
 
+// 🔥 NEW: Utility to cleanly format slugs into Title Case just in case
+const formatSlugToTitle = (slug: string) => {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 export function ChapterDashboardPageClient({
   subject,
   division,
@@ -27,14 +34,16 @@ export function ChapterDashboardPageClient({
   const [error, setError] = useState(false);
 
   const divisionChapters = chapterConfig[division] || [];
+  
+  // 🔥 FIX: Apply the formatter as the fallback instead of the raw slug
   const exactChapterName =
-    divisionChapters.find((c) => c.id === chapter)?.title || chapter;
+    divisionChapters.find((c) => c.id === chapter)?.title || formatSlugToTitle(chapter);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const chapterData = await fetchChapterInfo(exactChapterName);
+        const chapterData = await fetchChapterInfo(chapter);
         setData(chapterData);
       } catch (err: unknown) {
         console.error(err);
@@ -49,7 +58,7 @@ export function ChapterDashboardPageClient({
       }
     };
     loadData();
-  }, [exactChapterName]);
+  }, [chapter]);
 
   if (loading && !isRateLimited) {
     return (
