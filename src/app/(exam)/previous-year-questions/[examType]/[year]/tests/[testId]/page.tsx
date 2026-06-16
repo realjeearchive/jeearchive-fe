@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-export const runtime = "edge";
+ 
 import { TestOverviewPageClient } from "./testOverviewPageClient";
 
 interface TestOverviewPageProps {

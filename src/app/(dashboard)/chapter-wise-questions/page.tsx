@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-export const runtime = "edge";
+ 
 import { ChapterWiseQuestionsClient } from "./ChapterWiseQuestionsClient";
 
 export const metadata: Metadata = {

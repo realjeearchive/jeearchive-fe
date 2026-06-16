@@ -146,6 +146,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/chapter-wise-questions": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/chapter-wise-questions",
+      "dataRoute": "/chapter-wise-questions.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/dashboard": {
       "experimentalBypassFor": [
         {
@@ -319,6 +343,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/previous-year-questions": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/previous-year-questions",
+      "dataRoute": "/previous-year-questions.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/profile": {
       "experimentalBypassFor": [
         {
@@ -443,8 +491,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "513df65b9b8d4c875bbcf83fa33e7318",
-    "previewModeSigningKey": "70ed153230d56fd226a0103d7d90c4c6c146e227d1ff19d8d7422725a98fff0d",
-    "previewModeEncryptionKey": "370849be16684df6129f5266bcf3f6c6db849dff5f0d38da37560d955bc4b4a3"
+    "previewModeId": "f1f067b92d05c423a8c2b0d3f497d755",
+    "previewModeSigningKey": "a33c2a13cd0c59e8d696198b58c2e10b981d224addc67b1198697feb9e97567b",
+    "previewModeEncryptionKey": "00b77094e5e7241922eb3a75c1c9f53de55a55ba7456890dd8737a09dadb0154"
   }
 }
