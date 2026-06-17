@@ -2,7 +2,8 @@
 
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import styles from "./header.module.css";
-import { PiSidebar, PiDiscordLogo, PiFireFill } from "react-icons/pi";
+// 🔥 Added PiFire (outline) alongside PiFireFill for that true "unfilled" look
+import { PiSidebar, PiDiscordLogo, PiFireFill, PiFire } from "react-icons/pi";
 import { IoChevronBack, IoChevronForward, IoCalendarOutline, IoTimeOutline } from "react-icons/io5";
 import { FiBell, FiTarget } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
@@ -11,7 +12,6 @@ import { useStreakStore } from "@/store/useStreakStore";
 
 import { useNotificationStore } from "@/store/useNotificationStore";
 import { NotificationPopup } from "@/components/popups/NotificationPopup/NotificationPopup";
-// 🔥 Import the Streak Popup
 import { StreakPopup } from "@/components/popups/StreakPopup/StreakPopup";
 import { DailyGoalPopup } from "@/components/popups/DailyGoalPopup/DailyGoalPopup";
 
@@ -61,7 +61,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const pathname = usePathname();
   const profile = useUserStore((s) => s.profile);
   
-  // 🔥 Updated destructuring to include isPopupOpen and setPopupOpen
   const { streak, loadStreak, isPopupOpen, setPopupOpen } = useStreakStore();
 
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -71,13 +70,11 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const previousPathnameRef = useRef(pathname);
   const [isGoalOpen, setIsGoalOpen] = useState(false);
 
-  // 🔥 NEW: The Bulletproof Global Watcher for the Streak Popup
   useEffect(() => {
     if (streak && streak.questionsToday > 0) {
       const d = new Date();
       const todayStr = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
       
-      // Use the specific profile ID so logging into a new account resets the check!
       const userId = profile?.id || "guest";
       const storageKey = `streakNotified_${userId}`;
       const lastNotifiedDate = localStorage.getItem(storageKey);
@@ -170,8 +167,10 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [handleBack, handleForward]);
 
+  // 🔥 LEETCODE LOGIC: Streak is only colored/filled if the user HAS SOLVED something TODAY.
   const currentStreak = streak?.currentStreak || 0;
-  const streakColorClass = currentStreak > 0 ? styles.streakActive : styles.streakDefault;
+  const hasCompletedToday = (streak?.questionsToday || 0) > 0;
+  const streakColorClass = hasCompletedToday ? styles.streakActive : styles.streakDefault;
 
   return (
     <header className={styles.header}>
@@ -223,7 +222,12 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
           data-title={`Max Streak: ${streak?.maxStreak || 0}`}
         >
           <span className={styles.streakText}>{currentStreak}</span>
-          <PiFireFill size={18} className={styles.streakIcon} />
+          {/* 🔥 Swaps between a solid icon and an outline icon based on today's status */}
+          {hasCompletedToday ? (
+            <PiFireFill size={18} className={styles.streakIcon} />
+          ) : (
+            <PiFire size={18} className={styles.streakIcon} />
+          )}
         </button>
 
         <div style={{ position: 'relative' }}>
@@ -295,7 +299,6 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
         </div>
       </div>
 
-      {/* 🔥 Render the Streak Popup */}
       <StreakPopup 
         isOpen={isPopupOpen} 
         onClose={() => setPopupOpen(false)} 

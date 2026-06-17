@@ -4,7 +4,7 @@ import React, { useEffect, useRef, Suspense } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
-import { Loader } from "@/components/ui/loader"; // 🔥 Unified Loader imported
+import { BrandSplashScreen } from "@/components/ui/BrandSplashScreen/BrandSplashScreen";
 
 const PUBLIC_ROUTES = [
   "/login",
@@ -84,12 +84,7 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
   ]);
 
   if (!initialized || isStageChecking) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[var(--bg-main)]">
-        {/* 🔥 Unified stealth loading state */}
-        <Loader label="Authenticating..." size="h-6 w-6" />
-      </div>
-    );
+    return <BrandSplashScreen />;
   }
 
   return <>{children}</>;
@@ -97,11 +92,7 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 const RouteGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Suspense fallback={
-      <div className="flex h-screen w-screen items-center justify-center bg-[var(--bg-main)]">
-        <Loader label="Loading..." size="h-6 w-6" />
-      </div>
-    }>
+    <Suspense fallback={<BrandSplashScreen />}>
       <RouteGuardInner>{children}</RouteGuardInner>
     </Suspense>
   );

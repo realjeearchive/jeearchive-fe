@@ -3,8 +3,6 @@ import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
 import RouteGuard from "@/components/auth/RouteGuard";
-
-// Import Google Analytics from Next.js third-parties
 import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
@@ -19,7 +17,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      {/* 🔥 FIX: Added default background and text colors to the body to prevent the white flash */}
+      <body style={{ backgroundColor: 'var(--bg-main)', color: 'var(--text-primary)', margin: 0 }}>
         <AuthInitializer>
           <RouteGuard>{children}</RouteGuard>
         </AuthInitializer>
@@ -33,7 +32,6 @@ export default function RootLayout({
         />
       </body> 
       
-
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
     </html>
   );

@@ -121,6 +121,11 @@ export const ChapterWiseInterface = ({
     if (questions && questions.length > 0) {
       const params = new URLSearchParams(window.location.search);
       initStore(questions, params.get("q") || undefined);
+      
+      // 🔥 NEW: Automatically start the timer on load if it is paused
+      if (!useChapterPracticeStore.getState().isTimerRunning) {
+        toggleTimer();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, initStore]);
