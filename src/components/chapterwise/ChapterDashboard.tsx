@@ -28,7 +28,7 @@ interface ChapterDashboardProps {
   chapterName: string;
 }
 
-// ─── Subject Icons (matching ChapterWiseQuestionsClient) ───────────────────
+// ─── Subject Icons ────────────────────────────────────────────────────────
 function PhysicsIcon() {
   return (
     <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={Styles.subjectIconSvg}>
@@ -88,26 +88,52 @@ function getSubjectIconClass(subject: string) {
   return Styles.iconContainerMaths;
 }
 
-// ─── Helpers ───────────────────────────────────────────────────────────────
+// ─── THE FIX: Safely parse HTML without destroying LaTeX ────────────────────
 const prepareForPreview = (html: string) => {
   if (!html) return "";
-  let text = html.replace(/<br\s*\/?>/gi, " ");
-  text = text.replace(/<\/p>|<\/div>|<\/li>/gi, " ");
-  text = text.replace(/<[^>]*>?/gm, " ");
+  
+  let text = html;
+
+  if (typeof window !== "undefined") {
+    // We add spaces around block elements so words don't get squished together
+    const preProcessed = html
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<\/p>|<\/div>|<\/li>/gi, " ");
+      
+    // Safely parse the HTML to strip tags and decode entities (e.g. &gt; becomes >)
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = preProcessed;
+    text = tempDiv.textContent || tempDiv.innerText || "";
+  } else {
+    // SSR Fallback (Basic regex replacing)
+    text = text
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<\/p>|<\/div>|<\/li>/gi, " ")
+      .replace(/<[^>]*>?/gm, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&");
+  }
+
+  // Clean up extra spaces
   text = text.replace(/\s+/g, " ").trim();
+  
+  // Convert block math to inline math so it flows beautifully in a single line
   text = text.replace(/\$\$/g, "$");
   text = text.replace(/\\\[/g, "\\(");
   text = text.replace(/\\\]/g, "\\)");
+  
   return text;
 };
 
+// ─── Component ─────────────────────────────────────────────────────────────
 const formatSession = (sess: string) => {
   if (!sess) return "";
   const parts = sess.replace(/_/g, " ").split(" ");
   return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(" ");
 };
 
-// ─── Component ─────────────────────────────────────────────────────────────
 export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   data,
   subject,
@@ -244,9 +270,8 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   const activeQuestions = sortedBaseQuestions.filter((q, index) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const plainText = q.content
-        ? q.content.replace(/<[^>]*>?/gm, "").trim().toLowerCase()
-        : "";
+      // We use the same safe text extractor for accurate search
+      const plainText = prepareForPreview(q.content).toLowerCase();
       const qNum = (index + 1).toString();
       if (!plainText.includes(query) && !qNum.includes(query)) return false;
     }
@@ -325,7 +350,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       <aside className={Styles.sidebar} aria-label="Chapter information and progress">
         <div className={Styles.card}>
 
-          {/* Subject Icon — matches ChapterWiseQuestionsClient style */}
+          {/* Subject Icon */}
           <div className={`${Styles.graphicIconContainer} ${getSubjectIconClass(subject)}`} aria-hidden="true">
             {getSubjectIcon(subject)}
           </div>
@@ -687,6 +712,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
           {activeQuestions && activeQuestions.length > 0 ? (
             activeQuestions.map((q, index) => {
               const isSuccess = q.attemptStatus === "Successfully attempted";
+              // Cleanly extract text + math without breaking HTML entities
               const plainTextContent = prepareForPreview(q.content);
               return (
                 <Link
@@ -709,6 +735,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                       {plainTextContent.length === 0 ? (
                         <span className="italic text-gray-500">Image Based Question</span>
                       ) : (
+                        // Render safely through Latex
                         <Latex>{plainTextContent}</Latex>
                       )}
                     </span>
