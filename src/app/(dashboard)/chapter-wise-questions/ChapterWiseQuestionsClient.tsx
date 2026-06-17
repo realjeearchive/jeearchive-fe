@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useMemo, useEffect } from "react";
+// Removed useSearchParams entirely as we are moving to a more robust storage method
 import TestListSection, {
   TestListItem,
 } from "@/components/dashboard/TestListSection/TestListSection";
 import Styles from "./chapterWiseQuestions.module.css";
 
 // --- CONFIGURATIONS ---
-// 🔥 UPDATED: Group/Division IDs exactly match the backend groups.
 const DIVISION_CONFIG: Record<string, { id: string; title: string; meta: string }[]> = {
   physics: [
     { id: "mechanics", title: "Mechanics", meta: "15 Chapters" },
@@ -30,7 +29,6 @@ const DIVISION_CONFIG: Record<string, { id: string; title: string; meta: string 
   ],
 };
 
-// 🔥 UPDATED: Every `id` perfectly matches the backend `name` field from your JSON.
 const CHAPTER_CONFIG: Record<string, { id: string; title: string }[]> = {
   // --- PHYSICS ---
   mechanics: [
@@ -164,7 +162,6 @@ const SUBJECT_LABELS: Record<string, string> = {
   maths: "Mathematics",
 };
 
-// --- SUBJECT META (total chapters + divisions count) ---
 const SUBJECT_META: Record<string, string> = {
   physics: "4 Divisions · 30 Chapters",
   chemistry: "3 Divisions · 32 Chapters",
@@ -220,15 +217,49 @@ const SUBJECT_ICON_CLASS: Record<string, string> = {
 };
 
 export function ChapterWiseQuestionsClient() {
-  const router = useRouter();
-
   const [activeSubject, setActiveSubject] = useState<string>("physics");
   const [activeDivision, setActiveDivision] = useState<string>("mechanics");
 
+  // 🔥 THE FIX: Use SessionStorage to save the exact state and restore it upon Back navigation
+  useEffect(() => {
+    const restoreState = () => {
+      const savedSub = sessionStorage.getItem("cw_active_subject");
+      const savedDiv = sessionStorage.getItem("cw_active_division");
+
+      if (savedSub && DIVISION_CONFIG[savedSub]) {
+        setActiveSubject(savedSub);
+        if (savedDiv && DIVISION_CONFIG[savedSub].find((d) => d.id === savedDiv)) {
+          setActiveDivision(savedDiv);
+        } else {
+          setActiveDivision(DIVISION_CONFIG[savedSub][0].id);
+        }
+      }
+    };
+
+    // Run on initial mount
+    restoreState();
+
+    // Run if the page is restored from the browser's Back-Forward Cache
+    window.addEventListener("pageshow", restoreState);
+    return () => window.removeEventListener("pageshow", restoreState);
+  }, []);
+
   const handleSubjectChange = (newSubject: string) => {
-    setActiveSubject(newSubject);
     const primaryDivision = DIVISION_CONFIG[newSubject]?.[0]?.id || "";
+    
+    setActiveSubject(newSubject);
     setActiveDivision(primaryDivision);
+    
+    // Save state instantly
+    sessionStorage.setItem("cw_active_subject", newSubject);
+    sessionStorage.setItem("cw_active_division", primaryDivision);
+  };
+
+  const handleDivisionChange = (divId: string) => {
+    setActiveDivision(divId);
+    
+    // Save state instantly
+    sessionStorage.setItem("cw_active_division", divId);
   };
 
   const currentDivisions = useMemo(() => DIVISION_CONFIG[activeSubject] || [], [activeSubject]);
@@ -350,7 +381,7 @@ export function ChapterWiseQuestionsClient() {
                 {currentDivisions.map((div) => (
                   <button
                     key={div.id}
-                    onClick={() => setActiveDivision(div.id)}
+                    onClick={() => handleDivisionChange(div.id)} 
                     className={`${Styles.divisionTabBtn} ${activeDivision === div.id ? Styles.divisionTabActive : ""}`}
                     aria-current={activeDivision === div.id ? "true" : undefined}
                   >

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
- 
+import { Suspense } from "react";
 import { ChapterWiseQuestionsClient } from "./ChapterWiseQuestionsClient";
 
 export const metadata: Metadata = {
@@ -19,5 +19,10 @@ export const metadata: Metadata = {
 };
 
 export default function ChapterWiseQuestionsPage() {
-  return <ChapterWiseQuestionsClient />;
+  return (
+    // 🔥 Suspense boundary required when using useSearchParams
+    <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}></div>}>
+      <ChapterWiseQuestionsClient />
+    </Suspense>
+  );
 }
