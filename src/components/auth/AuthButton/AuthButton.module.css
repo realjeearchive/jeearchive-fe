@@ -5,4 +5,5 @@
   background-color: var(--auth-text-primary);
   padding: var(--space-xs) var(--space-lg);
   border-radius: var(--shape-radius-full);
+  color: var(--bg-main);
 }
