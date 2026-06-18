@@ -4756,7 +4756,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/ssr/src_1m93czu._.js": {
-      "bytes": 26376,
+      "bytes": 26423,
       "imports": [],
       "format": "cjs"
     },
@@ -10638,7 +10638,7 @@
           "bytesInOutput": 24281
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_1m93czu._.js": {
-          "bytesInOutput": 26819
+          "bytesInOutput": 26864
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/0eu3_[subject]_[division]_[chapter]_practice_page_actions_1mqffrr.js": {
           "bytesInOutput": 282
@@ -11124,7 +11124,7 @@
           "bytesInOutput": 70118
         }
       },
-      "bytes": 8123911
+      "bytes": 8123956
     }
   }
 }

@@ -25,7 +25,7 @@ const DIVISION_CONFIG: Record<string, { id: string; title: string; meta: string 
     { id: "calculus", title: "Calculus", meta: "8 Chapters" },
     { id: "coordinate-geometry", title: "Coordinate Geometry", meta: "5 Chapters" },
     { id: "trigonometry", title: "Trigonometry", meta: "5 Chapters" },
-    { id: "statistics", title: "Statistics & Probability", meta: "1 Chapter" },
+    { id: "statistics", title: "Statistics", meta: "1 Chapter" },
   ],
 };
 

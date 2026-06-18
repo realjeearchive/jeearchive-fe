@@ -67,15 +67,15 @@ export const transformDashboardData = (data: DashboardDataPayload | null, examFi
   const progress = {
     phy: { 
       solved: uniqueQuestionsAttempted?.subjectWise?.Physics?.uniqueAttempted || 0, 
-      total: uniqueQuestionsAttempted?.subjectWise?.Physics?.totalQuestions || 4469 
+      total: uniqueQuestionsAttempted?.subjectWise?.Physics?.totalQuestions || 5494
     },
     chem: { 
       solved: uniqueQuestionsAttempted?.subjectWise?.Chemistry?.uniqueAttempted || 0, 
-      total: uniqueQuestionsAttempted?.subjectWise?.Chemistry?.totalQuestions || 4467 
+      total: uniqueQuestionsAttempted?.subjectWise?.Chemistry?.totalQuestions || 5491
     },
     math: { 
       solved: uniqueQuestionsAttempted?.subjectWise?.Mathematics?.uniqueAttempted || 0, 
-      total: uniqueQuestionsAttempted?.subjectWise?.Mathematics?.totalQuestions || 4471 
+      total: uniqueQuestionsAttempted?.subjectWise?.Mathematics?.totalQuestions || 5499
     },
   };
 
