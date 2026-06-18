@@ -12,6 +12,8 @@ import {
   Search,
   Filter,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   RotateCcw,
   Calendar,
   Clock,
@@ -155,6 +157,73 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
   const [selectedShifts, setSelectedShifts] = useState<string[]>([]);
   const filterRef = useRef<HTMLDivElement>(null);
 
+  // Pagination State & Refs
+  const [currentPage, setCurrentPage] = useState(1);
+  const contentRef = useRef<HTMLElement>(null);
+
+  // Persistence State & Effects
+  const [isReady, setIsReady] = useState(false);
+  const [lastChapterSlug, setLastChapterSlug] = useState(chapterSlug);
+
+  if (chapterSlug !== lastChapterSlug) {
+    setLastChapterSlug(chapterSlug);
+    setIsReady(false);
+  }
+
+  // Load filters from sessionStorage on mount / chapter change
+  useEffect(() => {
+    const saved = sessionStorage.getItem(`cw-filters-${chapterSlug}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Defer updating to next tick to avoid synchronous cascading renders error
+        setTimeout(() => {
+          if (parsed.activeFilter) setActiveFilter(parsed.activeFilter);
+          if (parsed.searchQuery) setSearchQuery(parsed.searchQuery);
+          if (parsed.selectedYears) setSelectedYears(parsed.selectedYears);
+          if (parsed.selectedSessions) setSelectedSessions(parsed.selectedSessions);
+          if (parsed.selectedDates) setSelectedDates(parsed.selectedDates);
+          if (parsed.selectedShifts) setSelectedShifts(parsed.selectedShifts);
+          if (parsed.currentPage) setCurrentPage(parsed.currentPage);
+          setIsReady(true);
+        }, 0);
+      } catch (e) {
+        console.error("Error parsing saved filters", e);
+        setTimeout(() => {
+          setIsReady(true);
+        }, 0);
+      }
+    } else {
+      // Clear filters if no saved filters exist (deferred to avoid synchronous state updates)
+      setTimeout(() => {
+        setActiveFilter("Main");
+        setSearchQuery("");
+        setSelectedYears([]);
+        setSelectedSessions([]);
+        setSelectedDates([]);
+        setSelectedShifts([]);
+        setCurrentPage(1);
+        setIsReady(true);
+      }, 0);
+    }
+  }, [chapterSlug]);
+
+  // Save filters to sessionStorage whenever they change
+  useEffect(() => {
+    if (!isReady) return;
+    
+    const stateToSave = {
+      activeFilter,
+      searchQuery,
+      selectedYears,
+      selectedSessions,
+      selectedDates,
+      selectedShifts,
+      currentPage
+    };
+    sessionStorage.setItem(`cw-filters-${chapterSlug}`, JSON.stringify(stateToSave));
+  }, [chapterSlug, activeFilter, searchQuery, selectedYears, selectedSessions, selectedDates, selectedShifts, currentPage, isReady]);
+
   const { stats, jeeMain, jeeAdvanced, chapterData } = data;
   const baseQuestions = activeFilter === "Main" ? jeeMain : jeeAdvanced;
 
@@ -172,9 +241,13 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
         (q.papers?.year !== undefined && selectedYears.includes(q.papers.year))
       );
     });
-    return Array.from(
+    const sessions = Array.from(
       new Set(filtered.map((q) => q.papers?.session).filter(Boolean))
     ) as string[];
+    return sessions.filter((sess) => {
+      const lower = sess.toLowerCase();
+      return lower.includes("1") || lower.includes("2") || lower.includes("one") || lower.includes("two");
+    });
   }, [baseQuestions, selectedYears]);
 
   const availableDates = useMemo(() => {
@@ -291,6 +364,60 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
 
     return true;
   });
+
+  // Reset page when filters change (React-recommended render-phase adjustment)
+  const [lastFilterKey, setLastFilterKey] = useState("");
+  const currentFilterKey = `${activeFilter}-${searchQuery}-${selectedYears.join(",")}-${selectedSessions.join(",")}-${selectedDates.join(",")}-${selectedShifts.join(",")}`;
+
+  if (currentFilterKey !== lastFilterKey) {
+    setLastFilterKey(currentFilterKey);
+    setCurrentPage(1);
+  }
+
+  const questionsPerPage = 30;
+  const totalPages = Math.ceil(activeQuestions.length / questionsPerPage);
+  const safeCurrentPage = Math.min(currentPage, Math.max(1, totalPages));
+
+  const paginatedQuestions = useMemo(() => {
+    return activeQuestions.slice((safeCurrentPage - 1) * questionsPerPage, safeCurrentPage * questionsPerPage);
+  }, [activeQuestions, safeCurrentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisiblePages = 7;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      if (safeCurrentPage <= 4) {
+        pages.push(2, 3, 4, 5);
+        pages.push("...");
+        pages.push(totalPages);
+      } else if (safeCurrentPage >= totalPages - 3) {
+        pages.push("...");
+        for (let i = totalPages - 4; i <= totalPages - 1; i++) {
+          pages.push(i);
+        }
+        pages.push(totalPages);
+      } else {
+        pages.push("...");
+        pages.push(safeCurrentPage - 1, safeCurrentPage, safeCurrentPage + 1);
+        pages.push("...");
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
 
   const clearFilters = () => {
     setSelectedYears([]);
@@ -466,7 +593,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
       </aside>
 
       {/* ─── MAIN CONTENT ──────────────────────────────────────────────── */}
-      <main className={Styles.content} aria-label="Questions list">
+      <main ref={contentRef} className={Styles.content} aria-label="Questions list">
         <div className={Styles.listHeader}>
           <div className={Styles.headerControls}>
 
@@ -709,18 +836,19 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
         </div>
 
         <div className={Styles.list} role="list" aria-label="Questions">
-          {activeQuestions && activeQuestions.length > 0 ? (
-            activeQuestions.map((q, index) => {
+          {paginatedQuestions && paginatedQuestions.length > 0 ? (
+            paginatedQuestions.map((q, index) => {
               const isSuccess = q.attemptStatus === "Successfully attempted";
               // Cleanly extract text + math without breaking HTML entities
               const plainTextContent = prepareForPreview(q.content);
+              const questionIndex = (safeCurrentPage - 1) * questionsPerPage + index;
               return (
                 <Link
                   key={q.id}
                   href={getQuestionUrl(q.id)}
                   className={Styles.row}
                   role="listitem"
-                  aria-label={`Question ${index + 1}: ${plainTextContent.substring(0, 80)}`}
+                  aria-label={`Question ${questionIndex + 1}: ${plainTextContent.substring(0, 80)}`}
                 >
                   <div className={Styles.rowLeft}>
                     <div className={Styles.statusIcon} aria-hidden="true">
@@ -731,7 +859,7 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
                       )}
                     </div>
                     <span className={Styles.qText}>
-                      {index + 1}.{" "}
+                      {questionIndex + 1}.{" "}
                       {plainTextContent.length === 0 ? (
                         <span className="italic text-gray-500">Image Based Question</span>
                       ) : (
@@ -760,6 +888,52 @@ export const ChapterDashboard: React.FC<ChapterDashboardProps> = ({
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <nav className={Styles.pagination} aria-label="Pagination Navigation">
+            <button
+              className={Styles.pageBtn}
+              onClick={() => handlePageChange(safeCurrentPage - 1)}
+              disabled={safeCurrentPage === 1}
+              aria-label="Go to previous page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            
+            {getPageNumbers().map((page, index) => {
+              if (page === "...") {
+                return (
+                  <span key={`ellipsis-${index}`} className={Styles.pageEllipsis}>
+                    &hellip;
+                  </span>
+                );
+              }
+              
+              return (
+                <button
+                  key={`page-${page}`}
+                  className={`${Styles.pageBtn} ${
+                    safeCurrentPage === page ? Styles.pageBtnActive : ""
+                  }`}
+                  onClick={() => handlePageChange(page as number)}
+                  aria-label={`Go to page ${page}`}
+                  aria-current={safeCurrentPage === page ? "page" : undefined}
+                >
+                  {page}
+                </button>
+              );
+            })}
+            
+            <button
+              className={Styles.pageBtn}
+              onClick={() => handlePageChange(safeCurrentPage + 1)}
+              disabled={safeCurrentPage === totalPages}
+              aria-label="Go to next page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </nav>
+        )}
       </main>
     </div>
   );
