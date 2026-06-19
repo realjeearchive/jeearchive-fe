@@ -3664,7 +3664,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
-      "bytes": 332761,
+      "bytes": 332763,
       "imports": [
         {
           "path": "path",
@@ -5506,7 +5506,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_auth_Onboarding_1ho7_jt._.js": {
-      "bytes": 15993,
+      "bytes": 16494,
       "imports": [],
       "format": "cjs"
     },
@@ -10341,7 +10341,7 @@
           "bytesInOutput": 469
         },
         ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
-          "bytesInOutput": 289741
+          "bytesInOutput": 289743
         },
         ".open-next/cloudflare-templates/shims/throw.js": {
           "bytesInOutput": 215
@@ -10866,7 +10866,7 @@
           "bytesInOutput": 23549
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_auth_Onboarding_1ho7_jt._.js": {
-          "bytesInOutput": 16591
+          "bytesInOutput": 17092
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__0elm6h_._.js": {
           "bytesInOutput": 2084
@@ -11142,7 +11142,7 @@
           "bytesInOutput": 70118
         }
       },
-      "bytes": 8168367
+      "bytes": 8168870
     }
   }
 }
