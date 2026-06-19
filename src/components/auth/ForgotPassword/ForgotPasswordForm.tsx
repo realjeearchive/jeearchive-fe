@@ -13,6 +13,7 @@ import { forgotPasswordEmailSchema, type ForgotPasswordEmailInput } from '@/feat
 import { passwordEmailVerificationRequest } from '@/features/auth/api';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { MdClose } from 'react-icons/md';
 
 export function ForgotPasswordForm() {
   const router = useRouter();
@@ -72,8 +73,14 @@ export function ForgotPasswordForm() {
   return (
     <div className={Styles.forgotPasswordFormContainer}>
       <div className={Styles.forgotPasswordHeader}>
-        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
-        <h2 className={Styles.forgotPasswordHeading}>Reset your password</h2>
+        <Link 
+          href="/login?method=email"
+          className="w-[30px] h-[30px] rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[var(--text-secondary,theme(colors.gray.400))] hover:text-[var(--text-primary,theme(colors.white))] transition-colors cursor-pointer"
+          aria-label="Go back"
+        >
+          <MdClose size={16} />
+        </Link>
+        <h2 className={`${Styles.forgotPasswordHeading} text-2xl sm:text-3xl`}>Reset your password</h2>
         <p className={Styles.forgotPasswordSubtext}>
           Enter your email address and we will send you an OTP to reset your password.
         </p>
@@ -89,7 +96,7 @@ export function ForgotPasswordForm() {
         </AuthButton>
 
         <div className={Styles.backToLogin}>
-          <Link href="/login" className={`${Styles.onboardingNavigation} font-medium`}>
+          <Link href="/login?method=email" className={`${Styles.onboardingNavigation} font-medium`}>
             Back to <span className={Styles.loginNavigation}>login</span>
           </Link>
         </div>

@@ -18,10 +18,8 @@
 }
 
 .verificationHeading {
-  font-size: var(--text-4xl);
   font-weight: 700;
   text-align: center;
-  width: 60%;
   line-height: 1;
   color: var(--auth-text-primary);
   letter-spacing: -1.2px;

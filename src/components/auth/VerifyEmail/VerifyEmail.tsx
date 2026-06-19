@@ -4,13 +4,11 @@ import Styles from './VerifyEmail.module.css';
 import { useState, useRef, KeyboardEvent, ChangeEvent, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { MdClose } from 'react-icons/md';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
-import Logo from '../../../../public/images/logo.png';
 import { verifyOtpRequest, passwordEmailVerificationRequest, type VerifyOtpResponse } from '@/features/auth/api';
 
-// 🔥 FIX 1: Import useUserStore
 import { useAuthStore, useUserStore } from '@/store';
 import { toast } from 'sonner';
 
@@ -19,7 +17,6 @@ export function VerifyEmail() {
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get('email') ?? '';
   
-  // 🔥 FIX 2: Change the fallback from '/dashboard' to '/onboarding'
   const redirectTo = searchParams.get('redirectTo') ?? '/onboarding';
 
   const [loading, setLoading] = useState(false);
@@ -30,14 +27,13 @@ export function VerifyEmail() {
   
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
   
-  // 🔥 FIX 3: Bring in setStageNumber and syncStageNumber
   const setStageNumber = useUserStore((s) => s.setStageNumber);
   const syncStageNumber = useUserStore((s) => s.syncStageNumber);
 
   useEffect(() => {
     if (!emailFromQuery) {
       console.warn('[Auth: VerifyEmail] No email found in query params. Redirecting to signup.');
-      router.replace('/signup');
+      router.replace('/signup?method=email');
     }
   }, [emailFromQuery, router]);
 
@@ -110,13 +106,10 @@ export function VerifyEmail() {
         otp: otpValue,
       });
 
-      // 🔥 FIX 4: Explicitly set stageNumber to 1 BEFORE setting the access token.
-      // This guarantees your app route guards know they belong in /onboarding.
       setStageNumber(1);
       
       setAccessToken(data.accessToken); 
       
-      // Kick off a background sync to ensure the full profile gets hydrated
       syncStageNumber();
 
       console.info(`[Auth: VerifyEmail] Verification successful for: ${emailFromQuery}`);
@@ -155,9 +148,15 @@ export function VerifyEmail() {
 
   return (
     <div className={Styles.verificationFormContainer}>
-      <div className={Styles.verificationHeader}>
-        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
-        <h2 className={Styles.verificationHeading}>Verify your email</h2>
+      <div className={Styles.verifyEmailHeader}>
+        <Link 
+          href="/signup?method=email"
+          className="w-[30px] h-[30px] rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[var(--text-secondary,theme(colors.gray.400))] hover:text-[var(--text-primary,theme(colors.white))] transition-colors cursor-pointer"
+          aria-label="Go back"
+        >
+          <MdClose size={16} />
+        </Link>
+        <h2 className={`${Styles.verifyEmailHeading} text-2xl sm:text-3xl`}>Verify your email</h2>
         <p className={Styles.verificationSubtext}>
           We have sent a 6-digit code to <span className={Styles.emailText}>{emailFromQuery}</span>. Please enter it below.
         </p>
@@ -200,7 +199,7 @@ export function VerifyEmail() {
 
         <p className={Styles.onboardingNavigationText}>
           Wrong email?{' '}
-          <Link href="/signup" className={`${Styles.onboardingNavigation} font-medium`}>Go back</Link>
+          <Link href="/signup?method=email" className={`${Styles.onboardingNavigation} font-medium`}>Go back</Link>
         </p>
       </form>
     </div>

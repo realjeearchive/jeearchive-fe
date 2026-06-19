@@ -4,12 +4,11 @@ import Styles from './ResetPassword.module.css';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { MdClose } from 'react-icons/md';
 import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
-import Logo from '../../../../public/images/logo.png';
 import { resetPasswordSchema, type ResetPasswordInput } from '@/features/auth/schemas';
 import { verifyPasswordOtpRequest, passwordChangeRequest, type VerifyPasswordOtpResponse } from '@/features/auth/api';
 import { toast } from 'sonner';
@@ -91,7 +90,7 @@ export function ResetPasswordForm() {
       toast.success('Password changed successfully. Please log in.');
 
       setTimeout(() => {
-        router.push('/login');
+        router.push('/login?method=email');
       }, 1500);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
@@ -106,8 +105,14 @@ export function ResetPasswordForm() {
   return (
     <div className={Styles.resetPasswordFormContainer}>
       <div className={Styles.resetPasswordHeader}>
-        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
-        <h2 className={Styles.resetPasswordHeading}>Reset your password</h2>
+        <Link 
+          href="/login?method=email"
+          className="w-[30px] h-[30px] rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[var(--text-secondary,theme(colors.gray.400))] hover:text-[var(--text-primary,theme(colors.white))] transition-colors cursor-pointer"
+          aria-label="Go back"
+        >
+          <MdClose size={16} />
+        </Link>
+        <h2 className={`${Styles.resetPasswordHeading} text-2xl sm:text-3xl`}>Update your password</h2>
         <p className={Styles.resetPasswordSubtext}>
           Enter the 6-digit code sent to your email and choose a new password.
         </p>
@@ -126,7 +131,7 @@ export function ResetPasswordForm() {
         </AuthButton>
 
         <div className={Styles.backToLogin}>
-          <Link href="/login" className={`${Styles.onboardingNavigation} font-medium`}>
+          <Link href="/login?method=email" className={`${Styles.onboardingNavigation} font-medium`}>
             Back to <span className={Styles.loginNavigation}>login</span>
           </Link>
         </div>

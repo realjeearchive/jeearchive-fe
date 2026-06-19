@@ -21,10 +21,8 @@
 }
 
 .loginHeading {
-  font-size: var(--text-4xl);
   font-weight: 700;
   text-align: center;
-  width: 60%;
   line-height: 1;
   color: var(--auth-text-primary);
   letter-spacing: -1.2px;
@@ -70,9 +68,5 @@
 @media (max-width: 600px) {
   .loginFormContainer {
     width: 90%;
-  }
-  .loginHeading {
-    width: 80%;
-    font-size: var(--text-3xl);
   }
 }

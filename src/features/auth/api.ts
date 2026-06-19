@@ -280,3 +280,14 @@ export async function refreshTokenRequest() {
 }
 
 export const getCurrentSession = refreshTokenRequest;
+
+export async function googleLoginRequest(params: { idToken: string }) {
+  let res = await fetch(`${API_BASE_URL}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(params),
+  });
+  res = await processEncryptedResponse(res);
+  return handleJson<LoginResponse>(res);
+}

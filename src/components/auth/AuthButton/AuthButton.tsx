@@ -19,14 +19,17 @@ export function AuthButton({
   onClick,
   disabled = false,
   fullWidth = true,
+  variant = 'primary',
 }: AuthButtonProps) {  
+
+  const buttonClass = variant === 'secondary' ? Styles.onboardingButtonSecondary : Styles.onboardingButton;
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${Styles.onboardingButton} ${fullWidth ? 'w-full' : ''}`}
+      className={`${buttonClass} ${fullWidth ? 'w-full' : ''}`}
       aria-busy={loading}
     >
       {loading ? (

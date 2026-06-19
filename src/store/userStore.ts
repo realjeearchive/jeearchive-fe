@@ -78,8 +78,17 @@ export const useUserStore = create<UserState>()(
           try {
             const res = await getStageNumberRequest();
             
-            // 🔥 FIX: Extract the number from the 'data' field
-            const fetchedStage = res.data; 
+            if (!res) return null;
+
+            let fetchedStage = null;
+            if (typeof res === 'number') fetchedStage = res;
+            else if (typeof res.data === 'number') fetchedStage = res.data;
+            else if (typeof (res as any).stageNumber === 'number') fetchedStage = (res as any).stageNumber;
+
+            if (fetchedStage === null) {
+              console.warn("syncStageNumber: Could not extract a valid stage number from response", res);
+              return null;
+            }
             
             set({ stageNumber: fetchedStage });
             

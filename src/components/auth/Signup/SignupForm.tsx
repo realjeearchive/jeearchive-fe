@@ -2,7 +2,7 @@
 
 import Styles from './SignupForm.module.css';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { z } from 'zod';
@@ -11,14 +11,18 @@ import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.png';
 import { signupSchema, type SignupInput } from '@/features/auth/schemas';
+import { GoogleAuthButton } from '../GoogleAuthButton/GoogleAuthButton';
 import { signupRequest, type SignupResponse } from '@/features/auth/api';
 import { toast } from 'sonner';
+import { MdEmail, MdClose } from 'react-icons/md';
 
 export function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showEmailForm, setShowEmailForm] = useState(searchParams.get('method') === 'email');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,28 +78,58 @@ export function SignupForm() {
   };
 
   return (
-    <div className={Styles.signupFormContainer}>
+    <div className={`${Styles.signupFormContainer} relative`}>
       <div className={Styles.signupHeader}>
-        <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
-        <h2 className={Styles.signupHeading}>{"Let's get started"}</h2>
+        {!showEmailForm ? (
+          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
+        ) : (
+          <button 
+            type="button" 
+            onClick={() => setShowEmailForm(false)} 
+            className="w-[30px] h-[30px] rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.03)] hover:bg-[rgba(255,255,255,0.08)] flex items-center justify-center text-[var(--text-secondary,theme(colors.gray.400))] hover:text-[var(--text-primary,theme(colors.white))] transition-colors cursor-pointer"
+            aria-label="Go back"
+          >
+            <MdClose size={16} />
+          </button>
+        )}
+        <h2 className={`${Styles.signupHeading} ${!showEmailForm ? 'text-4xl sm:text-[40px]' : 'text-3xl sm:text-[36px]'}`}>{"Let's get started"}</h2>
+        {!showEmailForm && (
+          <p className="text-center text-[var(--auth-text-secondary,theme(colors.gray.400))] text-[15px] sm:text-base leading-snug mt-2 max-w-xs sm:max-w-sm">
+            Master your prep - practice chapter-wise PYQs and take mock tests with the real NTA interface.
+          </p>
+        )}
       </div>
 
       <FormError message={error} />
 
       <form onSubmit={handleSubmit} className={Styles.signupForm}>
-        <AuthInput id="name" name="name" type="text" label="Full Name" required placeholder="Full Name" error={fieldErrors.name} />
-        <AuthInput id="email" name="email" type="email" label="Email address" required placeholder="Email" error={fieldErrors.email} />
-        <AuthInput id="password" name="password" type="password" label="Password" required placeholder="Password" error={fieldErrors.password} />
-        <AuthInput id="confirm-password" name="confirm-password" type="password" label="Confirm Password" required placeholder="Confirm Password" error={fieldErrors.confirmPassword} />
+        {!showEmailForm ? (
+          <div className="flex flex-col gap-2 w-full max-w-[320px] mx-auto">
+            <GoogleAuthButton label="Continue with Google" />
+            <AuthButton type="button" variant="secondary" onClick={() => setShowEmailForm(true)}>
+              <div className="flex items-center justify-center gap-2 font-medium">
+                <MdEmail size={20} />
+                <span>Continue with email</span>
+              </div>
+            </AuthButton>
+          </div>
+        ) : (
+          <>
+            <AuthInput id="name" name="name" type="text" label="Full Name" required placeholder="Full Name" error={fieldErrors.name} />
+            <AuthInput id="email" name="email" type="email" label="Email address" required placeholder="Email" error={fieldErrors.email} />
+            <AuthInput id="password" name="password" type="password" label="Password" required placeholder="Password" error={fieldErrors.password} />
+            <AuthInput id="confirm-password" name="confirm-password" type="password" label="Confirm Password" required placeholder="Confirm Password" error={fieldErrors.confirmPassword} />
 
-        <AuthButton type="submit" loading={loading}>
-          <div className="font-medium">Create account</div>
-        </AuthButton>
+            <AuthButton type="submit" loading={loading}>
+              <div className="font-medium">Create account</div>
+            </AuthButton>
 
-        <p className={Styles.onboardingNavigationText}>
-          Already have an account?{' '}
-          <Link href="/login" className={`${Styles.onboardingNavigation} font-medium`}>Sign in</Link>
-        </p>
+            <p className={Styles.onboardingNavigationText}>
+              Already have an account?{' '}
+              <Link href="/login?method=email" className={`${Styles.onboardingNavigation} font-medium`}>Sign in</Link>
+            </p>
+          </>
+        )}
       </form>
     </div>
   );
