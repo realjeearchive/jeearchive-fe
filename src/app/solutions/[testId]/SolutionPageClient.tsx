@@ -18,6 +18,7 @@ import { Loader } from "@/components/ui/loader";
 import { BottomBar } from "@/components/solution-interface/navigation/BottomBar";
 
 import { useSolutionStore } from "@/store/useSolutionStore";
+import { useBookmarkStore } from "@/store/useBookmarkStore";
 import {
   transformSolutionData,
   Subject,
@@ -32,6 +33,7 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
 
   const { rawSolutionData, isLoading, error, fetchData, clearData } =
     useSolutionStore();
+  const { bookmarks, fetchBookmarks, addBookmark, removeBookmark } = useBookmarkStore();
   const TEST_DATA = useMemo(
     () => transformSolutionData(rawSolutionData),
     [rawSolutionData]
@@ -45,6 +47,10 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
     if (testId) fetchData(testId);
     return () => clearData();
   }, [testId, fetchData, clearData]);
+
+  useEffect(() => {
+    fetchBookmarks();
+  }, [fetchBookmarks]);
 
   useEffect(() => {
     const handleResize = () => setIsSidebarOpen(window.innerWidth > 1024);
@@ -110,6 +116,20 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
         setActiveSubject(prevQ.subject);
       }
       setSelectedQuestionId(prevQ.id);
+    }
+  };
+
+  const isBookmarked = useMemo(() => {
+    if (!currentQuestion) return false;
+    return bookmarks.some((b) => b.id === currentQuestion.id);
+  }, [bookmarks, currentQuestion]);
+
+  const handleBookmarkToggle = async () => {
+    if (!currentQuestion) return;
+    if (isBookmarked) {
+      await removeBookmark(currentQuestion.id);
+    } else {
+      await addBookmark(currentQuestion.id);
     }
   };
 
@@ -192,6 +212,8 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
           type={currentQuestion.section}
           marksPos={currentQuestion.meta.marksPos}
           marksNeg={currentQuestion.meta.marksNeg}
+          isBookmarked={isBookmarked}
+          onBookmark={handleBookmarkToggle}
         />
 
         {currentQuestion.comprehensionContent && (

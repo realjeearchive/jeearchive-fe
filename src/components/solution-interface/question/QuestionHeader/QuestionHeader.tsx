@@ -7,6 +7,8 @@ interface QuestionHeaderProps {
   type: string;
   marksPos: number;
   marksNeg: number;
+  isBookmarked?: boolean;
+  onBookmark?: () => void;
 }
 
 export const QuestionHeader = ({
@@ -14,6 +16,8 @@ export const QuestionHeader = ({
   type,
   marksPos,
   marksNeg,
+  isBookmarked = false,
+  onBookmark,
 }: QuestionHeaderProps) => {
   return (
     <div className={styles.header}>
@@ -30,12 +34,24 @@ export const QuestionHeader = ({
           <span> / </span>
           <span className={styles.negMark}>-{marksNeg}</span>
         </div>
-        <button className={styles.actionBtn} aria-label="Bookmark this question">
-          <FiBookmark size={13} aria-hidden="true" /> Bookmark
+        <button
+          className={`${styles.actionBtn} ${isBookmarked ? styles.activeBookmark : ""}`}
+          onClick={onBookmark}
+          aria-label={isBookmarked ? "Remove bookmark" : "Bookmark this question"}
+          aria-pressed={isBookmarked}
+        >
+          <FiBookmark
+            size={13}
+            fill={isBookmarked ? "currentColor" : "none"}
+            aria-hidden="true"
+          />{" "}
+          {isBookmarked ? "Bookmarked" : "Bookmark"}
         </button>
         <button
           className={`${styles.actionBtn} ${styles.reportBtn}`}
-          aria-label="Report this question"
+          aria-label="Report this question (Coming Soon)"
+          title="Coming Soon"
+          disabled
         >
           <FiAlertTriangle size={13} aria-hidden="true" /> Report
         </button>

@@ -76,6 +76,23 @@
 
 .reportBtn:hover { color: var(--color-error-main); border-color: color-mix(in srgb, var(--color-error-main) 30%, transparent); }
 
+.activeBookmark {
+  color: var(--color-focus-ring) !important;
+  border-color: color-mix(in srgb, var(--color-focus-ring) 30%, transparent) !important;
+  background: color-mix(in srgb, var(--color-focus-ring) 5%, transparent) !important;
+}
+
+.activeBookmark:hover {
+  background: color-mix(in srgb, var(--color-focus-ring) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--color-focus-ring) 50%, transparent) !important;
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 @media (max-width: 700px) {
   .header { padding: 10px 10px; }
   .rightSection { gap: var(--space-xs); margin-left: var(--space-xl); }

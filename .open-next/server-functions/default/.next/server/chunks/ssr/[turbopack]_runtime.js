@@ -910,11 +910,11 @@ module.exports = (sourcePath)=>({
 
   function requireChunk(chunkPath) {
     switch(chunkPath) {
-      case "server/chunks/ssr/[root-of-the-server]__08v9ebs._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__08v9ebs._.js");
       case "server/chunks/ssr/[root-of-the-server]__0cb_8dj._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__0cb_8dj._.js");
       case "server/chunks/ssr/[root-of-the-server]__0g84hko._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__0g84hko._.js");
-      case "server/chunks/ssr/[root-of-the-server]__0njo2qr._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__0njo2qr._.js");
+      case "server/chunks/ssr/[root-of-the-server]__1busd4b._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__1busd4b._.js");
       case "server/chunks/ssr/[root-of-the-server]__1gf8ql1._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__1gf8ql1._.js");
+      case "server/chunks/ssr/[root-of-the-server]__1zn3tyx._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__1zn3tyx._.js");
       case "server/chunks/ssr/[turbopack]_runtime.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[turbopack]_runtime.js");
       case "server/chunks/ssr/_0hq_0_o._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/_0hq_0_o._.js");
       case "server/chunks/ssr/_0yds1_m._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/_0yds1_m._.js");
@@ -1046,7 +1046,7 @@ module.exports = (sourcePath)=>({
       case "server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_0jf1q5f.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_0jf1q5f.js");
       case "server/chunks/ssr/src_1izaysr._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_1izaysr._.js");
       case "server/chunks/ssr/src_assets_image_instructions_png_1ym523f._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_assets_image_instructions_png_1ym523f._.js");
-      case "server/chunks/ssr/[root-of-the-server]__03_-j6c._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__03_-j6c._.js");
+      case "server/chunks/ssr/[root-of-the-server]__1164lgf._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__1164lgf._.js");
       case "server/chunks/ssr/[root-of-the-server]__116k9xl._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__116k9xl._.js");
       case "server/chunks/ssr/_next-internal_server_app__global-error_page_actions_0zi5s8-.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/_next-internal_server_app__global-error_page_actions_0zi5s8-.js");
       case "server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_06zp_1r.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_06zp_1r.js");
@@ -1069,7 +1069,7 @@ module.exports = (sourcePath)=>({
       case "server/chunks/ssr/_next-internal_server_app_solutions_[testId]_page_actions_0930-ez.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/_next-internal_server_app_solutions_[testId]_page_actions_0930-ez.js");
       case "server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_0jscmfd.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/node_modules_next_dist_esm_build_templates_app-page_0jscmfd.js");
       case "server/chunks/ssr/src_02ie1hi._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_02ie1hi._.js");
-      case "server/chunks/ssr/src_0rffdfe._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0rffdfe._.js");
+      case "server/chunks/ssr/src_0y-m4hl._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0y-m4hl._.js");
       case "server/chunks/ssr/src_features_solutions_solutionsApi_ts_0rz5i2v._.js": return require("/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_features_solutions_solutionsApi_ts_0rz5i2v._.js");
       default:
         throw new Error(`Not found ${chunkPath}`);
