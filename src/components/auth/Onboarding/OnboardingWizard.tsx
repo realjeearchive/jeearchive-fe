@@ -11,6 +11,7 @@ import {
   Target,
   UserCircle,
   Phone,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import styles from "./OnboardingWizard.module.css";
@@ -452,6 +453,11 @@ export default function OnboardingWizard() {
                       aria-label="Mobile number"
                     />
                   </div>
+                  
+                  <p className="text-[11px] text-[var(--text-secondary)] mt-3 text-center opacity-70 flex items-center justify-center gap-1.5">
+                    <ShieldCheck size={12} />
+                    Don't worry, we won't send any spam or promotional calls.
+                  </p>
                 </div>
               )}
             </motion.div>
