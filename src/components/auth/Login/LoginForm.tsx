@@ -64,23 +64,11 @@ export function LoginForm() {
     try {
       console.info(`[Auth: LoginForm] Attempting login for: ${parsed.email}`);
       const data: LoginResponse = await loginRequest(rawData);
-
       setAccessToken(data.accessToken); 
-      
-      const stage = await syncStageNumber();
       
       console.info(`[Auth: LoginForm] Login successful for: ${parsed.email}`);
       toast.success('Logged in successfully.');
-      
-      let redirectToTarget = searchParams.get('redirectTo');
-      if (!redirectToTarget) {
-        if (stage !== null && stage < 5) {
-          redirectToTarget = '/onboarding';
-        } else {
-          redirectToTarget = '/dashboard';
-        }
-      }
-      router.replace(redirectToTarget);
+      // RouteGuard will automatically handle fetching the stage and redirecting
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Authentication failed';
       console.error(`[Auth: LoginForm] Login failed:`, err);
@@ -119,7 +107,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className={Styles.loginForm}>
         {!showEmailForm ? (
           <div className="flex flex-col gap-2 w-full max-w-[320px] mx-auto">
-            <GoogleAuthButton label="Continue with Google" />
+            <GoogleAuthButton />
             <AuthButton type="button" variant="secondary" onClick={() => setShowEmailForm(true)}>
               <div className="flex items-center justify-center gap-2 font-medium">
                 <MdEmail size={20} />

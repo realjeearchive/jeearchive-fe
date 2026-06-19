@@ -32,6 +32,13 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const authed = !!accessToken;
   const isStageChecking = authed && stageNumber === null;
 
+  // Reset the fetch flag if auth state changes (e.g. user just logged in)
+  const prevAuthed = useRef(authed);
+  if (prevAuthed.current !== authed) {
+    hasFetchedStage.current = false;
+    prevAuthed.current = authed;
+  }
+
   useEffect(() => {
     if (!initialized) return;
 

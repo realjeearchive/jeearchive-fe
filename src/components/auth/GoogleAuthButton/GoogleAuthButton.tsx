@@ -6,19 +6,9 @@ import { GoogleLogin } from '@react-oauth/google';
 import { googleLoginRequest } from '@/features/auth/api';
 import { useAuthStore, useUserStore } from '@/store';
 import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
 
-interface GoogleAuthButtonProps {
-  label?: string;
-  redirectTo?: string;
-}
-
-export function GoogleAuthButton({ label = 'Continue with Google', redirectTo }: GoogleAuthButtonProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(false);
+export function GoogleAuthButton() {
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
-  const syncStageNumber = useUserStore((s) => s.syncStageNumber);
 
   return (
     <div className="w-full flex justify-center [&>div]:w-full [&>div]:flex [&>div]:justify-center">
@@ -28,30 +18,20 @@ export function GoogleAuthButton({ label = 'Continue with Google', redirectTo }:
             if (!credentialResponse.credential) {
               throw new Error("No credential received from Google");
             }
-            setLoading(true);
             const data = await googleLoginRequest({ idToken: credentialResponse.credential });
+            
+            if (!data || !data.accessToken) {
+              throw new Error("Invalid response from server. Please try again.");
+            }
             
             setAccessToken(data.accessToken);
             
-            const stage = await syncStageNumber();
-            
             toast.success('Logged in successfully.');
-            
-            let path = redirectTo || searchParams.get('redirectTo');
-            if (!path) {
-              if (stage !== null && stage < 5) {
-                path = '/onboarding';
-              } else {
-                path = '/dashboard';
-              }
-            }
-            router.replace(path);
+            // RouteGuard will automatically handle fetching the stage and redirecting
           } catch (err) {
             const message = err instanceof Error ? err.message : 'Google authentication failed';
             console.error(`[Auth: GoogleAuthButton] Login failed:`, err);
             toast.error(message);
-          } finally {
-            setLoading(false);
           }
         }}
         onError={() => {

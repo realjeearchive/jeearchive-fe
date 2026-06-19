@@ -69,20 +69,23 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   const [renderTick, setRenderTick] = useState(0);
   const previousPathnameRef = useRef(pathname);
   const [isGoalOpen, setIsGoalOpen] = useState(false);
+  const prevQuestionsToday = useRef<number | null>(null);
 
   useEffect(() => {
-    if (streak && streak.questionsToday > 0) {
-      const d = new Date();
-      const todayStr = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      
-      const userId = profile?.id || "guest";
-      const storageKey = `streakNotified_${userId}`;
-      const lastNotifiedDate = localStorage.getItem(storageKey);
+    if (!profile?.id) return;
 
-      if (lastNotifiedDate !== todayStr) {
-        localStorage.setItem(storageKey, todayStr);
+    if (streak) {
+      const currQuestions = streak.questionsToday || 0;
+      const prevQuestions = prevQuestionsToday.current;
+
+      // 🔥 ONLY show popup if we observe the transition from 0 to > 0 during THIS session.
+      // This prevents it from showing multiple times if you switch to a laptop after solving on mobile.
+      if (prevQuestions === 0 && currQuestions > 0) {
         setPopupOpen(true);
       }
+
+      // Update ref for the next state change
+      prevQuestionsToday.current = currQuestions;
     }
   }, [streak, profile?.id, setPopupOpen]);
 

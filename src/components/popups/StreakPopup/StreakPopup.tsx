@@ -66,17 +66,12 @@ export const StreakPopup: React.FC<StreakPopupProps> = ({ isOpen, onClose, strea
           <div className={styles.iconRing}>
             <PiFireFill className={styles.fireIcon} />
           </div>
-          <h2 className={styles.title}>Daily Goal Completed!</h2>
+          <h2 className={styles.title}>Streak Maintained!</h2>
         </div>
 
-        <div className={styles.streakBox}>
-          <span className={styles.streakLabel}>Completion Streak:</span>
-          <span className={styles.streakValue}>
-            {streakCount} {streakCount === 1 ? "Day" : "Days"}
-          </span>
-        </div>
-
-        <p className={styles.subtitle}>Consistency is key, see you tomorrow!</p>
+        <p className={styles.subtitle}>
+          You are on a <strong>{streakCount} {streakCount === 1 ? "Day" : "Days"}</strong> streak. Keep it up!
+        </p>
       </div>
     </div>
   );

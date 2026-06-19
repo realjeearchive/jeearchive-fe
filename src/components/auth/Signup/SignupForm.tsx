@@ -105,7 +105,7 @@ export function SignupForm() {
       <form onSubmit={handleSubmit} className={Styles.signupForm}>
         {!showEmailForm ? (
           <div className="flex flex-col gap-2 w-full max-w-[320px] mx-auto">
-            <GoogleAuthButton label="Continue with Google" />
+            <GoogleAuthButton />
             <AuthButton type="button" variant="secondary" onClick={() => setShowEmailForm(true)}>
               <div className="flex items-center justify-center gap-2 font-medium">
                 <MdEmail size={20} />
