@@ -7,6 +7,6 @@ module.exports=[782904,a=>{"use strict";a.s(["AuthInitializer",()=>b]);let b=(0,
               y=l.getElementsByTagName(r)[0];
               y.parentNode.insertBefore(t,y);
             })(window, document, "clarity", "script", "x9y8ommo8x");
-          `})]}),(0,b.jsx)(f.GoogleAnalytics,{gaId:"G-B8B4870ZYY"})]})},"metadata",0,{title:"JEE Mock Test Platform - jeearchive",description:"jeearchive provides the most realistic and comprehensive practice environment for JEE students, allowing them to test their knowledge and master every topic before the actual exam."}])},650645,a=>{a.n(a.i(827572))}];
+          `})]}),(0,b.jsx)(f.GoogleAnalytics,{gaId:"G-G53L4P6QVJ"})]})},"metadata",0,{title:"JEE Mock Test Platform - jeearchive",description:"jeearchive provides the most realistic and comprehensive practice environment for JEE students, allowing them to test their knowledge and master every topic before the actual exam."}])},650645,a=>{a.n(a.i(827572))}];
 
 //# sourceMappingURL=_0bvjs9e._.js.map
