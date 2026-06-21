@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { FiBarChart2, FiBookOpen, FiClock, FiLock } from "react-icons/fi";
+import { FiBarChart2, FiBookOpen, FiClock, FiLock, FiChevronDown } from "react-icons/fi";
+import AllRecentTestsPopup from "@/components/popups/AllRecentTestsPopup/AllRecentTestsPopup";
 import styles from "./RecentTestsList.module.css";
 
 interface RecentTestUI {
@@ -23,6 +24,7 @@ interface RecentTestsListProps {
 
 export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty }) => {
   const router = useRouter();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const hasData = !isEmpty && data && data.length > 0;
 
@@ -33,12 +35,14 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
   ];
 
   const listData = hasData ? data : dummyData;
+  const displayData = listData.slice(0, 10);
+  const showSeeMore = hasData && listData.length > 10;
 
   return (
     <AnalyticsCard title="Recent Activity">
       <div className={styles.container}>
         <div className={!hasData ? styles.blurredList : styles.list} role="list">
-          {listData.map((test, index) => (
+          {displayData.map((test, index) => (
             <div key={`${test.id}-${index}`} className={styles.row} role="listitem">
               <div className={styles.info}>
                 <span className={styles.title}>{test.title}</span>
@@ -57,7 +61,8 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
                   aria-label={`View analytics for ${test.title}`}
                   disabled={!hasData}
                 >
-                  <FiBarChart2 size={13} aria-hidden="true" />
+                  <FiBarChart2 size={14} aria-hidden="true" />
+                  <span className={styles.btnText}>Analytics</span>
                 </button>
 
                 <button
@@ -67,7 +72,8 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
                   aria-label={`View solutions for ${test.title}`}
                   disabled={!hasData}
                 >
-                  <FiBookOpen size={13} aria-hidden="true" />
+                  <FiBookOpen size={14} aria-hidden="true" />
+                  <span className={styles.btnText}>Solutions</span>
                 </button>
               </div>
             </div>
@@ -81,6 +87,22 @@ export const RecentTestsList: React.FC<RecentTestsListProps> = ({ data, isEmpty 
             <span className={styles.emptyTitle}>Activity Locked</span>
             <span className={styles.emptySub}>Take tests to populate your history</span>
           </div>
+        )}
+
+        {showSeeMore && (
+          <div className={styles.seeMoreContainer}>
+            <button className={styles.seeMoreBtn} onClick={() => setIsPopupOpen(true)}>
+              View Complete History <FiChevronDown size={14} />
+            </button>
+          </div>
+        )}
+
+        {hasData && (
+          <AllRecentTestsPopup 
+            isOpen={isPopupOpen} 
+            onClose={() => setIsPopupOpen(false)} 
+            data={listData} 
+          />
         )}
       </div>
     </AnalyticsCard>

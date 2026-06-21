@@ -4563,7 +4563,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/ssr/node_modules_react-icons_fi_index_mjs_0cqav6z._.js": {
-      "bytes": 22373,
+      "bytes": 21303,
       "imports": [],
       "format": "cjs"
     },
@@ -4577,8 +4577,8 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js": {
-      "bytes": 1164814,
+    ".open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js": {
+      "bytes": 1172400,
       "imports": [],
       "format": "cjs"
     },
@@ -4852,7 +4852,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_dashboard_0ndcpcs._.js": {
-      "bytes": 55409,
+      "bytes": 55460,
       "imports": [],
       "format": "cjs"
     },
@@ -5986,9 +5986,9 @@
           "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0cm-77r._.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js",
+          "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js",
           "kind": "require-call",
-          "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js"
+          "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_app_(dashboard)_layout_tsx_03wc-ky._.js",
@@ -6897,9 +6897,9 @@
           "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0cm-77r._.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js",
+          "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js",
           "kind": "require-call",
-          "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js"
+          "original": "/Users/ayushsingh/Documents/WebProjects/jeearchive-frontend/.open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/chunks/ssr/src_app_(dashboard)_layout_tsx_03wc-ky._.js",
@@ -10866,7 +10866,7 @@
           "bytesInOutput": 23962
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/node_modules_react-icons_fi_index_mjs_0cqav6z._.js": {
-          "bytesInOutput": 22629
+          "bytesInOutput": 21555
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/node_modules_react-icons_io5_index_mjs_06319f9._.js": {
           "bytesInOutput": 4174
@@ -10874,8 +10874,8 @@
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_0cm-77r._.js": {
           "bytesInOutput": 30597
         },
-        ".open-next/server-functions/default/.next/server/chunks/ssr/src_20hy-pr._.js": {
-          "bytesInOutput": 1382029
+        ".open-next/server-functions/default/.next/server/chunks/ssr/src_0i8mkyy._.js": {
+          "bytesInOutput": 1389718
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_app_(dashboard)_layout_tsx_03wc-ky._.js": {
           "bytesInOutput": 1227
@@ -10989,7 +10989,7 @@
           "bytesInOutput": 3275
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_dashboard_0ndcpcs._.js": {
-          "bytesInOutput": 58561
+          "bytesInOutput": 58612
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/[root-of-the-server]__0nreg0v._.js": {
           "bytesInOutput": 2220
@@ -11487,7 +11487,7 @@
           "bytesInOutput": 72218
         }
       },
-      "bytes": 8340830
+      "bytes": 8347496
     }
   }
 }
