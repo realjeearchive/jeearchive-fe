@@ -60,6 +60,7 @@
   border-radius: 6px;
   margin: var(--space-sm) 0;
   filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
 }
 
 .videoWrapper {

@@ -1,12 +1,14 @@
 .container {
   padding: var(--space-lg) var(--space-xl);
   color: var(--text-primary);
+  overflow-x: auto;
 }
 
 .htmlContent {
   font-size: var(--text-base);
   line-height: 1.6;
   font-weight: 400;
+  overflow-x: auto;
 }
 
 .htmlContent p {
@@ -22,6 +24,7 @@
   border-radius: 6px;
   margin: var(--space-sm) 0;
   filter: invert(1) hue-rotate(180deg); 
+  mix-blend-mode: screen;
 }
 
 .imageWrapper {

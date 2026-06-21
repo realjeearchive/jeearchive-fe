@@ -4,9 +4,10 @@
   color: var(--text-primary);
   font-weight: 400;
   padding: var(--space-lg);
+  overflow-x: auto;
 }
 
-.htmlContent { width: 100%; }
+.htmlContent { width: 100%; overflow-x: auto; }
 .htmlContent p { margin-bottom: var(--space-sm); }
 .htmlContent p:last-child { margin-bottom: 0; }
 
@@ -19,6 +20,7 @@
   border-radius: 6px;
   margin: var(--space-sm) 0;
   filter: invert(1) hue-rotate(180deg); 
+  mix-blend-mode: screen;
 }
 
 .imageWrapper { margin-top: var(--space-md); display: inline-block; }

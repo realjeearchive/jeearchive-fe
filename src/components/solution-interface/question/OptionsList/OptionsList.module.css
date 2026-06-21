@@ -46,6 +46,18 @@
   justify-content: center; 
   gap: 4px;
   padding-right: 10px; 
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.contentWrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.contentWrapper::-webkit-scrollbar-thumb {
+  background-color: var(--border-subtle, #36312F);
+  border-radius: 4px;
 }
 
 .text {
@@ -107,6 +119,7 @@
   filter: invert(1) hue-rotate(180deg);
   border-radius: 6px;
   margin-top: var(--space-xs);
+  mix-blend-mode: screen;
 }
 
 .correctBadge {

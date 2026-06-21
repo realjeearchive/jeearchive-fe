@@ -85,7 +85,18 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.contentWrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.contentWrapper::-webkit-scrollbar-thumb {
+  background-color: var(--border-subtle, #36312F);
+  border-radius: 4px;
 }
 
 .text {
@@ -104,6 +115,7 @@
   border-radius: 6px;
   margin: 4px 0;
   filter: invert(1) hue-rotate(180deg); 
+  mix-blend-mode: screen;
 }
 
 .userMarkedLabel {
