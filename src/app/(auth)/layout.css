@@ -268,3 +268,61 @@
     animation-duration: 1ms !important;
   }
 }
+
+/* =========================================
+   🔥 AUTH FOOTER STYLES
+   ========================================= */
+.auth-footer-container {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.auth-footer-links {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--auth-text-secondary);
+}
+
+.auth-footer-links a {
+  text-decoration: none;
+  color: var(--auth-text-secondary);
+  transition: color var(--auth-transition-speed) ease;
+}
+
+.auth-footer-links a:hover {
+  color: var(--text-primary);
+}
+
+.dot-separator {
+  opacity: 0.4;
+}
+
+.auth-footer-disclaimer {
+  font-size: 10px;
+  color: var(--auth-text-secondary);
+  opacity: 0.6;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .auth-footer-links {
+    font-size: 10px;
+  }
+  .auth-footer-disclaimer {
+    font-size: 9px;
+  }
+}

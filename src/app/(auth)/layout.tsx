@@ -7,6 +7,7 @@ import './layout.css';
 
 import { OnboardingCarousel } from '@/components/layout/LoginCarausel';
 import { ChevronUp } from 'lucide-react';
+import Link from 'next/link';
 
 type FormState = 'collapsed' | 'expanded';
 
@@ -89,6 +90,21 @@ export default function AuthLayout({
 
         <div className={`form-content ${isMobileView ? `mobile mobile-${formState}` : ''}`}>
           {children}
+        </div>
+
+        <div className="auth-footer-container">
+          <div className="auth-footer-links">
+            <Link href="/about-us">About Us</Link>
+            <span className="dot-separator">•</span>
+            <Link href="/contact-us">Contact Us</Link>
+            <span className="dot-separator">•</span>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+            <span className="dot-separator">•</span>
+            <Link href="/terms-of-service">Terms of Service</Link>
+          </div>
+          <p className="auth-footer-disclaimer">
+            By continuing, you agree to our Terms of Service & Privacy Policy.
+          </p>
         </div>
       </div>
     </div>

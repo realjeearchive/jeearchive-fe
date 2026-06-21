@@ -12,6 +12,10 @@ const PUBLIC_ROUTES = [
   "/forgot-password",
   "/reset-password",
   "/verify-email",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/about-us",
+  "/contact-us",
 ];
 
 const isPublicRoute = (path: string) =>
