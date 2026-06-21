@@ -2,7 +2,7 @@
 
 import React from "react";
 import styles from "./WelcomeBanner.module.css";
-import { FiPlay, FiBookOpen, FiTrendingUp, FiTarget } from "react-icons/fi";
+import { FiPlay, FiBookOpen, FiBarChart2, FiCheckCircle, FiTarget } from "react-icons/fi";
 import Link from "next/link";
 
 const WelcomeBanner = () => {
@@ -12,42 +12,36 @@ const WelcomeBanner = () => {
 
       <div className={styles.content}>
         <div className={styles.textSide}>
-          <h1 className={styles.title}>Kickstart your JEE Preparation</h1>
+          <h1 className={styles.title}>Welcome to JEE Archive</h1>
           <p className={styles.description}>
-            Your dashboard is currently empty. Take a mock test or practice
-            chapter-wise questions to see your detailed performance analysis,
-            AIR prediction, and weakness insights.
+            Start your preparation by practicing chapter-wise questions to strengthen weak concepts, or take a full-length mock test to experience the real NTA interface.
           </p>
 
           <div className={styles.ctaGroup}>
             <Link
-              href="/previous-year-questions"
-              className={styles.primaryBtn}
-              aria-label="Take your first mock test"
-            >
-              <FiPlay size={16} aria-hidden="true" />
-              <span>Take First Mock Test</span>
-            </Link>
-            <Link
               href="/chapter-wise-questions"
-              className={styles.secondaryBtn}
+              className={styles.primaryBtn}
               aria-label="Practice chapter-wise questions"
             >
               <FiBookOpen size={16} aria-hidden="true" />
               <span>Practice Chapters</span>
             </Link>
+            <Link
+              href="/previous-year-questions"
+              className={styles.secondaryBtn}
+              aria-label="Take your first mock test"
+            >
+              <FiPlay size={16} aria-hidden="true" />
+              <span>Take Mock Test</span>
+            </Link>
           </div>
         </div>
 
-        <div className={styles.imageSide} aria-hidden="true">
-          <div className={styles.visualContainer}>
-            <div className={styles.abstractCircleOuter}>
-              <div className={styles.abstractCircleInner}>
-                <FiTrendingUp size={36} className={styles.mainIcon} />
-              </div>
-              <div className={styles.floatingIcon}>
-                <FiTarget size={18} />
-              </div>
+        <div className={styles.visualSide} aria-hidden="true">
+          <div className={styles.simpleGraphic}>
+            <div className={styles.gridGraphic}></div>
+            <div className={styles.circleGraphic}>
+              <FiTarget size={32} className={styles.centerIcon} />
             </div>
           </div>
         </div>

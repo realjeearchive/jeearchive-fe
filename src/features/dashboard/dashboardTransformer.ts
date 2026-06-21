@@ -84,10 +84,24 @@ export const transformDashboardData = (data: DashboardDataPayload | null, examFi
   const avgTestScore = testAggregates?.totalMarks ? testAggregates.totalMarks / testsIncluded : 0;
   const totalMocks = testAggregates?.testsIncluded || data.totalUniqueMockTests || 0;
 
+  let strongestSubject = "--";
+  let strongestSubtext = "Take more tests to unlock";
+  
+  if (testAggregates?.subjects && testAggregates.subjects.length > 0) {
+    const validSubjects = testAggregates.subjects.filter(s => s.accuracy > 0);
+    if (validSubjects.length > 0) {
+      const best = validSubjects.sort((a, b) => b.accuracy - a.accuracy)[0];
+      strongestSubject = best.subjectName;
+      // Capitalize if it's all lowercase, otherwise leave as is
+      strongestSubject = strongestSubject.charAt(0).toUpperCase() + strongestSubject.slice(1);
+      strongestSubtext = `${best.accuracy.toFixed(1)}% accuracy`;
+    }
+  }
+
   const testKpis = [
     { label: "Mock Accuracy", value: `${avgTestAcc.toFixed(1)}%`, sub: "Avg in recent tests", icon: React.createElement(FiTarget, { size: 16 }) },
     { label: "Avg Score", value: Math.round(avgTestScore).toString(), sub: "Per Test Average", icon: React.createElement(FiActivity, { size: 16 }) },
-    { label: "AIR Prediction", value: "--", sub: "Take more tests to unlock", icon: React.createElement(FiAward, { size: 16 }) },
+    { label: "Strongest Subject", value: strongestSubject, sub: strongestSubtext, icon: React.createElement(FiAward, { size: 16 }) },
     { label: "Mocks Attempted", value: totalMocks.toString(), sub: "Total tests recorded", icon: React.createElement(FiCheckSquare, { size: 16 }) },
   ];
 

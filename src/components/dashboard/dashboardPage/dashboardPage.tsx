@@ -189,24 +189,22 @@ export default function DashboardPage() {
                 ))}
           </section>
 
-          {!newUser && (
-            <>
-              {viewMode === "test" ? (
-                <section className={styles.growthSection} aria-label="Score growth chart">
-                  <ScoreGrowthChart data={uiData.scoreData} />
-                </section>
-              ) : (
-                <section className={styles.bottomRow} aria-label="Subject and question type analysis">
-                  <div className={styles.bottomItem}>
-                    <SubjectBalanceRadar data={uiData.radarData} />
-                  </div>
-                  <div className={styles.bottomItem}>
-                    <QuestionTypeBar data={uiData.typeData} />
-                  </div>
-                </section>
-              )}
-            </>
-          )}
+          <>
+            {viewMode === "test" ? (
+              <section className={styles.growthSection} aria-label="Score growth chart">
+                <ScoreGrowthChart data={uiData.scoreData} />
+              </section>
+            ) : (
+              <section className={styles.bottomRow} aria-label="Subject and question type analysis">
+                <div className={styles.bottomItem}>
+                  <SubjectBalanceRadar data={uiData.radarData} />
+                </div>
+                <div className={styles.bottomItem}>
+                  <QuestionTypeBar data={uiData.typeData} />
+                </div>
+              </section>
+            )}
+          </>
         </main>
       )}
     </>

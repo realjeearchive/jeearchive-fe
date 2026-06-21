@@ -24,9 +24,13 @@
     "[project]/src/app/(exam)/previous-year-questions/[examType]/[year]/tests/[testId]/attempt/submit/page": [],
     "[project]/src/app/(exam)/previous-year-questions/[examType]/[year]/tests/[testId]/page": [],
     "[project]/src/app/_not-found/page": [],
+    "[project]/src/app/about-us/page": [],
+    "[project]/src/app/contact-us/page": [],
     "[project]/src/app/onboarding/page": [],
     "[project]/src/app/page": [],
-    "[project]/src/app/solutions/[testId]/page": []
+    "[project]/src/app/privacy-policy/page": [],
+    "[project]/src/app/solutions/[testId]/page": [],
+    "[project]/src/app/terms-of-service/page": []
   },
   "appUsingSizeAdjust": false,
   "pages": {},

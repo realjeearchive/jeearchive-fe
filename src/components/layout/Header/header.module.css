@@ -7,6 +7,10 @@
   top: -1px;
   z-index: 10;
   background-color: var(--bg-main);
+  
+  /* Stretch to cover the scroll padding so scrolling content doesn't peek through the edges */
+  margin: 0 calc(-1 * var(--space-md));
+  padding: 0 var(--space-md);
 }
 
 .leftSection {
@@ -130,6 +134,13 @@
   .rightSection .iconButton[data-title="Activity"],
   .rightSection .iconButton[data-title="Planner"] {
     display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    margin: 0;
+    padding: 0;
   }
 }
 

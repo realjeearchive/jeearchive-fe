@@ -24,9 +24,13 @@
   "/(exam)/previous-year-questions/[examType]/[year]/tests/[testId]/page": "/previous-year-questions/[examType]/[year]/tests/[testId]",
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",
+  "/about-us/page": "/about-us",
   "/api/percentile/route": "/api/percentile",
+  "/contact-us/page": "/contact-us",
   "/favicon.ico/route": "/favicon.ico",
   "/onboarding/page": "/onboarding",
   "/page": "/",
-  "/solutions/[testId]/page": "/solutions/[testId]"
+  "/privacy-policy/page": "/privacy-policy",
+  "/solutions/[testId]/page": "/solutions/[testId]",
+  "/terms-of-service/page": "/terms-of-service"
 }

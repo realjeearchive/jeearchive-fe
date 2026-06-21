@@ -88,8 +88,23 @@ const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyContent}>
-              <span className={styles.emptyText}>No subject data available</span>
+            <div className={styles.blurredPlaceholder} aria-hidden="true">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                <rect x="10" y="20" width="80" height="10" fill="currentColor" opacity="0.4" />
+                <rect x="10" y="40" width="60" height="10" fill="currentColor" opacity="0.6" />
+                <rect x="10" y="60" width="40" height="10" fill="currentColor" opacity="0.3" />
+                <rect x="10" y="80" width="70" height="10" fill="currentColor" opacity="0.5" />
+                <line x1="10" y1="10" x2="10" y2="95" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+              </svg>
+            </div>
+            <div className={styles.emptyOverlay}>
+              <div className={styles.emptyIconBox} aria-hidden="true">
+                <FiPieChart size={24} />
+              </div>
+              <p className={styles.emptyText}>Unlock Format Analysis</p>
+              <span className={styles.emptySubText}>
+                Complete your first mock test to see your accuracy by question type
+              </span>
             </div>
           </div>
         )}

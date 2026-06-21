@@ -87,8 +87,26 @@ const SubjectBalanceBar: React.FC<SubjectBalanceBarProps> = ({ data }) => {
           />
         ) : (
           <div className={styles.emptyState}>
-            <div className={styles.emptyContent}>
-              <span className={styles.emptyText}>No subject data available</span>
+            <div className={styles.blurredPlaceholder} aria-hidden="true">
+              <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                <polygon points="50,10 90,30 90,70 50,90 10,70 10,30" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
+                <polygon points="50,20 80,35 80,65 50,80 20,65 20,35" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="50" y1="10" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="90" y1="30" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="90" y1="70" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="50" y1="90" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="10" y1="70" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                <line x1="10" y1="30" x2="50" y2="50" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+              </svg>
+            </div>
+            <div className={styles.emptyOverlay}>
+              <div className={styles.emptyIconBox} aria-hidden="true">
+                <FiCrosshair size={24} />
+              </div>
+              <p className={styles.emptyText}>Unlock Subject Balance</p>
+              <span className={styles.emptySubText}>
+                Complete your first mock test to see your accuracy distribution
+              </span>
             </div>
           </div>
         )}
