@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FiActivity, FiTarget, FiCheckCircle, FiCpu } from "react-icons/fi";
+import { FiActivity, FiTarget, FiCheckCircle, FiClock } from "react-icons/fi";
 import styles from "./GlobalStats.module.css";
 
 interface StatItemProps {
@@ -34,11 +34,7 @@ const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: S
       {/* Value + subtitle */}
       <div className={styles.statBottom}>
         <span className={styles.statValue}>{value}</span>
-        {isDashed ? (
-          <span className={styles.statSubtitle}>&mdash;</span>
-        ) : (
-          <span className={styles.statSubtitle}>{subtitle}</span>
-        )}
+        <span className={styles.statSubtitle}>{subtitle}</span>
       </div>
 
       {/* Mini ring indicator */}
@@ -52,21 +48,19 @@ const StatItem = ({ label, value, icon: Icon, accent, subtitle, ringPercent }: S
             stroke="rgba(255,255,255,0.05)"
             strokeWidth="2.5"
           />
-          {!isDashed && (
-            <circle
-              cx="20"
-              cy="20"
-              r="15"
-              fill="none"
-              stroke={accent}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeDasharray={ringCircumference}
-              strokeDashoffset={ringOffset}
-              transform="rotate(-90 20 20)"
-              className={styles.ringProgress}
-            />
-          )}
+          <circle
+            cx="20"
+            cy="20"
+            r="15"
+            fill="none"
+            stroke={accent}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray={ringCircumference}
+            strokeDashoffset={ringOffset}
+            transform="rotate(-90 20 20)"
+            className={styles.ringProgress}
+          />
         </svg>
       </div>
     </article>
@@ -78,7 +72,7 @@ interface GlobalStatsProps {
     testsTaken: number;
     avgScore: number;
     accuracy: number;
-    consistency: number;
+    avgTime: number;
   };
 }
 
@@ -88,7 +82,7 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
   const testsRingPercent = Math.min(100, (data.testsTaken / 20) * 100);
   const scoreRingPercent = isZero ? 0 : (data.avgScore / 300) * 100;
   const accuracyRingPercent = isZero ? 0 : data.accuracy;
-  const consistencyRingPercent = isZero ? 0 : data.consistency;
+  const timeRingPercent = isZero ? 0 : Math.max(0, 100 - (data.avgTime / 120) * 100); // Inverse ring, assuming 120s is average limit
 
   const stats = [
     {
@@ -96,32 +90,32 @@ export const GlobalStats: React.FC<GlobalStatsProps> = ({ data }) => {
       value: data.testsTaken,
       icon: FiActivity,
       accent: "#F59E0B",
-      subtitle: "+2 this month",
+      subtitle: isZero ? "No tests yet" : "+2 this month",
       ringPercent: testsRingPercent,
     },
     {
       label: "Avg Score",
-      value: isZero ? "--" : data.avgScore,
+      value: isZero ? 0 : data.avgScore,
       icon: FiTarget,
       accent: "#3B82F6",
-      subtitle: isZero ? "" : "out of 300",
+      subtitle: isZero ? "out of 300" : "out of 300",
       ringPercent: scoreRingPercent,
     },
     {
       label: "Accuracy",
-      value: isZero ? "--" : `${data.accuracy}%`,
+      value: isZero ? "0%" : `${data.accuracy}%`,
       icon: FiCheckCircle,
       accent: "#10b981",
-      subtitle: isZero ? "" : data.accuracy > 70 ? "Above average" : "Needs attention",
+      subtitle: isZero ? "0% accuracy" : data.accuracy > 70 ? "Above average" : "Needs attention",
       ringPercent: accuracyRingPercent,
     },
     {
-      label: "Consistency",
-      value: isZero ? "--" : data.consistency,
-      icon: FiCpu,
+      label: "Avg Time/Q",
+      value: isZero ? 0 : `${data.avgTime}s`,
+      icon: FiClock,
       accent: "#8b5cf6",
-      subtitle: isZero ? "" : "Score stability",
-      ringPercent: consistencyRingPercent,
+      subtitle: isZero ? "0s" : "Per question speed",
+      ringPercent: timeRingPercent,
     },
   ];
 

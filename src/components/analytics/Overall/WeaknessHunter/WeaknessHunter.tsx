@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
-import { FiCheck } from "react-icons/fi";
+import { FiCheck, FiLock } from "react-icons/fi";
 import styles from "./WeaknessHunter.module.css";
 
 export interface WeaknessItem {
@@ -49,11 +49,18 @@ const FilterPills = ({
 export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
   const [filter, setFilter] = useState<SubjectFilter>("All");
 
-  const hasData = data && data.length > 0;
+  const dummyData = [
+    { chapter: "Thermodynamics", subject: "Physics", accuracy: 35, totalMax: 20 },
+    { chapter: "Kinematics", subject: "Physics", accuracy: 50, totalMax: 15 },
+    { chapter: "Electrostatics", subject: "Physics", accuracy: 80, totalMax: 25 },
+    { chapter: "Chemical Kinetics", subject: "Chemistry", accuracy: 45, totalMax: 16 },
+    { chapter: "Calculus", subject: "Mathematics", accuracy: 25, totalMax: 20 },
+  ];
 
-  const filteredData = hasData
-    ? data.filter((d) => filter === "All" || d.subject === filter)
-    : [];
+  const hasData = data && data.length > 0;
+  const dataToUse = hasData ? data : dummyData;
+
+  const filteredData = dataToUse.filter((d) => filter === "All" || d.subject === filter);
 
   const critical = filteredData
     .filter((d) => d.accuracy < 40)
@@ -95,8 +102,8 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
       }
     >
       <div className={styles.container}>
-        {filteredData.length > 0 ? (
-          <div className={styles.chartWrapper}>
+        <>
+          <div className={!hasData ? styles.blurredChart : styles.chartWrapper}>
             <ResponsiveScatterPlot
               data={chartData}
               theme={analyticsChartTheme}
@@ -156,15 +163,18 @@ export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
               )}
             />
           </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <FiCheck size={24} className={styles.emptyIcon} aria-hidden="true" />
-            <span className={styles.emptyTitle}>No vulnerabilities found</span>
-            <span className={styles.emptySub}>
-              You are performing well in {filter}.
-            </span>
-          </div>
-        )}
+          {!hasData && (
+            <div className={styles.emptyOverlay}>
+              <div className={styles.emptyIconBox} aria-hidden="true">
+                <FiLock size={22} />
+              </div>
+              <span className={styles.emptyTitle}>Threat Matrix Locked</span>
+              <span className={styles.emptySub}>
+                Solve tests to identify your vulnerabilities
+              </span>
+            </div>
+          )}
+        </>
       </div>
     </AnalyticsCard>
   );

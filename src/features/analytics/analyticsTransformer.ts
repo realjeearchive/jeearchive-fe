@@ -29,7 +29,7 @@ export interface TransformedAnalyticsUI {
     testsTaken: number;
     avgScore: number;
     accuracy: number;
-    consistency: number;
+    avgTime: number;
   };
   graph: Array<{ x: string; y: number }>;
   radar: Array<{ subject: string; Accuracy: number }>;
@@ -174,7 +174,7 @@ export const transformAnalyticsData = (
     testsTaken: testReport.totalTests || 0,
     avgScore: Math.round(testReport.overall?.avgScore || 0),
     accuracy: Number((testReport.overall?.avgAccuracy || 0).toFixed(1)),
-    consistency: 8.5,
+    avgTime: Number((testReport.overall?.avgTimePerQuestion || 0).toFixed(1)),
   };
 
   // 2. PERFORMANCE GRAPH

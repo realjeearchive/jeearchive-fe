@@ -28,7 +28,7 @@ import {
 } from "@/features/analytics/analyticsTransformer";
 
 const DATA_EMPTY: TransformedAnalyticsUI = {
-  global: { testsTaken: 0, avgScore: 0, accuracy: 0, consistency: 0 },
+  global: { testsTaken: 0, avgScore: 0, accuracy: 0, avgTime: 0 },
   graph: [],
   radar: [],
   deepDive: [],

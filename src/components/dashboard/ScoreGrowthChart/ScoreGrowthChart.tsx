@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ResponsiveLine } from "@nivo/line";
 import { dashboardNivoTheme } from "@/theme/nivoTheme";
 import styles from "./ScoreGrowthChart.module.css";
-import { FiActivity } from "react-icons/fi";
+import { FiLock } from "react-icons/fi";
 
 interface ScoreGrowthChartProps {
   data: Array<{
@@ -83,7 +83,7 @@ const ScoreGrowthChart: React.FC<ScoreGrowthChartProps> = ({ data }) => {
           {!hasData && (
             <div className={styles.emptyOverlay}>
               <div className={styles.emptyIconBox} aria-hidden="true">
-                <FiActivity size={20} />
+                <FiLock size={20} />
               </div>
               <p className={styles.emptyText}>Performance Trend Locked</p>
               <span className={styles.emptySubText}>

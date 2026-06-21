@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import * as echarts from "echarts";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
-import { FiZap } from "react-icons/fi";
+import { FiZap, FiLock } from "react-icons/fi";
 import styles from "./EfficiencyMatrix.module.css";
 
 interface QuestionTypeEfficiency {
@@ -47,16 +47,26 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
     return data.questionTypes.filter((qt) => qt.accuracy > 0);
   }, [data.questionTypes]);
 
+  const hasData = !isZero && activeTypes.length > 0;
+
   useEffect(() => {
-    if (!chartRef.current || isZero || activeTypes.length === 0) return;
+    if (!chartRef.current) return;
 
     if (chartInstance.current) {
       chartInstance.current.dispose();
     }
 
+    const dummyTypes = [
+      { type: "Single Correct", accuracy: 80, color: "#3B82F6" },
+      { type: "Multiple Correct", accuracy: 60, color: "#10B981" },
+      { type: "Numerical", accuracy: 45, color: "#F59E0B" },
+    ];
+
+    const typesToRender = hasData ? activeTypes : dummyTypes;
+
     chartInstance.current = echarts.init(chartRef.current);
 
-    const chartData = activeTypes.map((qt) => ({
+    const chartData = typesToRender.map((qt) => ({
       value: qt.accuracy,
       name: getShortLabel(qt.type),
       itemStyle: {
@@ -92,7 +102,7 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
         {
           name: "Accuracy",
           type: "pie",
-          radius: activeTypes.length > 3 ? ["25%", "65%"] : ["30%", "70%"],
+          radius: typesToRender.length > 3 ? ["25%", "65%"] : ["30%", "70%"],
           center: ["50%", "45%"],
           roseType: "area",
           itemStyle: {
@@ -127,7 +137,7 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [activeTypes, isZero]);
+  }, [activeTypes, isZero, hasData]);
 
   useEffect(() => {
     return () => {
@@ -139,13 +149,17 @@ export const EfficiencyMatrix: React.FC<EfficiencyMatrixProps> = ({ data }) => {
   return (
     <AnalyticsCard title="Format Efficiency" subtitle="Accuracy by question type">
       <div className={styles.container}>
-        {isZero || activeTypes.length === 0 ? (
-          <div className={styles.emptyState}>
-            <FiZap size={20} className={styles.emptyIcon} aria-hidden="true" />
-            <span>Not enough data yet</span>
-          </div>
-        ) : (
+        <div className={!hasData ? styles.blurredChart : styles.fullChart}>
           <div ref={chartRef} className={styles.chartArea} role="img" aria-label="Pie chart showing accuracy by question type" />
+        </div>
+        {!hasData && (
+          <div className={styles.emptyOverlay}>
+            <div className={styles.emptyIconBox} aria-hidden="true">
+              <FiLock size={22} />
+            </div>
+            <span className={styles.emptyTitle}>Efficiency Locked</span>
+            <span className={styles.emptySub}>Solve questions to view format efficiency</span>
+          </div>
         )}
       </div>
     </AnalyticsCard>

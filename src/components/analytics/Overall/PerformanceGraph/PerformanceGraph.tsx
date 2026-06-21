@@ -5,7 +5,7 @@ import { ResponsiveLine } from "@nivo/line";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
 import styles from "./PerformanceGraph.module.css";
-import { FiTrendingUp } from "react-icons/fi";
+import { FiTrendingUp, FiLock } from "react-icons/fi";
 
 interface GraphPoint {
   x: string | number;
@@ -30,10 +30,20 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
       ? `↓ ${Math.abs(trend)} pts decline`
       : "Stable";
 
+  const dummyData = [
+    { x: "T1", y: 90 },
+    { x: "T2", y: 110 },
+    { x: "T3", y: 105 },
+    { x: "T4", y: 140 },
+    { x: "T5", y: 180 },
+  ];
+
+  const chartDataArray = hasData ? data : dummyData;
+
   const chartData = [
     {
       id: "Score",
-      data: data,
+      data: chartDataArray,
     },
   ];
 
@@ -43,7 +53,7 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
       subtitle={hasData ? trendLabel : "Score progression across tests"}
     >
       <div className={styles.chartContainer}>
-        {hasData ? (
+        <div className={!hasData ? styles.blurredChart : styles.fullChart}>
           <ResponsiveLine
             data={chartData}
             theme={analyticsChartTheme}
@@ -117,13 +127,14 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
             animate={true}
             motionConfig="gentle"
           />
-        ) : (
-          <div className={styles.emptyState}>
+        </div>
+        {!hasData && (
+          <div className={styles.emptyOverlay}>
             <div className={styles.emptyIconBox} aria-hidden="true">
-              <FiTrendingUp size={22} />
+              <FiLock size={22} />
             </div>
-            <span className={styles.emptyTitle}>No performance data</span>
-            <span className={styles.emptySub}>Complete tests to see your trend</span>
+            <span className={styles.emptyTitle}>Performance Trend Locked</span>
+            <span className={styles.emptySub}>Complete your first mock test to generate your growth analytics</span>
           </div>
         )}
       </div>
