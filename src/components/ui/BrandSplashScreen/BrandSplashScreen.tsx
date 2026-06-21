@@ -15,12 +15,12 @@ export const BrandSplashScreen = () => {
           <div className={styles.ringInner}></div>
           
           <Image 
-            src="/images/logo.png" 
+            src="/images/logo.png"
             alt="JEE Archive" 
-            width={40} 
-            height={40} 
-            className={styles.logo} 
-            priority 
+            width={40}
+            height={40}
+            className={styles.logo}
+            priority
           />
         </div>
         

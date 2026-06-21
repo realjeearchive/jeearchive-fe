@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import './layout.css';
 
 import { OnboardingCarousel } from '@/components/layout/LoginCarausel';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 type FormState = 'collapsed' | 'expanded';
@@ -54,6 +54,15 @@ export default function AuthLayout({
 
   return (
     <div className={`onboarding ${isMobileView ? 'mobile-view' : ''}`}>
+      
+      {/* Maintenance Banner */}
+      <div className="maintenance-banner">
+        <AlertCircle size={20} className="maintenance-icon" />
+        <span className="maintenance-text">
+          We are experiencing database issues and are working on a fix.
+        </span>
+      </div>
+
       <div className="carousel-wrapper">
         <OnboardingCarousel />
       </div>
