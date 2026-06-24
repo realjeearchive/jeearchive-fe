@@ -81,11 +81,20 @@ export const useUserStore = create<UserState>()(
             if (!res) return null;
 
             let fetchedStage = null;
-            if (typeof res === 'number') fetchedStage = res;
-            else if (typeof res.data === 'number') fetchedStage = res.data;
-            else if (typeof (res as any).stageNumber === 'number') fetchedStage = (res as any).stageNumber;
+            if (typeof res === 'number') {
+              fetchedStage = res;
+            } else if (typeof res === 'string') {
+              fetchedStage = parseInt(res, 10);
+            } else if (res && res.data !== undefined) {
+              fetchedStage = typeof res.data === 'number' ? res.data : parseInt(String(res.data), 10);
+            } else if (res && typeof res === 'object' && 'stageNumber' in res) {
+              const resObj = res as Record<string, unknown>;
+              fetchedStage = typeof resObj.stageNumber === 'number' 
+                ? resObj.stageNumber 
+                : parseInt(String(resObj.stageNumber), 10);
+            }
 
-            if (fetchedStage === null) {
+            if (fetchedStage === null || isNaN(fetchedStage)) {
               console.warn("syncStageNumber: Could not extract a valid stage number from response", res);
               return null;
             }
