@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 
 // Fallback hardcoded key - ensure this matches your backend config exactly
-const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || '12345678901734567890123456789012';
+const ENCRYPTION_KEY = process.env.NEXT_PUBLIC_ENCRYPTION_KEY || '12345678901734569890123456789012';
 
 export const decryptData = <T>(encryptedString: string): T | null => {
   // 1. Debug: Check if env var is loaded or falling back
