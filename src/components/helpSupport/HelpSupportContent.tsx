@@ -44,7 +44,7 @@ export default function HelpSupportContent() {
   };
 
   const handleEmailClick = () => {
-    window.location.href = "mailto:contactjeearchive@gmail.com";
+    window.location.href = "mailto:techjeearchive@gmail.com";
   };
 
   const handleDiscordClick = () => {
@@ -78,14 +78,14 @@ export default function HelpSupportContent() {
           <button
             className={styles.contactCard}
             onClick={handleEmailClick}
-            aria-label="Send email to contactjeearchive@gmail.com"
+            aria-label="Send email to techjeearchive@gmail.com"
           >
             <div className={styles.contactIconWrap}>
               <FiMail size={18} aria-hidden="true" />
             </div>
             <div className={styles.contactBody}>
               <span className={styles.contactLabel}>Official Support Email</span>
-              <span className={styles.contactValue}>contactjeearchive@gmail.com</span>
+              <span className={styles.contactValue}>techjeearchive@gmail.com</span>
             </div>
             <FiExternalLink size={14} className={styles.contactArrow} aria-hidden="true" />
           </button>
