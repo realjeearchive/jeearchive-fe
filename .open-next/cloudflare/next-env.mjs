@@ -1,3 +1,3 @@
-export const production = {"ENCRYPTION_KEY":"12345678901734569890123456789012","IV_LENGTH":"16","NEXT_PUBLIC_GA_ID":"G-G53L4P6QVJ","NEXT_PUBLIC_CLARITY_ID":"x9y8ommo8x","NEXT_PUBLIC_GOOGLE_CLIENT_ID":"1048397575193-vrsgqcqtmb47pj13ibqarqttllpetm0k.apps.googleusercontent.com","NEXT_PUBLIC_ENCRYPTION_KEY":"12345678901734569890123456789012"};
-export const development = {"NEXT_PUBLIC_ENCRYPTION_KEY":"12345678901734569890123456789012","IV_LENGTH":"16","NEXT_PUBLIC_GA_ID":"G-G53L4P6QVJ","NEXT_PUBLIC_CLARITY_ID":"x9y8ommo8x","NEXT_PUBLIC_GOOGLE_CLIENT_ID":"1048397575193-vrsgqcqtmb47pj13ibqarqttllpetm0k.apps.googleusercontent.com"};
+export const production = {"NEXT_PUBLIC_API_URL":"https://jee-mock-test-backend-5bgg.onrender.com/api","ENCRYPTION_KEY":"12345678901734569890123456789012","IV_LENGTH":"16","NEXT_PUBLIC_GA_ID":"G-G53L4P6QVJ","NEXT_PUBLIC_CLARITY_ID":"x9y8ommo8x","NEXT_PUBLIC_GOOGLE_CLIENT_ID":"1048397575193-vrsgqcqtmb47pj13ibqarqttllpetm0k.apps.googleusercontent.com"};
+export const development = {};
 export const test = {};
