@@ -3664,7 +3664,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
-      "bytes": 343841,
+      "bytes": 343839,
       "imports": [
         {
           "path": "path",
@@ -4714,7 +4714,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_chapterwise_0glq69d._.js": {
-      "bytes": 38812,
+      "bytes": 38793,
       "imports": [],
       "format": "cjs"
     },
@@ -10638,7 +10638,7 @@
           "bytesInOutput": 469
         },
         ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
-          "bytesInOutput": 299061
+          "bytesInOutput": 299059
         },
         ".open-next/cloudflare-templates/shims/throw.js": {
           "bytesInOutput": 215
@@ -10935,7 +10935,7 @@
           "bytesInOutput": 7013
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/src_components_chapterwise_0glq69d._.js": {
-          "bytesInOutput": 39665
+          "bytesInOutput": 39646
         },
         ".open-next/server-functions/default/.next/server/chunks/ssr/191x_chapter-wise-questions_[subject]_[division]_[chapter]_page_actions_1ckf_n1.js": {
           "bytesInOutput": 308
@@ -11487,7 +11487,7 @@
           "bytesInOutput": 72218
         }
       },
-      "bytes": 8347710
+      "bytes": 8347689
     }
   }
 }

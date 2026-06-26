@@ -472,7 +472,7 @@ export const ChapterWiseInterface = ({
           mainActionText={
             activeTab === "question"
               ? isSubmitted
-                ? "Update Answer"
+                ? "Check Answer"
                 : "Check Answer"
               : "Back to Question"
           }
