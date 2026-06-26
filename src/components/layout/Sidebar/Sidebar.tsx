@@ -134,7 +134,7 @@ const Sidebar: FC<SidebarProps> = ({ toggleSidebar }) => {
           {/* Brand */}
           <div className={styles.logoContainer}>
             <Image
-              src="/images/logo.png"
+              src="/images/logo.webp"
               alt="JEEArchive Logo"
               width={32}
               height={32}

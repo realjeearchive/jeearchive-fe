@@ -8,7 +8,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel"
-import { motion } from "framer-motion"
+import { LazyMotion, domAnimation, m as motion } from "framer-motion"
 import Image from "next/image"
 import ExamInterfaceImage from '@/assets/image/test-player.png';
 import {
@@ -50,12 +50,13 @@ export function OnboardingCarousel() {
   )
 
   return (
-    <Carousel
-      plugins={[plugin.current]}
-      className="w-[71%] max-lg:w-full h-full"
-      opts={{ align: "start", loop: true }}
-    >
-      <CarouselContent className="h-full">
+    <LazyMotion features={domAnimation}>
+      <Carousel
+        plugins={[plugin.current]}
+        className="w-[71%] max-lg:w-full h-full"
+        opts={{ align: "start", loop: true }}
+      >
+        <CarouselContent className="h-full">
         {onboardingSlides.map((slide) => (
           <CarouselItem key={slide.id} className="basis-full h-full">
             <div className="py-2 px-0 md:px-4 h-[100dvh] lg:h-screen">
@@ -89,6 +90,7 @@ export function OnboardingCarousel() {
         ))}
       </CarouselContent>
     </Carousel>
+    </LazyMotion>
   )
 }
 
@@ -675,14 +677,13 @@ function CardThreeExamImage() {
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
           className="relative z-20 w-full h-full overflow-hidden shadow-2xl border border-white/40 bg-slate-900"
         >
-          <video
-            src="/videos/interfaceRec.mov"
-            poster={ExamInterfaceImage.src}
-            autoPlay
-            loop
-            muted
-            playsInline
+          <Image
+            src="/images/nta-interface.webp"
+            alt="NTA Interface Live Preview"
+            fill
             className="w-full h-full object-cover"
+            priority={true}
+            sizes="(max-width: 768px) 100vw, 760px"
           />
           <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] rounded-xl" />
         </motion.div>

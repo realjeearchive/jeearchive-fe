@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
-import Logo from '../../../../public/images/logo.png';
+import Logo from '../../../../public/images/logo.webp';
 import { forgotPasswordEmailSchema, type ForgotPasswordEmailInput } from '@/features/auth/schemas';
 import { passwordEmailVerificationRequest } from '@/features/auth/api';
 import { useRouter } from 'next/navigation';

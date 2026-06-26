@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
-import Logo from '../../../../public/images/logo.png';
+import Logo from '../../../../public/images/logo.webp';
 import { signupSchema, type SignupInput } from '@/features/auth/schemas';
 import { GoogleAuthButton } from '../GoogleAuthButton/GoogleAuthButton';
 import { signupRequest, type SignupResponse } from '@/features/auth/api';
@@ -81,7 +81,7 @@ export function SignupForm() {
     <div className={`${Styles.signupFormContainer} relative`}>
       <div className={Styles.signupHeader}>
         {!showEmailForm ? (
-          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
+          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} priority={true} />
         ) : (
           <button 
             type="button" 

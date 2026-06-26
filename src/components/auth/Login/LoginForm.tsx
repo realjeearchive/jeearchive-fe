@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
-import Logo from '../../../../public/images/logo.png';
+import Logo from '../../../../public/images/logo.webp';
 import { loginSchema, type LoginInput } from '@/features/auth/schemas';
 import { loginRequest, type LoginResponse } from '@/features/auth/api';
 import { useAuthStore, useUserStore } from '@/store';
@@ -83,7 +83,7 @@ export function LoginForm() {
     <div className={`${Styles.loginFormContainer} relative`}>
       <div className={Styles.loginHeader}>
         {!showEmailForm ? (
-          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} />
+          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} priority={true} />
         ) : (
           <button 
             type="button" 
