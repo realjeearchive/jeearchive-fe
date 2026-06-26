@@ -16,7 +16,7 @@ import { StreakPopup } from "@/components/popups/StreakPopup/StreakPopup";
 import { DailyGoalPopup } from "@/components/popups/DailyGoalPopup/DailyGoalPopup";
 
 interface HeaderProps {
-  isSidebarOpen: boolean;
+  isSidebarToggled: boolean;
   toggleSidebar: () => void;
 }
 
@@ -56,7 +56,7 @@ const getPageTitle = (path: string): string | null => {
   return formatSegment(meaningfulSegments[meaningfulSegments.length - 1]);
 };
 
-const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
+const Header: React.FC<HeaderProps> = ({ isSidebarToggled, toggleSidebar }) => {
   const router = useRouter();
   const pathname = usePathname();
   const profile = useUserStore((s) => s.profile);
@@ -178,17 +178,15 @@ const Header: React.FC<HeaderProps> = ({ isSidebarOpen, toggleSidebar }) => {
   return (
     <header className={styles.header}>
       <div className={styles.leftSection}>
-        {!isSidebarOpen && (
-          <button
-            type="button"
-            className={styles.sidebarToggle}
-            onClick={toggleSidebar}
-            aria-label="Toggle sidebar"
-            data-title="Toggle sidebar"
-          >
-            <PiSidebar size={18} />
-          </button>
-        )}
+        <button
+          type="button"
+          className={`${styles.sidebarToggle} ${isSidebarToggled ? styles.toggled : ""}`}
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
+          data-title="Toggle sidebar"
+        >
+          <PiSidebar size={18} />
+        </button>
 
         <div className={styles.navArrows}>
           <button

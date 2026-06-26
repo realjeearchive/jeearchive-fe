@@ -21,6 +21,7 @@
   font-family: Inter, sans-serif;
 }
 
+/* Default Desktop State (Open) */
 .sidebarContainer {
   width: 20%;
   min-width: 300px;
@@ -31,16 +32,17 @@
   scrollbar-width: none; /* Hides scrollbar in Firefox */
 }
 
-/* Hides scrollbar in Chrome/Safari/Edge */
-.sidebarContainer::-webkit-scrollbar {
-  display: none; 
-}
-
-.hideSidebar {
+/* Desktop: When toggled (Closed) */
+.sidebarContainer.toggled {
   width: 0;
   min-width: 0;
   opacity: 0;
   overflow: hidden;
+}
+
+/* Hides scrollbar in Chrome/Safari/Edge */
+.sidebarContainer::-webkit-scrollbar {
+  display: none; 
 }
 
 .dashboard {
@@ -86,6 +88,7 @@
 }
 
 @media (max-width: 900px) {
+  /* Mobile: Default State (Closed) */
   .sidebarContainer {
     position: absolute;
     left: var(--space-sm);
@@ -95,8 +98,9 @@
     background-color: var(--bg-surface);
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
     border-radius: var(--shape-radius-sm);
-    transform: translateX(0);
-    opacity: 1;
+    
+    transform: translateX(-100%);
+    opacity: 0;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
     
     /* Ensure mobile sidebar also scrolls internally */
@@ -104,10 +108,12 @@
     overflow-y: auto;
   }
 
-  .hideSidebar {
-    transform: translateX(-100%);
-    opacity: 0;                          
-    transition: all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+  /* Mobile: When toggled (Open) */
+  .sidebarContainer.toggled {
+    transform: translateX(0);
+    opacity: 1;
+    width: 280px;
+    min-width: 280px;
   }
 
   .dashboard {
@@ -127,4 +133,10 @@
 
 @keyframes fadeIn {
   to { opacity: 1; }
+}
+
+@media (min-width: 901px) {
+  .mobileOverlay {
+    display: none !important;
+  }
 }

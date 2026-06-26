@@ -39,6 +39,30 @@
   color: var(--icon-active);
 }
 
+@media (min-width: 901px) {
+  /* Desktop: Default open (no toggle) -> Hide button */
+  .sidebarToggle {
+    display: none !important;
+  }
+  
+  /* Desktop: When toggled (sidebar closed) -> Show button */
+  .sidebarToggle.toggled {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Mobile: Default closed (no toggle) -> Show button */
+  .sidebarToggle {
+    display: flex;
+  }
+
+  /* Mobile: When toggled (sidebar open) -> Hide button */
+  .sidebarToggle.toggled {
+    display: none !important;
+  }
+}
+
 .navArrows {
   display: flex;
   align-items: center;

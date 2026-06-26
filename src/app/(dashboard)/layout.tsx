@@ -15,24 +15,10 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   // 1. Hooks must be at the top
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarToggled, setIsSidebarToggled] = useState<boolean>(false);
   const initialized = useAuthStore((s) => s.initialized);
   const accessToken = useAuthStore((s) => s.accessToken);
   const authed = !!accessToken;
-
-  // 2. Initial Resize Logic
-  useEffect(() => {
-    const handleInitialResize = () => {
-      if (typeof window !== "undefined") {
-        if (window.innerWidth <= 900) {
-          setIsSidebarOpen(false);
-        } else {
-          setIsSidebarOpen(true);
-        }
-      }
-    };
-    handleInitialResize();
-  }, []);
 
   // --- FULL SCREEN DETECTION LOGIC ---
   const isChapterTestPage = 
@@ -59,13 +45,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   // 4. Standard Dashboard UI
   const toggleSidebar = (): void => {
-    setIsSidebarOpen((prev) => !prev);
+    setIsSidebarToggled((prev) => !prev);
   };
 
   const handleOverlayClick = () => {
-    if (typeof window !== "undefined" && window.innerWidth <= 900) {
-      setIsSidebarOpen(false);
-    }
+    // Only used on mobile to close the sidebar. 
+    // On mobile, isSidebarToggled = true means OPEN. 
+    // So setting to false closes it.
+    setIsSidebarToggled(false);
   };
 
   return (
@@ -76,7 +63,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <AnnouncementBar />
 
       <div className={styles.appWrap}>
-        {isSidebarOpen && typeof window !== "undefined" && window.innerWidth <= 900 && (
+        {isSidebarToggled && (
           <div
             className={styles.mobileOverlay}
             onClick={handleOverlayClick}
@@ -85,14 +72,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         <div
           className={`${styles.sidebarContainer} ${
-            !isSidebarOpen ? styles.hideSidebar : ""
+            isSidebarToggled ? styles.toggled : ""
           }`}
         >
           <Sidebar toggleSidebar={toggleSidebar} />
         </div>
 
         <main className={styles.dashboard}>
-          <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          <Header isSidebarToggled={isSidebarToggled} toggleSidebar={toggleSidebar} />
           <div className={styles.dashboardRight}>{children}</div>
         </main>
       </div>
