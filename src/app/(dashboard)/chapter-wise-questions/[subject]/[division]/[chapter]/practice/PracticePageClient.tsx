@@ -10,6 +10,7 @@ import {
   SectionType,
 } from "@/components/chapterwise/ChapterWiseInterface";
 import { chapterConfig } from "@/features/chapterWise/config";
+import { sortQuestions } from "@/features/chapterWise/utils";
 import { Loader } from "@/components/ui/loader";
 
 interface PracticePageClientProps {
@@ -111,9 +112,9 @@ export function PracticePageClient({
           });
         }
 
-        sourceQuestions.sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0));
+        const sortedQuestions = sortQuestions(sourceQuestions);
 
-        const mapped: QuestionData[] = sourceQuestions.map((q, index) => {
+        const mapped: QuestionData[] = sortedQuestions.map((q, index) => {
           const options = [];
           if (
             (q.type === "SingleCorrect" || q.type === "MultiCorrect" || q.type === "Comprehension") &&
