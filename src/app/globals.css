@@ -135,9 +135,9 @@ body {
   --color-avatar-border: #6C4DB6;
 
   /* Global Subject Colors */
-  --subject-physics: #60A5FA;
-  --subject-chemistry: #22C55E;
-  --subject-maths: #FB7185;
+  --subject-physics: #e8c1a0;
+  --subject-chemistry: #f47560;
+  --subject-maths: #f1e15b;
 
   /* Gamification & Leaderboard Colors */
   --color-streak-yellow: #FBBF24;

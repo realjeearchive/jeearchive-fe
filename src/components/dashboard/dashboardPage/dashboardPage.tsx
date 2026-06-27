@@ -9,6 +9,7 @@ import DashboardHeader, {
 import KpiCard from "@/components/dashboard/KpiCard/KpiCard";
 import PyqProgressCard from "@/components/dashboard/PyqProgressCard/PyqProgressCard";
 import ScoreGrowthChart from "@/components/dashboard/ScoreGrowthChart/ScoreGrowthChart";
+import SubjectScoreChart from "@/components/dashboard/SubjectScoreChart/SubjectScoreChart";
 import SubjectBalanceRadar from "@/components/dashboard/SubjectBalanceRadar/SubjectBalanceRadar";
 import QuestionTypeBar from "@/components/dashboard/QuestionTypeBar/QuestionsTypeBar";
 import TestListSection, {
@@ -191,9 +192,16 @@ export default function DashboardPage() {
 
           <>
             {viewMode === "test" ? (
-              <section className={styles.growthSection} aria-label="Score growth chart">
-                <ScoreGrowthChart data={uiData.scoreData} />
-              </section>
+              <>
+                <section className={styles.growthSection} aria-label="Score growth chart">
+                  <ScoreGrowthChart data={uiData.scoreData} />
+                </section>
+                <section className={styles.bottomRow} aria-label="Subject Score Breakdown">
+                  <div style={{ width: "100%" }}>
+                    <SubjectScoreChart data={uiData.subjectScoreTrend} />
+                  </div>
+                </section>
+              </>
             ) : (
               <section className={styles.bottomRow} aria-label="Subject and question type analysis">
                 <div className={styles.bottomItem}>

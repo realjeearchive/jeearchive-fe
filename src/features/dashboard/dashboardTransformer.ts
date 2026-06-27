@@ -152,6 +152,15 @@ export const transformDashboardData = (data: DashboardDataPayload | null, examFi
     accuracy: Math.round(qt.accuracy || 0) // Rounding for cleaner tooltip display
   }));
 
+  const subjectScoreTrend = last5Tests.map((test: DashboardTestAttempt, index: number) => {
+    return {
+      test: `T${last5Tests.length - index}`,
+      Physics: test.subjects?.physics?.marks || 0,
+      Chemistry: test.subjects?.chemistry?.marks || 0,
+      Mathematics: test.subjects?.math?.marks || 0,
+    };
+  }).reverse();
+
   const recentTestItems = last5Tests.map((test) => {
     const dateObj = new Date(test.createdAt);
     const formattedDate = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -178,5 +187,5 @@ export const transformDashboardData = (data: DashboardDataPayload | null, examFi
     };
   });
 
-  return { progress, testKpis, chapterKpis, scoreData, radarData, typeData, recentTestItems };
+  return { progress, testKpis, chapterKpis, scoreData, radarData, typeData, subjectScoreTrend, recentTestItems };
 };
