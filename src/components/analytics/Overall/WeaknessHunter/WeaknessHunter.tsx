@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
@@ -48,50 +48,53 @@ const FilterPills = ({
 
 export const WeaknessHunter: React.FC<WeaknessHunterProps> = ({ data }) => {
   const [filter, setFilter] = useState<SubjectFilter>("All");
-
-  const dummyData = [
-    { chapter: "Thermodynamics", subject: "Physics", accuracy: 35, totalMax: 20 },
-    { chapter: "Kinematics", subject: "Physics", accuracy: 50, totalMax: 15 },
-    { chapter: "Electrostatics", subject: "Physics", accuracy: 80, totalMax: 25 },
-    { chapter: "Chemical Kinetics", subject: "Chemistry", accuracy: 45, totalMax: 16 },
-    { chapter: "Calculus", subject: "Mathematics", accuracy: 25, totalMax: 20 },
-  ];
-
+  
   const hasData = data && data.length > 0;
-  const dataToUse = hasData ? data : dummyData;
 
-  const filteredData = dataToUse.filter((d) => filter === "All" || d.subject === filter);
+  const chartData = useMemo(() => {
+    const dummyData = [
+      { chapter: "Thermodynamics", subject: "Physics", accuracy: 35, totalMax: 20 },
+      { chapter: "Kinematics", subject: "Physics", accuracy: 50, totalMax: 15 },
+      { chapter: "Electrostatics", subject: "Physics", accuracy: 80, totalMax: 25 },
+      { chapter: "Chemical Kinetics", subject: "Chemistry", accuracy: 45, totalMax: 16 },
+      { chapter: "Calculus", subject: "Mathematics", accuracy: 25, totalMax: 20 },
+    ];
 
-  const critical = filteredData
-    .filter((d) => d.accuracy < 40)
-    .map((d) => ({
-      x: d.totalMax,
-      y: d.accuracy,
-      chapter: d.chapter,
-      subject: d.subject,
-    }));
-  const weak = filteredData
-    .filter((d) => d.accuracy >= 40 && d.accuracy < 60)
-    .map((d) => ({
-      x: d.totalMax,
-      y: d.accuracy,
-      chapter: d.chapter,
-      subject: d.subject,
-    }));
-  const moderate = filteredData
-    .filter((d) => d.accuracy >= 60 && d.accuracy <= 100)
-    .map((d) => ({
-      x: d.totalMax,
-      y: d.accuracy,
-      chapter: d.chapter,
-      subject: d.subject,
-    }));
+    const dataToUse = hasData ? data : dummyData;
 
-  const chartData = [
-    { id: "Critical (<40%)", data: critical },
-    { id: "Weak (40-60%)", data: weak },
-    { id: "Moderate (>60%)", data: moderate },
-  ].filter((series) => series.data.length > 0);
+    const filteredData = dataToUse.filter((d) => filter === "All" || d.subject === filter);
+
+    const critical = filteredData
+      .filter((d) => d.accuracy < 40)
+      .map((d) => ({
+        x: d.totalMax,
+        y: d.accuracy,
+        chapter: d.chapter,
+        subject: d.subject,
+      }));
+    const weak = filteredData
+      .filter((d) => d.accuracy >= 40 && d.accuracy < 60)
+      .map((d) => ({
+        x: d.totalMax,
+        y: d.accuracy,
+        chapter: d.chapter,
+        subject: d.subject,
+      }));
+    const moderate = filteredData
+      .filter((d) => d.accuracy >= 60 && d.accuracy <= 100)
+      .map((d) => ({
+        x: d.totalMax,
+        y: d.accuracy,
+        chapter: d.chapter,
+        subject: d.subject,
+      }));
+
+    return [
+      { id: "Critical (<40%)", data: critical },
+      { id: "Weak (40-60%)", data: weak },
+      { id: "Moderate (>60%)", data: moderate },
+    ].filter((series) => series.data.length > 0);
+  }, [data, filter, hasData]);
 
   return (
     <AnalyticsCard

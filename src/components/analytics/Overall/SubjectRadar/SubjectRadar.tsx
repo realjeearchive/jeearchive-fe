@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { ResponsiveRadar } from "@nivo/radar";
 import type { RadarSliceTooltipProps } from "@nivo/radar";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
@@ -37,22 +37,27 @@ const toRadarData = (items: RadarDataPoint[]): Record<string, unknown>[] => {
 
 export const SubjectRadar: React.FC<SubjectRadarProps> = ({ data }) => {
   const hasData = data && data.length > 0 && data.some((item) => item.Accuracy > 0);
-  const dummyData = [
-    { subject: "Physics", Accuracy: 85 },
-    { subject: "Chemistry", Accuracy: 92 },
-    { subject: "Mathematics", Accuracy: 78 },
-  ];
+  
+  const { radarData, strongest, weakest } = useMemo(() => {
+    const dummyData = [
+      { subject: "Physics", Accuracy: 85 },
+      { subject: "Chemistry", Accuracy: 92 },
+      { subject: "Mathematics", Accuracy: 78 },
+    ];
 
-  const radarData = toRadarData(hasData ? data : dummyData);
+    const radarData = toRadarData(hasData ? data : dummyData);
 
-  let strongest: RadarDataPoint | null = null;
-  let weakest: RadarDataPoint | null = null;
+    let strongest: RadarDataPoint | null = null;
+    let weakest: RadarDataPoint | null = null;
 
-  if (hasData) {
-    const sorted = [...data].sort((a, b) => b.Accuracy - a.Accuracy);
-    strongest = sorted[0];
-    weakest = sorted[sorted.length - 1];
-  }
+    if (hasData) {
+      const sorted = [...data].sort((a, b) => b.Accuracy - a.Accuracy);
+      strongest = sorted[0];
+      weakest = sorted[sorted.length - 1];
+    }
+
+    return { radarData, strongest, weakest };
+  }, [data, hasData]);
 
   return (
     <AnalyticsCard title="Subject Balance" subtitle="Average accuracy distribution">

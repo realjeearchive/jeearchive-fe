@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import styles from "./QuestionBlock.module.css";
 import type { TestQuestion } from "@/features/tests/types";
 import type { QuestionState } from "@/features/tests/playertypes";
@@ -14,6 +15,21 @@ interface Props {
   onSelectOption: (value: string) => void;
 }
 
+// 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
+const preprocessHtml = (html: string) => {
+  if (!html) return "";
+
+  // Clean rogue HTML tags INSIDE math blocks safely.
+  const stripTags = (str: string) => str.replace(/<\/?\s*[a-zA-Z][^>]*>/g, '');
+
+  const processed = html
+    .replace(/\$\$([\s\S]*?)\$\$/g, (match) => stripTags(match))
+    .replace(/\\\[([\s\S]*?)\\\]/g, (match) => stripTags(match))
+    .replace(/\\\(([\s\S]*?)\\\)/g, (match) => stripTags(match));
+
+  return processed;
+};
+
 export function QuestionBlock({
   question,
   questionState,
@@ -22,26 +38,7 @@ export function QuestionBlock({
   const { fontSize } = useTestPlayerAccessibility();
   const isSelected = (optId: string) => questionState.selectedOptionIds.includes(optId);
 
-  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
-  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
-  // 🔥 THE FIX: Safely preprocess the HTML before the parser touches it
-  const preprocessHtml = (html: string) => {
-    if (!html) return "";
-
-    // Clean rogue HTML tags INSIDE math blocks safely.
-    // This regex strictly targets tags starting with letters (like <p>, <br>) so it NEVER hurts math like < or >.
-    const stripTags = (str: string) => str.replace(/<\/?\s*[a-zA-Z][^>]*>/g, '');
-
-    // Uses [\s\S]*? to safely match across multiple lines without causing the ES2018 compiler error
-    const processed = html
-      .replace(/\$\$([\s\S]*?)\$\$/g, (match) => stripTags(match))
-      .replace(/\\\[([\s\S]*?)\\\]/g, (match) => stripTags(match))
-      .replace(/\\\(([\s\S]*?)\\\)/g, (match) => stripTags(match));
-
-    return processed;
-  };
-
-  const parserOptions: HTMLReactParserOptions = {
+  const parserOptions: HTMLReactParserOptions = React.useMemo(() => ({
     replace: (domNode: DOMNode) => {
       if (domNode.type === 'text') {
          if (domNode.data && domNode.data.trim() !== '') {
@@ -58,24 +55,26 @@ export function QuestionBlock({
               {...element.attribs}
               className={styles.questionImage} 
               alt={element.attribs.alt || "Question related image"}
+              loading="lazy"
+              decoding="async"
             />
           );
         }
       }
     }
-  };
+  }), []);
 
-  const renderContent = (htmlContent: string) => {
+  const renderContent = React.useCallback((htmlContent: string) => {
     if (!htmlContent) return null;
     const safeHtml = preprocessHtml(htmlContent);
     return <div className={styles.htmlContent}>{parse(safeHtml, parserOptions)}</div>;
-  };
+  }, [parserOptions]);
 
-  const renderOptionText = (text: string) => {
+  const renderOptionText = React.useCallback((text: string) => {
       if (!text) return null;
       const safeHtml = preprocessHtml(text);
       return parse(safeHtml, parserOptions); 
-  };
+  }, [parserOptions]);
 
   const numericalInputId = `numerical-input-${question.id}`;
   const isMulti = question.kind === "multi";

@@ -7,7 +7,19 @@ import { useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { fetchTestSession } from "@/features/tests/api";
-import { TestPlayerLayout } from "@/components/testPlayer/TestPlayerLayout/TestPlayerLayout";
+import dynamic from "next/dynamic";
+
+const TestPlayerLayout = dynamic(
+  () => import("@/components/testPlayer/TestPlayerLayout/TestPlayerLayout").then((mod) => mod.TestPlayerLayout),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-screen items-center justify-center bg-zinc-900 text-white">
+        <Loader label="Loading Test Interface..." size="h-6 w-6" />
+      </div>
+    )
+  }
+);
 import { Loader } from "@/components/ui/loader";
 import type {
   HierarchicalSessionData,

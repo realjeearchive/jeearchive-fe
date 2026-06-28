@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./analysis.module.css";
-import { AnalysisLayout } from "@/components/analytics/TestAnalysis/AnalysisLayout";
+import dynamic from "next/dynamic";
+
+const AnalysisLayout = dynamic(() => import("@/components/analytics/TestAnalysis/AnalysisLayout").then(mod => mod.AnalysisLayout));
 import { FiDownload, FiBookOpen, FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
 import { Loader } from "@/components/ui/loader";
 

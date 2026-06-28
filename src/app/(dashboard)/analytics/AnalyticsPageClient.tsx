@@ -7,13 +7,15 @@ import AnalyticsHeader, {
   ExamTypeUI,
 } from "@/components/analytics/AnalyticsHeader/AnalyticsHeader";
 
-import { GlobalStats } from "@/components/analytics/Overall/GlobalStats/GlobalStats";
-import { PerformanceGraph } from "@/components/analytics/Overall/PerformanceGraph/PerformanceGraph";
-import { SubjectRadar } from "@/components/analytics/Overall/SubjectRadar/SubjectRadar";
-import { RecentTestsList } from "@/components/analytics/Overall/RecentTestsList/RecentTestsList";
-import { SubjectDeepDive } from "@/components/analytics/Overall/SubjectDeepDive/SubjectDeepDive";
-import { EfficiencyMatrix } from "@/components/analytics/Overall/EfficiencyMatrix/EfficiencyMatrix";
-import { WeaknessHunter } from "@/components/analytics/Overall/WeaknessHunter/WeaknessHunter";
+import dynamic from "next/dynamic";
+
+const GlobalStats = dynamic(() => import("@/components/analytics/Overall/GlobalStats/GlobalStats").then(mod => mod.GlobalStats));
+const PerformanceGraph = dynamic(() => import("@/components/analytics/Overall/PerformanceGraph/PerformanceGraph").then(mod => mod.PerformanceGraph));
+const SubjectRadar = dynamic(() => import("@/components/analytics/Overall/SubjectRadar/SubjectRadar").then(mod => mod.SubjectRadar));
+const RecentTestsList = dynamic(() => import("@/components/analytics/Overall/RecentTestsList/RecentTestsList").then(mod => mod.RecentTestsList));
+const SubjectDeepDive = dynamic(() => import("@/components/analytics/Overall/SubjectDeepDive/SubjectDeepDive").then(mod => mod.SubjectDeepDive));
+const EfficiencyMatrix = dynamic(() => import("@/components/analytics/Overall/EfficiencyMatrix/EfficiencyMatrix").then(mod => mod.EfficiencyMatrix));
+const WeaknessHunter = dynamic(() => import("@/components/analytics/Overall/WeaknessHunter/WeaknessHunter").then(mod => mod.WeaknessHunter));
 import { Loader } from "@/components/ui/loader";
 
 import { RateLimitModal } from "@/components/ui/RateLimitModal/RateLimitModal";

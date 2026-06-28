@@ -20,7 +20,18 @@ export async function generateMetadata({ params }: AttemptPageProps): Promise<Me
   };
 }
 
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
+
 export default async function AttemptPage(props: AttemptPageProps) {
   const { examType, year, testId } = await props.params;
-  return <AttemptClient examType={examType} year={year} testId={testId} />;
+  return (
+    <Suspense fallback={
+      <main className="flex h-screen items-center justify-center bg-[var(--bg-main)]">
+        <Loader label="Preparing test environment..." />
+      </main>
+    }>
+      <AttemptClient examType={examType} year={year} testId={testId} />
+    </Suspense>
+  );
 }

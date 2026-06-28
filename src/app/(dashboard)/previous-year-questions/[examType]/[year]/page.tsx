@@ -29,7 +29,18 @@ export async function generateMetadata({ params }: YearPageProps): Promise<Metad
   };
 }
 
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
+
 export default async function YearPage(props: YearPageProps) {
   const { examType, year } = await props.params;
-  return <YearPageClient examType={examType} year={year} />;
+  return (
+    <Suspense fallback={
+      <main className="flex h-screen items-center justify-center bg-[var(--bg-main)]">
+        <Loader label={`Loading ${year} papers...`} />
+      </main>
+    }>
+      <YearPageClient examType={examType} year={year} />
+    </Suspense>
+  );
 }

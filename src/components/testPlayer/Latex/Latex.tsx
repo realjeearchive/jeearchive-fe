@@ -8,7 +8,7 @@ interface LatexProps {
   children: string;
 }
 
-export default function Latex({ children }: LatexProps) {
+const Latex = ({ children }: LatexProps) => {
   if (!children) return null;
 
   // --- 1. SANITIZATION LAYER FOR BACKEND FRAGMENTS ---
@@ -51,7 +51,7 @@ export default function Latex({ children }: LatexProps) {
 }
 
 // --- SUB-COMPONENT: Safe KaTeX Compilation Engine ---
-function RenderMath({ math, block }: { math: string; block: boolean }) {
+const RenderMath = React.memo(({ math, block }: { math: string; block: boolean }) => {
   let cleanedMath = math
     .replace(/<br\s*\/?>/gi, " ")
     // 🔥 THE FIX: Strictly strip ONLY valid HTML tags (starting with letters).
@@ -134,9 +134,9 @@ function RenderMath({ math, block }: { math: string; block: boolean }) {
       }
     />
   );
-}
+});
 
-function SmartText({ text }: { text: string }) {
+const SmartText = React.memo(({ text }: { text: string }) => {
   const tokens = text.split(/(\\[a-zA-Z]+(?:\{[^}]*\})*)/g);
   return (
     <>
@@ -148,4 +148,6 @@ function SmartText({ text }: { text: string }) {
       })}
     </>
   );
-}
+});
+
+export default React.memo(Latex);

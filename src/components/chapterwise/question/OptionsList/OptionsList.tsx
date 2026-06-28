@@ -52,6 +52,8 @@ export const OptionsList = ({
               {...element.attribs}
               className={styles.parsedImage}
               alt={element.attribs.alt || "Option related image"}
+              loading="lazy"
+              decoding="async"
             />
           );
         }

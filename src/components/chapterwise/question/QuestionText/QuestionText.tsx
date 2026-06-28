@@ -32,6 +32,8 @@ export const QuestionText = ({ content, hasImage, imageUrl }: QuestionTextProps)
               src={src}
               alt={alt || "Question diagram or figure"}
               className={`${styles.parsedImage} ${_className || ""}`}
+              loading="lazy"
+              decoding="async"
               {...restAttribs}
             />
           );
@@ -53,6 +55,8 @@ export const QuestionText = ({ content, hasImage, imageUrl }: QuestionTextProps)
             src={imageUrl}
             alt="Question diagram"
             className={styles.parsedImage}
+            loading="lazy"
+            decoding="async"
           />
         </div>
       )}

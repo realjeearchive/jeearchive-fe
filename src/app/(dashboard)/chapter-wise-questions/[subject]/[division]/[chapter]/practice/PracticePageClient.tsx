@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { fetchChapterInfo } from "@/features/chapterWise/api";
 import {
-  ChapterWiseInterface,
   QuestionData,
   Subject,
   SectionType,
@@ -12,6 +12,11 @@ import {
 import { chapterConfig } from "@/features/chapterWise/config";
 import { sortQuestions } from "@/features/chapterWise/utils";
 import { Loader } from "@/components/ui/loader";
+
+const ChapterWiseInterface = dynamic(
+  () => import("@/components/chapterwise/ChapterWiseInterface").then((mod) => mod.ChapterWiseInterface),
+  { ssr: false } // Client-side only because it relies on window and heavy DOM measurements
+);
 
 interface PracticePageClientProps {
   subject: string;

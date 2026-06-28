@@ -74,14 +74,17 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
       submissions: initialSubmissions,
       bookmarkedQuestions: initialBookmarks,
       revealedSolutions: {},
-      questionTimes: {},
-      isTimerRunning: false, 
+      questionTimes: { [startingId]: 0 }, // Reset time for initial question
+      isTimerRunning: true, // Always start timer
     });
   },
 
-  setActiveQuestionId: (id) => set({ 
-    activeQuestionId: id,
-    isTimerRunning: false 
+  setActiveQuestionId: (id) => set((state) => {
+    return {
+      activeQuestionId: id,
+      isTimerRunning: true, // Always start timer on navigation
+      questionTimes: { ...state.questionTimes, [id]: 0 } // Reset time to 0
+    };
   }),
 
   selectOption: (questionId, optionId) => {

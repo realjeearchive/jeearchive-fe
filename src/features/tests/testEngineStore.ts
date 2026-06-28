@@ -17,6 +17,7 @@ export interface SavedSessionData {
   testId: string;
   questionsById: Record<string, QuestionState>;
   sectionTimeSpent: Record<string, number>; 
+  questionTimeSpent: Record<string, number>;
   timeLeftSeconds: number;
   activeQuestionId: string | null;
   activeSectionId: string | null;
@@ -33,6 +34,7 @@ interface TestEngineState {
   sections: TestSection[];
   timeLeftSeconds: number;
   sectionTimeSpent: Record<string, number>;
+  questionTimeSpent: Record<string, number>; // 🔥 FIX: Extracted to prevent questionsById re-renders every second
   activeSectionId: string | null;
   activeQuestionId: string | null;
   questionsById: Record<string, QuestionState>;
@@ -75,6 +77,7 @@ const saveToLocal = (state: TestEngineState) => {
     testId: state.testId,
     questionsById: state.questionsById,
     sectionTimeSpent: state.sectionTimeSpent, 
+    questionTimeSpent: state.questionTimeSpent,
     timeLeftSeconds: state.timeLeftSeconds,
     activeQuestionId: state.activeQuestionId,
     activeSectionId: state.activeSectionId,
@@ -132,7 +135,7 @@ const buildPayload = (state: TestEngineState, status: "IN_PROGRESS" | "COMPLETED
       userAnswer: q.numericAnswer ? [q.numericAnswer] : q.selectedOptionIds, 
       markedForReview: q.status === "markedForReview" || q.status === "answeredAndMarked",
       isVisited: q.isVisited,
-      timeSpent: q.timeSpentSeconds,
+      timeSpent: state.questionTimeSpent[q.questionId] || 0,
       status: q.status
     };
   });
@@ -151,9 +154,10 @@ const buildPayload = (state: TestEngineState, status: "IN_PROGRESS" | "COMPLETED
 };
 
 // --- HIERARCHICAL PARSER ---
-function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestSection[], qMap: Record<string, QuestionState> } {
+function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestSection[], qMap: Record<string, QuestionState>, qTimeSpentMap: Record<string, number> } {
   const sections: TestSection[] = [];
   const qMap: Record<string, QuestionState> = {};
+  const qTimeSpentMap: Record<string, number> = {};
   let globalCounter = 0;
 
   const ignoreKeys = ['session', 'paper', 'success', 'message'];
@@ -203,13 +207,15 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
             status: "NOT_VISITED" 
         };
 
+        qTimeSpentMap[q.id] = att.timeSpent || 0;
+
         qMap[q.id] = {
           questionId: q.id,
           globalQuestionNumber: tq.globalQuestionNumber,
           localQuestionNumber: tq.localQuestionNumber, 
           status: mapBackendStatusToFrontend(att),
           isVisited: att.isVisited || false,
-          timeSpentSeconds: att.timeSpent || 0,
+          timeSpentSeconds: att.timeSpent || 0, // Keeping for backwards compat temporarily
           isBookmarked: false,
           selectedOptionIds: (tq.kind !== 'numerical' && att.userAnswer) ? att.userAnswer : [],
           numericAnswer: (tq.kind === 'numerical' && att.userAnswer) ? att.userAnswer[0] : null
@@ -225,7 +231,7 @@ function parseHierarchicalData(data: HierarchicalSessionData): { sections: TestS
       });
     });
   });
-  return { sections, qMap };
+  return { sections, qMap, qTimeSpentMap };
 }
 
 function moveToNextQuestion(get: StoreApi<TestEngineState>['getState'], set: StoreApi<TestEngineState>['setState']) {
@@ -266,6 +272,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     sections: [],
     timeLeftSeconds: 0,
     sectionTimeSpent: {}, 
+    questionTimeSpent: {},
     activeSectionId: null,
     activeQuestionId: null,
     questionsById: {},
@@ -276,7 +283,7 @@ export const useTestEngineStore = create<TestEngineState>()(
 
     initFromBackendSession: (data: HierarchicalSessionData) => {
       const { session, paper } = data;
-      const { sections, qMap } = parseHierarchicalData(data);
+      const { sections, qMap, qTimeSpentMap } = parseHierarchicalData(data);
 
       const initialQ = session.activeQuestionId || (sections[0]?.questions[0]?.id || null);
       const initialSec = initialQ ? (sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null) : null;
@@ -309,6 +316,7 @@ export const useTestEngineStore = create<TestEngineState>()(
         questionsById: qMap,
         sections: sections,
         sectionTimeSpent: {},
+        questionTimeSpent: qTimeSpentMap, // 🔥 ADD THIS TO PREVENT TIMER RE-RENDERS
         paperMetadata: {
           year: paper.year,
           month: paper.month,
@@ -477,7 +485,7 @@ export const useTestEngineStore = create<TestEngineState>()(
     },
 
     tickTimer: () => {
-      const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionsById, changedQuestionIds } = get();
+      const { timeLeftSeconds, submitTest, activeSectionId, activeQuestionId, sectionTimeSpent, questionTimeSpent } = get();
       if (timeLeftSeconds <= 0) { 
         submitTest(); 
         return; 
@@ -489,15 +497,16 @@ export const useTestEngineStore = create<TestEngineState>()(
       const newSectionTimes = { ...sectionTimeSpent };
       if (activeSectionId) newSectionTimes[activeSectionId] = (newSectionTimes[activeSectionId] || 0) + 1;
 
-      const newQuestionsById = { ...questionsById };
-      const newChanges = new Set(changedQuestionIds);
-
-      if (activeQuestionId && newQuestionsById[activeQuestionId]) {
-        newQuestionsById[activeQuestionId].timeSpentSeconds += 1;
-        newChanges.add(activeQuestionId);
+      const newQuestionTimes = { ...questionTimeSpent };
+      if (activeQuestionId) {
+        newQuestionTimes[activeQuestionId] = (newQuestionTimes[activeQuestionId] || 0) + 1;
       }
 
-      set({ timeLeftSeconds: newTimeLeft, sectionTimeSpent: newSectionTimes, questionsById: newQuestionsById, changedQuestionIds: newChanges });
+      set({ 
+        timeLeftSeconds: newTimeLeft, 
+        sectionTimeSpent: newSectionTimes, 
+        questionTimeSpent: newQuestionTimes 
+      });
     },
 
     submitTest: async () => {

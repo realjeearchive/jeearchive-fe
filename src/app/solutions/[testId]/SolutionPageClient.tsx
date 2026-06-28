@@ -52,11 +52,11 @@ export function SolutionPageClient({ testId }: SolutionPageClientProps) {
     fetchBookmarks();
   }, [fetchBookmarks]);
 
+  // 🔥 FIX: Run width check ONCE on mount to prevent overriding manual toggle state on incidental resizes
   useEffect(() => {
-    const handleResize = () => setIsSidebarOpen(window.innerWidth > 1024);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      setIsSidebarOpen(window.innerWidth > 1024);
+    }
   }, []);
 
   const sidebarQuestions = useMemo(() => {

@@ -5,10 +5,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Styles from "./yearPage.module.css";
-import TestListSection2, {
-  TestCardItem,
-} from "@/components/testPlayer/TestListSection2/TestListSection2";
 import { Loader } from "@/components/ui/loader";
+import dynamic from "next/dynamic";
+import type { TestCardItem } from "@/components/testPlayer/TestListSection2/TestListSection2";
+
+const TestListSection2 = dynamic(
+  () => import("@/components/testPlayer/TestListSection2/TestListSection2"),
+  { 
+    ssr: false,
+    loading: () => <Loader label="Loading papers..." />
+  }
+);
 import {
   fetchPaperAttemptsDetails,
   createTestSession,

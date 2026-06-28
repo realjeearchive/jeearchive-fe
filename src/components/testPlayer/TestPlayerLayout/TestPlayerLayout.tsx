@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
+import { useShallow } from "zustand/react/shallow";
 import { useTestPlayerTheme } from "@/features/tests/useTestPlayerTheme";
 import { useTestPlayerAccessibility } from "@/features/tests/useTestPlayerAccessibility";
 
@@ -37,7 +38,24 @@ export function TestPlayerLayout() {
     syncWithServer,
     startTimer,
     stopTimer,
-  } = useTestEngineStore((s) => s);
+  } = useTestEngineStore(
+    useShallow((s) => ({
+      testId: s.testId,
+      title: s.title,
+      sections: s.sections,
+      activeSectionId: s.activeSectionId,
+      activeQuestionId: s.activeQuestionId,
+      questionsById: s.questionsById,
+      isInitialized: s.isInitialized,
+      selectOption: s.selectOption,
+      saveAndNext: s.saveAndNext,
+      clearResponse: s.clearResponse,
+      markForReview: s.markForReview,
+      syncWithServer: s.syncWithServer,
+      startTimer: s.startTimer,
+      stopTimer: s.stopTimer,
+    }))
+  );
 
   const { theme, setTheme } = useTestPlayerTheme();
   const { cursorTrailEnabled } = useTestPlayerAccessibility();

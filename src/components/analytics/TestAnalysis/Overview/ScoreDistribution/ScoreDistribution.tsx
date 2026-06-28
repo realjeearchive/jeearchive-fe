@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { ResponsivePie, PieCustomLayerProps } from "@nivo/pie";
 import { AnalyticsCard } from "../../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../../Shared/chartTheme";
@@ -20,29 +20,36 @@ interface Props {
 }
 
 export const ScoreDistribution = ({ meta, subjects }: Props) => {
-  // Enforcing the global Semantic Subject variables
-  const rawData: PieDatum[] = [
-    {
-      id: "Mathematics",
-      label: "Maths",
-      value: Math.max(0, subjects.maths.score),
-      color: "var(--subject-maths)",
-    },
-    {
-      id: "Physics",
-      label: "Physics",
-      value: Math.max(0, subjects.physics.score),
-      color: "var(--subject-physics)",
-    },
-    {
-      id: "Chemistry",
-      label: "Chemistry",
-      value: Math.max(0, subjects.chemistry.score),
-      color: "var(--subject-chemistry)",
-    },
-  ];
+  const data = useMemo(() => {
+    const rawData: PieDatum[] = [
+      {
+        id: "Mathematics",
+        label: "Maths",
+        value: Math.max(0, subjects.maths.score),
+        color: "var(--subject-maths)",
+      },
+      {
+        id: "Physics",
+        label: "Physics",
+        value: Math.max(0, subjects.physics.score),
+        color: "var(--subject-physics)",
+      },
+      {
+        id: "Chemistry",
+        label: "Chemistry",
+        value: Math.max(0, subjects.chemistry.score),
+        color: "var(--subject-chemistry)",
+      },
+    ];
+    return rawData.filter((d) => d.value > 0);
+  }, [subjects]);
 
-  const data = rawData.filter((d) => d.value > 0);
+  const rawData: PieDatum[] = [
+    { id: "Mathematics", label: "Maths", value: 0, color: "var(--subject-maths)" },
+    { id: "Physics", label: "Physics", value: 0, color: "var(--subject-physics)" },
+    { id: "Chemistry", label: "Chemistry", value: 0, color: "var(--subject-chemistry)" },
+  ]; // Only needed for the legend
+
   const totalScore = meta.myScore;
 
   const CenteredMetric = ({ centerX, centerY }: PieCustomLayerProps<PieDatum>) => {

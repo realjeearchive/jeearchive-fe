@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { AnalyticsCard } from "../../AnalyticsCard/AnalyticsCard";
 import { analyticsChartTheme } from "../../Shared/chartTheme";
@@ -19,10 +19,12 @@ interface PerformanceGraphProps {
 export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
   const hasData = data && data.length > 0;
 
-  const trend =
-    hasData && data.length >= 2
+  const trend = useMemo(() => {
+    return hasData && data.length >= 2
       ? data[data.length - 1].y - data[0].y
       : 0;
+  }, [data, hasData]);
+
   const trendLabel =
     trend > 0
       ? `↑ ${trend} pts improvement`
@@ -30,22 +32,24 @@ export const PerformanceGraph: React.FC<PerformanceGraphProps> = ({ data }) => {
       ? `↓ ${Math.abs(trend)} pts decline`
       : "Stable";
 
-  const dummyData = [
-    { x: "T1", y: 90 },
-    { x: "T2", y: 110 },
-    { x: "T3", y: 105 },
-    { x: "T4", y: 140 },
-    { x: "T5", y: 180 },
-  ];
+  const chartData = useMemo(() => {
+    const dummyData = [
+      { x: "T1", y: 90 },
+      { x: "T2", y: 110 },
+      { x: "T3", y: 105 },
+      { x: "T4", y: 140 },
+      { x: "T5", y: 180 },
+    ];
 
-  const chartDataArray = hasData ? data : dummyData;
+    const chartDataArray = hasData ? data : dummyData;
 
-  const chartData = [
-    {
-      id: "Score",
-      data: chartDataArray,
-    },
-  ];
+    return [
+      {
+        id: "Score",
+        data: chartDataArray,
+      },
+    ];
+  }, [data, hasData]);
 
   return (
     <AnalyticsCard

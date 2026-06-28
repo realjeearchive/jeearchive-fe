@@ -1,10 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { fetchChapterInfo, ChapterInfoResponse } from "@/features/chapterWise/api";
 import { chapterConfig } from "@/features/chapterWise/config";
-import { ChapterDashboard } from "@/components/chapterwise/ChapterDashboard";
 import { Loader } from "@/components/ui/loader";
+
+const ChapterDashboard = dynamic(
+  () => import("@/components/chapterwise/ChapterDashboard").then((mod) => mod.ChapterDashboard),
+  { ssr: false } // Avoids hydration issues with heavy dashboard charts
+);
 import { RateLimitModal } from "@/components/ui/RateLimitModal/RateLimitModal";
 import { useRateLimitStore } from "@/store/useRateLimitStore";
 

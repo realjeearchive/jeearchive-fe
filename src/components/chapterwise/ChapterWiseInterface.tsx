@@ -121,11 +121,6 @@ export const ChapterWiseInterface = ({
     if (questions && questions.length > 0) {
       const params = new URLSearchParams(window.location.search);
       initStore(questions, params.get("q") || undefined);
-      
-      // 🔥 NEW: Automatically start the timer on load if it is paused
-      if (!useChapterPracticeStore.getState().isTimerRunning) {
-        toggleTimer();
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions, initStore]);
@@ -164,11 +159,11 @@ export const ChapterWiseInterface = ({
     return () => clearInterval(timerId);
   }, [activeQuestionId, activeTab, isTimerRunning, incrementTime]);
 
+  // 🔥 FIX: Initialize based on width ONCE to avoid destroying the user's manual toggles on incidental resizes
   useEffect(() => {
-    const handleResize = () => setIsSidebarOpen(window.innerWidth > 1024);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      setIsSidebarOpen(window.innerWidth > 1024);
+    }
   }, []);
 
   const currentQuestion = questions.find((q) => q.id === activeQuestionId);

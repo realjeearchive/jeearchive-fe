@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import { FiGrid, FiLayers, FiClock, FiList } from "react-icons/fi";
-import { OverviewTab } from "./Overview/OverviewTab/OverviewTab";
-import { PerformanceTab } from "./Performance/PerformanceTab/PerformanceTab";
-import { TimeAnalysisTab } from "./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab";
-import { QuestionWiseTab } from "./QuestionWise/QuestionWiseTab";
+import dynamic from "next/dynamic";
+
+const OverviewTab = dynamic(() => import("./Overview/OverviewTab/OverviewTab").then(mod => mod.OverviewTab));
+const PerformanceTab = dynamic(() => import("./Performance/PerformanceTab/PerformanceTab").then(mod => mod.PerformanceTab));
+const TimeAnalysisTab = dynamic(() => import("./TimeAnalysis/TimeAnalysisTab/TimeAnalysisTab").then(mod => mod.TimeAnalysisTab));
+const QuestionWiseTab = dynamic(() => import("./QuestionWise/QuestionWiseTab").then(mod => mod.QuestionWiseTab));
 import styles from "./AnalysisLayout.module.css";
 
 const MENU_ITEMS = [

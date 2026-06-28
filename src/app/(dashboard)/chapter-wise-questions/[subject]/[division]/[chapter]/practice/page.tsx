@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
  
 import { chapterConfig } from "@/features/chapterWise/config";
 import { PracticePageClient } from "./PracticePageClient";
+import { Loader } from "@/components/ui/loader";
 
 interface PracticePageProps {
   params: Promise<{ subject: string; division: string; chapter: string }>;
@@ -36,6 +38,17 @@ export async function generateMetadata({ params }: PracticePageProps): Promise<M
 export default async function PracticePage(props: PracticePageProps) {
   const { subject, division, chapter } = await props.params;
   return (
-    <PracticePageClient subject={subject} division={division} chapter={chapter} />
+    <Suspense 
+      fallback={
+        <main
+          className="flex h-screen items-center justify-center bg-[var(--bg-main)]"
+          aria-label="Loading practice questions"
+        >
+          <Loader label="Initializing practice session..." />
+        </main>
+      }
+    >
+      <PracticePageClient subject={subject} division={division} chapter={chapter} />
+    </Suspense>
   );
 }

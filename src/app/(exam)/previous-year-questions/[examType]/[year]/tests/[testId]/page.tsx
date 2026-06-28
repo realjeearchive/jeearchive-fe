@@ -24,18 +24,25 @@ export async function generateMetadata({ params }: TestOverviewPageProps): Promi
   };
 }
 
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
+
 export default async function TestOverviewPage(props: TestOverviewPageProps) {
   const { examType, year, testId } = await props.params;
   
-  // You'll need to fetch paper data here or pass to client
-  // For now, keeping your existing client-side logic
   return (
-    <TestOverviewPageClient
-      summaryTitle={`${examType === "jee-advanced" ? "JEE Advanced" : "JEE Main"} Overview`}
-      sectionsCount={3}
-      paperId={testId}
-      year={year}
-      examType={examType}
-    />
+    <Suspense fallback={
+      <main className="flex h-screen items-center justify-center bg-[var(--bg-main)]">
+        <Loader label="Loading instructions..." />
+      </main>
+    }>
+      <TestOverviewPageClient
+        summaryTitle={`${examType === "jee-advanced" ? "JEE Advanced" : "JEE Main"} Overview`}
+        sectionsCount={3}
+        paperId={testId}
+        year={year}
+        examType={examType}
+      />
+    </Suspense>
   );
 }

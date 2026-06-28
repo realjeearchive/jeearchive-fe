@@ -6,9 +6,15 @@ import styles from "./SectionTabsBar.module.css";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { SectionStatusPopup } from "../SectionStatusPopup/SectionStatusPopup";
 
+import { useShallow } from "zustand/react/shallow";
+
 export function SectionTabsBar() {
   const { sections, activeSectionId, setActiveSectionId } = useTestEngineStore(
-    (s) => s
+    useShallow((s) => ({
+      sections: s.sections,
+      activeSectionId: s.activeSectionId,
+      setActiveSectionId: s.setActiveSectionId,
+    }))
   );
 
   const [popupInfo, setPopupInfo] = useState<{

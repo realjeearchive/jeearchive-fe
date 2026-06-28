@@ -18,6 +18,17 @@ export const metadata: Metadata = {
   },
 };
 
+import { Suspense } from "react";
+import { Loader } from "@/components/ui/loader";
+
 export default function PreviousYearQuestionsPage() {
-  return <PreviousYearQuestionsClient />;
+  return (
+    <Suspense fallback={
+      <main className="flex h-screen items-center justify-center bg-[var(--bg-main)]">
+        <Loader label="Loading papers..." />
+      </main>
+    }>
+      <PreviousYearQuestionsClient />
+    </Suspense>
+  );
 }
