@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
@@ -7,10 +6,39 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { GoogleAuthProviderWrapper } from "./providers/GoogleAuthProviderWrapper";
 import Script from "next/script";
 
+import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "JEE Mock Test Platform - jeearchive",
+  metadataBase: new URL("https://jeearchive.com"),
+
+  title: "JEE Mock Test Platform - JEEArchive",
   description:
-    "jeearchive provides the most realistic and comprehensive practice environment for JEE students, allowing them to test their knowledge and master every topic before the actual exam.",
+    "Practice JEE Main & Advanced with Chapter-wise PYQs, Mock Tests, Previous Year Papers and detailed performance analytics.",
+
+  openGraph: {
+    title: "JEE Mock Test Platform - JEEArchive",
+    description:
+      "Practice JEE Main & Advanced with Chapter-wise PYQs, Mock Tests, Previous Year Papers and detailed performance analytics.",
+    url: "https://jeearchive.com",
+    siteName: "JEEArchive",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "JEEArchive",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "JEE Mock Test Platform - JEEArchive",
+    description:
+      "Practice JEE Main & Advanced with Chapter-wise PYQs, Mock Tests, Previous Year Papers and detailed performance analytics.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
