@@ -1,3 +1,0 @@
-module.exports=[142794,a=>{"use strict";var b=a.i(228411);async function c(a){let c=await a.json().catch(()=>null);if(!a.ok){let d="Something went wrong.";throw c&&"object"==typeof c&&"message"in c&&(d=String(c.message)),new b.ApiError(d,a.status)}return c&&"object"==typeof c&&"data"in c&&c.data&&"object"==typeof c.data&&!Array.isArray(c.data)?{...c,data:c.data}:c}let d=async a=>(console.info(`[API: Solutions] Fetching deep solution data for session: ${a}`),c(await (0,b.authenticatedFetch)(`/testStatus/getPaper?testStatusId=${a}`,{method:"GET"})));a.s(["fetchTestSolutionData",0,d])}];
-
-//# sourceMappingURL=src_features_solutions_solutionsApi_ts_0rz5i2v._.js.map
