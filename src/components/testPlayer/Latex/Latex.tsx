@@ -21,7 +21,8 @@ const Latex = ({ children }: LatexProps) => {
     .replace(/\\left\\\(/g, "\\left(")
     .replace(/\\right\\\)/g, "\\right)")
     .replace(/_\\limits/g, "\\limits_")
-    .replace(/\\_/g, "_");
+    .replace(/\\_/g, "_")
+    .replace(/_{2,}/g, (match) => "\\_".repeat(match.length));
 
   // --- 2. REGEX TO FIND ALL COMBINATIONS OF MATH BLOCKS ---
   const parts = processed.split(/(\$\$[\s\S]+?\$\$)|(\$[^\$]+\$)|(\\\[[\s\S]+?\\\])|(\\begin\{[a-zA-Z*]+\}[\s\S]+?\\end\{[a-zA-Z*]+\})/g);
