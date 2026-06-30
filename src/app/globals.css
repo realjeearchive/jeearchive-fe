@@ -466,3 +466,11 @@ body {
     min-width: 100vw !important;
   }
 }
+
+/* Hide scrollbars for KaTeX blocks */
+.katex-block::-webkit-scrollbar {
+  display: none;
+}
+.katex-block {
+  scrollbar-width: none;
+}

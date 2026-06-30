@@ -19,6 +19,11 @@
   line-height: 1.6;
   color: var(--test-player-text-color);
   display: block; 
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.questionText::-webkit-scrollbar {
+  display: none;
 }
 
 .htmlContent {

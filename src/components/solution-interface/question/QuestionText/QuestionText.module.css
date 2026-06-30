@@ -5,9 +5,16 @@
   font-weight: 400;
   padding: var(--space-lg);
   overflow-x: auto;
+  scrollbar-width: none;
+}
+.container::-webkit-scrollbar {
+  display: none;
 }
 
-.htmlContent { width: 100%; overflow-x: auto; }
+.htmlContent { width: 100%; overflow-x: auto; scrollbar-width: none; }
+.htmlContent::-webkit-scrollbar {
+  display: none;
+}
 .htmlContent p { margin-bottom: var(--space-sm); }
 .htmlContent p:last-child { margin-bottom: 0; }
 

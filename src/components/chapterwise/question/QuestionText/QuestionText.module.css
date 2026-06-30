@@ -2,6 +2,10 @@
   padding: var(--space-lg) var(--space-xl);
   color: var(--text-primary);
   overflow-x: auto;
+  scrollbar-width: none;
+}
+.container::-webkit-scrollbar {
+  display: none;
 }
 
 .htmlContent {
@@ -9,6 +13,10 @@
   line-height: 1.6;
   font-weight: 400;
   overflow-x: auto;
+  scrollbar-width: none;
+}
+.htmlContent::-webkit-scrollbar {
+  display: none;
 }
 
 .htmlContent p {
