@@ -1,11 +1,10 @@
 .sidebar {
   position: relative;
-  min-width: 300px;
   background: var(--bg-surface);
   color: var(--text-primary);
   padding: var(--space-lg);
   box-sizing: border-box;
-  min-height: calc(100vh - var(--space-lg));
+  min-height: 100%;
   border: 1px solid var(--border-subtle);
   border-radius: var(--shape-radius-md);
   display: flex;
