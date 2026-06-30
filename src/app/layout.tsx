@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpeg",
         width: 1200,
         height: 630,
         alt: "JEEArchive",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "JEE Mock Test Platform - JEEArchive",
     description:
       "Practice JEE Main & Advanced with Chapter-wise PYQs, Mock Tests, Previous Year Papers and detailed performance analytics.",
-    images: ["/og-image.png"],
+    images: ["/og-image.jpeg"],
   },
 };
 

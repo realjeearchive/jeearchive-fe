@@ -12,10 +12,7 @@ import ScoreGrowthChart from "@/components/dashboard/ScoreGrowthChart/ScoreGrowt
 import SubjectScoreChart from "@/components/dashboard/SubjectScoreChart/SubjectScoreChart";
 import SubjectBalanceRadar from "@/components/dashboard/SubjectBalanceRadar/SubjectBalanceRadar";
 import QuestionTypeBar from "@/components/dashboard/QuestionTypeBar/QuestionsTypeBar";
-import TestListSection, {
-  TestListItem,
-} from "@/components/dashboard/TestListSection/TestListSection";
-import DetailedAnalysisSection from "@/components/dashboard/DetailedAnalysisSection/DetailedAnalysisSection";
+
 import WelcomeBanner from "@/components/dashboard/WelcomeBanner/WelcomeBanner";
 import { Loader } from "@/components/ui/loader";
 
@@ -26,15 +23,6 @@ import { FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
 import { useDashboardStore } from "@/store/useDashboardStore";
 import { fetchDashboardData } from "@/features/dashboard/api";
 import { transformDashboardData } from "@/features/dashboard/dashboardTransformer";
-
-const pyqItems: TestListItem[] = [
-  { id: "pyq-2025", title: "JEE Main 2025 PYQs", meta: "19 Papers", href: "/pyq/2025" },
-  { id: "pyq-2024", title: "JEE Main 2024 PYQs", meta: "20 Papers", href: "/pyq/2024" },
-];
-const chapterItems: TestListItem[] = [
-  { id: "phy", title: "Physics Chapters", meta: "32 Chapters", href: "/practice/phy" },
-  { id: "chem", title: "Chemistry Chapters", meta: "35 Chapters", href: "/practice/chem" },
-];
 
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<"test" | "chapter">("test");
