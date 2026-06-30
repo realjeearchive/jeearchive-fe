@@ -29,6 +29,8 @@ import {
   TransformedAnalyticsUI,
 } from "@/features/analytics/analyticsTransformer";
 
+import { get, set as setIdb } from "idb-keyval";
+
 const DATA_EMPTY: TransformedAnalyticsUI = {
   global: { testsTaken: 0, avgScore: 0, accuracy: 0, avgTime: 0 },
   graph: [],
@@ -46,6 +48,9 @@ const DATA_EMPTY: TransformedAnalyticsUI = {
 export function AnalyticsPageClient() {
   const [timeRange, setTimeRange] = useState<TimeRange>("Last 5 Tests");
   const [examType, setExamType] = useState<ExamTypeUI>("Overall");
+  
+  // 🔥 FIX: 150ms delay state to prevent flicker before IDB cache is checked
+  const [showLoader, setShowLoader] = useState(false);
 
   const {
     rawAnalytics,
@@ -59,26 +64,78 @@ export function AnalyticsPageClient() {
 
   const { isRateLimited } = useRateLimitStore();
 
+  const hasFetched = React.useRef(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading && !isRateLimited) {
+      timer = setTimeout(() => setShowLoader(true), 150);
+    } else {
+      setShowLoader(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading, isRateLimited]);
+
   useEffect(() => {
     const loadAnalytics = async () => {
-      setLoading(true);
+      if (hasFetched.current) return;
+      hasFetched.current = true;
+
+      let hasCachedData = false;
+
+      // 0. Check if it's already in the live Zustand store
+      if (rawAnalytics) {
+        hasCachedData = true;
+      }
+
+      // 1. Try to load from IndexedDB first if not in store
+      if (!hasCachedData) {
+        try {
+          const cachedData = await get("analytics_cache");
+          if (cachedData) {
+            hasCachedData = true;
+            setAnalyticsData(cachedData);
+            console.info("[AnalyticsPageClient] Loaded from IDB");
+          }
+        } catch (e) {
+          console.error("[AnalyticsPageClient] IDB get error", e);
+        }
+      }
+
+      if (!hasCachedData) {
+        setLoading(true);
+      }
+
+      // 2. Always fetch fresh data from API in background
       try {
+        console.info("[AnalyticsPageClient] Fetching fresh data from API");
         const response = await fetchAnalyticsData();
         if (response.success && response.data) {
           setAnalyticsData(response.data);
-        } else {
+          try {
+            await setIdb("analytics_cache", response.data);
+          } catch (e) {
+            console.error("[AnalyticsPageClient] IDB set error", e);
+          }
+        } else if (!hasCachedData) {
           setError("Performance analysis metrics are unavailable right now.");
         }
       } catch (err: unknown) {
-        setError("Connection drop. Please refresh.");
+        console.error("[AnalyticsPageClient] API fetch failed:", err);
+        if (!hasCachedData) {
+          setError("Connection drop. Please refresh.");
+        }
       }
     };
 
-    if (!rawAnalytics) loadAnalytics();
-    else setLoading(false);
+    loadAnalytics();
   }, [rawAnalytics, setAnalyticsData, setLoading, setError]);
 
   if (isLoading && !isRateLimited) {
+    if (!showLoader) {
+      // 150ms blank screen delay to allow fast IDB retrieval without flashing a spinner
+      return <main className={styles.loaderContainer} aria-label="Loading analytics"></main>;
+    }
     return (
       <main className={styles.loaderContainer} aria-label="Loading analytics">
         <Loader label="Crunching your performance data..." />

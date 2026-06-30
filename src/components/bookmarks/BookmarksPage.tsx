@@ -39,6 +39,17 @@ export default function BookmarksPage() {
   const [activeSubjectFilter, setActiveSubjectFilter] = useState<string>("All");
 
   const { isRateLimited } = useRateLimitStore();
+  const [showLoader, setShowLoader] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading) {
+      timer = setTimeout(() => setShowLoader(true), 150);
+    } else {
+      setShowLoader(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   useEffect(() => {
     fetchBookmarks();
@@ -59,6 +70,9 @@ export default function BookmarksPage() {
   }, [bookmarks, searchQuery, activeSubjectFilter]);
 
   if (isLoading && !isRateLimited) {
+    if (!showLoader) {
+      return <main style={{ minHeight: "85vh" }} aria-hidden="true" />; // Blank for first 150ms to prevent flicker
+    }
     return (
       <main
         style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "85vh" }}

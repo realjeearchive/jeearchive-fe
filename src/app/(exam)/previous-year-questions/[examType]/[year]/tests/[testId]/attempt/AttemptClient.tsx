@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useTestEngineStore } from "@/features/tests/testEngineStore";
 import { fetchTestSession } from "@/features/tests/api";
 import dynamic from "next/dynamic";
+import { get, set as setIdb } from "idb-keyval";
 
 const TestPlayerLayout = dynamic(
   () => import("@/components/testPlayer/TestPlayerLayout/TestPlayerLayout").then((mod) => mod.TestPlayerLayout),
@@ -79,41 +80,72 @@ export function AttemptClient({ year, testId, examType }: AttemptClientProps) {
   const hasFetched = useRef(false);
 
   useEffect(() => {
-  async function loadSession() {
-    if (!sessionId) {
-      setError("Session not found. Go back and start the test again.");
-      setLoading(false);
-      return;
+    async function loadSession() {
+      if (!sessionId) {
+        setError("Session not found. Go back and start the test again.");
+        setLoading(false);
+        return;
+      }
+
+      if (!authInitialized) {
+        await initAuth();
+      }
+
+      if (hasFetched.current) return;
+      hasFetched.current = true;
+
+      const cacheKey = `test_session_${sessionId}`;
+      let hasCachedData = false;
+
+      // 1. Try to load from IndexedDB first
+      try {
+        const cachedData = await get(cacheKey);
+        if (cachedData) {
+          hasCachedData = true;
+          initFromBackendSession(cachedData as HierarchicalSessionData);
+          setLoading(false);
+          console.info(`[AttemptClient] Loaded session from IDB: ${sessionId}`);
+        }
+      } catch (e) {
+        console.error("[AttemptClient] IDB get error", e);
+      }
+
+      if (!hasCachedData) {
+        setLoading(true);
+      }
+
+      // 2. Fetch from API in background (or foreground if no cache)
+      try {
+        console.info(`[AttemptClient] Fetching session from API: ${sessionId} for ${examType}`);
+        const response: SessionDataResponse | HierarchicalSessionData = await fetchTestSession(sessionId);
+
+        let sessionData: HierarchicalSessionData | null = null;
+        if (isWrappedSessionResponse(response)) sessionData = response.data;
+        else if (isDirectSessionResponse(response)) sessionData = response;
+
+        if (!sessionData) throw new Error("Invalid session payload");
+
+        // Merge API session data into store (it will intelligently merge with local progress inside the store)
+        initFromBackendSession(sessionData);
+        setLoading(false);
+
+        // Save fresh payload to IDB
+        try {
+          await setIdb(cacheKey, sessionData);
+        } catch (e) {
+          console.error("[AttemptClient] IDB set error", e);
+        }
+      } catch (err) {
+        console.error("[AttemptClient] Session load failed:", err);
+        if (!hasCachedData) {
+          setError("Couldn't load questions. Check your connection and refresh.");
+          setLoading(false);
+        }
+      }
     }
 
-    if (!authInitialized) {
-      await initAuth();
-    }
-
-    if (hasFetched.current) return;
-    hasFetched.current = true;
-
-    try {
-      console.info(`[AttemptClient] Fetching session: ${sessionId} for ${examType}`);
-      const response: SessionDataResponse | HierarchicalSessionData = await fetchTestSession(sessionId);
-
-      let sessionData: HierarchicalSessionData | null = null;
-      if (isWrappedSessionResponse(response)) sessionData = response.data;
-      else if (isDirectSessionResponse(response)) sessionData = response;
-
-      if (!sessionData) throw new Error("Invalid session payload");
-
-      initFromBackendSession(sessionData);
-    } catch (err) {
-      console.error("[AttemptClient] Session load failed:", err);
-      setError("Couldn't load questions. Check your connection and refresh.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  loadSession();
-}, [sessionId, authInitialized, initAuth, initFromBackendSession, examType]);
+    loadSession();
+  }, [sessionId, authInitialized, initAuth, initFromBackendSession, examType]);
 
   // ---------------- UI STATES ----------------
 

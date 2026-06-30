@@ -19,6 +19,8 @@ interface ChapterPageClientProps {
   chapter: string;
 }
 
+import { get, set } from "idb-keyval";
+
 // 🔥 NEW: Utility to cleanly format slugs into Title Case just in case
 const formatSlugToTitle = (slug: string) => {
   return slug
@@ -45,24 +47,60 @@ export function ChapterDashboardPageClient({
     divisionChapters.find((c) => c.id === chapter)?.title || formatSlugToTitle(chapter);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const loadData = async () => {
+      let hasCachedData = false;
+      const cacheKey = `chapter_info_${chapter}`;
+      
       try {
+        // 1. Try to load from IndexedDB first
+        const cachedData = await get(cacheKey);
+        if (cachedData && isMounted) {
+          hasCachedData = true;
+          setData(cachedData);
+          setLoading(false); // Hide loader if we have cache
+        }
+      } catch (e) {
+        console.error("IDB get error", e);
+      }
+
+      if (!hasCachedData && isMounted) {
         setLoading(true);
+      }
+
+      // 2. Fetch fresh data from API
+      try {
         const chapterData = await fetchChapterInfo(chapter);
-        setData(chapterData);
+        
+        if (isMounted) {
+          setData(chapterData);
+          // Save fresh data to IndexedDB
+          try {
+            await set(cacheKey, chapterData);
+          } catch (e) {
+            console.error("IDB set error", e);
+          }
+        }
       } catch (err: unknown) {
+        if (!isMounted) return;
         console.error(err);
-        const error = err as { status?: number; message?: string };
-        if (error?.status === 429 || useRateLimitStore.getState().isRateLimited) {
+        const errObj = err as { status?: number; message?: string };
+        if (errObj?.status === 429 || useRateLimitStore.getState().isRateLimited) {
           // Let the Modal handle it
-        } else {
+        } else if (!hasCachedData) {
           setError(true);
         }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
+    
     loadData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [chapter]);
 
   if (loading && !isRateLimited) {

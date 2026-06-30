@@ -14,6 +14,18 @@ export default function BookmarkPracticeContent() {
 
   const [hasInitialized, setHasInitialized] = useState(false);
 
+  const [showLoader, setShowLoader] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading || (!hasInitialized && bookmarks.length > 0)) {
+      timer = setTimeout(() => setShowLoader(true), 150);
+    } else {
+      setShowLoader(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading, hasInitialized, bookmarks.length]);
+
   useEffect(() => {
     if (bookmarks.length === 0 && !hasInitialized) {
       fetchBookmarks();
@@ -74,6 +86,9 @@ export default function BookmarkPracticeContent() {
   }, [isLoading, sessionQuestions.length]);
 
   if (isLoading || (!hasInitialized && bookmarks.length > 0)) {
+    if (!showLoader) {
+      return <main className={Styles.fullScreenWrapper} aria-hidden="true" />; // Blank for first 150ms to prevent flicker
+    }
     return (
       <main className={Styles.fullScreenWrapper} aria-label="Loading bookmarks practice">
         <Loader label="Preparing practice arena..." />

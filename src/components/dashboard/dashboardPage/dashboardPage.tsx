@@ -41,23 +41,59 @@ export default function DashboardPage() {
   const { isRateLimited } = useRateLimitStore();
 
   useEffect(() => {
+    let isMounted = true;
+    
     const loadDashboard = async () => {
-      setLoading(true);
+      let cachedData = rawReport;
+      
+      // 1. Local Cache Check
+      if (!cachedData) {
+        try {
+          const cacheStr = localStorage.getItem("dashboard_cache");
+          if (cacheStr) {
+            const parsed = JSON.parse(cacheStr);
+            if (parsed && parsed.studentId) {
+              cachedData = parsed as typeof rawReport;
+              if (cachedData) {
+                setDashboardData(cachedData);
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Cache parsing error", e);
+        }
+      }
+      
+      if (!cachedData && isMounted) {
+        setLoading(true);
+      } else if (cachedData && isMounted) {
+        // Ensure loader is hidden if we have cached data
+        setLoading(false);
+      }
+
+      // 2. API Fetch
       try {
         const response = await fetchDashboardData();
-        if (response.success && response.data) {
+        if (response.success && response.data && isMounted) {
           setDashboardData(response.data);
-        } else {
+          localStorage.setItem("dashboard_cache", JSON.stringify(response.data));
+        } else if (!cachedData && isMounted) {
           setError("Metrics unavailable.");
         }
       } catch (err: unknown) {
-        setError("Connection drop. Please refresh.");
+        if (!cachedData && isMounted) {
+          setError("Connection drop. Please refresh.");
+        }
       }
     };
 
-    if (!rawReport) loadDashboard();
-    else setLoading(false);
-  }, [rawReport, setDashboardData, setLoading, setError]);
+    loadDashboard();
+    
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading && !isRateLimited) {
     return (

@@ -36,14 +36,16 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
   bookmarkedQuestions: {}, 
 
   initStore: (fetchedQuestions, initialQuestionId) => {
-    const initialUserAnswers: Record<string, string | string[]> = {};
-    const initialSubmissions: Record<string, boolean> = {};
-    const initialBookmarks: Record<string, boolean> = {}; 
-
+    const state = get();
+    
     const perfectlyNumberedQuestions = fetchedQuestions.map((q, index) => ({
       ...q,
       number: index + 1
     }));
+
+    const nextUserAnswers = { ...state.userAnswers };
+    const nextSubmissions = { ...state.submissions };
+    const nextBookmarks = { ...state.bookmarkedQuestions };
 
     perfectlyNumberedQuestions.forEach((q) => {
       // 🔥 FIX: Strict check! Prevent empty arrays [] or empty strings "" from acting as a real answer
@@ -51,31 +53,31 @@ export const useChapterPracticeStore = create<ChapterPracticeState>((set, get) =
                         (!Array.isArray(q.userAnswer) || q.userAnswer.length > 0) &&
                         q.userAnswer !== "";
 
-      if (hasAnswer) {
-        initialUserAnswers[q.id] = q.userAnswer as string | string[];
+      if (hasAnswer && nextUserAnswers[q.id] === undefined) {
+        nextUserAnswers[q.id] = q.userAnswer as string | string[];
       }
       
       // Only mark as submitted if the status explicitly says so, or if they actually answered it
-      if (q.status === "correct" || q.status === "incorrect" || q.status === "answered" || hasAnswer) {
-        initialSubmissions[q.id] = true;
+      if ((q.status === "correct" || q.status === "incorrect" || q.status === "answered" || hasAnswer) && nextSubmissions[q.id] === undefined) {
+        nextSubmissions[q.id] = true;
       }
       
-      if (q.isBookmarked === true) {
-        initialBookmarks[q.id] = true;
+      if (q.isBookmarked === true && nextBookmarks[q.id] === undefined) {
+        nextBookmarks[q.id] = true;
       }
     });
 
-    const startingId = perfectlyNumberedQuestions.find(q => q.id === initialQuestionId)?.id || perfectlyNumberedQuestions[0]?.id || "";
+    const startingId = state.activeQuestionId || perfectlyNumberedQuestions.find(q => q.id === initialQuestionId)?.id || perfectlyNumberedQuestions[0]?.id || "";
 
     set({
       questions: perfectlyNumberedQuestions,
       activeQuestionId: startingId,
-      userAnswers: initialUserAnswers,
-      submissions: initialSubmissions,
-      bookmarkedQuestions: initialBookmarks,
-      revealedSolutions: {},
-      questionTimes: { [startingId]: 0 }, // Reset time for initial question
-      isTimerRunning: true, // Always start timer
+      userAnswers: nextUserAnswers,
+      submissions: nextSubmissions,
+      bookmarkedQuestions: nextBookmarks,
+      revealedSolutions: state.revealedSolutions,
+      questionTimes: { ...state.questionTimes, [startingId]: state.questionTimes[startingId] || 0 }, // Reset time for initial question if not already started
+      isTimerRunning: state.activeQuestionId ? state.isTimerRunning : true, // Start timer on actual initial load
     });
   },
 

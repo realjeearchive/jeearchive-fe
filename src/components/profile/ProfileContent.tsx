@@ -71,7 +71,7 @@ export default function ProfileContent() {
       });
 
       toast.success("Profile updated successfully!");
-      await fetchProfile();
+      await fetchProfile(true);
       cancelEditing();
     } catch (error) {
       console.error("Update failed:", error);
@@ -95,7 +95,7 @@ export default function ProfileContent() {
     ? `${profile?.countryCode ? `+${profile.countryCode.replace("+", "")} ` : ""}${profile.mobileNumber}`
     : "Not specified";
 
-  const classOptions = ["Class_11", "Class_12", "Dropper"];
+  const classOptions = ["class_11", "class_12", "dropper", "class_10_or_below"];
 
   return (
     <>

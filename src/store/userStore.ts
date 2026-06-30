@@ -17,7 +17,7 @@ interface UserState {
   setStageNumber: (stage: number) => void;
   
   // Async Actions
-  fetchProfile: () => Promise<void>;
+  fetchProfile: (force?: boolean) => Promise<void>;
   syncStageNumber: () => Promise<number | null>;
   clearUser: () => void;
 }
@@ -54,8 +54,14 @@ export const useUserStore = create<UserState>()(
         setStageNumber: (stage) => set({ stageNumber: stage }),
 
         // Fetches the full populated profile (typically called once they hit the dashboard)
-        // Fetches the full populated profile (typically called once they hit the dashboard)
-        fetchProfile: async () => {
+        fetchProfile: async (force = false) => {
+          const state = get();
+          
+          // Avoid redundant calls if we already have the full profile and aren't forcing
+          if (!force && state.profile && state.profile.name) {
+            return;
+          }
+
           set({ isLoadingProfile: true });
           try {
             const res = await getStudentProfileRequest();

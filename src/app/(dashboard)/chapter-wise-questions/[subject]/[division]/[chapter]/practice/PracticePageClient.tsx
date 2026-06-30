@@ -3,7 +3,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { fetchChapterInfo } from "@/features/chapterWise/api";
+import { get, set } from "idb-keyval";
+import { fetchChapterInfo, ChapterInfoResponse, QuestionListItem } from "@/features/chapterWise/api";
 import {
   QuestionData,
   Subject,
@@ -65,6 +66,7 @@ export function PracticePageClient({
   const filterShifts = searchParams.get("shifts")?.split(",") || [];
 
   useEffect(() => {
+    let isMounted = true;
     const loadQuestions = async () => {
       const fetchKey = `${chapter}-${examType}-${filterYears.join(",")}-${filterSessions.join(",")}-${filterDates.join(",")}-${filterShifts.join(",")}`;
 
@@ -79,11 +81,9 @@ export function PracticePageClient({
       isFetchingRef.current = true;
       lastFetchParamsRef.current = fetchKey;
 
-      try {
-        setLoading(true);
-        const data = await fetchChapterInfo(chapter);
+      const processAndSetQuestions = (data: ChapterInfoResponse) => {
+        if (!isMounted) return;
         const validSubject = getSubjectFromSlug(subject);
-
         let sourceQuestions = examType === "advanced" ? data.jeeAdvanced : data.jeeMain;
 
         const hasFilters =
@@ -93,33 +93,20 @@ export function PracticePageClient({
           filterShifts.length > 0;
 
         if (hasFilters) {
-          sourceQuestions = sourceQuestions.filter((q) => {
+          sourceQuestions = sourceQuestions.filter((q: QuestionListItem) => {
             const p = q.papers;
-
-            if (filterYears.length > 0 && (!p?.year || !filterYears.includes(p.year))) {
-              return false;
-            }
-
-            if (filterSessions.length > 0 && (!p?.session || !filterSessions.includes(p.session))) {
-              return false;
-            }
-
+            if (filterYears.length > 0 && (!p?.year || !filterYears.includes(p.year))) return false;
+            if (filterSessions.length > 0 && (!p?.session || !filterSessions.includes(p.session))) return false;
             const dateStr = p?.date && p?.month ? `${p.date} ${p.month}` : null;
-            if (filterDates.length > 0 && (!dateStr || !filterDates.includes(dateStr))) {
-              return false;
-            }
-
-            if (filterShifts.length > 0 && (!p?.shift || !filterShifts.includes(p.shift))) {
-              return false;
-            }
-
+            if (filterDates.length > 0 && (!dateStr || !filterDates.includes(dateStr))) return false;
+            if (filterShifts.length > 0 && (!p?.shift || !filterShifts.includes(p.shift))) return false;
             return true;
           });
         }
 
         const sortedQuestions = sortQuestions(sourceQuestions);
 
-        const mapped: QuestionData[] = sortedQuestions.map((q, index) => {
+        const mapped: QuestionData[] = sortedQuestions.map((q: QuestionListItem, index: number) => {
           const options = [];
           if (
             (q.type === "SingleCorrect" || q.type === "MultiCorrect" || q.type === "Comprehension") &&
@@ -166,17 +153,53 @@ export function PracticePageClient({
             topic: "Practice",
           };
         });
-
         setQuestions(mapped);
+      };
+
+      try {
+        let hasCachedData = false;
+        const cacheKey = `chapter_info_${chapter}`;
+        
+        try {
+          const cachedData = await get(cacheKey);
+          if (cachedData && isMounted) {
+            hasCachedData = true;
+            processAndSetQuestions(cachedData);
+            setLoading(false);
+          }
+        } catch (e) {
+          console.error("IDB get error", e);
+        }
+
+        if (!hasCachedData && isMounted) {
+          setLoading(true);
+        }
+
+        const data = await fetchChapterInfo(chapter);
+        
+        if (isMounted) {
+          try {
+            await set(cacheKey, data);
+          } catch(e) {
+            console.error("IDB set error", e);
+          }
+          processAndSetQuestions(data);
+        }
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
-        isFetchingRef.current = false;
+        if (isMounted) {
+          setLoading(false);
+          isFetchingRef.current = false;
+        }
       }
     };
 
     loadQuestions();
+    
+    return () => {
+      isMounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapter, examType, filterYears.join(","), filterSessions.join(","), filterDates.join(","), filterShifts.join(",")]);
 

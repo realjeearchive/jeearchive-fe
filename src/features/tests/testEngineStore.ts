@@ -285,8 +285,49 @@ export const useTestEngineStore = create<TestEngineState>()(
       const { session, paper } = data;
       const { sections, qMap, qTimeSpentMap } = parseHierarchicalData(data);
 
-      const initialQ = session.activeQuestionId || (sections[0]?.questions[0]?.id || null);
-      const initialSec = initialQ ? (sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null) : null;
+      let initialQ = session.activeQuestionId || (sections[0]?.questions[0]?.id || null);
+      let initialSec = initialQ ? (sections.find(s => s.questions.some(q => q.id === initialQ))?.id || null) : null;
+      let finalTimeLeft = session.timeLeft;
+      let finalSectionTimes: Record<string, number> = {};
+
+      // 🔥 FIX: Attempt to load second-by-second progress from localStorage
+      if (typeof window !== "undefined") {
+        try {
+          const localStr = localStorage.getItem(`test_progress_${session.testId}`);
+          if (localStr) {
+            const localProgress = JSON.parse(localStr) as SavedSessionData;
+            
+            // If the session isn't completed and local time left is less (meaning it's newer)
+            if (session.status !== "COMPLETED" && localProgress.timeLeftSeconds < session.timeLeft) {
+              console.info(`[TestEngine] Restoring newer local progress for session ${session.testId}`);
+              
+              // 1. Merge Questions
+              Object.keys(localProgress.questionsById).forEach(qid => {
+                if (qMap[qid]) {
+                  qMap[qid] = { ...qMap[qid], ...localProgress.questionsById[qid] };
+                }
+              });
+
+              // 2. Merge Time Spent
+              Object.keys(localProgress.questionTimeSpent || {}).forEach(qid => {
+                qTimeSpentMap[qid] = localProgress.questionTimeSpent[qid];
+              });
+
+              // 3. Update active pointers & timers
+              if (localProgress.activeQuestionId && qMap[localProgress.activeQuestionId]) {
+                initialQ = localProgress.activeQuestionId;
+                initialSec = localProgress.activeSectionId;
+              }
+              finalTimeLeft = localProgress.timeLeftSeconds;
+              if (localProgress.sectionTimeSpent) {
+                finalSectionTimes = localProgress.sectionTimeSpent;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("[TestEngine] Failed to parse local progress", e);
+        }
+      }
 
       if (initialQ && qMap[initialQ]?.status === "notVisited") {
           qMap[initialQ].status = "notAnswered" as QuestionStatus;
@@ -310,12 +351,12 @@ export const useTestEngineStore = create<TestEngineState>()(
         paperId: paper.id, 
         title: `JEE ${paper.exam?.name || 'Test'} ${paper.year}`,
         formattedBannerText, // 🔥 ADD THIS TO NEW STATE
-        timeLeftSeconds: session.timeLeft,
+        timeLeftSeconds: finalTimeLeft,
         activeQuestionId: initialQ,
         activeSectionId: initialSec,
         questionsById: qMap,
         sections: sections,
-        sectionTimeSpent: {},
+        sectionTimeSpent: finalSectionTimes,
         questionTimeSpent: qTimeSpentMap, // 🔥 ADD THIS TO PREVENT TIMER RE-RENDERS
         paperMetadata: {
           year: paper.year,
@@ -507,6 +548,10 @@ export const useTestEngineStore = create<TestEngineState>()(
         sectionTimeSpent: newSectionTimes, 
         questionTimeSpent: newQuestionTimes 
       });
+
+      // Save every second so the timer and timeSpent maps are perfectly accurate 
+      // if the user refreshes without making any active selections.
+      saveToLocal(get());
     },
 
     submitTest: async () => {

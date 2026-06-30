@@ -71,6 +71,9 @@ export const useAuthStore = create<AuthState>()(
             initialized: true,
             hasLoggedOut: true,
           });
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("dashboard_cache");
+          }
         },
       }),
       {
