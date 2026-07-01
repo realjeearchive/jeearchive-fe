@@ -95,7 +95,22 @@ export default function ProfileContent() {
     ? `${profile?.countryCode ? `+${profile.countryCode.replace("+", "")} ` : ""}${profile.mobileNumber}`
     : "Not specified";
 
-  const classOptions = ["class_11", "class_12", "dropper", "class_10_or_below"];
+  // Dynamic Class Options Logic
+  const classOptions = React.useMemo(() => {
+    switch (rawClass) {
+      case "class_10_or_below":
+        return ["class_10_or_below", "class_11"];
+      case "class_11":
+        return ["class_11", "class_12"];
+      case "class_12":
+        return ["class_12", "Dropper"];
+      case "Dropper":
+        return ["Dropper"];
+      default:
+        // Fallback if not set yet, or invalid
+        return ["class_10_or_below", "class_11", "class_12", "Dropper"];
+    }
+  }, [rawClass]);
 
   return (
     <>

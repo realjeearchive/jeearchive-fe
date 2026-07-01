@@ -11,6 +11,7 @@ interface UserState {
   profile: Partial<StudentProfile> | null;
   stageNumber: number | null;
   isLoadingProfile: boolean;
+  hasFetchedFullProfile: boolean;
 
   // Actions
   setProfile: (profile: Partial<StudentProfile> | null) => void;
@@ -29,6 +30,7 @@ export const useUserStore = create<UserState>()(
         profile: null,
         stageNumber: null,
         isLoadingProfile: false,
+        hasFetchedFullProfile: false,
 
         // Gracefully handles partial updates (like from JWT decoding in authStore)
         setProfile: (partialProfile) => {
@@ -57,8 +59,8 @@ export const useUserStore = create<UserState>()(
         fetchProfile: async (force = false) => {
           const state = get();
           
-          // Avoid redundant calls if we already have the full profile and aren't forcing
-          if (!force && state.profile && state.profile.name) {
+          // Avoid redundant calls if we already have the FULL profile and aren't forcing
+          if (!force && state.hasFetchedFullProfile) {
             return;
           }
 
@@ -68,6 +70,7 @@ export const useUserStore = create<UserState>()(
             if (res.data) {
               set((state) => ({ 
                 profile: res.data, 
+                hasFetchedFullProfile: true,
                 // 🔥 FIX: Only update stageNumber if the API actually sent it, otherwise keep the current one!
                 stageNumber: res.data.stageNumber !== undefined ? res.data.stageNumber : state.stageNumber 
               }));
@@ -121,7 +124,7 @@ export const useUserStore = create<UserState>()(
         },
 
         clearUser: () => {
-          set({ profile: null, stageNumber: null, isLoadingProfile: false });
+          set({ profile: null, stageNumber: null, isLoadingProfile: false, hasFetchedFullProfile: false });
         }
       }),
       { 
@@ -129,7 +132,8 @@ export const useUserStore = create<UserState>()(
         // We only persist the data, not the loading state
         partialize: (state) => ({
           profile: state.profile,
-          stageNumber: state.stageNumber
+          stageNumber: state.stageNumber,
+          hasFetchedFullProfile: state.hasFetchedFullProfile
         }),
       }
     )
