@@ -7,11 +7,11 @@ import styles from "./QuestionsTypeBar.module.css";
 import { FiPieChart } from "react-icons/fi";
 
 interface QuestionTypeBarProps {
-  data: Array<{ type: string; accuracy: number }>;
+  data: Array<{ type: string; accuracy: number; attempts?: number }>;
 }
 
 const QuestionTypeBar: React.FC<QuestionTypeBarProps> = ({ data }) => {
-  const hasData = data && data.some((item) => item.accuracy !== 0);
+  const hasData = data && data.some((item) => (item.attempts ?? 0) > 0 || item.accuracy !== 0);
 
   return (
     <section className={styles.card} aria-label="Question type accuracy chart">

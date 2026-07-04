@@ -143,13 +143,15 @@ export const transformDashboardData = (data: DashboardDataPayload | null, examFi
 
   const radarData = (practiceCategory?.subjects || []).map((sub: SubjectPractice, index: number) => ({
     subject: sub.subjectName || getSubjectName(sub.subjectId, index),
-    Accuracy: sub.accuracy || 0
+    Accuracy: sub.accuracy || 0,
+    attempts: sub.attempts || 0
   }));
 
   // 🚨 FIX: Map the raw backend strings to our clean, short labels
   const typeData = (practiceCategory?.questionTypes || []).map((qt: QuestionTypeStat) => ({
     type: getShortQType(qt.questionType || 'Unknown'),
-    accuracy: Math.round(qt.accuracy || 0) // Rounding for cleaner tooltip display
+    accuracy: Math.round(qt.accuracy || 0), // Rounding for cleaner tooltip display
+    attempts: qt.attempts || 0
   }));
 
   const subjectScoreTrend = last5Tests.map((test: DashboardTestAttempt, index: number) => {

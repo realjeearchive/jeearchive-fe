@@ -7,11 +7,11 @@ import styles from "./SubjectBalanceRadar.module.css";
 import { FiCrosshair } from "react-icons/fi";
 
 interface SubjectBalanceBarProps {
-  data: Array<{ subject: string; Accuracy: number }>;
+  data: Array<{ subject: string; Accuracy: number; attempts?: number }>;
 }
 
 const SubjectBalanceBar: React.FC<SubjectBalanceBarProps> = ({ data }) => {
-  const hasData = data && data.some((item) => item.Accuracy !== 0);
+  const hasData = data && data.some((item) => (item.attempts ?? 0) > 0 || item.Accuracy !== 0);
 
   return (
     <section className={styles.card} aria-label="Subject balance chart">
