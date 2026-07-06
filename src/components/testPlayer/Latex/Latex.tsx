@@ -52,7 +52,7 @@ const Latex = ({ children }: LatexProps) => {
 }
 
 // --- SUB-COMPONENT: Safe KaTeX Compilation Engine ---
-const RenderMath = React.memo(({ math, block }: { math: string; block: boolean }) => {
+const RenderMath = React.memo(function RenderMath({ math, block }: { math: string; block: boolean }) {
   let cleanedMath = math
     .replace(/<br\s*\/?>/gi, " ")
     // 🔥 THE FIX: Strictly strip ONLY valid HTML tags (starting with letters).
@@ -137,7 +137,7 @@ const RenderMath = React.memo(({ math, block }: { math: string; block: boolean }
   );
 });
 
-const SmartText = React.memo(({ text }: { text: string }) => {
+const SmartText = React.memo(function SmartText({ text }: { text: string }) {
   const tokens = text.split(/(\\[a-zA-Z]+(?:\{[^}]*\})*)/g);
   return (
     <>
@@ -145,7 +145,15 @@ const SmartText = React.memo(({ text }: { text: string }) => {
         if (token.startsWith("\\") && token.length > 1 && !token.includes(" ")) {
           return <RenderMath key={i} math={token} block={false} />;
         }
-        return <span key={i}>{token}</span>;
+        
+        // Clean up text artifacts before rendering to DOM:
+        // 1. Unescape \_ back to _ (handles our global _{2,} replacement)
+        // 2. Convert \  (backslash space) to _ (often used by backend for fill-in-the-blank)
+        const displayText = token
+          .replace(/\\_/g, "_")
+          .replace(/\\\s/g, "_");
+          
+        return <span key={i}>{displayText}</span>;
       })}
     </>
   );
