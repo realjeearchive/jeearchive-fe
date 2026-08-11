@@ -71,7 +71,7 @@ export function AnalyticsPageClient() {
     if (isLoading && !isRateLimited) {
       timer = setTimeout(() => setShowLoader(true), 150);
     } else {
-      setShowLoader(false);
+      timer = setTimeout(() => setShowLoader(false), 0);
     }
     return () => clearTimeout(timer);
   }, [isLoading, isRateLimited]);
