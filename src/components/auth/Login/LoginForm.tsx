@@ -83,7 +83,7 @@ export function LoginForm() {
     <div className={`${Styles.loginFormContainer} relative`}>
       <div className={Styles.loginHeader}>
         {!showEmailForm ? (
-          <Image src={Logo} alt="jeearchive-logo" width={60} height={60} className={Styles.logo} priority={true} />
+          <Image src={Logo} alt="jeearchive-logo" width={40} height={40} className={`${Styles.logo} mb-[18px]`} priority={true} />
         ) : (
           <button 
             type="button" 
@@ -94,9 +94,9 @@ export function LoginForm() {
             <MdClose size={16} />
           </button>
         )}
-        <h2 className={`${Styles.loginHeading} ${!showEmailForm ? 'text-4xl sm:text-[40px]' : 'text-3xl sm:text-[36px]'}`}>{!showEmailForm ? "Let's get started" : "Welcome back"}</h2>
+        <h2 className={`${Styles.loginHeading} text-[36px]`}>{!showEmailForm ? "Let's get started" : "Welcome back"}</h2>
         {!showEmailForm && (
-          <p className="text-center text-[var(--auth-text-secondary,theme(colors.gray.400))] text-[15px] sm:text-base leading-snug mt-2 max-w-xs sm:max-w-sm">
+          <p className="text-center text-[var(--auth-text-secondary,theme(colors.gray.400))] text-[15px] leading-[1.5] max-w-[290px]">
             Master your prep - practice chapter-wise PYQs and take mock tests with the real NTA interface.
           </p>
         )}
@@ -106,11 +106,11 @@ export function LoginForm() {
 
       <form onSubmit={handleSubmit} className={Styles.loginForm}>
         {!showEmailForm ? (
-          <div className="flex flex-col gap-2 w-full max-w-[320px] mx-auto">
+          <div className="flex flex-col gap-2 w-full max-w-[300px] mx-auto mt-7">
             <GoogleAuthButton />
-            <AuthButton type="button" variant="secondary" onClick={() => setShowEmailForm(true)}>
+            <AuthButton type="button" variant="secondary" className="h-10 text-[15px]" onClick={() => setShowEmailForm(true)}>
               <div className="flex items-center justify-center gap-2 font-medium">
-                <MdEmail size={20} />
+                <MdEmail size={17} />
                 <span>Continue with email</span>
               </div>
             </AuthButton>
