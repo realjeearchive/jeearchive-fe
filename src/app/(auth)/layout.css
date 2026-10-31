@@ -1,3 +1,7 @@
+:root {
+  --auth-panel-w: clamp(400px, 35vw, 640px);
+}
+
 .onboarding {
   position: relative;
   height: 100vh;
@@ -21,7 +25,6 @@
   /* Desktop: Extremely subtle red tint matching the dark panel */
   background: rgba(229, 95, 95, 0.08); 
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   
   border: 1px solid rgba(229, 95, 95, 0.4);
   
@@ -91,21 +94,21 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 30%;
-    min-width: 360px;
-    max-width: 620px;
+    width: var(--auth-panel-w);
     height: 100vh;
 
-    background:
-      radial-gradient(circle at 18% 22%, var(--auth-glow-1-desktop), transparent 60%),
-      radial-gradient(circle at 82% 24%, var(--auth-glow-2-desktop), transparent 60%),
-      radial-gradient(circle at 68% 78%, var(--auth-glow-3-desktop), transparent 65%),
-      var(--auth-bg-form-desktop);
+    /* Translucent on the left so the next carousel card, parked behind the
+       panel, bleeds through the blur as a coloured glow (Superlist effect). */
+    background: linear-gradient(
+      90deg,
+      rgba(34, 32, 48, 0.8) 0%,
+      rgba(34, 32, 48, 0.92) 35%,
+      rgba(34, 32, 48, 0.96) 100%
+    );
 
-    backdrop-filter: blur(26px) saturate(125%);
-    -webkit-backdrop-filter: blur(26px) saturate(125%);
+    backdrop-filter: blur(80px) saturate(150%);
 
-    box-shadow: var(--auth-shadow-desktop);
+    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.35);
 
     display: flex;
     flex-direction: column;
@@ -156,9 +159,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--auth-bg-backdrop);
+    background-color: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
     z-index: 90;
     animation: fadeIn 0.3s ease-out;
   }
@@ -175,29 +177,34 @@
     
     height: var(--auth-mobile-expanded-h);
     
-    background:
-      radial-gradient(circle at 18% 22%, var(--auth-glow-1-mobile), transparent 60%),
-      radial-gradient(circle at 82% 24%, var(--auth-glow-2-mobile), transparent 60%),
-      radial-gradient(circle at 68% 78%, var(--auth-glow-3-mobile), transparent 65%),
-      var(--auth-bg-form-mobile);
-      
-    backdrop-filter: blur(26px) saturate(125%);
-    -webkit-backdrop-filter: blur(26px) saturate(125%);
+    /* Same frosted, translucent treatment as the desktop panel so the active
+       carousel card's colour tints the sheet as it slides up. */
+    background: linear-gradient(
+      180deg,
+      rgba(34, 32, 48, 0.62) 0%,
+      rgba(34, 32, 48, 0.8) 55%,
+      rgba(34, 32, 48, 0.88) 100%
+    );
+
+    backdrop-filter: blur(60px) saturate(150%);
     
     transition: transform var(--auth-transition-speed) var(--auth-transition-curve),
-                border-radius var(--auth-transition-speed) var(--auth-transition-curve);
+                border-radius var(--auth-transition-speed) var(--auth-transition-curve),
+                box-shadow var(--auth-transition-speed) var(--auth-transition-curve);
     will-change: transform;
   }
 
   .form-section.collapsed {
     transform: translateY(calc(100% - var(--auth-mobile-collapsed-h)));
     border-radius: 0;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0), inset 0 1px 0 rgba(255, 255, 255, 0);
   }
 
+  /* Soft, short shadow plus a faint top highlight instead of a heavy dark band. */
   .form-section.expanded {
     transform: translateY(0);
     border-radius: var(--shape-radius-xl) var(--shape-radius-xl) 0 0;
-    box-shadow: var(--auth-shadow-mobile);
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .form-toggle-button {

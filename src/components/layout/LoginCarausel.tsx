@@ -1,13 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Autoplay from "embla-carousel-autoplay"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel"
 import { LazyMotion, domAnimation, m as motion } from "framer-motion"
 import Image from "next/image"
 import ExamInterfaceImage from '@/assets/image/test-player.png';
@@ -24,88 +17,224 @@ import {
   Filter,
   Play,
 } from "lucide-react"
+import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion"
+import { useTypewriter } from "@/lib/useTypewriter"
+import styles from "./LoginCarausel.module.css"
 
 // --- Slide Data ---
+const STORY_MS = 8000
+const MOCK_REVEAL_MS = 650
+
 const onboardingSlides = [
   {
-    id: 1,
     heading: "Organize your prep with structured PYQ archives",
-    colorVar: "#F94F39",
+    color: "#F94F39",
   },
   {
-    id: 2,
     heading: "Deep performance analytics across all subjects",
-    colorVar: "#1E7CD3",
+    color: "#1E7CD3",
   },
   {
-    id: 3,
     heading: "Experience the real NTA exam interface",
-    colorVar: "#6B66DA",
+    color: "#6B66DA",
   },
-]
+] as const
 
+// Superlist-style track: the active card sits in the left slot, the next one
+// waits one slot to the right (behind the translucent auth panel, which blurs
+// it into a coloured glow), and the previous one slides off left with a tilt.
+// `step` only ever increases; each slide's `generation` bumps when it wraps
+// from the far left back to the right, which remounts it there instead of
+// animating it across the screen.
 export function OnboardingCarousel() {
-  const plugin = React.useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: false })
-  )
+  const reducedMotion = usePrefersReducedMotion()
+  const [step, setStep] = React.useState(0)
+  const stageRef = React.useRef<HTMLDivElement>(null)
+
+  const total = onboardingSlides.length
+  const activeIndex = step % total
+  const paused = reducedMotion
+
+  const advance = React.useCallback(() => setStep((s) => s + 1), [])
+
+  React.useEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    const desktop = window.matchMedia("(min-width: 900px)")
+    const update = () => {
+      const card = stage.querySelector<HTMLElement>(`.${styles.slide}`)
+      if (!card) return
+      const w = card.offsetWidth
+      const h = card.offsetHeight
+      const scale = desktop.matches
+        ? Math.min(w / 1090, (h * 0.54) / 480)
+        : Math.min(1, ((w - 48) * 0.85) / 360, (h * 0.5) / 480)
+      stage.style.setProperty("--mock-scale", scale.toFixed(3))
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(stage)
+    return () => ro.disconnect()
+  }, [])
 
   return (
     <LazyMotion features={domAnimation}>
-      <Carousel
-        plugins={[plugin.current]}
-        className="w-[71%] max-lg:w-full h-full"
-        opts={{ align: "start", loop: true }}
+      <div
+        ref={stageRef}
+        className={styles.stage}
+        style={{ ["--story-ms" as string]: `${STORY_MS}ms` }}
       >
-        <CarouselContent className="h-full">
-        {onboardingSlides.map((slide) => (
-          <CarouselItem key={slide.id} className="basis-full h-full">
-            <div className="py-2 px-0 md:px-4 h-[100dvh] lg:h-screen">
-              <Card
-                className="border-0 h-full relative overflow-hidden"
-                style={{ background: slide.colorVar }}
-              >
-                <CardContent className="h-full flex flex-col items-center justify-start p-4 lg:p-4 text-white gap-16 lg:gap-5">
+        <StoryProgressBar
+          total={total}
+          activeIndex={activeIndex}
+          paused={paused}
+          onSegmentComplete={advance}
+        />
 
-                  {/* Top Text */}
-                  <div className="flex justify-center items-center max-w-lg z-10 pt-8 lg:pt-12 px-4 lg:px-0">
-                    <motion.h2
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.2 }}
-                      className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-center drop-shadow-sm"
-                    >
-                      {slide.heading}
-                    </motion.h2>
-                  </div>
-
-                  {/* Bottom App Card Area */}
-                  <div className="flex-1 w-full flex items-center justify-center perspective-1000 relative">
-                    <InnerAppCard slideId={slide.id} />
-                  </div>
-
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-    </Carousel>
+        {onboardingSlides.map((slide, i) => {
+          const generation = Math.ceil((step - 1 - i) / total)
+          const position = i + generation * total - step
+          return (
+            <SlideCard
+              key={`${i}:${generation}`}
+              index={i}
+              heading={slide.heading}
+              color={slide.color}
+              position={position}
+              typingActive={!reducedMotion}
+              onAdvance={advance}
+            />
+          )
+        })}
+      </div>
     </LazyMotion>
   )
 }
 
-// ─── App Window Container ──────────────────────────────────────────────────
-function InnerAppCard({ slideId }: { slideId: number }) {
-  // Both cards share the same fixed height so they're perfectly uniform
-  const CARD_H = "h-[480px]"
+// ─── One card on the track ─────────────────────────────────────────────────
+function SlideCard({
+  index,
+  heading,
+  color,
+  position,
+  typingActive,
+  onAdvance,
+}: {
+  index: number
+  heading: string
+  color: string
+  position: number
+  typingActive: boolean
+  onAdvance: () => void
+}) {
+  // The mock app only appears once the card has slid into place, and stays
+  // while it slides out. Cards waiting behind the panel never mount it.
+  const [showMock, setShowMock] = React.useState(false)
 
-  if (slideId === 1) {
+  React.useEffect(() => {
+    if (position !== 0 || showMock) return
+    const t = setTimeout(() => setShowMock(true), MOCK_REVEAL_MS)
+    return () => clearTimeout(t)
+  }, [position, showMock])
+
+  return (
+    <div
+      className={styles.slide}
+      aria-hidden={position !== 0}
+      data-active={position === 0}
+      onClick={position === 0 ? onAdvance : undefined}
+      style={{
+        backgroundColor: color,
+        // Exited cards get an extra 64px so their tilted corners clear the edge.
+        transform:
+          position < 0
+            ? `translate3d(calc(${position} * var(--slot) - 64px), 0, 0) rotate(-4deg)`
+            : `translate3d(calc(${position} * var(--slot)), 0, 0) rotate(0deg)`,
+      }}
+    >
+      <h2 className={styles.heading}>{heading}</h2>
+      {showMock &&
+        (index === 2 ? (
+          <div className={styles.mockWide}>
+            <CardThreeExamImage />
+          </div>
+        ) : (
+          <div className={styles.mock}>
+            <InnerAppCard slideId={index} typingActive={typingActive} />
+          </div>
+        ))}
+    </div>
+  )
+}
+
+// ─── Story-style progress bar (left slot only) ─────────────────────────────
+// Ticking is a compositor-only CSS animation; React only hears about it once
+// per slide via animationend. Segments resize via flex-grow.
+function StoryProgressBar({
+  total,
+  activeIndex,
+  paused,
+  onSegmentComplete,
+}: {
+  total: number
+  activeIndex: number
+  paused: boolean
+  onSegmentComplete: () => void
+}) {
+  return (
+    <div className={styles.progressBar} aria-hidden="true">
+      {Array.from({ length: total }).map((_, i) => {
+        const active = i === activeIndex
+        return (
+          <div
+            key={i}
+            className={styles.segment}
+            data-active={active}
+            data-paused={paused}
+          >
+            <div
+              className={styles.segmentFill}
+              onAnimationEnd={active ? onSegmentComplete : undefined}
+            />
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ─── Typed caption with blinking caret ─────────────────────────────────────
+function TypedCaption({
+  text,
+  active,
+  startDelay = 700,
+  speed = 24,
+  className,
+}: {
+  text: string
+  active: boolean
+  startDelay?: number
+  speed?: number
+  className?: string
+}) {
+  const { shown, done } = useTypewriter(text, { active, startDelay, speed })
+  return (
+    <span className={className}>
+      {shown}
+      {active && !done && <span className={styles.caret} aria-hidden="true" />}
+    </span>
+  )
+}
+
+// ─── App Window Container ──────────────────────────────────────────────────
+function InnerAppCard({ slideId, typingActive }: { slideId: number; typingActive: boolean }) {
+  if (slideId === 0) {
     return (
-      <div className={`relative w-full max-w-[360px] ${CARD_H} flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top lg:origin-center`}>
+      <div className="relative w-full h-full">
         {/* Back ghost card */}
         <motion.div
           initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
-          whileInView={{ rotate: -5, x: -28, y: -8, opacity: 1 }}
+          animate={{ rotate: -5, x: -28, y: -8, opacity: 1 }}
           transition={{ delay: 0.45, type: "spring", stiffness: 60, damping: 15 }}
           className="absolute inset-0 bg-orange-50 rounded-3xl shadow-lg border border-orange-100 overflow-hidden z-0"
         >
@@ -126,23 +255,23 @@ function InnerAppCard({ slideId }: { slideId: number }) {
         {/* Front main card */}
         <motion.div
           initial={{ y: 80, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", stiffness: 75, damping: 18 }}
           className="relative z-10 w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-100/80"
         >
-          <CardOnePYQ />
+          <CardOnePYQ typingActive={typingActive} />
         </motion.div>
       </div>
     )
   }
 
-  if (slideId === 2) {
+  if (slideId === 1) {
     return (
-      <div className={`relative w-full max-w-[360px] ${CARD_H} flex items-center justify-center scale-[0.75] sm:scale-[0.85] lg:scale-100 origin-top lg:origin-center`}>
+      <div className="relative w-full h-full">
         {/* Back ghost card */}
         <motion.div
           initial={{ rotate: 0, x: 0, y: 0, opacity: 0 }}
-          whileInView={{ rotate: 5, x: 28, y: -8, opacity: 1 }}
+          animate={{ rotate: 5, x: 28, y: -8, opacity: 1 }}
           transition={{ delay: 0.45, type: "spring", stiffness: 60, damping: 15 }}
           className="absolute inset-0 bg-blue-50 rounded-3xl shadow-lg border border-blue-100 overflow-hidden z-0"
         >
@@ -152,25 +281,21 @@ function InnerAppCard({ slideId }: { slideId: number }) {
         {/* Front main card */}
         <motion.div
           initial={{ y: 80, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", stiffness: 75, damping: 18 }}
           className="relative z-10 w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-100/80"
         >
-          <CardTwoFrontDNA />
+          <CardTwoFrontDNA typingActive={typingActive} />
         </motion.div>
       </div>
     )
   }
 
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <CardThreeExamImage />
-    </div>
-  )
+  return null
 }
 
 // ─── CARD 1: PYQ Topic Detail ─────────────────────────────────────────────
-function CardOnePYQ() {
+function CardOnePYQ({ typingActive }: { typingActive: boolean }) {
   const totalQ = 238
   const solved = 163
   const mainsTotal = 191
@@ -196,7 +321,7 @@ function CardOnePYQ() {
         <div className="flex items-center gap-3 mb-3">
           <motion.div
             initial={{ scale: 0.6, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 18 }}
             className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-100 to-orange-50 border border-orange-200/60 flex items-center justify-center shrink-0 shadow-sm"
           >
@@ -205,7 +330,7 @@ function CardOnePYQ() {
           <div className="flex-1 min-w-0">
             <motion.h2
               initial={{ opacity: 0, x: -10 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25, duration: 0.4 }}
               className="font-bold text-slate-900 text-[15px] leading-tight"
             >
@@ -213,11 +338,15 @@ function CardOnePYQ() {
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
               transition={{ delay: 0.35 }}
-              className="text-[10.5px] text-slate-400 font-medium mt-0.5"
+              className="text-[11px] text-slate-600 font-medium mt-0.5"
             >
-              JEE Archive · {totalQ} Questions
+              <TypedCaption
+                text={`Syncing your last attempt…`}
+                active={typingActive}
+                startDelay={650}
+              />
             </motion.p>
           </div>
         </div>
@@ -226,17 +355,17 @@ function CardOnePYQ() {
         <div className="flex items-center gap-2 mb-3">
           <motion.span
             initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.38, type: "spring" }}
-            className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-200"
+            className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-200"
           >
             <CheckCircle2 size={9} strokeWidth={3} /> JEE Main
           </motion.span>
           <motion.span
             initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.46, type: "spring" }}
-            className="flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-full border-2 border-orange-400 text-orange-500 bg-orange-50"
+            className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border-2 border-orange-400 text-orange-600 bg-orange-50"
           >
             <CheckCircle2 size={9} strokeWidth={3} /> JEE Advanced
           </motion.span>
@@ -245,7 +374,7 @@ function CardOnePYQ() {
         {/* Practice CTA — orange gradient, no black */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.52, duration: 0.4 }}
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
@@ -261,14 +390,14 @@ function CardOnePYQ() {
       <div className="px-4 pt-2.5 pb-2 shrink-0">
         <motion.div
           initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.55 }}
           className="relative group"
         >
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search size={12} className="text-slate-400 group-hover:text-orange-400 transition-colors duration-200" />
+            <Search size={12} className="text-slate-600 group-hover:text-orange-600 transition-colors duration-200" />
           </div>
-          <div className="w-full bg-white rounded-xl py-2 pl-8 pr-3 border border-slate-200/80 text-[11px] text-slate-400 font-medium shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:border-orange-200 hover:shadow-[0_2px_8px_rgba(249,79,57,0.08)] transition-all duration-200">
+          <div className="w-full bg-white rounded-xl py-2 pl-8 pr-3 border border-slate-200/80 text-[11px] text-slate-600 font-medium shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:border-orange-200 hover:shadow-[0_2px_8px_rgba(249,79,57,0.08)] transition-all duration-200">
             Search questions...
           </div>
         </motion.div>
@@ -276,10 +405,10 @@ function CardOnePYQ() {
 
       {/* ── Progress ── */}
       <div className="px-4 pb-2.5 shrink-0">
-        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Progress</p>
+        <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Progress</p>
         <motion.div
           initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.58, type: "spring", stiffness: 100 }}
           className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-3 flex items-center gap-3"
         >
@@ -294,7 +423,7 @@ function CardOnePYQ() {
                 strokeWidth="4"
                 strokeLinecap="round"
                 initial={{ strokeDasharray: `0 ${circ}` }}
-                whileInView={{ strokeDasharray: `${solvedDash} ${circ}` }}
+                animate={{ strokeDasharray: `${solvedDash} ${circ}` }}
                 transition={{ duration: 1.4, delay: 0.7, ease: "easeOut" }}
               />
             </svg>
@@ -302,12 +431,12 @@ function CardOnePYQ() {
               <motion.span
                 className="text-[14px] font-bold text-blue-600 leading-none"
                 initial={{ opacity: 0, scale: 0.7 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.9, type: "spring" }}
               >
                 {solved}
               </motion.span>
-              <span className="text-[8.5px] text-slate-400 font-medium leading-none mt-0.5">/{totalQ}</span>
+              <span className="text-[11px] text-slate-600 font-medium leading-none mt-0.5">/{totalQ}</span>
               <span className="text-[7.5px] text-emerald-500 font-bold mt-1 leading-none">✓ Solved</span>
             </div>
           </div>
@@ -316,20 +445,20 @@ function CardOnePYQ() {
           <div className="flex-1 grid grid-cols-2 gap-2">
             <motion.div
               initial={{ opacity: 0, x: 8 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.72 }}
               className="bg-blue-50/80 rounded-xl px-2.5 py-2 border border-blue-100/60"
             >
-              <p className="text-[9.5px] font-bold text-blue-500 mb-0.5">Mains</p>
+              <p className="text-[11px] font-bold text-blue-600 mb-0.5">Mains</p>
               <p className="text-[13px] font-bold text-slate-700 leading-none">0/{mainsTotal}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 8 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.8 }}
               className="bg-orange-50/80 rounded-xl px-2.5 py-2 border border-orange-100/60"
             >
-              <p className="text-[9.5px] font-bold text-orange-500 mb-0.5">Advanced</p>
+              <p className="text-[11px] font-bold text-orange-600 mb-0.5">Advanced</p>
               <p className="text-[13px] font-bold text-slate-700 leading-none">{advSolved}/{advTotal}</p>
             </motion.div>
           </div>
@@ -342,7 +471,7 @@ function CardOnePYQ() {
         <div className="flex items-center gap-2 mb-2 shrink-0">
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.62 }}
             className="h-6 w-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center shadow-[0_1px_3px_rgba(0,0,0,0.06)]"
           >
@@ -350,17 +479,17 @@ function CardOnePYQ() {
           </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.65 }}
             className="flex bg-white border border-slate-200 rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.05)]"
           >
             <span
-              className="px-3 py-1.5 text-[10px] font-bold text-white"
+              className="px-3 py-1.5 text-[11px] font-bold text-white"
               style={{ background: "linear-gradient(135deg, #FF6B4A, #F94F39)" }}
             >
               JEE Main
             </span>
-            <span className="px-3 py-1.5 text-[10px] font-bold text-slate-400">JEE Advanced</span>
+            <span className="px-3 py-1.5 text-[11px] font-bold text-slate-600">JEE Advanced</span>
           </motion.div>
         </div>
 
@@ -370,18 +499,18 @@ function CardOnePYQ() {
             <motion.div
               key={q.id}
               initial={{ x: -14, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
+              animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.72 + i * 0.11, type: "spring", stiffness: 130, damping: 22 }}
               whileHover={{ x: 3, backgroundColor: "#FFF8F7" }}
               className="flex items-center justify-between gap-2 bg-white rounded-xl px-3 py-2 border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] cursor-default transition-colors duration-150"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <span className="shrink-0 text-[9.5px] font-bold text-slate-300">{q.id}.</span>
-                <span className="text-[10.5px] text-slate-700 font-medium truncate">{q.text}</span>
+                <span className="shrink-0 text-[11px] font-bold text-slate-600">{q.id}.</span>
+                <span className="text-[11px] text-slate-700 font-medium truncate">{q.text}</span>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md">{q.year}</span>
-                <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/80">{q.type}</span>
+                <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded-md">{q.year}</span>
+                <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/80">{q.type}</span>
               </div>
             </motion.div>
           ))}
@@ -408,7 +537,7 @@ function CardTwoBackHeatmap() {
         <span className="font-bold text-slate-600 text-xs">Chapter Heatmap</span>
       </div>
       <div className="p-4 flex-1">
-        <p className="text-[9px] text-slate-400 font-bold mb-3 uppercase tracking-wider">Weakness Detection</p>
+        <p className="text-[11px] text-slate-600 font-bold mb-3 uppercase tracking-wider">Weakness Detection</p>
         <div className="grid grid-cols-6 gap-1.5">
           {grid.map((status, i) => {
             let color = "bg-emerald-200"
@@ -418,7 +547,7 @@ function CardTwoBackHeatmap() {
               <motion.div
                 key={i}
                 initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
+                animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.55 + i * 0.018, type: "spring", stiffness: 200 }}
                 className={`aspect-square rounded-md ${color}`}
               />
@@ -427,7 +556,7 @@ function CardTwoBackHeatmap() {
         </div>
         <div className="mt-4 flex gap-3">
           {[["bg-emerald-300", "Strong"], ["bg-amber-200", "Review"], ["bg-rose-300", "Weak"]].map(([c, l]) => (
-            <span key={l} className="flex items-center gap-1 text-[9px] text-slate-500 font-semibold">
+            <span key={l} className="flex items-center gap-1 text-[11px] text-slate-500 font-semibold">
               <span className={`h-2 w-2 rounded-sm ${c} inline-block`} />{l}
             </span>
           ))}
@@ -438,7 +567,7 @@ function CardTwoBackHeatmap() {
 }
 
 // ─── CARD 2 FRONT: Performance Analytics ─────────────────────────────────
-function CardTwoFrontDNA() {
+function CardTwoFrontDNA({ typingActive }: { typingActive: boolean }) {
   const metrics = [
     { label: "Tests Taken", value: "4",     sub: "+2 this month",   icon: Activity,     color: "#F94F39", bg: "#FFF4F2", arc: 0.40 },
     { label: "Avg Score",   value: "125",   sub: "out of 300",      icon: Target,       color: "#1E7CD3", bg: "#EFF6FF", arc: 0.42 },
@@ -463,22 +592,28 @@ function CardTwoFrontDNA() {
           <div>
             <motion.h3
               initial={{ opacity: 0, x: -8 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
               className="font-bold text-slate-800 text-[14px] leading-none"
             >
               Performance
             </motion.h3>
-            <p className="text-[10px] text-slate-400 mt-0.5">Last 5 Tests · Overall</p>
+            <p className="text-[11px] text-slate-600 mt-0.5">
+              <TypedCaption
+                text="Last 5 Tests · Overall"
+                active={typingActive}
+                startDelay={500}
+              />
+            </p>
           </div>
           <motion.div
             initial={{ opacity: 0, scale: 0.85 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, type: "spring" }}
             className="flex items-center gap-1.5 bg-blue-50 border border-blue-100 rounded-xl px-2.5 py-1.5"
           >
             <BarChart3 size={11} className="text-blue-500" />
-            <span className="text-[9.5px] font-bold text-blue-600">Analytics</span>
+            <span className="text-[11px] font-bold text-blue-600">Analytics</span>
           </motion.div>
         </div>
       </div>
@@ -491,7 +626,7 @@ function CardTwoFrontDNA() {
             <motion.div
               key={m.label}
               initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.28 + i * 0.09, type: "spring", stiffness: 130, damping: 20 }}
               whileHover={{ scale: 1.04, y: -1 }}
               className="rounded-2xl p-2.5 border border-slate-100 bg-white shadow-[0_1px_6px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.09)] transition-all duration-200 cursor-default"
@@ -509,23 +644,23 @@ function CardTwoFrontDNA() {
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     initial={{ strokeDasharray: `0 ${C}` }}
-                    whileInView={{ strokeDasharray: `${C * m.arc} ${C}` }}
+                    animate={{ strokeDasharray: `${C * m.arc} ${C}` }}
                     transition={{ duration: 1.1, delay: 0.55 + i * 0.09, ease: "easeOut" }}
                     transform="rotate(-90 9 9)"
                   />
                 </svg>
               </div>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide leading-none">{m.label}</p>
+              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wide leading-none">{m.label}</p>
               <motion.p
                 className="text-[17px] font-bold leading-tight mt-0.5"
                 style={{ color: m.color }}
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.55 + i * 0.09, duration: 0.35 }}
               >
                 {m.value}
               </motion.p>
-              <p className="text-[9px] text-slate-400 leading-none mt-0.5">{m.sub}</p>
+              <p className="text-[11px] text-slate-600 leading-none mt-0.5">{m.sub}</p>
             </motion.div>
           )
         })}
@@ -536,15 +671,15 @@ function CardTwoFrontDNA() {
         <div className="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 h-full flex flex-col">
           <div className="flex items-center justify-between mb-1.5 shrink-0">
             <div>
-              <p className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Performance Trend</p>
+              <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wide">Performance Trend</p>
               <div className="flex items-center gap-1 mt-0.5">
                 <TrendingDown size={9} className="text-rose-500" />
-                <span className="text-[9.5px] text-rose-500 font-semibold">121 pts decline</span>
+                <span className="text-[11px] text-rose-500 font-semibold">121 pts decline</span>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="h-1.5 w-4 rounded-full bg-gradient-to-r from-orange-400 to-rose-500" />
-              <span className="text-[9px] text-slate-400 font-medium">Score</span>
+              <span className="text-[11px] text-slate-600 font-medium">Score</span>
             </div>
           </div>
 
@@ -570,7 +705,7 @@ function CardTwoFrontDNA() {
               </defs>
               <motion.path
                 initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.6 }}
                 d={`${svgPath} L 250 150 L 30 150 Z`}
                 fill="url(#areaGrad2)"
@@ -585,7 +720,7 @@ function CardTwoFrontDNA() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
+                animate={{ pathLength: 1, opacity: 1 }}
                 transition={{ duration: 1.3, delay: 0.55, ease: "easeInOut" }}
               />
               <defs>
@@ -604,7 +739,7 @@ function CardTwoFrontDNA() {
                     stroke={i < 2 ? "#1E7CD3" : i === 2 ? "#059669" : "#F94F39"}
                     strokeWidth="2"
                     initial={{ scale: 0, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.95 + i * 0.11, type: "spring", stiffness: 260, damping: 20 }}
                   />
                   <text x={p.x} y={154} fontSize="8" fill="#94a3b8" textAnchor="middle" fontWeight="600">{p.label}</text>
@@ -616,7 +751,7 @@ function CardTwoFrontDNA() {
                     textAnchor="middle"
                     fontWeight="700"
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
                     transition={{ delay: 1.1 + i * 0.11 }}
                   >
                     {p.score}
@@ -639,7 +774,7 @@ function CardThreeExamImage() {
 
         <motion.div
           initial={{ y: 70, rotate: 0, opacity: 0 }}
-          whileInView={{ y: 20, rotate: -8, opacity: 0.25 }}
+          animate={{ y: 20, rotate: -8, opacity: 0.25 }}
           transition={{ duration: 0.9, ease: "easeOut" }}
           className="
             absolute inset-0 z-0 overflow-hidden shadow-lg
@@ -651,12 +786,13 @@ function CardThreeExamImage() {
             src={ExamInterfaceImage}
             alt="Exam UI Back"
             className="w-full h-full object-cover grayscale opacity-70"
+            sizes="(max-width: 1024px) 80vw, 560px"
           />
         </motion.div>
 
         <motion.div
           initial={{ y: 60, rotate: 0, opacity: 0 }}
-          whileInView={{ y: 10, rotate: 8, opacity: 0.45 }}
+          animate={{ y: 10, rotate: 8, opacity: 0.45 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.05 }}
           className="
              absolute inset-0 z-10 overflow-hidden shadow-xl
@@ -668,12 +804,13 @@ function CardThreeExamImage() {
             src={ExamInterfaceImage}
             alt="Exam UI Middle"
             className="w-full h-full object-cover grayscale opacity-50"
+            sizes="(max-width: 1024px) 80vw, 560px"
           />
         </motion.div>
 
         <motion.div
           initial={{ y: 50, scale: 0.92, opacity: 0 }}
-          whileInView={{ y: 0, scale: 1, opacity: 1 }}
+          animate={{ y: 0, scale: 1, opacity: 1 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
           className="relative z-20 w-full h-full overflow-hidden shadow-2xl border border-white/40 bg-slate-900"
         >
@@ -682,7 +819,6 @@ function CardThreeExamImage() {
             alt="NTA Interface Live Preview"
             fill
             className="w-full h-full object-cover"
-            priority={true}
             sizes="(max-width: 768px) 100vw, 760px"
           />
           <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] rounded-xl" />
@@ -690,7 +826,7 @@ function CardThreeExamImage() {
 
         <motion.div
           initial={{ scale: 0 }}
-          whileInView={{ scale: 1 }}
+          animate={{ scale: 1 }}
           transition={{ delay: 0.6, type: "spring", stiffness: 120 }}
           className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30 bg-white/90 backdrop-blur px-5 py-2 shadow-xl flex items-center gap-3 rounded-full border border-white/50"
         >
@@ -698,7 +834,7 @@ function CardThreeExamImage() {
             <span className="animate-ping absolute inline-flex h-full w-full bg-green-400 opacity-75 rounded-full" />
             <span className="relative inline-flex h-2.5 w-2.5 bg-green-500 rounded-full" />
           </div>
-          <span className="text-[10px] font-extrabold text-slate-800 uppercase tracking-widest whitespace-nowrap">
+          <span className="text-[11px] font-extrabold text-slate-800 uppercase tracking-widest whitespace-nowrap">
             Live Preview
           </span>
         </motion.div>

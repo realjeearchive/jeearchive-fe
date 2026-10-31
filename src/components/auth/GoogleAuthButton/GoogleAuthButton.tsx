@@ -43,7 +43,7 @@ export function GoogleAuthButton() {
         shape="pill"
         text="continue_with"
         logo_alignment="center"
-        width="320"
+        width="300"
       />
     </div>
   );
