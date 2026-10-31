@@ -18,6 +18,17 @@
   transition: border-color 0.2s ease;
 }
 
+/* Browsers paint autofilled fields light blue with black text. The input
+   background is translucent, so instead of covering it with an inset shadow
+   we stall the browser's background change with a very long transition. */
+.onboardingInput:-webkit-autofill,
+.onboardingInput:-webkit-autofill:hover,
+.onboardingInput:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--auth-text-primary);
+  caret-color: var(--auth-text-primary);
+  transition: background-color 99999s ease-out 0s, border-color 0.2s ease;
+}
+
 .inputNormal {
   border-color: var(--auth-input-border-hover);
 }

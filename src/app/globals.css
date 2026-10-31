@@ -213,7 +213,7 @@ body {
   --auth-transition-speed: 0.35s;
   --auth-transition-curve: cubic-bezier(0.4, 0, 0.2, 1);
   --auth-mobile-collapsed-h: 64px;
-  --auth-mobile-expanded-h: 75vh;
+  --auth-mobile-expanded-h: 75dvh;
 
   /* NTA Instruction Page Context */
   --instruction-topHeader-background-color: #BCE8F5;

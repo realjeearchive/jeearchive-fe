@@ -60,23 +60,27 @@ export default function AuthFormContainer({
           <ChevronUp className="toggle-icon" size={20} />
         </button>
 
-        <div className={`form-content ${formState}`}>
-          {children}
-        </div>
-
-        <div className="auth-footer-container">
-          <div className="auth-footer-links">
-            <Link href="/about-us">About Us</Link>
-            <span className="dot-separator">•</span>
-            <Link href="/contact-us">Contact Us</Link>
-            <span className="dot-separator">•</span>
-            <Link href="/privacy-policy">Privacy Policy</Link>
-            <span className="dot-separator">•</span>
-            <Link href="/terms-of-service">Terms of Service</Link>
+        {/* Form and footer share one scroll area so the footer always sits
+            below the form and can never overlap it on short screens. */}
+        <div className="form-scroll">
+          <div className={`form-content ${formState}`}>
+            {children}
           </div>
-          <p className="auth-footer-disclaimer">
-            By continuing, you agree to our Terms of Service & Privacy Policy.
-          </p>
+
+          <div className="auth-footer-container">
+            <div className="auth-footer-links">
+              <Link href="/about-us">About Us</Link>
+              <span className="dot-separator">•</span>
+              <Link href="/contact-us">Contact Us</Link>
+              <span className="dot-separator">•</span>
+              <Link href="/privacy-policy">Privacy Policy</Link>
+              <span className="dot-separator">•</span>
+              <Link href="/terms-of-service">Terms of Service</Link>
+            </div>
+            <p className="auth-footer-disclaimer">
+              By continuing, you agree to our Terms of Service & Privacy Policy.
+            </p>
+          </div>
         </div>
       </div>
     </>
