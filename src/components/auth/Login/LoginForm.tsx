@@ -1,29 +1,40 @@
 'use client';
 
 import Styles from './LoginForm.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.webp';
-import { loginSchema, type LoginInput } from '@/features/auth/schemas';
+import type { LoginInput } from '@/features/auth/schemas';
+
+// zod (~56 KB) is only needed on submit, so it's kept off the initial page
+// load and fetched when the email form opens (or on submit at the latest).
+const loadValidation = () =>
+  Promise.all([import('zod'), import('@/features/auth/schemas')]);
 import { loginRequest, type LoginResponse } from '@/features/auth/api';
 import { useAuthStore, useUserStore } from '@/store';
 import { GoogleAuthButton } from '../GoogleAuthButton/GoogleAuthButton';
 import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useClientSearchParam } from '@/lib/useClientSearchParam';
 import { MdEmail, MdClose } from 'react-icons/md';
 
 export function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const methodParam = useClientSearchParam('method');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [showEmailForm, setShowEmailForm] = useState(searchParams.get('method') === 'email');
+  // null until the user picks; until then ?method=email decides.
+  const [emailChoice, setShowEmailForm] = useState<boolean | null>(null);
+  const showEmailForm = emailChoice ?? methodParam === 'email';
+
+  useEffect(() => {
+    if (showEmailForm) void loadValidation();
+  }, [showEmailForm]);
   const setAccessToken = useAuthStore((s) => s.setAccessToken);
   const syncStageNumber = useUserStore((s) => s.syncStageNumber);
 
@@ -40,6 +51,7 @@ export function LoginForm() {
       remberMe: formData.get('remember-me') === 'on',
     };
 
+    const [{ z }, { loginSchema }] = await loadValidation();
     let parsed: LoginInput;
 
     try {

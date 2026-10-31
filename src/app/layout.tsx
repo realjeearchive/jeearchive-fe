@@ -2,9 +2,9 @@ import "./globals.css";
 import { AuthInitializer } from "./providers/AuthInitializer";
 import { Toaster } from "sonner";
 import RouteGuard from "@/components/auth/RouteGuard";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { GoogleAuthProviderWrapper } from "./providers/GoogleAuthProviderWrapper";
 import Script from "next/script";
+import { DeferredAnalytics } from "./providers/DeferredAnalytics";
 
 import type { Metadata } from "next";
 
@@ -70,23 +70,22 @@ export default function RootLayout({
           }}
         />
 
-        {/* Microsoft Clarity */}
-        <Script id="microsoft-clarity" strategy="afterInteractive">
+        {/* Google Analytics queue: tiny, runs early so the page view is
+            recorded. gtag.js and Clarity themselves load on first
+            interaction (or after 6s) via DeferredAnalytics. */}
+        <Script id="ga-init" strategy="afterInteractive">
           {`
-            (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);
-              t.async=1;
-              t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];
-              y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
           `}
         </Script>
+        <DeferredAnalytics
+          gaId={process.env.NEXT_PUBLIC_GA_ID}
+          clarityId={process.env.NEXT_PUBLIC_CLARITY_ID}
+        />
       </body>
-
-      {/* Google Analytics */}
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
     </html>
   );
 }

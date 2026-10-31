@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, Suspense } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
 import { BrandSplashScreen } from "@/components/ui/BrandSplashScreen/BrandSplashScreen";
@@ -24,7 +24,6 @@ const isPublicRoute = (path: string) =>
 const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const accessToken = useAuthStore((s) => s.accessToken);
   const initialized = useAuthStore((s) => s.initialized);
@@ -80,7 +79,9 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
       }
     } else {
       if (onPublic || isOnboarding) {
-        const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+        // Read from the URL here rather than useSearchParams(), which would
+        // force public pages to render client-only behind the splash screen.
+        const redirectTo = new URLSearchParams(window.location.search).get("redirectTo") || "/dashboard";
         console.info(`[Auth: RouteGuard] Fully onboarded user on public route. Redirecting to ${redirectTo}.`);
         router.replace(redirectTo);
       }
@@ -90,11 +91,14 @@ const RouteGuardInner: React.FC<{ children: React.ReactNode }> = ({ children }) 
       }
     }
   }, [
-    initialized, authed, pathname, router, searchParams, 
+    initialized, authed, pathname, router,
     stageNumber, syncStageNumber, profile, fetchProfile
   ]);
 
-  if (!initialized || isStageChecking) {
+  // Public pages (login, signup, legal) render straight away, so their HTML
+  // is prerendered and shows before the auth check returns. A signed-in user
+  // who lands on one is redirected by the effect above once it resolves.
+  if (!isPublicRoute(pathname) && (!initialized || isStageChecking)) {
     return <BrandSplashScreen />;
   }
 

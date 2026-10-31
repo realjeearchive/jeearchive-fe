@@ -1,16 +1,21 @@
 'use client';
 
 import Styles from './SignupForm.module.css';
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useClientSearchParam } from '@/lib/useClientSearchParam';
 import Link from 'next/link';
 import Image from 'next/image';
-import { z } from 'zod';
 import { AuthInput } from '../AuthInput/AuthInput';
 import { AuthButton } from '../AuthButton/AuthButton';
 import { FormError } from '../FormError/FormError';
 import Logo from '../../../../public/images/logo.webp';
-import { signupSchema, type SignupInput } from '@/features/auth/schemas';
+import type { SignupInput } from '@/features/auth/schemas';
+
+// zod (~56 KB) is only needed on submit, so it's kept off the initial page
+// load and fetched when the email form opens (or on submit at the latest).
+const loadValidation = () =>
+  Promise.all([import('zod'), import('@/features/auth/schemas')]);
 import { GoogleAuthButton } from '../GoogleAuthButton/GoogleAuthButton';
 import { signupRequest, type SignupResponse } from '@/features/auth/api';
 import { toast } from 'sonner';
@@ -18,11 +23,17 @@ import { MdEmail, MdClose } from 'react-icons/md';
 
 export function SignupForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const methodParam = useClientSearchParam('method');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [showEmailForm, setShowEmailForm] = useState(searchParams.get('method') === 'email');
+  // null until the user picks; until then ?method=email decides.
+  const [emailChoice, setShowEmailForm] = useState<boolean | null>(null);
+  const showEmailForm = emailChoice ?? methodParam === 'email';
+
+  useEffect(() => {
+    if (showEmailForm) void loadValidation();
+  }, [showEmailForm]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,6 +49,7 @@ export function SignupForm() {
       confirmPassword: formData.get('confirm-password') as string,
     };
 
+    const [{ z }, { signupSchema }] = await loadValidation();
     let parsed: SignupInput;
 
     try {

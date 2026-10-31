@@ -1,0 +1,1149 @@
+/* Login carousel vignettes. Each vignette is laid out at a fixed pixel size
+   (360×480, or 600×380 for the exam screen) and scaled by --mock-scale from
+   the carousel, so every position here is exact at any viewport.
+   Only transform and opacity are animated (plus stroke-dashoffset). */
+
+/* ─── Shared frame: camera push-in, drift, ghost parallax ─────────────── */
+.vignette {
+  position: absolute;
+  inset: 0;
+  color: #0f172a;
+  text-align: left;
+  user-select: none;
+  pointer-events: none;
+  /* Camera: slow push-in across the slide. */
+  animation: pushIn 7.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.drift {
+  position: absolute;
+  inset: 0;
+  animation: drift 6s ease-in-out infinite alternate;
+}
+
+.ghostWrap {
+  position: absolute;
+  inset: 0;
+  animation: parallax 6s ease-in-out infinite alternate;
+}
+
+/* Inactive cards (sliding out, or waiting) keep their frame but stop moving. */
+.vignette:not([data-playing="true"]),
+.vignette:not([data-playing="true"]) .drift,
+.vignette:not([data-playing="true"]) .ghostWrap,
+.vignette:not([data-playing="true"]) .caret {
+  animation-play-state: paused;
+}
+
+@keyframes pushIn {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 2px, 0); }
+  to { transform: translate3d(0, -3px, 0) scale(1.012); }
+}
+
+@keyframes parallax {
+  from { transform: translate3d(0, -1px, 0); }
+  to { transform: translate3d(0, 2px, 0); }
+}
+
+.h {
+  opacity: 0;
+}
+
+/* framer-motion moves these from JavaScript; their own compositor layer
+   means each frame is a cheap recomposite instead of a repaint. */
+.vignette [data-k="card"],
+.vignette [data-k="cardBg"],
+.vignette [data-k="frame"],
+.vignette [data-k="ghost"],
+.vignette [data-k="rowM"],
+.vignette [data-k="rowA"] {
+  will-change: transform, opacity;
+}
+
+.ghost {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.ghostLine {
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.18;
+  margin-bottom: 10px;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ripple,
+.rippleDark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rippleDark {
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  opacity: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 13px;
+  margin-left: 1px;
+  vertical-align: -2px;
+  background: #f94f39;
+  animation: caretBlink 0.9s steps(1) infinite;
+}
+
+@keyframes caretBlink {
+  50% { opacity: 0; }
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Slide 1 · PYQ archive ─────────────────────────────────────────────── */
+.pyqGhost {
+  background: #fff1ec;
+  color: #f94f39;
+  padding: 22px 20px;
+}
+
+.pyqCard {
+  position: absolute;
+  inset: 0;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pyqBg {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow:
+    0 34px 70px -24px rgba(128, 24, 8, 0.55),
+    0 10px 24px -10px rgba(128, 24, 8, 0.3);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+}
+
+.chapterIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #ffe6df, #fff4f0);
+  color: #f94f39;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  margin-top: 3px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.search {
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.searchIcon {
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.placeholder {
+  color: #94a3b8;
+}
+
+.toggle {
+  position: relative;
+  height: 32px;
+  border-radius: 11px;
+  background: #f1f5f9;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  overflow: hidden;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: 26px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.toggleLabel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.toggleRipple {
+  position: absolute;
+  left: 75%;
+  top: 50%;
+}
+
+.rows {
+  position: relative;
+  height: 148px;
+  flex-shrink: 0;
+}
+
+.rowList {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  position: relative;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 0 12px;
+}
+
+.rowBg {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #edf0f4;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.rowText {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowNum {
+  font-weight: 700;
+  color: #94a3b8;
+  margin-right: 6px;
+}
+
+.badges {
+  position: relative;
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.chip {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chipYear {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.chipType {
+  background: #fff1ec;
+  color: #d9452f;
+}
+
+.progress {
+  height: 78px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #edf0f4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.ring {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.ring svg {
+  transform: rotate(-90deg);
+}
+
+.ringLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.ringValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ringTotal {
+  margin-top: 2px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.progressText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progressTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.miniStats {
+  display: flex;
+  gap: 6px;
+}
+
+.mini {
+  flex: 1;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 9px;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.mini strong {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.practice {
+  position: relative;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b4a 0%, #f94f39 60%, #e8381e 100%);
+  box-shadow: 0 8px 18px -8px rgba(249, 79, 57, 0.8);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.practiceLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Slide 2 · Analytics ───────────────────────────────────────────────── */
+.statsGhost {
+  background: #eaf3fd;
+  color: #1e7cd3;
+  padding: 22px 20px;
+}
+
+.heatGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.heatCell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: currentColor;
+}
+
+/* Scales from near the bottom so the push-in closes on the weak chapter. */
+.statsCard {
+  transform-origin: 50% 88%;
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow:
+    0 34px 70px -24px rgba(6, 42, 92, 0.6),
+    0 10px 24px -10px rgba(6, 42, 92, 0.3);
+}
+
+.focus {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.statsHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 38px;
+}
+
+.pill {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #eaf3fd;
+  color: #1e6fc0;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.kpi {
+  height: 58px;
+  border-radius: 13px;
+  border: 1px solid #edf0f4;
+  background: #fff;
+  padding: 9px 9px 0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.kpiLabel {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.kpiValue {
+  margin-top: 4px;
+  color: #0f172a;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.kpiSub {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-left: 2px;
+}
+
+.panel {
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #edf0f4;
+  padding: 11px 12px;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.gainChip {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #eaf3fd;
+  color: #1e6fc0;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.trend {
+  height: 138px;
+}
+
+.trend svg {
+  display: block;
+  margin-top: 6px;
+  overflow: visible;
+}
+
+.dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.barRow {
+  position: relative;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.barLabel {
+  width: 112px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.barTrack {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: #e8edf3;
+  overflow: hidden;
+}
+
+.barFill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #1e7cd3;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.barWeak .barFill {
+  background: #e5484d;
+}
+
+.barValue {
+  position: relative;
+  width: 30px;
+  text-align: right;
+  font-weight: 700;
+}
+
+.barWeak {
+  margin-top: 6px;
+  color: #c62a2f;
+  font-weight: 700;
+}
+
+/* Pre-rendered highlight: only its opacity animates. */
+.glow {
+  position: absolute;
+  inset: -3px -7px;
+  border-radius: 9px;
+  background: #fff1f1;
+  border: 1.5px solid #f2a1a3;
+  box-shadow: 0 4px 14px -4px rgba(229, 72, 77, 0.45);
+  opacity: 0;
+}
+
+/* Badge on the highlight's top edge, over the empty part of the track. */
+.focusTag {
+  position: absolute;
+  right: 46px;
+  top: -12px;
+  height: 17px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #1f2937;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 6px 14px -6px rgba(15, 23, 42, 0.6);
+  opacity: 0;
+  transform-origin: center;
+}
+
+/* ─── Slide 3 · NTA exam ────────────────────────────────────────────────── */
+.examGhost {
+  background: #e9e7fb;
+  color: #6b66da;
+  border-radius: 14px;
+  padding: 34px 18px 18px;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 34px 70px -24px rgba(30, 20, 100, 0.6),
+    0 10px 24px -10px rgba(30, 20, 100, 0.3);
+}
+
+.strip {
+  height: 26px;
+  flex-shrink: 0;
+  background: #363636;
+  color: #dbd66c;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.stripRight {
+  color: #c9c9c9;
+  font-weight: 400;
+}
+
+.examBody {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 172px;
+}
+
+.examMain {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-right: 1px solid #d7dde5;
+}
+
+.sectionRow {
+  height: 30px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 10.5px;
+}
+
+.sectionTab {
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 3px;
+  background: #1f7fc4;
+  color: #fff;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.timeLeft {
+  font-weight: 700;
+  color: #111827;
+}
+
+.qArea {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.question {
+  position: absolute;
+  inset: 0;
+  padding: 10px 12px;
+}
+
+.qNo {
+  font-size: 11px;
+  font-weight: 700;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.qText {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #111827;
+}
+
+.options {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.option {
+  position: relative;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 8px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 14px;
+}
+
+.optionHi {
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  background: #eef6fd;
+  border: 1px solid #b9d9f3;
+  opacity: 0;
+}
+
+.radio {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid #6b7280;
+  flex-shrink: 0;
+}
+
+.radioDot {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: #1f7fc4;
+  opacity: 0;
+}
+
+.optionLabel {
+  position: relative;
+}
+
+.actions {
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.examBtn {
+  position: relative;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 3px;
+  border: 1px solid #c4c9d0;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  color: #1f2937;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.examBtnSave {
+  margin-left: auto;
+  background: #2f9e44;
+  border-color: #2b8a3e;
+  color: #fff;
+}
+
+.examSide {
+  background: #e6f2fb;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.candidate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #fff;
+  border-bottom: 1px solid #d7dde5;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #cbd5e1, #94a3b8);
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 6px;
+  padding: 8px 8px 6px;
+  font-size: 8.5px;
+  color: #374151;
+  background: #fff;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.legendWide {
+  grid-column: span 2;
+}
+
+.paletteTitle {
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  background: #1f7fc4;
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.palette {
+  display: grid;
+  grid-template-columns: repeat(4, 30px);
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+}
+
+.submit {
+  margin: auto 10px 8px;
+  height: 22px;
+  border-radius: 3px;
+  background: #1f7fc4;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+/* Palette button: one element per state stacked on top of each other;
+   a state change only fades a layer in while the button pops. */
+.pb {
+  position: relative;
+  width: 30px;
+  height: 26px;
+}
+
+.pbLayer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pbOverlay {
+  opacity: 0;
+}
+
+/* Shapes and gradients mirror testPlayer/StatusIcon.module.css. */
+.nv {
+  background: linear-gradient(to bottom, #fbfbfb, #d1d1d1);
+  border: 1px solid #b0b0b0;
+  border-radius: 2px;
+  color: #656565;
+}
+
+.ans {
+  background: linear-gradient(to bottom, #a5d928, #51a41d);
+  border: 1px solid #a5c077;
+  clip-path: polygon(35% 0%, 65% 0%, 100% 40%, 100% 100%, 0% 100%, 0% 40%);
+}
+
+/* StatusIcon rotates the "answered" shape 180°; flipping the polygon and
+   the gradient gives the same result without a transform. */
+.na {
+  background: linear-gradient(to bottom, #f45912, #ad2709);
+  border: 1px solid #cd816b;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 60%, 65% 100%, 35% 100%, 0% 60%);
+}
+
+.mk,
+.amk {
+  left: 1px;
+  right: 1px;
+  top: -1px;
+  bottom: -1px;
+  background: #815ea0;
+  border: 1px solid #806f91;
+  border-radius: 50%;
+}
+
+.tick {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #a5d928, #51a41d);
+  border: 1px solid #a5c077;
+  display: grid;
+  place-items: center;
+}
+
+.legendIcon {
+  position: relative;
+  width: 16px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.legendIcon .pbLayer {
+  font-size: 7.5px;
+}
+
+.livePill {
+  position: absolute;
+  left: 50%;
+  bottom: -50px;
+  height: 34px;
+  margin-left: -76px;
+  width: 152px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 28px -10px rgba(30, 20, 100, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #1e1b4b;
+  opacity: 0;
+  z-index: 20;
+}
+
+.liveDot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.livePulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+  opacity: 0;
+}
+
+/* Phone-only drawer handle and scrim; hidden on desktop. */
+.drawerTab,
+.scrim {
+  display: none;
+}
+
+/* Under 900px the exam screen is portrait and, like the real test player,
+   the question palette is a sidebar that slides in from the right edge.
+   Tap ripples replace the cursor. */
+@media (max-width: 899px) {
+  .cursor {
+    display: none;
+  }
+
+  .examBody {
+    grid-template-columns: 1fr;
+  }
+
+  .examMain {
+    border-right: 0;
+  }
+
+  .examSide {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 180px;
+    z-index: 5;
+    box-shadow: -14px 0 28px -10px rgba(15, 23, 42, 0.35);
+    transform: translateX(100%);
+  }
+
+  .scrim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background: rgba(15, 23, 42, 0.32);
+    opacity: 0;
+  }
+
+  .drawerTab {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    z-index: 3;
+    width: 16px;
+    height: 46px;
+    margin-top: -23px;
+    border-radius: 6px 0 0 6px;
+    background: #1f7fc4;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .stripRight {
+    display: none;
+  }
+
+  /* Above the frame: below it would sit under the sign-in bar. */
+  .livePill {
+    top: -48px;
+    bottom: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vignette,
+  .drift,
+  .ghostWrap,
+  .caret,
+  .spinner {
+    animation: none;
+  }
+}

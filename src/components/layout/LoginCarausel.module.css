@@ -68,26 +68,89 @@
   letter-spacing: -0.03em;
 }
 
-/* Mock-app area: centred at 61% of the card height, scaled by JS
-   (--mock-scale) so it keeps Superlist's card-to-mock ratio. */
-.mock {
+/* Heading reveal: each word rises out of a mask with a slight overshoot,
+   55ms apart, once the card becomes active; the accent's underline
+   sweeps in after the last word. Only transform animates. */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* Room for descenders inside the mask. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.word > span {
+  display: inline-block;
+  transform: translate3d(0, 110%, 0);
+}
+
+.heading[data-shown="true"] .word > span {
+  animation: wordUp 620ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(200ms + var(--i) * 55ms);
+}
+
+/* Initial page load: the first card and its heading are painted at once
+   (they're the LCP element); the underline still sweeps in. */
+.stage[data-initial="true"] .slide {
+  animation: none;
+}
+
+.stage[data-initial="true"] .heading[data-shown="true"] .word > span {
+  animation: none;
+  transform: none;
+}
+
+@keyframes wordUp {
+  from { transform: translate3d(0, 110%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.accent {
+  position: relative;
+  display: inline-block;
+}
+
+.underline {
   position: absolute;
-  top: 61%;
+  left: 0;
+  right: 0;
+  bottom: -0.06em;
+  height: 0.09em;
+  min-height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  transform: scaleX(0) rotate(-1deg);
+  transform-origin: left center;
+}
+
+.heading[data-shown="true"] .underline {
+  animation: drawLine 650ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: calc(200ms + var(--words) * 55ms + 250ms);
+}
+
+@keyframes drawLine {
+  to { transform: scaleX(1) rotate(-1deg); }
+}
+
+/* Vignette area: centred at 62% of the card height and scaled by JS
+   (--mock-scale) so it keeps Superlist's card-to-mock ratio. */
+.mock,
+.mockExam {
+  position: absolute;
+  top: 62%;
   left: 50%;
   width: 360px;
   height: 480px;
   transform: translate(-50%, -50%) scale(var(--mock-scale, 0.8));
 }
 
-.mockWide {
-  position: absolute;
-  top: 26%;
-  bottom: 6%;
-  left: 6%;
-  right: 6%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* The exam screen is landscape on desktop, portrait on phones. */
+@media (min-width: 900px) {
+  .mockExam {
+    width: 600px;
+    height: 380px;
+  }
 }
 
 .slide[data-active="true"] {
@@ -151,24 +214,19 @@
   }
 }
 
-/* ─── Typewriter caret ───────────────────────────────────────────────── */
-.caret {
-  display: inline-block;
-  width: 1px;
-  height: 0.9em;
-  margin-left: 2px;
-  vertical-align: -0.15em;
-  background: currentColor;
-  animation: caretBlink 0.9s steps(1) infinite;
-}
-
-@keyframes caretBlink {
-  50% {
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .word > span,
+  .heading[data-shown="true"] .word > span {
+    animation: none;
+    transform: none;
+  }
+
+  .underline,
+  .heading[data-shown="true"] .underline {
+    animation: none;
+    transform: rotate(-1deg);
+  }
+
   .slide,
   .segment {
     transition: none;
@@ -178,9 +236,5 @@
   .segment[data-active="true"] .segmentFill {
     animation: none;
     transform: scaleX(1);
-  }
-
-  .caret {
-    animation: none;
   }
 }
